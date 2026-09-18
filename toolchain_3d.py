@@ -321,10 +321,10 @@ def _build_production_summary(plan: dict, success: bool, results: list[dict]) ->
 
     summary = {
         "success": success,
-        "profile": plan["profile"],
-        "optimizer": plan["optimizer"],
-        "rawOutput": plan["rawOutput"],
-        "finalOutput": plan["finalOutput"],
+        "profile": plan.get("profile"),
+        "optimizer": plan.get("optimizer"),
+        "rawOutput": plan.get("rawOutput"),
+        "finalOutput": plan.get("finalOutput"),
         "steps": [
             {
                 "id": item["id"],
