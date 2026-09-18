@@ -11,6 +11,7 @@ import zlib
 from pathlib import Path
 
 from animation_infer import infer_animations
+from blender_adapter import build_blender_export_job, render_blender_command, write_blender_export_script, write_job_manifest
 from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_export import write_spriteframes
 from raster_pack import pack_uniform_atlas, recompress_png
@@ -484,6 +485,16 @@ def parser() -> argparse.ArgumentParser:
     gltf_validate = sub.add_parser("validate-gltf", help="validate glTF/GLB structure")
     gltf_validate.add_argument("input", type=Path)
     gltf_validate.add_argument("--profile", choices=["prop", "environment", "character"])
+
+    blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
+    blender_job.add_argument("source_blend", type=Path)
+    blender_job.add_argument("output_glb", type=Path)
+    blender_job.add_argument("--script", type=Path, required=True)
+    blender_job.add_argument("--job-manifest", type=Path)
+    blender_job.add_argument("--blender", default="blender")
+    blender_job.add_argument("--selection-only", action="store_true")
+    blender_job.add_argument("--no-animations", action="store_true")
+    blender_job.add_argument("--no-apply-modifiers", action="store_true")
     return result
 
 
@@ -632,6 +643,28 @@ def main() -> int:
         result = {"file": str(args.input), "info": info, "errors": errors, "warnings": warnings}
         print(json.dumps(result, indent=2, sort_keys=True))
         return 1 if errors else 0
+    if args.command == "blender-export-job":
+        try:
+            job = build_blender_export_job(
+                args.source_blend,
+                args.output_glb,
+                selection_only=args.selection_only,
+                animations=not args.no_animations,
+                apply_modifiers=not args.no_apply_modifiers,
+            )
+            write_blender_export_script(job, args.script)
+            if args.job_manifest:
+                write_job_manifest(job, args.job_manifest)
+            result = {
+                "job": job,
+                "script": str(args.script),
+                "command": render_blender_command(args.blender, args.script),
+            }
+        except (OSError, ValueError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
     return 2
 
 
