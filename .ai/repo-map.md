@@ -52,6 +52,10 @@ pipelines/
   sprite-2d.json
   vector-svg.json
 profiles/
+  3d/
+    character.json
+    environment.json
+    prop.json
   vector/
     icon.json
     logo.json
@@ -61,6 +65,8 @@ schemas/
 tests/
   test_animation_infer.py
   test_asset_forge.py
+  test_blender_adapter.py
+  test_gltf_tools.py
   test_godot_export.py
   test_raster_pack.py
   test_starlist_bridge.py
@@ -68,6 +74,8 @@ tests/
 AGENTS.md
 animation_infer.py
 asset_forge.py
+blender_adapter.py
+gltf_tools.py
 godot_export.py
 raster_pack.py
 README.md
@@ -123,7 +131,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py blender_adapter.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -353,6 +361,51 @@ jobs:
 }
 ````
 
+## File: profiles/3d/character.json
+````json
+{
+  "id": "character",
+  "assetTypes": ["character-3d"],
+  "rules": {
+    "maxMeshes": 16,
+    "maxPrimitives": 64,
+    "maxMaterials": 16,
+    "allowAnimations": true,
+    "requireSkin": true
+  }
+}
+````
+
+## File: profiles/3d/environment.json
+````json
+{
+  "id": "environment",
+  "assetTypes": ["environment"],
+  "rules": {
+    "maxMeshes": 256,
+    "maxPrimitives": 1024,
+    "maxMaterials": 128,
+    "allowAnimations": false,
+    "requireSkin": false
+  }
+}
+````
+
+## File: profiles/3d/prop.json
+````json
+{
+  "id": "prop",
+  "assetTypes": ["prop", "mesh"],
+  "rules": {
+    "maxMeshes": 8,
+    "maxPrimitives": 16,
+    "maxMaterials": 8,
+    "allowAnimations": false,
+    "requireSkin": false
+  }
+}
+````
+
 ## File: profiles/vector/icon.json
 ````json
 {
@@ -531,6 +584,57 @@ def test_invalid_png_crc_is_rejected(self)
 image = Path(tmp) / "bad.png"
 ⋮----
 data = bytearray(image.read_bytes())
+````
+
+## File: tests/test_blender_adapter.py
+````python
+class BlenderAdapterTests(unittest.TestCase)
+⋮----
+def test_build_export_job_defaults(self)
+⋮----
+job = build_blender_export_job(
+⋮----
+def test_selection_and_animation_flags(self)
+⋮----
+def test_rendered_script_opens_source_and_exports(self)
+⋮----
+script = render_blender_python(job)
+⋮----
+def test_render_command_uses_background_mode(self)
+⋮----
+command = render_blender_command("blender", Path("build/export.py"))
+````
+
+## File: tests/test_gltf_tools.py
+````python
+def make_glb(data: dict) -> bytes
+⋮----
+payload = json.dumps(data, separators=(",", ":")).encode("utf-8")
+padding = (4 - (len(payload) % 4)) % 4
+⋮----
+total = 12 + 8 + len(payload)
+⋮----
+class GltfToolsTests(unittest.TestCase)
+⋮----
+def base(self)
+⋮----
+def test_valid_gltf(self)
+⋮----
+path = Path(tmp) / "asset.gltf"
+⋮----
+def test_invalid_version(self)
+⋮----
+data = self.base()
+⋮----
+def test_glb_json_chunk(self)
+⋮----
+path = Path(tmp) / "asset.glb"
+⋮----
+def test_character_requires_skin(self)
+⋮----
+path = Path(tmp) / "character.gltf"
+⋮----
+def test_character_with_skin_passes(self)
 ````
 
 ## File: tests/test_godot_export.py
@@ -937,6 +1041,10 @@ svg_sanitize = sub.add_parser("sanitize-svg", help="remove unsafe SVG content")
 ⋮----
 svg_normalize = sub.add_parser("normalize-svg", help="ensure SVG has a usable viewBox")
 ⋮----
+gltf_validate = sub.add_parser("validate-gltf", help="validate glTF/GLB structure")
+⋮----
+blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
+⋮----
 def main() -> int
 ⋮----
 args = parser().parse_args()
@@ -967,6 +1075,103 @@ result = {"file": str(args.input), "info": info, "errors": errors, "warnings": w
 result = sanitize_svg(args.input, args.output)
 ⋮----
 result = normalize_viewbox(args.input, args.output)
+⋮----
+job = build_blender_export_job(
+⋮----
+result = {
+````
+
+## File: blender_adapter.py
+````python
+DEFAULT_EXPORT_SETTINGS = {
+⋮----
+settings = dict(DEFAULT_EXPORT_SETTINGS)
+⋮----
+def render_blender_python(job: dict) -> str
+⋮----
+source = job["source"]
+output = job["output"]
+settings = job["settings"]
+⋮----
+def write_blender_export_script(job: dict, output_script: Path) -> None
+⋮----
+def render_blender_command(blender_executable: str, script_path: Path) -> str
+⋮----
+def write_job_manifest(job: dict, path: Path) -> None
+````
+
+## File: gltf_tools.py
+````python
+GLB_MAGIC = 0x46546C67
+GLB_JSON_CHUNK = 0x4E4F534A
+GLB_BIN_CHUNK = 0x004E4942
+⋮----
+def load_gltf_json(path: Path) -> tuple[dict, dict]
+⋮----
+suffix = path.suffix.lower()
+⋮----
+data = json.loads(path.read_text(encoding="utf-8"))
+⋮----
+raw = path.read_bytes()
+⋮----
+offset = 12
+json_chunk = None
+bin_bytes = 0
+chunk_count = 0
+⋮----
+end = offset + chunk_length
+⋮----
+payload = raw[offset:end]
+offset = end
+⋮----
+json_chunk = payload
+⋮----
+data = json.loads(json_chunk.decode("utf-8").rstrip(" \t\r\n\x00"))
+⋮----
+def _count_primitives(data: dict) -> tuple[int, int]
+⋮----
+meshes = data.get("meshes", [])
+⋮----
+primitive_count = 0
+indexed_primitive_count = 0
+⋮----
+primitives = mesh.get("primitives", [])
+⋮----
+def inspect_gltf(path: Path) -> tuple[dict, list[str], list[str]]
+⋮----
+errors: list[str] = []
+warnings: list[str] = []
+⋮----
+asset = data.get("asset")
+⋮----
+version = None
+⋮----
+version = asset.get("version")
+⋮----
+scenes = data.get("scenes", [])
+nodes = data.get("nodes", [])
+⋮----
+materials = data.get("materials", [])
+textures = data.get("textures", [])
+images = data.get("images", [])
+skins = data.get("skins", [])
+animations = data.get("animations", [])
+accessors = data.get("accessors", [])
+buffer_views = data.get("bufferViews", [])
+buffers = data.get("buffers", [])
+⋮----
+extensions_used = data.get("extensionsUsed", [])
+extensions_required = data.get("extensionsRequired", [])
+⋮----
+unknown_required = [
+⋮----
+info = {
+⋮----
+PROFILES = {
+⋮----
+def validate_gltf_profile(path: Path, profile: str) -> tuple[dict, list[str], list[str]]
+⋮----
+rules = PROFILES[profile]
 ````
 
 ## File: godot_export.py
@@ -1354,6 +1559,32 @@ python asset_forge.py validate-svg brand.svg --profile logo
 ```
 
 The current vector validator checks XML validity, SVG root type, viewBox shape, width/height consistency, scripts/foreignObject, event-handler attributes, external href/src references, editor metadata, and profile-specific complexity/shape rules. Versioned profile descriptions live under `profiles/vector/`.
+
+## 3D / Blender workflow
+
+Validate glTF/GLB structure:
+
+```bash
+python asset_forge.py validate-gltf model.glb
+```
+
+Apply a 3D profile:
+
+```bash
+python asset_forge.py validate-gltf prop.glb --profile prop
+python asset_forge.py validate-gltf level.glb --profile environment
+python asset_forge.py validate-gltf character.glb --profile character
+```
+
+Create a reproducible Blender export job and script:
+
+```bash
+python asset_forge.py blender-export-job source.blend build/model.glb \
+  --script build/export_blender.py \
+  --job-manifest build/export_job.json
+```
+
+The command returns the exact Blender background command to run. Current validation is structural and profile-based; Khronos glTF Validator remains the preferred deeper conformance backend when available.
 
 ## Initial interoperability
 

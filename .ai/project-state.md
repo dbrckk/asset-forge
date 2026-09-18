@@ -44,21 +44,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T17:03:05Z
+Generated: 2026-09-18T17:59:21Z
 
 ### Git
 - Branch: `main`
-- Head: `9c1c7ff00863`
-- Commit date: 2026-09-18T19:03:00+02:00
-- Commit: docs: record expanded png and svg pipeline milestone
-- Tracked files: 68
+- Head: `ac37700afa00`
+- Commit date: 2026-09-18T19:59:11+02:00
+- Commit: docs: record initial 3d Blender backend milestone
+- Tracked files: 80
 
 ### Recently changed files
 - `README.md`
 - `.github/workflows/validate.yml`
 - `asset_forge.py`
-- `tests/test_svg_tools.py`
-- `pipelines/vector-svg.json`
+- `tests/test_blender_adapter.py`
+- `blender_adapter.py`
 
 ### Project signals
 - No common build descriptor detected
