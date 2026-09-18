@@ -1,60 +1,49 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "ea8a294cb14f4a28b583a63dbbbb9378fdf5d673",
-  "head": "8f0dd5d24894d6d01ec2ece822e9081e30d1e502",
+  "base": "8f0dd5d24894d6d01ec2ece822e9081e30d1e502",
+  "head": "fdd1f0e461084651457b28c1479b2e14e0defc1e",
   "index_mode": "incremental",
   "changed_files": [
+    {
+      "path": ".github/workflows/ai-repo-map.yml",
+      "status": "A"
+    },
+    {
+      "path": ".repo-standards.yml",
+      "status": "A"
+    },
+    {
+      "path": "AGENTS.md",
+      "status": "M"
+    },
     {
       "path": "README.md",
       "status": "M"
     },
     {
-      "path": "asset_profile_validation.py",
+      "path": "asset_forge.py",
       "status": "M"
     },
     {
-      "path": "profiles/vector/icon.json",
+      "path": "raster_pack.py",
       "status": "M"
     },
     {
-      "path": "profiles/vector/logo.json",
-      "status": "M"
-    },
-    {
-      "path": "profiles/vector/ui.json",
-      "status": "M"
-    },
-    {
-      "path": "schemas/vector-profile.schema.json",
-      "status": "M"
-    },
-    {
-      "path": "svg_tools.py",
-      "status": "M"
-    },
-    {
-      "path": "tests/test_asset_profile_validation.py",
-      "status": "M"
-    },
-    {
-      "path": "tests/test_svg_tools.py",
+      "path": "tests/test_raster_pack.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
-    "asset_profile_validation.py",
-    "svg_tools.py",
-    "tests/test_asset_profile_validation.py",
-    "tests/test_svg_tools.py"
+    "asset_forge.py",
+    "raster_pack.py",
+    "tests/test_raster_pack.py"
   ],
   "impacted_files": [
     "asset_forge.py",
-    "asset_profile_validation.py",
-    "gltf_quality.py",
-    "svg_tools.py",
-    "tests/test_asset_profile_validation.py",
-    "tests/test_svg_tools.py"
+    "raster_pack.py",
+    "tests/test_asset_forge.py",
+    "tests/test_raster_pack.py"
   ],
   "impacted_symbols": [
     {
@@ -76,416 +65,416 @@
       "line": 131
     },
     {
-      "name": "parse_png_chunks",
+      "name": "sprite_grid",
       "kind": "function",
       "file": "asset_forge.py",
       "line": 135
     },
     {
-      "name": "inspect_png",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 167
-    },
-    {
-      "name": "sprite_grid",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 206
-    },
-    {
       "name": "build_atlas_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 227
+      "line": 156
     },
     {
       "name": "validate_raster_file",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 258
+      "line": 187
     },
     {
       "name": "select_tools",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 308
+      "line": 237
     },
     {
       "name": "build_plan",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 326
+      "line": 255
     },
     {
       "name": "load_valid_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 355
+      "line": 284
     },
     {
       "name": "cmd_validate",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 371
+      "line": 300
     },
     {
       "name": "cmd_plan",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 379
+      "line": 308
     },
     {
       "name": "cmd_validate_raster",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 387
+      "line": 316
     },
     {
       "name": "cmd_atlas_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 401
+      "line": 330
     },
     {
       "name": "parser",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 425
+      "line": 354
     },
     {
       "name": "main",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 559
+      "line": 488
     },
     {
-      "name": "_load_json",
+      "name": "_read_png_bytes",
       "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 37
-    },
-    {
-      "name": "_validate_rule_types",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 49
-    },
-    {
-      "name": "validate_3d_profile_data",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 68
-    },
-    {
-      "name": "validate_vector_profile_data",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 115
-    },
-    {
-      "name": "validate_profile_file",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 147
-    },
-    {
-      "name": "load_3d_profile",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 165
-    },
-    {
-      "name": "load_vector_profile",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 177
-    },
-    {
-      "name": "validate_all_asset_profiles",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 189
-    },
-    {
-      "name": "_accessor_count",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 11
-    },
-    {
-      "name": "_triangle_count",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 23
-    },
-    {
-      "name": "build_quality_report",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 31
-    },
-    {
-      "name": "evaluate_quality",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 255
-    },
-    {
-      "name": "quality_report",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 367
-    },
-    {
-      "name": "_local_name",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 21
-    },
-    {
-      "name": "_is_unsafe_reference",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 25
-    },
-    {
-      "name": "_unsafe_css_references",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 30
-    },
-    {
-      "name": "_max_depth",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 41
-    },
-    {
-      "name": "_parse_length",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 51
-    },
-    {
-      "name": "_parse_viewbox",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 60
-    },
-    {
-      "name": "inspect_svg",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 73
-    },
-    {
-      "name": "validate_svg_profile",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 182
-    },
-    {
-      "name": "normalize_viewbox",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 215
-    },
-    {
-      "name": "sanitize_svg",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 269
-    },
-    {
-      "name": "clean",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 298
-    },
-    {
-      "name": "AssetProfileValidationTests",
-      "kind": "class",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 15
-    },
-    {
-      "name": "test_repository_profiles_all_validate",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
+      "file": "raster_pack.py",
       "line": 16
     },
     {
-      "name": "test_3d_loader_reads_versioned_budget",
+      "name": "_chunks",
       "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 21
-    },
-    {
-      "name": "test_vector_loader_reads_versioned_budget",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 26
-    },
-    {
-      "name": "test_invalid_3d_unknown_rule_fails",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 31
-    },
-    {
-      "name": "test_invalid_vector_type_fails",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 55
-    },
-    {
-      "name": "test_3d_loader_uses_file_as_source_of_truth",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 72
-    },
-    {
-      "name": "test_vector_loader_uses_file_as_source_of_truth",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 102
-    },
-    {
-      "name": "SvgToolsTests",
-      "kind": "class",
-      "file": "tests/test_svg_tools.py",
-      "line": 8
-    },
-    {
-      "name": "test_valid_svg_passes",
-      "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 9
-    },
-    {
-      "name": "test_missing_viewbox_warns",
-      "kind": "function",
-      "file": "tests/test_svg_tools.py",
+      "file": "raster_pack.py",
       "line": 23
     },
     {
-      "name": "test_script_and_events_are_rejected",
+      "name": "_validate_ihdr",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
+      "file": "raster_pack.py",
+      "line": 90
+    },
+    {
+      "name": "_validate_palette_transparency",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 114
+    },
+    {
+      "name": "_decompress_idat",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 172
+    },
+    {
+      "name": "inspect_png",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 201
+    },
+    {
+      "name": "_paeth",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 229
+    },
+    {
+      "name": "_unfilter_scanlines",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 241
+    },
+    {
+      "name": "decode_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 283
+    },
+    {
+      "name": "_chunk",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 342
+    },
+    {
+      "name": "_filter_row",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 351
+    },
+    {
+      "name": "_filter_score",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 375
+    },
+    {
+      "name": "_png_bytes_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 379
+    },
+    {
+      "name": "encode_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 412
+    },
+    {
+      "name": "recompress_png",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 423
+    },
+    {
+      "name": "_next_power_of_two",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 440
+    },
+    {
+      "name": "pack_uniform_atlas",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 446
+    },
+    {
+      "name": "chunk",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 13
+    },
+    {
+      "name": "write_png",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 22
+    },
+    {
+      "name": "AssetForgeTests",
+      "kind": "class",
+      "file": "tests/test_asset_forge.py",
+      "line": 50
+    },
+    {
+      "name": "load_example",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 51
+    },
+    {
+      "name": "test_example_manifest_is_valid",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 54
+    },
+    {
+      "name": "test_pixel_art_rejects_non_nearest_interpolation",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 57
+    },
+    {
+      "name": "test_external_asset_requires_uri",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 65
+    },
+    {
+      "name": "test_incompatible_commercial_license_is_rejected",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 71
+    },
+    {
+      "name": "test_plan_routes_sprite_to_2d_pipeline",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 80
+    },
+    {
+      "name": "test_secondary_custom_asset_prompts_reuse_search",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 88
+    },
+    {
+      "name": "test_png_sprite_grid_validation_passes",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 97
+    },
+    {
+      "name": "test_png_sprite_grid_validation_rejects_bad_width",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 108
+    },
+    {
+      "name": "test_png_alpha_requirement",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 116
+    },
+    {
+      "name": "test_palette_transparency_and_max_colors",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 125
+    },
+    {
+      "name": "test_power_of_two_atlas",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 137
+    },
+    {
+      "name": "test_atlas_manifest_contains_frame_rectangles",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 148
+    },
+    {
+      "name": "test_invalid_png_crc_is_rejected",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 162
+    },
+    {
+      "name": "chunk",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 14
+    },
+    {
+      "name": "write_rgba_png",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 23
+    },
+    {
+      "name": "RasterPackTests",
+      "kind": "class",
+      "file": "tests/test_raster_pack.py",
       "line": 35
     },
     {
-      "name": "test_external_href_is_rejected",
+      "name": "test_pack_uniform_atlas_writes_png_and_metadata",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 48
+      "file": "tests/test_raster_pack.py",
+      "line": 36
     },
     {
-      "name": "test_sanitize_removes_dangerous_content",
+      "name": "test_pack_rejects_mixed_frame_sizes",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 60
+      "file": "tests/test_raster_pack.py",
+      "line": 63
     },
     {
-      "name": "test_icon_profile_requires_square_viewbox",
+      "name": "test_rgb_png_is_promoted_to_opaque_rgba",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 83
+      "file": "tests/test_raster_pack.py",
+      "line": 74
     },
     {
-      "name": "test_ui_profile_accepts_non_square_viewbox",
+      "name": "test_recompress_png_preserves_pixels",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 94
+      "file": "tests/test_raster_pack.py",
+      "line": 92
     },
     {
-      "name": "test_aspect_ratio_mismatch_warns",
+      "name": "test_recompress_png_reports_sizes",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 105
+      "file": "tests/test_raster_pack.py",
+      "line": 109
     },
     {
-      "name": "test_normalize_viewbox_from_dimensions",
+      "name": "test_grayscale_png_decodes_to_rgba",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 121
+      "file": "tests/test_raster_pack.py",
+      "line": 125
     },
     {
-      "name": "test_sanitize_removes_metadata",
+      "name": "test_grayscale_alpha_png_decodes_to_rgba",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 138
+      "file": "tests/test_raster_pack.py",
+      "line": 140
     },
     {
-      "name": "test_data_uri_reference_is_rejected",
+      "name": "test_indexed_png_with_transparency_decodes_to_rgba",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 156
+      "file": "tests/test_raster_pack.py",
+      "line": 154
     },
     {
-      "name": "test_relative_reference_is_rejected",
+      "name": "test_rejects_invalid_ihdr_length",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 168
+      "file": "tests/test_raster_pack.py",
+      "line": 175
     },
     {
-      "name": "test_internal_fragment_reference_is_allowed",
+      "name": "test_rejects_zero_dimensions",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 180
+      "file": "tests/test_raster_pack.py",
+      "line": 187
     },
     {
-      "name": "test_css_external_url_is_rejected",
+      "name": "test_rejects_duplicate_ihdr",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 193
+      "file": "tests/test_raster_pack.py",
+      "line": 200
     },
     {
-      "name": "test_presentation_attribute_external_url_is_rejected",
+      "name": "test_rejects_non_consecutive_idat",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 206
+      "file": "tests/test_raster_pack.py",
+      "line": 214
     },
     {
-      "name": "test_css_import_is_rejected",
+      "name": "test_rejects_trailing_data_after_iend",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 219
-    },
-    {
-      "name": "test_sanitize_removes_unsafe_css",
-      "kind": "function",
-      "file": "tests/test_svg_tools.py",
+      "file": "tests/test_raster_pack.py",
       "line": 231
     },
     {
-      "name": "test_profile_depth_limit_is_blocking",
+      "name": "test_rejects_indexed_trns_longer_than_palette",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 249
+      "file": "tests/test_raster_pack.py",
+      "line": 239
     },
     {
-      "name": "test_profile_element_limit_is_blocking",
+      "name": "test_rejects_trns_for_rgba",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 266
+      "file": "tests/test_raster_pack.py",
+      "line": 254
     },
     {
-      "name": "test_profile_file_size_limit_is_blocking",
+      "name": "test_truecolor_trns_is_applied",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 281
+      "file": "tests/test_raster_pack.py",
+      "line": 268
     },
     {
-      "name": "test_existing_malformed_viewbox_is_not_overwritten",
+      "name": "test_rejects_decompressed_data_larger_than_expected",
       "kind": "function",
-      "file": "tests/test_svg_tools.py",
-      "line": 295
+      "file": "tests/test_raster_pack.py",
+      "line": 284
+    },
+    {
+      "name": "test_hardened_inspector_reports_palette_and_transparency",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 298
+    },
+    {
+      "name": "test_oversized_file_is_rejected_before_read",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 316
     }
   ],
   "selected_tests": [
-    "tests/test_asset_profile_validation.py",
-    "tests/test_svg_tools.py"
+    "tests/test_asset_forge.py",
+    "tests/test_raster_pack.py"
   ]
 }

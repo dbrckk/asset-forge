@@ -1,0 +1,379 @@
+{
+  "areas": [
+    "animation-infer.py",
+    "asset-forge.py",
+    "asset-profile-validation.py",
+    "blender-adapter.py",
+    "engine-profile-validation.py",
+    "gltf-binary-metrics.py",
+    "gltf-diagnostics.py",
+    "gltf-quality.py",
+    "gltf-tools.py",
+    "godot-3d-delivery.py",
+    "godot-export.py",
+    "godot-handoff.py",
+    "raster-pack.py",
+    "starlist-bridge.py",
+    "svg-tools.py",
+    "tests",
+    "toolchain-3d.py"
+  ],
+  "central_files": [
+    {
+      "dependencies": [
+        "animation_infer.py",
+        "asset_profile_validation.py",
+        "blender_adapter.py",
+        "engine_profile_validation.py",
+        "gltf_diagnostics.py",
+        "gltf_quality.py",
+        "gltf_tools.py",
+        "godot_3d_delivery.py",
+        "godot_export.py",
+        "godot_handoff.py",
+        "raster_pack.py",
+        "starlist_bridge.py",
+        "svg_tools.py",
+        "toolchain_3d.py"
+      ],
+      "dependents": [
+        "tests/test_asset_forge.py"
+      ],
+      "in_degree": 1,
+      "out_degree": 14,
+      "path": "asset_forge.py"
+    },
+    {
+      "dependencies": [
+        "asset_profile_validation.py",
+        "gltf_binary_metrics.py",
+        "gltf_diagnostics.py",
+        "gltf_tools.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "godot_3d_delivery.py",
+        "tests/test_gltf_binary_metrics.py",
+        "tests/test_gltf_quality.py"
+      ],
+      "in_degree": 4,
+      "out_degree": 4,
+      "path": "gltf_quality.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "gltf_binary_metrics.py",
+        "gltf_diagnostics.py",
+        "gltf_quality.py",
+        "godot_3d_delivery.py",
+        "tests/test_gltf_tools.py"
+      ],
+      "in_degree": 6,
+      "out_degree": 0,
+      "path": "gltf_tools.py"
+    },
+    {
+      "dependencies": [
+        "gltf_binary_metrics.py",
+        "gltf_tools.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "gltf_quality.py",
+        "tests/test_gltf_diagnostics.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 2,
+      "path": "gltf_diagnostics.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "gltf_quality.py",
+        "svg_tools.py",
+        "tests/test_asset_profile_validation.py"
+      ],
+      "in_degree": 4,
+      "out_degree": 0,
+      "path": "asset_profile_validation.py"
+    },
+    {
+      "dependencies": [
+        "gltf_tools.py"
+      ],
+      "dependents": [
+        "gltf_diagnostics.py",
+        "gltf_quality.py",
+        "tests/test_gltf_binary_metrics.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 1,
+      "path": "gltf_binary_metrics.py"
+    },
+    {
+      "dependencies": [
+        "engine_profile_validation.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_godot_handoff.py",
+        "toolchain_3d.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 1,
+      "path": "godot_handoff.py"
+    },
+    {
+      "dependencies": [
+        "gltf_quality.py",
+        "gltf_tools.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_godot_3d_delivery.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 2,
+      "path": "godot_3d_delivery.py"
+    },
+    {
+      "dependencies": [
+        "blender_adapter.py",
+        "godot_handoff.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_toolchain_3d.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 2,
+      "path": "toolchain_3d.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_blender_adapter.py",
+        "toolchain_3d.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 0,
+      "path": "blender_adapter.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "godot_handoff.py",
+        "tests/test_engine_profile_validation.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 0,
+      "path": "engine_profile_validation.py"
+    },
+    {
+      "dependencies": [
+        "asset_profile_validation.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_svg_tools.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 1,
+      "path": "svg_tools.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_animation_infer.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 0,
+      "path": "animation_infer.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_godot_export.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 0,
+      "path": "godot_export.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_raster_pack.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 0,
+      "path": "raster_pack.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_starlist_bridge.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 0,
+      "path": "starlist_bridge.py"
+    },
+    {
+      "dependencies": [
+        "gltf_binary_metrics.py",
+        "gltf_quality.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 2,
+      "path": "tests/test_gltf_binary_metrics.py"
+    },
+    {
+      "dependencies": [
+        "animation_infer.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_animation_infer.py"
+    },
+    {
+      "dependencies": [
+        "asset_forge.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_asset_forge.py"
+    },
+    {
+      "dependencies": [
+        "asset_profile_validation.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_asset_profile_validation.py"
+    },
+    {
+      "dependencies": [
+        "blender_adapter.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_blender_adapter.py"
+    },
+    {
+      "dependencies": [
+        "engine_profile_validation.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_engine_profile_validation.py"
+    },
+    {
+      "dependencies": [
+        "gltf_diagnostics.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_gltf_diagnostics.py"
+    },
+    {
+      "dependencies": [
+        "gltf_quality.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_gltf_quality.py"
+    },
+    {
+      "dependencies": [
+        "gltf_tools.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_gltf_tools.py"
+    },
+    {
+      "dependencies": [
+        "godot_3d_delivery.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_godot_3d_delivery.py"
+    },
+    {
+      "dependencies": [
+        "godot_export.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_godot_export.py"
+    },
+    {
+      "dependencies": [
+        "godot_handoff.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_godot_handoff.py"
+    },
+    {
+      "dependencies": [
+        "raster_pack.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_raster_pack.py"
+    },
+    {
+      "dependencies": [
+        "starlist_bridge.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_starlist_bridge.py"
+    },
+    {
+      "dependencies": [
+        "svg_tools.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_svg_tools.py"
+    },
+    {
+      "dependencies": [
+        "toolchain_3d.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_toolchain_3d.py"
+    }
+  ],
+  "edge_count": 44,
+  "generated_by": "dbrckk/repo-brain-v7-graph",
+  "node_count": 32,
+  "schema_version": 1
+}

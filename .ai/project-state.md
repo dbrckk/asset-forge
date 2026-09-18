@@ -78,20 +78,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T19:01:18Z
+Generated: 2026-09-18T19:37:47Z
 
 ### Git
 - Branch: `main`
-- Head: `8f0dd5d24894`
-- Commit date: 2026-09-18T21:00:54+02:00
-- Commit: docs: record hardened SVG safety milestone
-- Tracked files: 104
+- Head: `fdd1f0e46108`
+- Commit date: 2026-09-18T21:34:20+02:00
+- Commit: docs: record hardened PNG parsing milestone
+- Tracked files: 106
 
 ### Recently changed files
 - `README.md`
-- `tests/test_svg_tools.py`
-- `svg_tools.py`
-- `tests/test_asset_profile_validation.py`
+- `tests/test_raster_pack.py`
+- `raster_pack.py`
+- `asset_forge.py`
 
 ### Project signals
 - No common build descriptor detected

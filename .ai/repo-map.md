@@ -40,6 +40,7 @@ The content is organized as follows:
 ````
 .github/
   workflows/
+    ai-repo-map.yml
     repo-standards.yml
     validate.yml
 config/
@@ -86,6 +87,7 @@ tests/
   test_starlist_bridge.py
   test_svg_tools.py
   test_toolchain_3d.py
+.repo-standards.yml
 AGENTS.md
 animation_infer.py
 asset_forge.py
@@ -107,6 +109,30 @@ toolchain_3d.py
 ````
 
 # Files
+
+## File: .github/workflows/ai-repo-map.yml
+````yaml
+name: Repository standards
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - ".ai/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: repo-standards-${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-standards:
+    uses: dbrckk/repo-standards/.github/workflows/reusable-unified.yml@main
+````
 
 ## File: .github/workflows/repo-standards.yml
 ````yaml
@@ -1335,6 +1361,51 @@ image = Path(tmp) / "indexed.png"
 ihdr = struct.pack(">IIBBBBB", 2, 1, 8, 3, 0, 0, 0)
 palette = bytes([255, 0, 0, 0, 255, 0])
 transparency = bytes([255, 64])
+⋮----
+def test_rejects_invalid_ihdr_length(self)
+⋮----
+image = Path(tmp) / "bad.png"
+⋮----
+def test_rejects_zero_dimensions(self)
+⋮----
+ihdr = struct.pack(">IIBBBBB", 0, 1, 8, 6, 0, 0, 0)
+⋮----
+def test_rejects_duplicate_ihdr(self)
+⋮----
+ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0)
+⋮----
+def test_rejects_non_consecutive_idat(self)
+⋮----
+compressed = zlib.compress(b"\x00\x00\x00\x00\xff")
+split = max(1, len(compressed) // 2)
+⋮----
+def test_rejects_trailing_data_after_iend(self)
+⋮----
+def test_rejects_indexed_trns_longer_than_palette(self)
+⋮----
+ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 3, 0, 0, 0)
+⋮----
+def test_rejects_trns_for_rgba(self)
+⋮----
+def test_truecolor_trns_is_applied(self)
+⋮----
+image = Path(tmp) / "rgb-trns.png"
+⋮----
+transparency = struct.pack(">HHH", 7, 8, 9)
+⋮----
+def test_rejects_decompressed_data_larger_than_expected(self)
+⋮----
+image = Path(tmp) / "bomb.png"
+⋮----
+raw = b"\x00\x00\x00\x00\xff" + (b"x" * 1000)
+⋮----
+def test_hardened_inspector_reports_palette_and_transparency(self)
+⋮----
+info = inspect_png(image)
+⋮----
+def test_oversized_file_is_rejected_before_read(self)
+⋮----
+image = Path(tmp) / "small.png"
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -1485,8 +1556,63 @@ result = execute_3d_pipeline(plan, Path("."))
 def test_invalid_target_engine_is_rejected(self)
 ````
 
+## File: .repo-standards.yml
+````yaml
+source: dbrckk/repo-standards
+ref: main
+version: 12
+adopted: true
+workflow_mode: unified-single-commit
+repo_brain: dbrckk/repo-brain@main
+repo_brain_fallback: portable-full-rebuild
+hotset_fallback: recent-project-state
+graph_routing: compact-sharded-reverse-deps
+ai_context:
+  index: .ai/index.md
+  project_state: .ai/project-state.md
+  change_impact: .ai/change-impact.md
+  architecture: .ai/architecture.json
+  dependency_map: .ai/dependency-map.json
+  commands: .ai/commands.json
+  ci_status: .ai/ci-status.md
+  security_signals: .ai/security-signals.json
+  repo_health: .ai/repo-health.md
+  brain_summary: .ai/brain/summary.md
+  brain_incremental_state: .ai/brain/incremental-state.json
+  brain_impact: .ai/brain/impact.json
+  brain_selected_tests: .ai/brain/selected-tests.json
+  brain_references: .ai/brain/references.json
+  brain_symbol_dependencies: .ai/brain/symbol-dependencies.json
+  brain_capabilities: .ai/brain/capabilities.json
+  brain_ast_routing: .ai/brain/ast-routing.json
+  brain_ast_symbols: .ai/brain/ast-symbols/
+  brain_file_outlines: .ai/brain/file-outlines/
+  brain_lookup: .ai/brain/lookup.json
+  brain_symbols: .ai/brain/symbols.json
+  brain_graph: .ai/brain/code-graph.json
+  brain_graph_index: .ai/brain/graph-index.json
+  brain_graph_manifest: .ai/brain/graph-manifest.json
+  brain_graph_shards: .ai/brain/graph-shards/
+  brain_reverse_deps: .ai/brain/reverse-deps.json
+  brain_architecture_mermaid: .ai/brain/architecture.mmd
+  brain_hotset: .ai/brain/hotset.json
+  brain_context_manifest: .ai/brain/context-manifest.json
+  brain_context_packets: .ai/brain/context/
+  brain_hash_cache: .ai/brain/hash-cache.json
+  session_state: .ai/session-state.json
+  repo_map: .ai/repo-map.md
+  segmented_maps: .ai/maps/
+workflow:
+  file: .github/workflows/ai-repo-map.yml
+  reusable_unified: .github/workflows/reusable-unified.yml
+````
+
 ## File: AGENTS.md
 ````markdown
+# Shared repository intelligence
+
+This repository uses `dbrckk/repo-standards` and `dbrckk/repo-brain`. Before substantial work, follow `.repo-standards.yml` and the bounded-context reading order from the central standards. Preserve the repository-specific instructions below.
+
 # asset-forge agent instructions
 
 This repository inherits global conventions from `dbrckk/repo-standards`.
@@ -1599,39 +1725,6 @@ constraints = manifest.get("constraints", {})
 value = constraints.get(field)
 ⋮----
 def is_power_of_two(value: int) -> bool
-⋮----
-def parse_png_chunks(data: bytes) -> list[tuple[bytes, bytes]]
-⋮----
-chunks: list[tuple[bytes, bytes]] = []
-offset = 8
-saw_iend = False
-⋮----
-length = struct.unpack(">I", data[offset : offset + 4])[0]
-kind = data[offset + 4 : offset + 8]
-end = offset + 12 + length
-⋮----
-payload = data[offset + 8 : offset + 8 + length]
-expected_crc = struct.unpack(">I", data[offset + 8 + length : end])[0]
-actual_crc = zlib.crc32(kind + payload) & 0xFFFFFFFF
-⋮----
-offset = end
-⋮----
-saw_iend = True
-⋮----
-def inspect_png(path: Path) -> dict
-⋮----
-data = path.read_bytes()
-chunks = parse_png_chunks(data)
-⋮----
-palette_entries = None
-has_trns = False
-idat_bytes = 0
-⋮----
-palette_entries = len(payload) // 3
-⋮----
-has_trns = True
-⋮----
-has_alpha = color_type in {4, 6} or has_trns
 ⋮----
 def sprite_grid(info: dict, constraints: dict) -> dict
 ⋮----
@@ -2617,24 +2710,73 @@ completed = subprocess.run(
 ## File: raster_pack.py
 ````python
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+MAX_PNG_FILE_BYTES = 256 * 1024 * 1024
+MAX_PNG_CHUNK_BYTES = 64 * 1024 * 1024
+MAX_PNG_CHUNKS = 10000
+MAX_PNG_PIXELS = 100_000_000
+MAX_DECOMPRESSED_BYTES = 512 * 1024 * 1024
+⋮----
+def _read_png_bytes(path: Path) -> bytes
+⋮----
+size = path.stat().st_size
 ⋮----
 def _chunks(data: bytes) -> list[tuple[bytes, bytes]]
 ⋮----
 chunks: list[tuple[bytes, bytes]] = []
 offset = 8
 saw_iend = False
+saw_ihdr = False
+saw_idat = False
+idat_closed = False
 ⋮----
 length = struct.unpack(">I", data[offset : offset + 4])[0]
 kind = data[offset + 4 : offset + 8]
+⋮----
 end = offset + 12 + length
 ⋮----
 payload = data[offset + 8 : offset + 8 + length]
 expected_crc = struct.unpack(">I", data[offset + 8 + length : end])[0]
 actual_crc = zlib.crc32(kind + payload) & 0xFFFFFFFF
 ⋮----
-offset = end
+saw_ihdr = True
+⋮----
+saw_idat = True
+⋮----
+idat_closed = True
 ⋮----
 saw_iend = True
+offset = end
+⋮----
+def _validate_ihdr(payload: bytes) -> tuple[int, int, int, int, int, int, int]
+⋮----
+valid_depths = {
+⋮----
+palette: list[tuple[int, int, int]] = []
+transparency = b""
+saw_plte = False
+saw_trns = False
+⋮----
+entries = len(payload) // 3
+⋮----
+palette = [
+saw_plte = True
+⋮----
+transparency = payload
+saw_trns = True
+⋮----
+def _decompress_idat(data: bytes, expected_size: int) -> bytes
+⋮----
+inflater = zlib.decompressobj()
+⋮----
+raw = inflater.decompress(data, expected_size + 1)
+⋮----
+before = len(inflater.unconsumed_tail)
+extra = inflater.decompress(inflater.unconsumed_tail, 1)
+⋮----
+def inspect_png(path: Path) -> dict
+⋮----
+data = _read_png_bytes(path)
+chunks = _chunks(data)
 ⋮----
 def _paeth(a: int, b: int, c: int) -> int
 ⋮----
@@ -2675,19 +2817,14 @@ previous = reconstructed
 ⋮----
 def decode_rgba(path: Path) -> tuple[int, int, bytes]
 ⋮----
-chunks = _chunks(path.read_bytes())
+chunks = _chunks(_read_png_bytes(path))
 ⋮----
 bpp_by_type = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}
 bpp = bpp_by_type[color_type]
-raw = zlib.decompress(b"".join(payload for kind, payload in chunks if kind == b"IDAT"))
+expected_size = (width * bpp + 1) * height
+compressed = b"".join(payload for kind, payload in chunks if kind == b"IDAT")
+raw = _decompress_idat(compressed, expected_size)
 rows = _unfilter_scanlines(raw, width, height, bpp)
-⋮----
-palette: list[tuple[int, int, int]] = []
-transparency = b""
-⋮----
-palette = [
-⋮----
-transparency = payload
 ⋮----
 rgba = bytearray(width * height * 4)
 destination = 0
@@ -2696,7 +2833,7 @@ gray = row[index]
 red = green = blue = gray
 alpha = 255
 ⋮----
-transparent_gray = struct.unpack(">H", transparency[:2])[0] & 0xFF
+transparent_gray = struct.unpack(">H", transparency[:2])[0]
 ⋮----
 alpha = 0
 ⋮----
@@ -3091,6 +3228,11 @@ A completed run also writes `production-report.json`, which records step status 
 - sprite sheets/atlases for 2D animation
 
 The repository starts deliberately small. Tooling is added only after validation.
+
+
+### Hardened PNG parsing
+
+PNG parsing now applies repository safety caps to total file bytes, chunk bytes/count, pixel count, and decompressed scanline bytes. IHDR/IDAT/IEND structure, PLTE/tRNS rules, zlib completion, and expected scanline size are validated consistently by raster validation, packing, and recompression.
 ````
 
 ## File: starlist_bridge.py
