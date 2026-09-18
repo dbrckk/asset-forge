@@ -89,19 +89,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T20:33:15Z
+Generated: 2026-09-18T20:41:33Z
 
 ### Git
 - Branch: `main`
-- Head: `64bd3943af5f`
-- Commit date: 2026-09-18T22:32:53+02:00
-- Commit: docs: record advanced atlas packing milestone
+- Head: `6a7a7995df6b`
+- Commit date: 2026-09-18T22:41:18+02:00
+- Commit: docs: record Godot trim export and atlas budget milestone
 - Tracked files: 187
 
 ### Recently changed files
 - `README.md`
-- `raster_pack.py`
 - `tests/test_raster_pack.py`
+- `raster_pack.py`
 - `asset_forge.py`
 
 ### Project signals

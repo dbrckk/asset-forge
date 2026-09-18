@@ -1,13 +1,15 @@
 # CI status
 
-Summary: 0 success / 4 failure / 0 active
+Summary: 0 success / 3 failure / 1 active
 
-- Validate asset-forge: completed / failure (64bd3943)
-- Validate asset-forge: completed / failure (84e7f537)
-- Validate asset-forge: completed / failure (42c6068f)
-- Validate asset-forge: completed / failure (942e1ff1)
+- Validate asset-forge: in_progress / pending (6a7a7995)
+- Validate asset-forge: completed / failure (b13bbca3)
+- Validate asset-forge: completed / failure (0394c2ec)
+- Validate asset-forge: completed / failure (e6b5bbb5)
 
 ## Latest failed run structure
+- Job: webp-backend
+  - Failed step: WebP backend tests
 - Job: test
   - Failed step: Unit tests
 

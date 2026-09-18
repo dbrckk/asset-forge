@@ -1284,6 +1284,19 @@ def test_render_spriteframes_uses_atlas_regions(self)
 ⋮----
 rendered = render_spriteframes(
 ⋮----
+def test_trimmed_frame_emits_atlas_margin(self)
+⋮----
+metadata = {
+rendered = render_spriteframes("res://atlas.png", metadata)
+⋮----
+def test_untrimmed_frame_does_not_emit_margin(self)
+⋮----
+rendered = render_spriteframes("res://atlas.png", self.metadata())
+⋮----
+def test_rejects_trim_metadata_that_does_not_fit_source(self)
+⋮----
+def test_rejects_frame_outside_known_atlas_bounds(self)
+⋮----
 def test_multiple_animations(self)
 ⋮----
 def test_rejects_duplicate_animation_names(self)
@@ -1795,6 +1808,18 @@ original = source.read_bytes()
 report = recompress_png(source, output)
 ⋮----
 result = output.read_bytes()
+⋮----
+def test_uniform_atlas_width_budget_is_enforced(self)
+⋮----
+def test_uniform_atlas_pixel_budget_is_enforced(self)
+⋮----
+def test_compact_atlas_height_budget_is_enforced(self)
+⋮----
+def test_atlas_byte_budget_preserves_existing_output(self)
+⋮----
+output = root / "atlas.png"
+⋮----
+preserved = output.read_bytes()
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -3001,12 +3026,24 @@ def _validate_frames(atlas_metadata: dict) -> list[dict]
 ⋮----
 frames = atlas_metadata.get("frames")
 ⋮----
+atlas_width = atlas_metadata.get("imageWidth")
+atlas_height = atlas_metadata.get("imageHeight")
+⋮----
+atlas_width = int(atlas_width)
+⋮----
+atlas_height = int(atlas_height)
+⋮----
 normalized = []
 ⋮----
 x = int(frame["x"])
 y = int(frame["y"])
 width = int(frame["width"])
 height = int(frame["height"])
+⋮----
+source_width = int(frame.get("sourceWidth", width))
+source_height = int(frame.get("sourceHeight", height))
+offset_x = int(frame.get("offsetX", 0))
+offset_y = int(frame.get("offsetY", 0))
 ⋮----
 seen_names: set[str] = set()
 ⋮----
@@ -3037,6 +3074,10 @@ resource_ids: list[str] = []
 ⋮----
 index = frame["index"]
 resource_id = f"AtlasTexture_{index}"
+⋮----
+resource_lines = [
+extra_width = frame["sourceWidth"] - frame["width"]
+extra_height = frame["sourceHeight"] - frame["height"]
 ⋮----
 rendered_animations = []
 ⋮----
@@ -3512,6 +3553,8 @@ bounds = _alpha_bounds(source_width, source_height, pixels)
 ⋮----
 offset_x = offset_y = 0
 ⋮----
+pixels = width * height
+⋮----
 def _next_power_of_two(value: int) -> int
 ⋮----
 def _pack_shelves(frames: list[dict], max_width: int, padding: int, extrude: int) -> tuple[list[dict], int, int]
@@ -3535,8 +3578,11 @@ frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]
 ⋮----
 atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
 atlas_height = _next_power_of_two(content_height) if power_of_two else content_height
+⋮----
 canvas = bytearray(atlas_width * atlas_height * 4)
 frames = []
+⋮----
+output_bytes = _write_atlas_png(
 ⋮----
 frame_count = len(frames_data)
 column_count = columns or math.ceil(math.sqrt(frame_count))
@@ -3554,6 +3600,8 @@ cell_x = column * (cell_width + gap)
 cell_y = row * (cell_height + gap)
 x = cell_x + extrude
 y = cell_y + extrude
+⋮----
+output_bytes = _enforce_atlas_file_budget(output, max_bytes)
 ````
 
 ## File: README.md
@@ -3942,6 +3990,27 @@ python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
 The compact packer sorts by height/width for placement but restores original input order in metadata. Rotation is intentionally not implemented yet. Consumers that need original untrimmed positioning must use the source dimension/offset metadata; the existing simple Godot SpriteFrames export still consumes atlas regions only.
 
 PNG optimization is now no-growth: `optimize-png` keeps the original bytes whenever the recompressed candidate is not smaller, including in-place optimization.
+
+
+### Godot export for trimmed atlases
+
+Trimmed atlas metadata is now mapped to Godot 4 `AtlasTexture.margin`. The atlas `region` remains the trimmed rectangle, while `margin = Rect2(offsetX, offsetY, sourceWidth - width, sourceHeight - height)` restores the original logical sprite size. Atlas bounds and trim/source consistency are validated before rendering the `.tres`.
+
+### Atlas budgets
+
+Both atlas packers accept explicit production budgets:
+
+```bash
+python asset_forge.py pack-atlas build/atlas.png frames/*.png \
+  --max-width 2048 --max-height 2048 \
+  --max-pixels 4194304 --max-bytes 8388608
+
+python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
+  --max-width 2048 --max-height 2048 \
+  --max-pixels 4194304 --max-bytes 8388608
+```
+
+Dimension/pixel limits are enforced before canvas allocation. The compressed byte budget is checked against the encoded PNG candidate before replacing the output file, so a failed budget check preserves any existing atlas.
 ````
 
 ## File: starlist_bridge.py

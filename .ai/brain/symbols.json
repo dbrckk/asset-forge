@@ -110,7 +110,7 @@
       "language": "python",
       "kind": "function",
       "name": "main",
-      "line": 517
+      "line": 524
     },
     {
       "file": "asset_profile_validation.py",
@@ -460,21 +460,21 @@
       "language": "python",
       "kind": "function",
       "name": "_normalize_animations",
-      "line": 44
+      "line": 76
     },
     {
       "file": "godot_export.py",
       "language": "python",
       "kind": "function",
       "name": "render_spriteframes",
-      "line": 135
+      "line": 167
     },
     {
       "file": "godot_export.py",
       "language": "python",
       "kind": "function",
       "name": "write_spriteframes",
-      "line": 206
+      "line": 244
     },
     {
       "file": "godot_handoff.py",
@@ -802,29 +802,43 @@
       "file": "raster_pack.py",
       "language": "python",
       "kind": "function",
-      "name": "_next_power_of_two",
+      "name": "_validate_atlas_dimensions",
       "line": 1063
     },
     {
       "file": "raster_pack.py",
       "language": "python",
       "kind": "function",
+      "name": "_write_atlas_png",
+      "line": 1091
+    },
+    {
+      "file": "raster_pack.py",
+      "language": "python",
+      "kind": "function",
+      "name": "_next_power_of_two",
+      "line": 1111
+    },
+    {
+      "file": "raster_pack.py",
+      "language": "python",
+      "kind": "function",
       "name": "_pack_shelves",
-      "line": 1069
+      "line": 1117
     },
     {
       "file": "raster_pack.py",
       "language": "python",
       "kind": "function",
       "name": "pack_compact_atlas",
-      "line": 1116
+      "line": 1164
     },
     {
       "file": "raster_pack.py",
       "language": "python",
       "kind": "function",
       "name": "pack_uniform_atlas",
-      "line": 1201
+      "line": 1269
     },
     {
       "file": "starlist_bridge.py",
@@ -1593,43 +1607,71 @@
       "file": "tests/test_godot_export.py",
       "language": "python",
       "kind": "function",
-      "name": "test_multiple_animations",
+      "name": "test_trimmed_frame_emits_atlas_margin",
       "line": 35
     },
     {
       "file": "tests/test_godot_export.py",
       "language": "python",
       "kind": "function",
-      "name": "test_rejects_duplicate_animation_names",
-      "line": 61
+      "name": "test_untrimmed_frame_does_not_emit_margin",
+      "line": 58
     },
     {
       "file": "tests/test_godot_export.py",
       "language": "python",
       "kind": "function",
-      "name": "test_rejects_out_of_range_animation_frame",
-      "line": 72
+      "name": "test_rejects_trim_metadata_that_does_not_fit_source",
+      "line": 62
     },
     {
       "file": "tests/test_godot_export.py",
       "language": "python",
       "kind": "function",
-      "name": "test_write_spriteframes_creates_file",
+      "name": "test_rejects_frame_outside_known_atlas_bounds",
       "line": 80
     },
     {
       "file": "tests/test_godot_export.py",
       "language": "python",
       "kind": "function",
+      "name": "test_multiple_animations",
+      "line": 89
+    },
+    {
+      "file": "tests/test_godot_export.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_rejects_duplicate_animation_names",
+      "line": 115
+    },
+    {
+      "file": "tests/test_godot_export.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_rejects_out_of_range_animation_frame",
+      "line": 126
+    },
+    {
+      "file": "tests/test_godot_export.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_write_spriteframes_creates_file",
+      "line": 134
+    },
+    {
+      "file": "tests/test_godot_export.py",
+      "language": "python",
+      "kind": "function",
       "name": "test_rejects_empty_metadata",
-      "line": 93
+      "line": 147
     },
     {
       "file": "tests/test_godot_export.py",
       "language": "python",
       "kind": "function",
       "name": "test_rejects_invalid_fps",
-      "line": 97
+      "line": 151
     },
     {
       "file": "tests/test_godot_handoff.py",
@@ -2232,6 +2274,34 @@
       "kind": "function",
       "name": "test_recompress_png_keeps_original_when_candidate_is_larger",
       "line": 1052
+    },
+    {
+      "file": "tests/test_raster_pack.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_uniform_atlas_width_budget_is_enforced",
+      "line": 1073
+    },
+    {
+      "file": "tests/test_raster_pack.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_uniform_atlas_pixel_budget_is_enforced",
+      "line": 1088
+    },
+    {
+      "file": "tests/test_raster_pack.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_compact_atlas_height_budget_is_enforced",
+      "line": 1100
+    },
+    {
+      "file": "tests/test_raster_pack.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_atlas_byte_budget_preserves_existing_output",
+      "line": 1116
     },
     {
       "file": "tests/test_starlist_bridge.py",

@@ -39,31 +39,31 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 600,
+          "line": 614,
           "preview": "metadata = load_json(args.metadata)",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 603,
+          "line": 617,
           "preview": "animation_config = load_json(args.animations)",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 646,
+          "line": 660,
           "preview": "metadata = load_json(args.metadata)",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 737,
+          "line": 751,
           "preview": "delivery = load_json(args.delivery_report) if args.delivery_report else None",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 738,
+          "line": 752,
           "preview": "asset_manifest = load_json(args.asset_manifest) if args.asset_manifest else None",
           "definition_candidate": false
         },
@@ -98,7 +98,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 740,
+          "line": 754,
           "preview": "manifest_errors = validate_manifest(asset_manifest)",
           "definition_candidate": false
         },
@@ -402,7 +402,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 522,
+          "line": 529,
           "preview": "return cmd_validate(args.manifest)",
           "definition_candidate": false
         }
@@ -425,7 +425,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 527,
+          "line": 534,
           "preview": "return cmd_plan(args.manifest, root)",
           "definition_candidate": false
         }
@@ -448,7 +448,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 529,
+          "line": 536,
           "preview": "return cmd_validate_raster(args.manifest, args.asset)",
           "definition_candidate": false
         }
@@ -471,7 +471,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 531,
+          "line": 538,
           "preview": "return cmd_atlas_manifest(args.manifest, args.asset, args.output)",
           "definition_candidate": false
         }
@@ -494,7 +494,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 518,
+          "line": 525,
           "preview": "args = parser().parse_args()",
           "definition_candidate": false
         },
@@ -516,20 +516,20 @@
     "main": {
       "definition": {
         "file": "asset_forge.py",
-        "line": 517,
+        "line": 524,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "asset_forge.py",
-          "line": 517,
+          "line": 524,
           "preview": "def main() -> int:",
           "definition_candidate": true
         },
         {
           "file": "asset_forge.py",
-          "line": 854,
+          "line": 868,
           "preview": "raise SystemExit(main())",
           "definition_candidate": false
         },
@@ -595,7 +595,7 @@
         },
         {
           "file": "tests/test_godot_export.py",
-          "line": 103,
+          "line": 157,
           "preview": "unittest.main()",
           "definition_candidate": false
         },
@@ -613,7 +613,7 @@
         },
         {
           "file": "tests/test_raster_pack.py",
-          "line": 1075,
+          "line": 1137,
           "preview": "unittest.main()",
           "definition_candidate": false
         },
@@ -637,6 +637,211 @@
         }
       ],
       "occurrence_count": 19
+    },
+    "_godot_string": {
+      "definition": {
+        "file": "godot_export.py",
+        "line": 7,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "godot_export.py",
+          "line": 7,
+          "preview": "def _godot_string(value: str) -> str:",
+          "definition_candidate": true
+        },
+        {
+          "file": "godot_export.py",
+          "line": 188,
+          "preview": "f'[ext_resource type=\"Texture2D\" path={_godot_string(atlas_path)} id=\"1_atlas\"]',",
+          "definition_candidate": false
+        },
+        {
+          "file": "godot_export.py",
+          "line": 229,
+          "preview": "f'\"name\": &{_godot_string(animation[\"name\"])},\\n'",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 3
+    },
+    "_validate_frames": {
+      "definition": {
+        "file": "godot_export.py",
+        "line": 11,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "godot_export.py",
+          "line": 11,
+          "preview": "def _validate_frames(atlas_metadata: dict) -> list[dict]:",
+          "definition_candidate": true
+        },
+        {
+          "file": "godot_export.py",
+          "line": 176,
+          "preview": "frames = _validate_frames(atlas_metadata)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "_normalize_animations": {
+      "definition": {
+        "file": "godot_export.py",
+        "line": 76,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "godot_export.py",
+          "line": 76,
+          "preview": "def _normalize_animations(",
+          "definition_candidate": true
+        },
+        {
+          "file": "godot_export.py",
+          "line": 177,
+          "preview": "animation_defs = _normalize_animations(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "render_spriteframes": {
+      "definition": {
+        "file": "godot_export.py",
+        "line": 167,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "godot_export.py",
+          "line": 167,
+          "preview": "def render_spriteframes(",
+          "definition_candidate": true
+        },
+        {
+          "file": "godot_export.py",
+          "line": 253,
+          "preview": "rendered = render_spriteframes(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 5,
+          "preview": "from godot_export import render_spriteframes, write_spriteframes",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 18,
+          "preview": "rendered = render_spriteframes(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 53,
+          "preview": "rendered = render_spriteframes(\"res://atlas.png\", metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 59,
+          "preview": "rendered = render_spriteframes(\"res://atlas.png\", self.metadata())",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 78,
+          "preview": "render_spriteframes(\"res://atlas.png\", metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 87,
+          "preview": "render_spriteframes(\"res://atlas.png\", metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 90,
+          "preview": "rendered = render_spriteframes(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 117,
+          "preview": "render_spriteframes(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 128,
+          "preview": "render_spriteframes(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 149,
+          "preview": "render_spriteframes(\"res://a.png\", {\"frames\": []})",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 153,
+          "preview": "render_spriteframes(\"res://a.png\", self.metadata(), fps=0)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 13
+    },
+    "write_spriteframes": {
+      "definition": {
+        "file": "godot_export.py",
+        "line": 244,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 22,
+          "preview": "from godot_export import write_spriteframes",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 619,
+          "preview": "write_spriteframes(",
+          "definition_candidate": false
+        },
+        {
+          "file": "godot_export.py",
+          "line": 244,
+          "preview": "def write_spriteframes(",
+          "definition_candidate": true
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 5,
+          "preview": "from godot_export import render_spriteframes, write_spriteframes",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 137,
+          "preview": "write_spriteframes(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 5
     },
     "_read_webp_bytes": {
       "definition": {
@@ -1525,7 +1730,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 524,
+          "line": 531,
           "preview": "print(json.dumps(raster_backend_status(), indent=2, sort_keys=True))",
           "definition_candidate": false
         },
@@ -1921,13 +2126,19 @@
           "definition_candidate": false
         },
         {
+          "file": "raster_pack.py",
+          "line": 1098,
+          "preview": "candidate = _png_bytes_rgba(width, height, pixels, adaptive=True)",
+          "definition_candidate": false
+        },
+        {
           "file": "tests/test_raster_pack.py",
           "line": 1061,
           "preview": "\"raster_pack._png_bytes_rgba\",",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 4
+      "occurrence_count": 5
     },
     "encode_rgba": {
       "definition": {
@@ -1945,13 +2156,7 @@
         },
         {
           "file": "raster_pack.py",
-          "line": 1184,
-          "preview": "encode_rgba(output, atlas_width, atlas_height, bytes(canvas), adaptive=True)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1290,
+          "line": 1369,
           "preview": "encode_rgba(output, atlas_width, atlas_height, bytes(canvas), adaptive=True)",
           "definition_candidate": false
         },
@@ -1992,7 +2197,7 @@
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 9
+      "occurrence_count": 8
     },
     "encode_webp": {
       "definition": {
@@ -2010,7 +2215,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 586,
+          "line": 600,
           "preview": "result = encode_webp(",
           "definition_candidate": false
         },
@@ -2051,7 +2256,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 578,
+          "line": 592,
           "preview": "result = recompress_png(args.input, args.output)",
           "definition_candidate": false
         },
@@ -2150,13 +2355,13 @@
         },
         {
           "file": "raster_pack.py",
-          "line": 1147,
+          "line": 1205,
           "preview": "_blit_rgba(",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 1253,
+          "line": 1332,
           "preview": "_blit_rgba(",
           "definition_candidate": false
         }
@@ -2179,13 +2384,13 @@
         },
         {
           "file": "raster_pack.py",
-          "line": 1156,
+          "line": 1214,
           "preview": "_extrude_rgba(",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 1262,
+          "line": 1341,
           "preview": "_extrude_rgba(",
           "definition_candidate": false
         }
@@ -2208,20 +2413,20 @@
         },
         {
           "file": "raster_pack.py",
-          "line": 1133,
+          "line": 1184,
           "preview": "frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 1218,
+          "line": 1290,
           "preview": "frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]",
           "definition_candidate": false
         }
       ],
       "occurrence_count": 3
     },
-    "_next_power_of_two": {
+    "_validate_atlas_dimensions": {
       "definition": {
         "file": "raster_pack.py",
         "line": 1063,
@@ -2232,30 +2437,82 @@
         {
           "file": "raster_pack.py",
           "line": 1063,
+          "preview": "def _validate_atlas_dimensions(",
+          "definition_candidate": true
+        },
+        {
+          "file": "raster_pack.py",
+          "line": 1194,
+          "preview": "_validate_atlas_dimensions(",
+          "definition_candidate": false
+        },
+        {
+          "file": "raster_pack.py",
+          "line": 1313,
+          "preview": "_validate_atlas_dimensions(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 3
+    },
+    "_write_atlas_png": {
+      "definition": {
+        "file": "raster_pack.py",
+        "line": 1091,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "raster_pack.py",
+          "line": 1091,
+          "preview": "def _write_atlas_png(",
+          "definition_candidate": true
+        },
+        {
+          "file": "raster_pack.py",
+          "line": 1242,
+          "preview": "output_bytes = _write_atlas_png(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "_next_power_of_two": {
+      "definition": {
+        "file": "raster_pack.py",
+        "line": 1111,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "raster_pack.py",
+          "line": 1111,
           "preview": "def _next_power_of_two(value: int) -> int:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 1141,
+          "line": 1192,
           "preview": "atlas_width = _next_power_of_two(content_width) if power_of_two else content_width",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 1142,
+          "line": 1193,
           "preview": "atlas_height = _next_power_of_two(content_height) if power_of_two else content_height",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 1239,
+          "line": 1311,
           "preview": "atlas_width = _next_power_of_two(content_width) if power_of_two else content_width",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 1240,
+          "line": 1312,
           "preview": "atlas_height = _next_power_of_two(content_height) if power_of_two else content_height",
           "definition_candidate": false
         }
@@ -2265,20 +2522,20 @@
     "_pack_shelves": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 1069,
+        "line": 1117,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 1069,
+          "line": 1117,
           "preview": "def _pack_shelves(frames: list[dict], max_width: int, padding: int, extrude: int) -> tuple[list[dict], int, int]:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 1134,
+          "line": 1185,
           "preview": "placements, content_width, content_height = _pack_shelves(",
           "definition_candidate": false
         }
@@ -2288,7 +2545,7 @@
     "pack_compact_atlas": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 1116,
+        "line": 1164,
         "kind": "function",
         "language": "python"
       },
@@ -2301,13 +2558,13 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 556,
+          "line": 567,
           "preview": "metadata = pack_compact_atlas(",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 1116,
+          "line": 1164,
           "preview": "def pack_compact_atlas(",
           "definition_candidate": true
         },
@@ -2328,14 +2585,20 @@
           "line": 1045,
           "preview": "pack_compact_atlas(",
           "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1108,
+          "preview": "pack_compact_atlas(",
+          "definition_candidate": false
         }
       ],
-      "occurrence_count": 6
+      "occurrence_count": 7
     },
     "pack_uniform_atlas": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 1201,
+        "line": 1269,
         "kind": "function",
         "language": "python"
       },
@@ -2348,13 +2611,13 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 534,
+          "line": 541,
           "preview": "metadata = pack_uniform_atlas(",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 1201,
+          "line": 1269,
           "preview": "def pack_uniform_atlas(",
           "definition_candidate": true
         },
@@ -2399,9 +2662,680 @@
           "line": 988,
           "preview": "metadata = pack_uniform_atlas(",
           "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1081,
+          "preview": "pack_uniform_atlas(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1094,
+          "preview": "pack_uniform_atlas(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1125,
+          "preview": "pack_uniform_atlas(",
+          "definition_candidate": false
         }
       ],
-      "occurrence_count": 10
+      "occurrence_count": 13
+    },
+    "GodotExportTests": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 8,
+        "kind": "class",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 8,
+          "preview": "class GodotExportTests(unittest.TestCase):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "metadata": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 9,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "animation_infer.py",
+          "line": 20,
+          "preview": "raise ValueError(\"atlas metadata must contain at least one frame\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 2,
+          "preview": "\"\"\"Dependency-free asset-forge manifest validator, planner, raster inspector, and atlas metadata builder.\"\"\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 377,
+          "preview": "atlas = sub.add_parser(\"atlas-manifest\", help=\"build uniform-grid atlas metadata from PNG or WebP\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 385,
+          "preview": "pack.add_argument(\"--metadata\", type=Path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 399,
+          "preview": "compact.add_argument(\"--metadata\", type=Path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 420,
+          "preview": "godot = sub.add_parser(\"export-godot\", help=\"export Godot 4 SpriteFrames .tres from atlas metadata\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 421,
+          "preview": "godot.add_argument(\"metadata\", type=Path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 439,
+          "preview": "infer.add_argument(\"metadata\", type=Path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 541,
+          "preview": "metadata = pack_uniform_atlas(",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 557,
+          "preview": "rendered = json.dumps(metadata, indent=2, sort_keys=True) + \"\\n\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 558,
+          "preview": "if args.metadata:",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 559,
+          "preview": "args.metadata.parent.mkdir(parents=True, exist_ok=True)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 560,
+          "preview": "args.metadata.write_text(rendered, encoding=\"utf-8\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 561,
+          "preview": "print(str(args.metadata))",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 567,
+          "preview": "metadata = pack_compact_atlas(",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 582,
+          "preview": "rendered = json.dumps(metadata, indent=2, sort_keys=True) + \"\\n\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 583,
+          "preview": "if args.metadata:",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 584,
+          "preview": "args.metadata.parent.mkdir(parents=True, exist_ok=True)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 585,
+          "preview": "args.metadata.write_text(rendered, encoding=\"utf-8\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 586,
+          "preview": "print(str(args.metadata))",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 614,
+          "preview": "metadata = load_json(args.metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 622,
+          "preview": "atlas_metadata=metadata,",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 660,
+          "preview": "metadata = load_json(args.metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 662,
+          "preview": "metadata,",
+          "definition_candidate": false
+        },
+        {
+          "file": "godot_export.py",
+          "line": 14,
+          "preview": "raise ValueError(\"atlas metadata must contain at least one frame\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "godot_handoff.py",
+          "line": 153,
+          "preview": "\"- Preserve provenance/license metadata when moving this asset to another repository.\\n\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "svg_tools.py",
+          "line": 12,
+          "preview": "METADATA_TAGS = {\"metadata\"}",
+          "definition_candidate": false
+        },
+        {
+          "file": "svg_tools.py",
+          "line": 165,
+          "preview": "warnings.append(f\"{metadata_elements} metadata element(s) can be removed for delivery\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_animation_infer.py",
+          "line": 8,
+          "preview": "metadata = {",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_animation_infer.py",
+          "line": 17,
+          "preview": "result = infer_animations(metadata, default_fps=8)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_animation_infer.py",
+          "line": 25,
+          "preview": "metadata = {",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_animation_infer.py",
+          "line": 32,
+          "preview": "result = infer_animations(metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_animation_infer.py",
+          "line": 38,
+          "preview": "metadata = {",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_animation_infer.py",
+          "line": 45,
+          "preview": "result = infer_animations(metadata, default_loop=False)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 9,
+          "preview": "def metadata(self):",
+          "definition_candidate": true
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 20,
+          "preview": "self.metadata(),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 36,
+          "preview": "metadata = {",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 53,
+          "preview": "rendered = render_spriteframes(\"res://atlas.png\", metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 59,
+          "preview": "rendered = render_spriteframes(\"res://atlas.png\", self.metadata())",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 63,
+          "preview": "metadata = {",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 78,
+          "preview": "render_spriteframes(\"res://atlas.png\", metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 81,
+          "preview": "metadata = {",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 87,
+          "preview": "render_spriteframes(\"res://atlas.png\", metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 92,
+          "preview": "self.metadata(),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 119,
+          "preview": "self.metadata(),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 130,
+          "preview": "self.metadata(),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 140,
+          "preview": "self.metadata(),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 153,
+          "preview": "render_spriteframes(\"res://a.png\", self.metadata(), fps=0)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 106,
+          "preview": "metadata = pack_uniform_atlas(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 117,
+          "preview": "self.assertEqual(metadata[\"frameCount\"], 2)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 118,
+          "preview": "self.assertEqual(metadata[\"contentWidth\"], 5)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 119,
+          "preview": "self.assertEqual(metadata[\"frames\"][1][\"x\"], 3)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 967,
+          "preview": "metadata = pack_uniform_atlas(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 974,
+          "preview": "self.assertEqual(metadata[\"frames\"][0][\"width\"], 2)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 975,
+          "preview": "self.assertEqual(metadata[\"frames\"][0][\"height\"], 2)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 976,
+          "preview": "self.assertEqual(metadata[\"frames\"][0][\"offsetX\"], 1)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 977,
+          "preview": "self.assertEqual(metadata[\"frames\"][0][\"offsetY\"], 1)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 978,
+          "preview": "self.assertEqual(metadata[\"frames\"][0][\"sourceWidth\"], 4)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 979,
+          "preview": "self.assertEqual(metadata[\"frames\"][0][\"sourceHeight\"], 4)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 988,
+          "preview": "metadata = pack_uniform_atlas(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 997,
+          "preview": "self.assertEqual(metadata[\"frames\"][0][\"x\"], 1)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 998,
+          "preview": "self.assertEqual(metadata[\"frames\"][0][\"y\"], 1)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1017,
+          "preview": "metadata = pack_compact_atlas(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1026,
+          "preview": "self.assertEqual(width, metadata[\"imageWidth\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1027,
+          "preview": "self.assertEqual(height, metadata[\"imageHeight\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1028,
+          "preview": "self.assertEqual(metadata[\"frameCount\"], 3)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1029,
+          "preview": "self.assertEqual(metadata[\"packing\"], \"shelf-height-desc\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1030,
+          "preview": "self.assertLessEqual(metadata[\"contentWidth\"], 5)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1032,
+          "preview": "[frame[\"name\"] for frame in metadata[\"frames\"]],",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1035,
+          "preview": "for frame in metadata[\"frames\"]:",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_svg_tools.py",
+          "line": 144,
+          "preview": "'<metadata>editor data</metadata>'",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_svg_tools.py",
+          "line": 154,
+          "preview": "self.assertNotIn(\"metadata\", rendered)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 72
+    },
+    "test_render_spriteframes_uses_atlas_regions": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 17,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 17,
+          "preview": "def test_render_spriteframes_uses_atlas_regions(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_trimmed_frame_emits_atlas_margin": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 35,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 35,
+          "preview": "def test_trimmed_frame_emits_atlas_margin(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_untrimmed_frame_does_not_emit_margin": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 58,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 58,
+          "preview": "def test_untrimmed_frame_does_not_emit_margin(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_rejects_trim_metadata_that_does_not_fit_source": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 62,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 62,
+          "preview": "def test_rejects_trim_metadata_that_does_not_fit_source(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_rejects_frame_outside_known_atlas_bounds": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 80,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 80,
+          "preview": "def test_rejects_frame_outside_known_atlas_bounds(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_multiple_animations": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 89,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 89,
+          "preview": "def test_multiple_animations(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_rejects_duplicate_animation_names": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 115,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 115,
+          "preview": "def test_rejects_duplicate_animation_names(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_rejects_out_of_range_animation_frame": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 126,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 126,
+          "preview": "def test_rejects_out_of_range_animation_frame(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_write_spriteframes_creates_file": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 134,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 134,
+          "preview": "def test_write_spriteframes_creates_file(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_rejects_empty_metadata": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 147,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 147,
+          "preview": "def test_rejects_empty_metadata(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_rejects_invalid_fps": {
+      "definition": {
+        "file": "tests/test_godot_export.py",
+        "line": 151,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_animation_infer.py",
+          "line": 50,
+          "preview": "def test_rejects_invalid_fps(self):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 151,
+          "preview": "def test_rejects_invalid_fps(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 2
     },
     "webp_chunk": {
       "definition": {
@@ -3352,454 +4286,6 @@
         }
       ],
       "occurrence_count": 5
-    },
-    "pack_indexed_samples": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 50,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 50,
-          "preview": "def pack_indexed_samples(samples: list[int], depth: int) -> bytes:",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 774,
-          "preview": "raw.extend(pack_indexed_samples(samples, 1))",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "adam7_raw": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 63,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 63,
-          "preview": "def adam7_raw(",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 741,
-          "preview": "raw = adam7_raw(width, height, pixel)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 809,
-          "preview": "raw = adam7_raw(width, height, pixel16)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 834,
-          "preview": "raw = adam7_raw(width, height, lambda x, y: bytes([x, y, 0, 255]))",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 4
-    },
-    "write_rgba_png": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 83,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 83,
-          "preview": "def write_rgba_png(path: Path, width: int, height: int, pixel: bytes) -> None:",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 103,
-          "preview": "write_rgba_png(red, 2, 2, bytes([255, 0, 0, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 104,
-          "preview": "write_rgba_png(green, 2, 2, bytes([0, 255, 0, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 128,
-          "preview": "write_rgba_png(first, 2, 2, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 129,
-          "preview": "write_rgba_png(second, 3, 2, bytes([4, 5, 6, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 158,
-          "preview": "write_rgba_png(source, 4, 4, bytes([10, 20, 30, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 175,
-          "preview": "write_rgba_png(source, 8, 8, bytes([0, 0, 0, 0]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 294,
-          "preview": "write_rgba_png(image, 1, 1, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 379,
-          "preview": "write_rgba_png(image, 1, 1, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 986,
-          "preview": "write_rgba_png(source, 1, 1, bytes([7, 8, 9, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1013,
-          "preview": "write_rgba_png(a, 3, 3, bytes([255, 0, 0, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1014,
-          "preview": "write_rgba_png(b, 2, 1, bytes([0, 255, 0, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1015,
-          "preview": "write_rgba_png(c, 1, 2, bytes([0, 0, 255, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1043,
-          "preview": "write_rgba_png(source, 8, 1, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1057,
-          "preview": "write_rgba_png(source, 1, 1, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 15
-    },
-    "RasterPackTests": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 95,
-        "kind": "class",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 95,
-          "preview": "class RasterPackTests(unittest.TestCase):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_pack_uniform_atlas_writes_png_and_metadata": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 96,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 96,
-          "preview": "def test_pack_uniform_atlas_writes_png_and_metadata(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_pack_rejects_mixed_frame_sizes": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 123,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 123,
-          "preview": "def test_pack_rejects_mixed_frame_sizes(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_rgb_png_is_promoted_to_opaque_rgba": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 134,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 134,
-          "preview": "def test_rgb_png_is_promoted_to_opaque_rgba(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_recompress_png_preserves_pixels": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 152,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 152,
-          "preview": "def test_recompress_png_preserves_pixels(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_recompress_png_reports_sizes": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 169,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 169,
-          "preview": "def test_recompress_png_reports_sizes(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_grayscale_png_decodes_to_rgba": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 185,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 185,
-          "preview": "def test_grayscale_png_decodes_to_rgba(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_grayscale_alpha_png_decodes_to_rgba": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 200,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 200,
-          "preview": "def test_grayscale_alpha_png_decodes_to_rgba(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_indexed_png_with_transparency_decodes_to_rgba": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 214,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 214,
-          "preview": "def test_indexed_png_with_transparency_decodes_to_rgba(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_rejects_invalid_ihdr_length": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 235,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 235,
-          "preview": "def test_rejects_invalid_ihdr_length(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_rejects_zero_dimensions": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 247,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 247,
-          "preview": "def test_rejects_zero_dimensions(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_rejects_duplicate_ihdr": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 260,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 260,
-          "preview": "def test_rejects_duplicate_ihdr(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_rejects_non_consecutive_idat": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 274,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 274,
-          "preview": "def test_rejects_non_consecutive_idat(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_rejects_trailing_data_after_iend": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 291,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 291,
-          "preview": "def test_rejects_trailing_data_after_iend(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_rejects_indexed_trns_longer_than_palette": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 299,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 299,
-          "preview": "def test_rejects_indexed_trns_longer_than_palette(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_rejects_trns_for_rgba": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 314,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 314,
-          "preview": "def test_rejects_trns_for_rgba(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_truecolor_trns_is_applied": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 328,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 328,
-          "preview": "def test_truecolor_trns_is_applied(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
     }
   }
 }
