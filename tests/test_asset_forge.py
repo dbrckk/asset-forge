@@ -159,6 +159,47 @@ class AssetForgeTests(unittest.TestCase):
             {"index": 3, "x": 32, "y": 32, "width": 32, "height": 32},
         )
 
+    def test_webp_raster_validation_supports_dimensions_and_alpha(self):
+        manifest = self.load_example()
+        manifest["target"]["format"] = "webp"
+        manifest["constraints"]["frameWidth"] = 32
+        manifest["constraints"]["frameHeight"] = 32
+        manifest["constraints"]["expectedFrames"] = 2
+        manifest["constraints"]["requiresAlpha"] = True
+        manifest["constraints"].pop("maxColors", None)
+
+        width, height = 64, 32
+        vp8x = bytes([0x10, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
+        body = b"WEBP" + b"VP8X" + struct.pack("<I", len(vp8x)) + vp8x
+        data = b"RIFF" + struct.pack("<I", len(body)) + body
+
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "sprite.webp"
+            image.write_bytes(data)
+            info, errors = asset_forge.validate_raster_file(image, manifest)
+
+        self.assertEqual(errors, [])
+        self.assertEqual(info["format"], "webp")
+        self.assertEqual(info["grid"]["frameCount"], 2)
+        self.assertTrue(info["hasAlpha"])
+
+    def test_webp_max_colors_constraint_is_rejected(self):
+        manifest = self.load_example()
+        manifest["target"]["format"] = "webp"
+        manifest["constraints"]["maxColors"] = 4
+
+        width = height = 32
+        vp8x = bytes([0, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
+        body = b"WEBP" + b"VP8X" + struct.pack("<I", len(vp8x)) + vp8x
+        data = b"RIFF" + struct.pack("<I", len(body)) + body
+
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "sprite.webp"
+            image.write_bytes(data)
+            _, errors = asset_forge.validate_raster_file(image, manifest)
+
+        self.assertIn("maxColors is only enforceable for indexed PNG assets", errors)
+
     def test_invalid_png_crc_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             image = Path(tmp) / "bad.png"
