@@ -916,6 +916,21 @@ class RasterPackTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "reserved feature bits"):
             inspect_webp_bytes(data)
 
+    def test_webp_vp8x_dimension_mismatch_is_rejected(self):
+        vp8x = bytes([0, 0, 0, 0]) + (19).to_bytes(3, "little") + (9).to_bytes(3, "little")
+        vp8 = (0).to_bytes(3, "little") + b"\x9d\x01\x2a" + (21).to_bytes(2, "little") + (10).to_bytes(2, "little")
+        data = webp_file(webp_chunk(b"VP8X", vp8x), webp_chunk(b"VP8 ", vp8))
+        with self.assertRaisesRegex(ValueError, "canvas dimensions"):
+            inspect_webp_bytes(data)
+
+    def test_webp_lossy_alpha_flag_requires_alph_chunk(self):
+        width, height = 20, 10
+        vp8x = bytes([0x10, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
+        vp8 = (0).to_bytes(3, "little") + b"\x9d\x01\x2a" + width.to_bytes(2, "little") + height.to_bytes(2, "little")
+        data = webp_file(webp_chunk(b"VP8X", vp8x), webp_chunk(b"VP8 ", vp8))
+        with self.assertRaisesRegex(ValueError, "requires ALPH"):
+            inspect_webp_bytes(data)
+
     def test_webp_bad_riff_size_is_rejected(self):
         data = bytearray(webp_file(webp_chunk(b"VP8L", b"\x2f\x00\x00\x00\x00")))
         data[4:8] = (1).to_bytes(4, "little")
