@@ -5,6 +5,7 @@ from unittest.mock import patch
 from toolchain_3d import (
     build_3d_pipeline,
     detect_3d_tools,
+    execute_3d_pipeline,
     gltf_transform_command,
     gltfpack_command,
     validator_command,
@@ -100,6 +101,86 @@ class Toolchain3DTests(unittest.TestCase):
                 Path("build/asset"),
                 optimizer="invalid",
             )
+
+    @patch("toolchain_3d.detect_3d_tools")
+    def test_missing_optimizer_falls_back_to_raw_output(self, detect):
+        detect.return_value = {
+            "blender": {"available": True, "path": "/bin/blender"},
+            "gltf-validator": {"available": False, "path": None},
+            "gltf-transform": {"available": False, "path": None},
+            "gltfpack": {"available": False, "path": None},
+        }
+
+        plan = build_3d_pipeline(
+            Path("source.blend"),
+            Path("build/asset"),
+            optimizer="gltf-transform",
+        )
+
+        self.assertEqual(plan["finalOutput"], "build/asset/raw.glb")
+        validation_steps = [
+            step for step in plan["steps"]
+            if step["id"] == "post-optimization-validation"
+        ]
+        self.assertEqual(len(validation_steps), 1)
+        self.assertIn("raw.glb", validation_steps[0]["command"])
+
+    @patch("toolchain_3d.execute_command")
+    @patch("toolchain_3d.prepare_3d_pipeline")
+    def test_execute_pipeline_skips_unavailable_optional_tools(self, prepare, execute):
+        plan = {
+            "workdir": "build/x",
+            "finalOutput": "build/x/raw.glb",
+            "steps": [
+                {
+                    "id": "blender-export",
+                    "required": True,
+                    "tool": "blender",
+                    "available": True,
+                    "command": "blender --background",
+                    "output": "build/x/raw.glb",
+                },
+                {
+                    "id": "khronos-validation",
+                    "required": False,
+                    "tool": "gltf-validator",
+                    "available": False,
+                    "command": "gltf_validator --stdout build/x/raw.glb",
+                    "output": "build/x/report.json",
+                },
+            ],
+        }
+        execute.return_value = {"returnCode": 0, "stdout": "", "stderr": ""}
+
+        result = execute_3d_pipeline(plan, Path("."))
+
+        self.assertTrue(result["success"])
+        self.assertEqual(result["results"][1]["status"], "skipped-unavailable")
+        execute.assert_called_once()
+
+    @patch("toolchain_3d.execute_command")
+    @patch("toolchain_3d.prepare_3d_pipeline")
+    def test_execute_pipeline_stops_on_required_failure(self, prepare, execute):
+        plan = {
+            "workdir": "build/x",
+            "finalOutput": "build/x/raw.glb",
+            "steps": [
+                {
+                    "id": "blender-export",
+                    "required": True,
+                    "tool": "blender",
+                    "available": True,
+                    "command": "blender --background",
+                    "output": "build/x/raw.glb",
+                }
+            ],
+        }
+        execute.return_value = {"returnCode": 2, "stdout": "", "stderr": "failed"}
+
+        result = execute_3d_pipeline(plan, Path("."))
+
+        self.assertFalse(result["success"])
+        self.assertEqual(result["results"][0]["status"], "failed")
 
 
 if __name__ == "__main__":
