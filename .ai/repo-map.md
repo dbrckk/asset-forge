@@ -256,8 +256,11 @@ jobs:
     "read-project-art-direction",
     "resolve-source-or-create",
     "normalize-canvas-and-scale",
-    "validate-alpha-and-grid",
+    "validate-png-integrity",
+    "validate-alpha-palette-and-grid",
+    "validate-frame-count-and-atlas-budget",
     "build-animation-frames",
+    "emit-atlas-metadata",
     "pack-atlas-if-requested",
     "optimize-delivery-format",
     "record-provenance-and-license",
@@ -624,11 +627,39 @@ Build its deterministic production plan:
 python asset_forge.py plan examples/asset-manifest.json
 ```
 
+Validate a PNG/sprite sheet against its manifest:
+
+```bash
+python asset_forge.py validate-raster examples/asset-manifest.json path/to/sprite.png
+```
+
+Generate uniform-grid atlas metadata:
+
+```bash
+python asset_forge.py atlas-manifest examples/asset-manifest.json path/to/sprite.png --output build/sprite.atlas.json
+```
+
 Run the offline test suite:
 
 ```bash
 python -m unittest discover -s tests -v
 ```
+
+## Current 2D validation
+
+The dependency-free PNG validator checks:
+
+- PNG signature, chunk boundaries, IEND presence, and chunk CRCs;
+- dimensions and file-size budget;
+- frame width/height divisibility;
+- derived rows, columns, and frame count;
+- expected frame count;
+- alpha/transparency requirements;
+- indexed-palette size when a PLTE chunk exists;
+- power-of-two atlas dimensions when required;
+- nearest-neighbor interpolation policy for pixel-art manifests.
+
+`atlas-manifest` emits deterministic frame rectangles for uniform sprite sheets.
 
 ## Repository layout
 

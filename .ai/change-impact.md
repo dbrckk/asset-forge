@@ -1,13 +1,13 @@
 # Change impact
 
-Base: a34570eec98aa4d44c9d5d559d9a3e7ca14aea5f
-Head: 5f66a0c38b14ba0af2422933b5d3e330526a465a
+Base: 2de811e422fff3a334edc80f2a9a9eb064cf6130
+Head: 4939b96e5f59f909d404c0a39811b2865e80407f
 
 ## Changed files
-- M tests/test_asset_forge.py
+- M pipelines/sprite-2d.json
 
 ## Affected areas
-- tests
+- pipelines
 
 ## Related test candidates
 - No direct filename-based test match detected.

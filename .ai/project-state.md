@@ -4,48 +4,44 @@ Status: active
 
 ## Working
 - Repository initialized as a central 2D/3D visual asset production pipeline.
-- Dependency-free Python CLI validates asset manifests and builds deterministic production plans.
-- PNG inspection validates chunk integrity/CRC, dimensions, transparency, palette metadata, file budget, sprite grids, frame counts, and optional power-of-two atlas constraints.
-- CLI can emit deterministic uniform-grid atlas metadata with frame rectangles.
+- Dependency-free Python CLI validates asset manifests.
+- CLI builds deterministic production plans and routes supported asset types to 2D/3D pipelines.
 - Initial tool registry, manifest schema, example manifest, unit tests, CI, and repo-standards adoption are present.
 
 ## Broken / blockers
 - star-list currently has no indexed matches for the first visual-production keywords checked.
-- Actual image atlas packing/merging and PNG/WebP optimization backends are not implemented yet.
-- Real Blender/vector backends are not implemented yet.
-- Direct local clone/testing from this ChatGPT runtime is blocked by network DNS.
-- GitHub combined-status API still exposes no check entries for the latest commit, so the newest tests are not yet independently confirmed here.
+- Real backend adapters for Blender/vector/raster/atlas operations are not implemented yet.
+- Current GitHub status endpoint has not yet surfaced a CI status for the latest workflow commit.
 
 ## Current priority
-- Finish the 2D pipeline with real atlas packing/optimization, then integrate tool discovery with star-list.
+- Implement real raster/sprite inspection and atlas validation, then add discovery integration with star-list.
 
 ## Validation
 - `python -m compileall -q asset_forge.py tests`
 - `python -m unittest discover -s tests -v`
 - `python asset_forge.py validate examples/asset-manifest.json`
 - `python asset_forge.py plan examples/asset-manifest.json`
-- `python asset_forge.py validate-raster <manifest.json> <sprite.png>`
-- `python asset_forge.py atlas-manifest <manifest.json> <sprite.png> --output <atlas.json>`
 
 ## Last verified
-- 2026-09-18: source and tests re-read from GitHub after atlas/PNG-integrity implementation.
+- 2026-09-18: executable bootstrap committed on main.
 
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T16:16:45Z
+Generated: 2026-09-18T16:17:33Z
 
 ### Git
 - Branch: `main`
-- Head: `5f66a0c38b14`
-- Commit date: 2026-09-18T18:16:30+02:00
-- Commit: test: cover atlas metadata palette and png integrity
+- Head: `4939b96e5f59`
+- Commit date: 2026-09-18T18:17:21+02:00
+- Commit: feat: refine 2d sprite production stages
 - Tracked files: 51
 
 ### Recently changed files
+- `pipelines/sprite-2d.json`
+- `README.md`
 - `tests/test_asset_forge.py`
 - `asset_forge.py`
-- `README.md`
 
 ### Project signals
 - No common build descriptor detected
