@@ -147,13 +147,27 @@ Validate an SVG before it enters a project:
 python asset_forge.py validate-svg path/to/icon.svg
 ```
 
-Create a sanitized copy that removes executable/unsafe SVG content and external references:
+Create a sanitized copy that removes executable/unsafe SVG content, editor metadata, and external references:
 
 ```bash
 python asset_forge.py sanitize-svg path/to/icon.svg build/icon.safe.svg
 ```
 
-The current vector validator checks XML validity, SVG root type, viewBox shape, dimensions, scripts/foreignObject, event-handler attributes, and external href/src references.
+Normalize a missing viewBox from positive numeric width/height values:
+
+```bash
+python asset_forge.py normalize-svg source.svg build/source.normalized.svg
+```
+
+Apply a production profile:
+
+```bash
+python asset_forge.py validate-svg icon.svg --profile icon
+python asset_forge.py validate-svg hud.svg --profile ui
+python asset_forge.py validate-svg brand.svg --profile logo
+```
+
+The current vector validator checks XML validity, SVG root type, viewBox shape, width/height consistency, scripts/foreignObject, event-handler attributes, external href/src references, editor metadata, and profile-specific complexity/shape rules. Versioned profile descriptions live under `profiles/vector/`.
 
 ## Initial interoperability
 
