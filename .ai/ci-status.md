@@ -2,12 +2,12 @@
 
 Summary: 0 success / 5 failure / 1 active
 
-- Validate asset-forge: queued / pending (d804f106)
-- Validate asset-forge: completed / failure (9c3c4f01)
-- Validate asset-forge: completed / failure (a6b26287)
-- Validate asset-forge: completed / failure (42072aae)
-- Validate asset-forge: completed / failure (e210a37e)
-- Validate asset-forge: completed / failure (292b9560)
+- Validate asset-forge: in_progress / pending (f5eba048)
+- Validate asset-forge: completed / failure (bf05aecb)
+- Validate asset-forge: completed / failure (54b1f3a3)
+- Validate asset-forge: completed / failure (74ec9252)
+- Validate asset-forge: completed / failure (fb09a4cb)
+- Validate asset-forge: completed / failure (6357a840)
 
 ## Latest failed run structure
 - Job: test

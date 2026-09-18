@@ -46,17 +46,20 @@ config/
   tooling.json
 examples/
   asset-manifest.json
+  godot-animations.json
 pipelines/
   model-3d.json
   sprite-2d.json
 schemas/
   asset-manifest.schema.json
 tests/
+  test_animation_infer.py
   test_asset_forge.py
   test_godot_export.py
   test_raster_pack.py
   test_starlist_bridge.py
 AGENTS.md
+animation_infer.py
 asset_forge.py
 godot_export.py
 raster_pack.py
@@ -112,7 +115,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -233,6 +236,36 @@ jobs:
 }
 ````
 
+## File: examples/godot-animations.json
+````json
+{
+  "animations": [
+    {
+      "name": "idle",
+      "fps": 6,
+      "loop": true,
+      "frames": [0, 1]
+    },
+    {
+      "name": "run",
+      "fps": 12,
+      "loop": true,
+      "frames": [2, 3, 4, 5]
+    },
+    {
+      "name": "attack",
+      "fps": 14,
+      "loop": false,
+      "frames": [
+        {"index": 6, "duration": 0.75},
+        {"index": 7, "duration": 1.0},
+        {"index": 8, "duration": 1.25}
+      ]
+    }
+  ]
+}
+````
+
 ## File: pipelines/model-3d.json
 ````json
 {
@@ -336,6 +369,28 @@ jobs:
 }
 ````
 
+## File: tests/test_animation_infer.py
+````python
+class AnimationInferTests(unittest.TestCase)
+⋮----
+def test_groups_numbered_filenames(self)
+⋮----
+metadata = {
+⋮----
+result = infer_animations(metadata, default_fps=8)
+animations = {item["name"]: item for item in result["animations"]}
+⋮----
+def test_uses_stem_when_no_numeric_suffix(self)
+⋮----
+result = infer_animations(metadata)
+⋮----
+def test_missing_names_fall_back_to_default(self)
+⋮----
+result = infer_animations(metadata, default_loop=False)
+⋮----
+def test_rejects_invalid_fps(self)
+````
+
 ## File: tests/test_asset_forge.py
 ````python
 ROOT = Path(__file__).resolve().parents[1]
@@ -409,6 +464,12 @@ def metadata(self)
 def test_render_spriteframes_uses_atlas_regions(self)
 ⋮----
 rendered = render_spriteframes(
+⋮----
+def test_multiple_animations(self)
+⋮----
+def test_rejects_duplicate_animation_names(self)
+⋮----
+def test_rejects_out_of_range_animation_frame(self)
 ⋮----
 def test_write_spriteframes_creates_file(self)
 ⋮----
@@ -530,6 +591,37 @@ A discovered tool must be reviewed before being marked approved.
 ## Definition of done
 
 A workflow is complete only when provenance is known, licensing is compatible, technical validation passes, export is reproducible, and the consuming project can import the result.
+````
+
+## File: animation_infer.py
+````python
+FRAME_SUFFIX = re.compile(r"^(?P<name>.+?)(?:[_\-. ]?)(?P<number>\d+)$")
+⋮----
+frames = atlas_metadata.get("frames")
+⋮----
+groups: dict[str, list[tuple[int, int]]] = {}
+⋮----
+index = frame.get("index", fallback_index)
+⋮----
+raw_name = frame.get("name")
+⋮----
+animation_name = "default"
+order = index
+⋮----
+stem = raw_name.rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
+⋮----
+stem = stem.rsplit(".", 1)[0]
+⋮----
+match = FRAME_SUFFIX.match(stem)
+⋮----
+animation_name = match.group("name").rstrip("_-. ").strip() or "default"
+order = int(match.group("number"))
+⋮----
+animation_name = stem.strip() or "default"
+⋮----
+animations = []
+⋮----
+ordered = sorted(groups[name], key=lambda item: (item[0], item[1]))
 ````
 
 ## File: asset_forge.py
@@ -698,6 +790,8 @@ godot = sub.add_parser("export-godot", help="export Godot 4 SpriteFrames .tres f
 ⋮----
 discover = sub.add_parser("discover-tools", help="query dbrckk/star-list for visual tooling")
 ⋮----
+infer = sub.add_parser("infer-animations", help="infer animation groups from atlas frame filenames")
+⋮----
 def main() -> int
 ⋮----
 args = parser().parse_args()
@@ -710,36 +804,70 @@ rendered = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
 result = recompress_png(args.input, args.output)
 ⋮----
 metadata = load_json(args.metadata)
+animations = None
+⋮----
+animation_config = load_json(args.animations)
+animations = animation_config.get("animations")
 ⋮----
 result = build_visual_discovery_report(args.star_list_root)
 ⋮----
 result = run_starlist_recommender(
 ⋮----
 rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
+⋮----
+result = infer_animations(
 ````
 
 ## File: godot_export.py
 ````python
 def _godot_string(value: str) -> str
 ⋮----
-"""Render a Godot 4 SpriteFrames .tres using AtlasTexture subresources."""
+def _validate_frames(atlas_metadata: dict) -> list[dict]
 ⋮----
 frames = atlas_metadata.get("frames")
 ⋮----
-lines = [
-⋮----
-resource_ids: list[str] = []
+normalized = []
 ⋮----
 x = int(frame["x"])
 y = int(frame["y"])
 width = int(frame["width"])
 height = int(frame["height"])
 ⋮----
+seen_names: set[str] = set()
+⋮----
+name = animation.get("name")
+⋮----
+speed = animation.get("fps", fps)
+⋮----
+raw_frames = animation.get("frames")
+⋮----
+animation_frames = []
+⋮----
+frame_index = raw
+duration = 1.0
+⋮----
+frame_index = int(raw["index"])
+⋮----
+duration = raw.get("duration", 1.0)
+⋮----
+duration = float(duration)
+⋮----
+"""Render a Godot 4 SpriteFrames .tres backed by AtlasTexture regions."""
+frames = _validate_frames(atlas_metadata)
+animation_defs = _normalize_animations(
+⋮----
+lines = [
+⋮----
+resource_ids: list[str] = []
+⋮----
+index = frame["index"]
 resource_id = f"AtlasTexture_{index}"
+⋮----
+rendered_animations = []
 ⋮----
 frame_lines = []
 ⋮----
-animation = (
+resource_id = resource_ids[frame["index"]]
 ⋮----
 rendered = render_spriteframes(
 ````
@@ -946,6 +1074,22 @@ Export atlas metadata as a Godot 4 SpriteFrames resource:
 ```bash
 python asset_forge.py export-godot build/atlas.json build/player.tres --atlas-path res://art/atlas.png --animation run --fps 12
 ```
+
+Infer animation groups automatically from filenames such as `idle_01.png`, `idle_02.png`, `run_01.png`:
+
+```bash
+python asset_forge.py infer-animations build/atlas.json --fps 12 --output build/animations.json
+```
+
+Export several animations from the same atlas:
+
+```bash
+python asset_forge.py export-godot build/atlas.json build/player.tres \
+  --atlas-path res://art/atlas.png \
+  --animations build/animations.json
+```
+
+The animation config can define per-animation FPS, loop behavior, frame order, and optional per-frame duration multipliers. A versioned example is available at `examples/godot-animations.json`.
 
 The built-in packer currently supports non-interlaced 8-bit RGB/RGBA PNG inputs and implements all five standard PNG scanline filters. It writes an RGBA PNG atlas without external image libraries. The optimizer uses adaptive per-row PNG filtering and zlib level 9 while preserving decoded pixels.
 

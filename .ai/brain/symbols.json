@@ -1,123 +1,130 @@
 {
   "symbols": [
     {
+      "file": "animation_infer.py",
+      "language": "python",
+      "kind": "function",
+      "name": "infer_animations",
+      "line": 9
+    },
+    {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "load_json",
-      "line": 44
+      "line": 45
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "validate_manifest",
-      "line": 52
+      "line": 53
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "is_power_of_two",
-      "line": 110
+      "line": 111
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "parse_png_chunks",
-      "line": 114
+      "line": 115
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "inspect_png",
-      "line": 146
+      "line": 147
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "sprite_grid",
-      "line": 185
+      "line": 186
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "build_atlas_manifest",
-      "line": 206
+      "line": 207
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "validate_raster_file",
-      "line": 237
+      "line": 238
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "select_tools",
-      "line": 287
+      "line": 288
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "build_plan",
-      "line": 305
+      "line": 306
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "load_valid_manifest",
-      "line": 334
+      "line": 335
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "cmd_validate",
-      "line": 350
+      "line": 351
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "cmd_plan",
-      "line": 358
+      "line": 359
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "cmd_validate_raster",
-      "line": 366
+      "line": 367
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "cmd_atlas_manifest",
-      "line": 380
+      "line": 381
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "parser",
-      "line": 404
+      "line": 405
     },
     {
       "file": "asset_forge.py",
       "language": "python",
       "kind": "function",
       "name": "main",
-      "line": 454
+      "line": 462
     },
     {
       "file": "godot_export.py",
@@ -130,15 +137,29 @@
       "file": "godot_export.py",
       "language": "python",
       "kind": "function",
-      "name": "render_spriteframes",
+      "name": "_validate_frames",
       "line": 11
     },
     {
       "file": "godot_export.py",
       "language": "python",
       "kind": "function",
+      "name": "_normalize_animations",
+      "line": 44
+    },
+    {
+      "file": "godot_export.py",
+      "language": "python",
+      "kind": "function",
+      "name": "render_spriteframes",
+      "line": 135
+    },
+    {
+      "file": "godot_export.py",
+      "language": "python",
+      "kind": "function",
       "name": "write_spriteframes",
-      "line": 76
+      "line": 206
     },
     {
       "file": "raster_pack.py",
@@ -230,6 +251,41 @@
       "kind": "function",
       "name": "build_visual_discovery_report",
       "line": 65
+    },
+    {
+      "file": "tests/test_animation_infer.py",
+      "language": "python",
+      "kind": "class",
+      "name": "AnimationInferTests",
+      "line": 6
+    },
+    {
+      "file": "tests/test_animation_infer.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_groups_numbered_filenames",
+      "line": 7
+    },
+    {
+      "file": "tests/test_animation_infer.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_uses_stem_when_no_numeric_suffix",
+      "line": 24
+    },
+    {
+      "file": "tests/test_animation_infer.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_missing_names_fall_back_to_default",
+      "line": 37
+    },
+    {
+      "file": "tests/test_animation_infer.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_rejects_invalid_fps",
+      "line": 50
     },
     {
       "file": "tests/test_asset_forge.py",
@@ -375,22 +431,43 @@
       "file": "tests/test_godot_export.py",
       "language": "python",
       "kind": "function",
-      "name": "test_write_spriteframes_creates_file",
+      "name": "test_multiple_animations",
       "line": 35
     },
     {
       "file": "tests/test_godot_export.py",
       "language": "python",
       "kind": "function",
+      "name": "test_rejects_duplicate_animation_names",
+      "line": 61
+    },
+    {
+      "file": "tests/test_godot_export.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_rejects_out_of_range_animation_frame",
+      "line": 72
+    },
+    {
+      "file": "tests/test_godot_export.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_write_spriteframes_creates_file",
+      "line": 80
+    },
+    {
+      "file": "tests/test_godot_export.py",
+      "language": "python",
+      "kind": "function",
       "name": "test_rejects_empty_metadata",
-      "line": 48
+      "line": 93
     },
     {
       "file": "tests/test_godot_export.py",
       "language": "python",
       "kind": "function",
       "name": "test_rejects_invalid_fps",
-      "line": 52
+      "line": 97
     },
     {
       "file": "tests/test_raster_pack.py",

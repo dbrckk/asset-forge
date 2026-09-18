@@ -45,21 +45,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T16:25:18Z
+Generated: 2026-09-18T16:45:18Z
 
 ### Git
 - Branch: `main`
-- Head: `d804f1065875`
-- Commit date: 2026-09-18T18:25:08+02:00
-- Commit: docs: record Godot optimization and discovery milestone
-- Tracked files: 61
+- Head: `f5eba048f16e`
+- Commit date: 2026-09-18T18:45:12+02:00
+- Commit: docs: record multi-animation Godot milestone
+- Tracked files: 65
 
 ### Recently changed files
 - `README.md`
 - `.github/workflows/validate.yml`
-- `tests/test_starlist_bridge.py`
+- `tests/test_animation_infer.py`
 - `asset_forge.py`
-- `starlist_bridge.py`
+- `animation_infer.py`
 
 ### Project signals
 - No common build descriptor detected
