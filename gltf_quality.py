@@ -2,49 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from asset_profile_validation import load_3d_profile
 from gltf_binary_metrics import inspect_images, inspect_rig_and_animation
 from gltf_diagnostics import deep_gltf_diagnostics
 from gltf_tools import load_gltf_json
-
-
-QUALITY_PROFILES = {
-    "prop": {
-        "maxVertices": 100_000,
-        "maxTriangles": 100_000,
-        "maxTextures": 16,
-        "maxMaterials": 8,
-        "requireNormals": True,
-        "requireUvWhenTextured": True,
-        "requireSkinning": False,
-        "maxTextureDimension": 4096,
-        "maxEstimatedTextureMipBytes": 134217728,
-        "maxJointsPerSkin": 0,
-    },
-    "environment": {
-        "maxVertices": 2_000_000,
-        "maxTriangles": 2_000_000,
-        "maxTextures": 256,
-        "maxMaterials": 128,
-        "requireNormals": True,
-        "requireUvWhenTextured": True,
-        "requireSkinning": False,
-        "maxTextureDimension": 8192,
-        "maxEstimatedTextureMipBytes": 1073741824,
-        "maxJointsPerSkin": 0,
-    },
-    "character": {
-        "maxVertices": 150_000,
-        "maxTriangles": 200_000,
-        "maxTextures": 32,
-        "maxMaterials": 16,
-        "requireNormals": True,
-        "requireUvWhenTextured": True,
-        "requireSkinning": True,
-        "maxTextureDimension": 4096,
-        "maxEstimatedTextureMipBytes": 268435456,
-        "maxJointsPerSkin": 128,
-    },
-}
 
 
 def _accessor_count(accessors: list, index) -> int | None:
@@ -292,10 +253,8 @@ def build_quality_report(path: Path) -> dict:
 
 
 def evaluate_quality(report: dict, profile: str) -> dict:
-    if profile not in QUALITY_PROFILES:
-        raise ValueError(f"unknown 3D quality profile: {profile}")
-
-    rules = QUALITY_PROFILES[profile]
+    profile_data = load_3d_profile(profile)
+    rules = profile_data["rules"]
     geometry = report["geometry"]
     attributes = report["attributes"]
     materials = report["materials"]
@@ -355,7 +314,7 @@ def evaluate_quality(report: dict, profile: str) -> dict:
             "textured primitives"
         )
 
-    if rules["requireSkinning"] and primitive_count and attributes["skinned"] == 0:
+    if rules["requireSkin"] and primitive_count and attributes["skinned"] == 0:
         errors.append("character profile requires JOINTS_0 and WEIGHTS_0 on skinned geometry")
 
     rig = report.get("rigAnimation", {})
