@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from svg_tools import inspect_svg, sanitize_svg
+from svg_tools import inspect_svg, normalize_viewbox, sanitize_svg, validate_svg_profile
 
 
 class SvgToolsTests(unittest.TestCase):
@@ -79,6 +79,79 @@ class SvgToolsTests(unittest.TestCase):
         self.assertGreaterEqual(report["removedAttributes"], 2)
         self.assertNotIn("<script", rendered)
         self.assertNotIn("https://example.com", rendered)
+
+    def test_icon_profile_requires_square_viewbox(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "icon.svg"
+            path.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 16"></svg>',
+                encoding="utf-8",
+            )
+            _, errors, _ = validate_svg_profile(path, "icon")
+
+        self.assertIn("profile icon: square viewBox required", errors)
+
+    def test_ui_profile_accepts_non_square_viewbox(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "ui.svg"
+            path.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180"></svg>',
+                encoding="utf-8",
+            )
+            _, errors, _ = validate_svg_profile(path, "ui")
+
+        self.assertEqual(errors, [])
+
+    def test_aspect_ratio_mismatch_warns(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "mismatch.svg"
+            path.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" '
+                'viewBox="0 0 200 100"></svg>',
+                encoding="utf-8",
+            )
+            _, errors, warnings = inspect_svg(path)
+
+        self.assertEqual(errors, [])
+        self.assertIn(
+            "width/height aspect ratio differs from viewBox aspect ratio",
+            warnings,
+        )
+
+    def test_normalize_viewbox_from_dimensions(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "source.svg"
+            output = Path(tmp) / "normalized.svg"
+            source.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="32">'
+                '<rect width="64" height="32"/></svg>',
+                encoding="utf-8",
+            )
+
+            report = normalize_viewbox(source, output)
+            info, errors, _ = inspect_svg(output)
+
+        self.assertTrue(report["changed"])
+        self.assertEqual(info["viewBox"], "0 0 64 32")
+        self.assertEqual(errors, [])
+
+    def test_sanitize_removes_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "source.svg"
+            output = Path(tmp) / "clean.svg"
+            source.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
+                '<metadata>editor data</metadata>'
+                '<rect width="10" height="10"/>'
+                '</svg>',
+                encoding="utf-8",
+            )
+
+            report = sanitize_svg(source, output)
+            rendered = output.read_text(encoding="utf-8")
+
+        self.assertEqual(report["removedElements"], 1)
+        self.assertNotIn("metadata", rendered)
 
 
 if __name__ == "__main__":
