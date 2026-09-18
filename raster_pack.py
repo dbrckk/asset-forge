@@ -1114,19 +1114,114 @@ def _next_power_of_two(value: int) -> int:
     return 1 << (value - 1).bit_length()
 
 
-def _pack_shelves(frames: list[dict], max_width: int, padding: int, extrude: int) -> tuple[list[dict], int, int]:
+def _rects_intersect(a: dict, b: dict) -> bool:
+    return not (
+        a["x"] + a["width"] <= b["x"]
+        or b["x"] + b["width"] <= a["x"]
+        or a["y"] + a["height"] <= b["y"]
+        or b["y"] + b["height"] <= a["y"]
+    )
+
+
+def _rect_contains(outer: dict, inner: dict) -> bool:
+    return (
+        inner["x"] >= outer["x"]
+        and inner["y"] >= outer["y"]
+        and inner["x"] + inner["width"] <= outer["x"] + outer["width"]
+        and inner["y"] + inner["height"] <= outer["y"] + outer["height"]
+    )
+
+
+def _split_free_rect(free: dict, used: dict) -> list[dict]:
+    if not _rects_intersect(free, used):
+        return [free]
+
+    result = []
+    free_right = free["x"] + free["width"]
+    free_bottom = free["y"] + free["height"]
+    used_right = used["x"] + used["width"]
+    used_bottom = used["y"] + used["height"]
+
+    if used["x"] > free["x"]:
+        result.append(
+            {
+                "x": free["x"],
+                "y": free["y"],
+                "width": used["x"] - free["x"],
+                "height": free["height"],
+            }
+        )
+    if used_right < free_right:
+        result.append(
+            {
+                "x": used_right,
+                "y": free["y"],
+                "width": free_right - used_right,
+                "height": free["height"],
+            }
+        )
+    if used["y"] > free["y"]:
+        result.append(
+            {
+                "x": free["x"],
+                "y": free["y"],
+                "width": free["width"],
+                "height": used["y"] - free["y"],
+            }
+        )
+    if used_bottom < free_bottom:
+        result.append(
+            {
+                "x": free["x"],
+                "y": used_bottom,
+                "width": free["width"],
+                "height": free_bottom - used_bottom,
+            }
+        )
+    return [rect for rect in result if rect["width"] > 0 and rect["height"] > 0]
+
+
+def _prune_free_rects(rects: list[dict]) -> list[dict]:
+    pruned = []
+    for index, rect in enumerate(rects):
+        if any(
+            index != other_index and _rect_contains(other, rect)
+            for other_index, other in enumerate(rects)
+        ):
+            continue
+        if rect not in pruned:
+            pruned.append(rect)
+    return pruned
+
+
+def _pack_maxrects(
+    frames: list[dict],
+    max_width: int,
+    padding: int,
+    extrude: int,
+) -> tuple[list[dict], int, int]:
     if max_width <= 0:
         raise ValueError("max_width must be > 0")
 
     ordered = sorted(
         enumerate(frames),
-        key=lambda item: (-item[1]["height"], -item[1]["width"], item[0]),
+        key=lambda item: (
+            -(item[1]["width"] + extrude * 2) * (item[1]["height"] + extrude * 2),
+            -max(item[1]["width"], item[1]["height"]),
+            item[0],
+        ),
     )
+
+    total_height = sum(frame["height"] + extrude * 2 + padding for _, frame in ordered)
+    free_rects = [
+        {
+            "x": 0,
+            "y": 0,
+            "width": max_width + padding,
+            "height": max(1, total_height),
+        }
+    ]
     placements: list[dict] = []
-    x = 0
-    y = 0
-    shelf_height = 0
-    used_width = 0
 
     for original_index, frame in ordered:
         packed_width = frame["width"] + extrude * 2
@@ -1136,29 +1231,64 @@ def _pack_shelves(frames: list[dict], max_width: int, padding: int, extrude: int
                 f"frame {frame['path'].name} width {packed_width} exceeds max atlas width {max_width}"
             )
 
-        if x and x + packed_width > max_width:
-            y += shelf_height + padding
-            x = 0
-            shelf_height = 0
+        reserve_width = packed_width + padding
+        reserve_height = packed_height + padding
+        candidates = []
+        for free_index, free in enumerate(free_rects):
+            if reserve_width <= free["width"] and reserve_height <= free["height"]:
+                leftover_w = free["width"] - reserve_width
+                leftover_h = free["height"] - reserve_height
+                candidates.append(
+                    (
+                        min(leftover_w, leftover_h),
+                        max(leftover_w, leftover_h),
+                        free["y"],
+                        free["x"],
+                        free_index,
+                    )
+                )
+
+        if not candidates:
+            raise ValueError(f"could not pack frame {frame['path'].name}")
+
+        _, _, _, _, free_index = min(candidates)
+        free = free_rects[free_index]
+        used = {
+            "x": free["x"],
+            "y": free["y"],
+            "width": reserve_width,
+            "height": reserve_height,
+        }
+
+        new_free = []
+        for candidate in free_rects:
+            new_free.extend(_split_free_rect(candidate, used))
+        free_rects = _prune_free_rects(new_free)
 
         placements.append(
             {
                 "index": original_index,
-                "cellX": x,
-                "cellY": y,
-                "x": x + extrude,
-                "y": y + extrude,
+                "cellX": used["x"],
+                "cellY": used["y"],
+                "x": used["x"] + extrude,
+                "y": used["y"] + extrude,
                 "width": frame["width"],
                 "height": frame["height"],
+                "packedWidth": packed_width,
+                "packedHeight": packed_height,
             }
         )
-        x += packed_width + padding
-        shelf_height = max(shelf_height, packed_height)
-        used_width = max(used_width, x - padding)
 
-    used_height = y + shelf_height
+    content_width = max(
+        placement["cellX"] + placement["packedWidth"]
+        for placement in placements
+    )
+    content_height = max(
+        placement["cellY"] + placement["packedHeight"]
+        for placement in placements
+    )
     placements.sort(key=lambda item: item["index"])
-    return placements, used_width, used_height
+    return placements, content_width, content_height
 
 
 def pack_compact_atlas(
@@ -1182,7 +1312,7 @@ def pack_compact_atlas(
         raise ValueError("extrude must be >= 0")
 
     frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]
-    placements, content_width, content_height = _pack_shelves(
+    placements, content_width, content_height = _pack_maxrects(
         frames_data,
         max_width=max_width,
         padding=padding,
@@ -1261,7 +1391,38 @@ def pack_compact_atlas(
         "maxPixels": max_pixels,
         "maxBytes": max_bytes,
         "outputBytes": output_bytes,
-        "packing": "shelf-height-desc",
+        "packing": "maxrects-best-short-side-fit",
+        "spriteArea": sum(frame["width"] * frame["height"] for frame in frames_data),
+        "packedArea": sum(
+            (frame["width"] + extrude * 2) * (frame["height"] + extrude * 2)
+            for frame in frames_data
+        ),
+        "contentArea": content_width * content_height,
+        "atlasArea": atlas_width * atlas_height,
+        "contentOccupancyPercent": round(
+            (
+                sum(
+                    (frame["width"] + extrude * 2)
+                    * (frame["height"] + extrude * 2)
+                    for frame in frames_data
+                )
+                / (content_width * content_height)
+                * 100.0
+            ),
+            2,
+        ),
+        "atlasOccupancyPercent": round(
+            (
+                sum(
+                    (frame["width"] + extrude * 2)
+                    * (frame["height"] + extrude * 2)
+                    for frame in frames_data
+                )
+                / (atlas_width * atlas_height)
+                * 100.0
+            ),
+            2,
+        ),
         "frames": frames,
     }
 
