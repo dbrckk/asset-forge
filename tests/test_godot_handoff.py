@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from godot_handoff import (
     build_import_recommendations,
+    load_godot_profile,
     godot_import_command,
     prepare_godot_handoff,
     validate_godot_handoff,
@@ -21,6 +22,24 @@ class GodotHandoffTests(unittest.TestCase):
 
         self.assertFalse(recommendations["animation"]["import"])
         self.assertTrue(recommendations["sceneImport"]["useNameSuffixes"])
+
+    def test_profiles_are_loaded_from_versioned_json(self):
+        prop = load_godot_profile("prop")
+        environment = load_godot_profile("environment")
+        character = load_godot_profile("character")
+
+        self.assertFalse(prop["animation"]["import"])
+        self.assertTrue(environment["sceneImport"]["navigationCandidate"])
+        self.assertTrue(character["animation"]["import"])
+        self.assertEqual(character["animation"]["fps"], 60)
+
+    def test_recommendations_report_profile_source(self):
+        recommendations = build_import_recommendations("character")
+        self.assertEqual(
+            recommendations["profileSource"],
+            "profiles/godot4/character.json",
+        )
+        self.assertEqual(recommendations["animation"]["fps"], 60)
 
     def test_prepare_handoff_copies_glb_and_writes_project(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -77,7 +96,6 @@ class GodotHandoffTests(unittest.TestCase):
                     source,
                     root / "build",
                     profile="prop",
-                    delivery_report={"ready": True},
                 )
 
     def test_failed_delivery_report_is_rejected(self):
