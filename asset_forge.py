@@ -510,6 +510,8 @@ def parser() -> argparse.ArgumentParser:
     godot_handoff.add_argument("output_dir", type=Path)
     godot_handoff.add_argument("--profile", choices=["prop", "environment", "character"], default="prop")
     godot_handoff.add_argument("--delivery-report", type=Path)
+    godot_handoff.add_argument("--asset-manifest", type=Path)
+    godot_handoff.add_argument("--allow-unvalidated", action="store_true")
 
     godot_import = sub.add_parser("validate-godot-handoff", help="run Godot headless import validation on a handoff")
     godot_import.add_argument("project_dir", type=Path)
@@ -729,11 +731,18 @@ def main() -> int:
     if args.command == "prepare-godot-handoff":
         try:
             delivery = load_json(args.delivery_report) if args.delivery_report else None
+            asset_manifest = load_json(args.asset_manifest) if args.asset_manifest else None
+            if asset_manifest is not None:
+                manifest_errors = validate_manifest(asset_manifest)
+                if manifest_errors:
+                    raise ValueError("asset manifest invalid: " + "; ".join(manifest_errors))
             result = prepare_godot_handoff(
                 args.input,
                 args.output_dir,
                 profile=args.profile,
                 delivery_report=delivery,
+                asset_manifest=asset_manifest,
+                allow_unvalidated=args.allow_unvalidated,
             )
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
