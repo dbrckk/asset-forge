@@ -169,6 +169,32 @@ python asset_forge.py validate-svg brand.svg --profile logo
 
 The current vector validator checks XML validity, SVG root type, viewBox shape, width/height consistency, scripts/foreignObject, event-handler attributes, external href/src references, editor metadata, and profile-specific complexity/shape rules. Versioned profile descriptions live under `profiles/vector/`.
 
+## 3D / Blender workflow
+
+Validate glTF/GLB structure:
+
+```bash
+python asset_forge.py validate-gltf model.glb
+```
+
+Apply a 3D profile:
+
+```bash
+python asset_forge.py validate-gltf prop.glb --profile prop
+python asset_forge.py validate-gltf level.glb --profile environment
+python asset_forge.py validate-gltf character.glb --profile character
+```
+
+Create a reproducible Blender export job and script:
+
+```bash
+python asset_forge.py blender-export-job source.blend build/model.glb \
+  --script build/export_blender.py \
+  --job-manifest build/export_job.json
+```
+
+The command returns the exact Blender background command to run. Current validation is structural and profile-based; Khronos glTF Validator remains the preferred deeper conformance backend when available.
+
 ## Initial interoperability
 
 - glTF/GLB for portable 3D delivery
