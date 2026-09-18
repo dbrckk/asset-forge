@@ -15,6 +15,7 @@ from blender_adapter import build_blender_export_job, render_blender_command, wr
 from gltf_diagnostics import deep_gltf_diagnostics
 from gltf_quality import quality_report
 from gltf_tools import inspect_gltf, validate_gltf_profile
+from godot_3d_delivery import godot_3d_delivery_report
 from godot_export import write_spriteframes
 from raster_pack import pack_uniform_atlas, recompress_png
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
@@ -498,6 +499,11 @@ def parser() -> argparse.ArgumentParser:
     gltf_diagnose.add_argument("input", type=Path)
     gltf_diagnose.add_argument("--output", type=Path)
 
+    godot3d = sub.add_parser("validate-godot-3d", help="validate a glTF/GLB delivery for Godot 4")
+    godot3d.add_argument("input", type=Path)
+    godot3d.add_argument("--profile", choices=["prop", "environment", "character"], default="prop")
+    godot3d.add_argument("--output", type=Path)
+
     blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
     blender_job.add_argument("source_blend", type=Path)
     blender_job.add_argument("output_glb", type=Path)
@@ -693,6 +699,20 @@ def main() -> int:
             for section in ("accessors", "skinning", "animations")
         )
         return 1 if has_errors else 0
+    if args.command == "validate-godot-3d":
+        try:
+            result = godot_3d_delivery_report(args.input, args.profile)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
+        if args.output:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(rendered, encoding="utf-8")
+            print(str(args.output))
+        else:
+            print(rendered, end="")
+        return 0 if result.get("ready") else 1
     if args.command == "quality-gltf":
         try:
             result = quality_report(args.input, args.profile)
