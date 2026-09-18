@@ -331,3 +331,10 @@ Low-bit grayscale decoding shares the packed-sample scanline path used by indexe
 
 
 Adam7 decoding computes the exact byte budget for all seven passes before zlib decompression, unfilters each pass independently with that pass's scanline width, converts pass rows through the same bit-depth/color-type conversion path as non-interlaced PNGs, and scatters decoded pixels back into final image coordinates. Empty passes for small images are skipped safely.
+
+
+### WebP raster inspection
+
+Asset Forge now validates WebP RIFF containers without external dependencies. It understands simple lossy `VP8 `, lossless `VP8L`, and extended `VP8X` headers, reports dimensions/alpha/animation/chunk metadata, validates RIFF length and chunk padding, checks reserved VP8X fields, and cross-checks extended canvas dimensions against static image data. `validate-raster` accepts `target.format=webp` for metadata/grid/size/alpha validation, and glTF texture metrics reuse the same WebP parser.
+
+This milestone is inspection/validation only: WebP pixel decoding, atlas input decoding, recompression, and WebP encoding are not implemented yet. PNG remains the decoded/encoded raster working format.
