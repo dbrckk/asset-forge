@@ -67,18 +67,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T18:36:35Z
+Generated: 2026-09-18T18:39:23Z
 
 ### Git
 - Branch: `main`
-- Head: `9a55e51aaa0c`
-- Commit date: 2026-09-18T20:35:50+02:00
-- Commit: docs: record Godot profile single-source milestone
-- Tracked files: 96
+- Head: `194c122cde7e`
+- Commit date: 2026-09-18T20:38:55+02:00
+- Commit: docs: record engine profile validation milestone
+- Tracked files: 99
 
 ### Recently changed files
 - `README.md`
-- `tests/test_godot_handoff.py`
+- `.github/workflows/validate.yml`
+- `tests/test_engine_profile_validation.py`
+- `asset_forge.py`
 - `godot_handoff.py`
 
 ### Project signals

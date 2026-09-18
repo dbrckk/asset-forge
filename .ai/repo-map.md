@@ -66,10 +66,12 @@ profiles/
     ui.json
 schemas/
   asset-manifest.schema.json
+  godot4-handoff-profile.schema.json
 tests/
   test_animation_infer.py
   test_asset_forge.py
   test_blender_adapter.py
+  test_engine_profile_validation.py
   test_gltf_binary_metrics.py
   test_gltf_diagnostics.py
   test_gltf_quality.py
@@ -85,6 +87,7 @@ AGENTS.md
 animation_infer.py
 asset_forge.py
 blender_adapter.py
+engine_profile_validation.py
 gltf_binary_metrics.py
 gltf_diagnostics.py
 gltf_quality.py
@@ -147,7 +150,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py godot_3d_delivery.py godot_handoff.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -156,6 +159,8 @@ jobs:
         run: python asset_forge.py plan examples/asset-manifest.json
       - name: Inspect 3D toolchain
         run: python asset_forge.py 3d-toolchain-status
+      - name: Validate engine handoff profiles
+        run: python asset_forge.py validate-engine-profiles
       - name: Checkout star-list
         uses: actions/checkout@v4
         with:
@@ -625,6 +630,59 @@ jobs:
 }
 ````
 
+## File: schemas/godot4-handoff-profile.schema.json
+````json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-forge Godot 4 handoff profile",
+  "type": "object",
+  "required": ["id", "engine", "assetProfile", "sceneImport", "animation", "textures"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "engine": {"const": "Godot 4"},
+    "assetProfile": {"enum": ["prop", "environment", "character"]},
+    "sceneImport": {
+      "type": "object",
+      "required": [
+        "useNameSuffixes",
+        "useNodeTypeSuffixes",
+        "generateTangentsIfMissing",
+        "preferStaticScene"
+      ],
+      "properties": {
+        "useNameSuffixes": {"type": "boolean"},
+        "useNodeTypeSuffixes": {"type": "boolean"},
+        "generateTangentsIfMissing": {"type": "boolean"},
+        "preferStaticScene": {"type": "boolean"},
+        "navigationCandidate": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "animation": {
+      "type": "object",
+      "required": ["import", "fps", "trimming", "removeImmutableTracks"],
+      "properties": {
+        "import": {"type": "boolean"},
+        "fps": {"type": "integer", "minimum": 1, "maximum": 240},
+        "trimming": {"type": "boolean"},
+        "removeImmutableTracks": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "textures": {
+      "type": "object",
+      "required": ["preferEmbeddedOrProjectLocal", "remoteUrisAllowed"],
+      "properties": {
+        "preferEmbeddedOrProjectLocal": {"type": "boolean"},
+        "remoteUrisAllowed": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+````
+
 ## File: tests/test_animation_infer.py
 ````python
 class AnimationInferTests(unittest.TestCase)
@@ -728,6 +786,40 @@ script = render_blender_python(job)
 def test_render_command_uses_background_mode(self)
 ⋮----
 command = render_blender_command("blender", Path("build/export.py"))
+````
+
+## File: tests/test_engine_profile_validation.py
+````python
+class EngineProfileValidationTests(unittest.TestCase)
+⋮----
+def valid_profile(self)
+⋮----
+def test_valid_profile_passes(self)
+⋮----
+def test_missing_required_field_fails(self)
+⋮----
+data = self.valid_profile()
+⋮----
+errors = validate_godot_profile_data(data, "prop")
+⋮----
+def test_unknown_field_fails(self)
+⋮----
+def test_wrong_type_fails(self)
+⋮----
+def test_invalid_fps_fails(self)
+⋮----
+def test_profile_name_mismatch_fails(self)
+⋮----
+errors = validate_godot_profile_data(data, "character")
+⋮----
+def test_invalid_json_file_fails(self)
+⋮----
+path = Path(tmp) / "prop.json"
+⋮----
+def test_repository_profiles_all_validate(self)
+⋮----
+root = Path(__file__).resolve().parents[1]
+report = validate_all_godot_profiles(root)
 ````
 
 ## File: tests/test_gltf_binary_metrics.py
@@ -1442,6 +1534,8 @@ godot_handoff = sub.add_parser("prepare-godot-handoff", help="prepare a self-con
 ⋮----
 godot_import = sub.add_parser("validate-godot-handoff", help="run Godot headless import validation on a handoff")
 ⋮----
+engine_profiles = sub.add_parser("validate-engine-profiles", help="validate versioned engine handoff profiles")
+⋮----
 blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
 ⋮----
 toolchain_status = sub.add_parser("3d-toolchain-status", help="detect available external 3D tools")
@@ -1496,6 +1590,8 @@ result = prepare_godot_handoff(
 ⋮----
 result = validate_godot_handoff(args.project_dir, executable=args.godot)
 ⋮----
+result = validate_all_godot_profiles(root)
+⋮----
 result = quality_report(args.input, args.profile)
 ⋮----
 evaluation = result.get("evaluation")
@@ -1526,6 +1622,46 @@ def write_blender_export_script(job: dict, output_script: Path) -> None
 def render_blender_command(blender_executable: str, script_path: Path) -> str
 ⋮----
 def write_job_manifest(job: dict, path: Path) -> None
+````
+
+## File: engine_profile_validation.py
+````python
+ALLOWED_PROFILES = {"prop", "environment", "character"}
+SCENE_KEYS = {
+OPTIONAL_SCENE_KEYS = {"navigationCandidate": bool}
+ANIMATION_KEYS = {
+TEXTURE_KEYS = {
+⋮----
+errors: list[str] = []
+optional = optional or {}
+⋮----
+allowed = set(required) | set(optional)
+⋮----
+def validate_godot_profile_data(data: dict, expected_profile: str | None = None) -> list[str]
+⋮----
+allowed_top = {"id", "engine", "assetProfile", "sceneImport", "animation", "textures"}
+⋮----
+profile_id = data.get("id")
+⋮----
+asset_profile = data.get("assetProfile")
+⋮----
+animation = data.get("animation")
+⋮----
+fps = animation.get("fps")
+⋮----
+def validate_godot_profile_file(path: Path, expected_profile: str | None = None) -> tuple[dict | None, list[str]]
+⋮----
+data = json.loads(path.read_text(encoding="utf-8"))
+⋮----
+def validate_all_godot_profiles(root: Path) -> dict
+⋮----
+profile_dir = root / "profiles" / "godot4"
+results = {}
+valid = True
+⋮----
+path = profile_dir / f"{profile}.json"
+⋮----
+valid = valid and not errors
 ````
 
 ## File: gltf_binary_metrics.py
@@ -2165,8 +2301,6 @@ def load_godot_profile(profile: str, root: Path | None = None) -> dict
 base = root or Path(__file__).resolve().parent
 path = base / "profiles" / "godot4" / f"{profile}.json"
 ⋮----
-data = json.loads(path.read_text(encoding="utf-8"))
-⋮----
 def build_import_recommendations(profile: str, delivery_report: dict | None = None) -> dict
 ⋮----
 profile_data = load_godot_profile(profile)
@@ -2656,7 +2790,15 @@ If a Godot editor executable is installed, validate the generated project with G
 python asset_forge.py validate-godot-handoff build/handoff/godot-handoff
 ```
 
-The generated handoff contains a minimal `project.godot`, a copied GLB under `assets/`, `handoff.json` with import recommendations/provenance, and a short README. Versioned engine handoff profiles live in `profiles/godot4/` for prop, environment, and character assets. These JSON files are the runtime source of truth for handoff recommendations; the Python code loads and validates them instead of duplicating their settings. When Godot is available, validation runs the documented headless `--import` workflow.
+The generated handoff contains a minimal `project.godot`, a copied GLB under `assets/`, `handoff.json` with import recommendations/provenance, and a short README. Versioned engine handoff profiles live in `profiles/godot4/` for prop, environment, and character assets. These JSON files are the runtime source of truth for handoff recommendations; the Python code loads and validates them instead of duplicating their settings.
+
+Validate all engine profiles directly:
+
+```bash
+python asset_forge.py validate-engine-profiles
+```
+
+The contract is documented by `schemas/godot4-handoff-profile.schema.json`. Runtime validation rejects missing/unknown fields, wrong types, invalid profile identity, and animation FPS outside 1–240. CI runs this validation on every change. When Godot is available, handoff validation also runs the documented headless `--import` workflow.
 
 The Godot delivery report checks glTF 2.0 suitability, stable/duplicate names, Godot import suffix hints, animation naming, PBR materials, double-sided materials, normal-map tangents, remote/external images, and the existing 3D quality profile.
 

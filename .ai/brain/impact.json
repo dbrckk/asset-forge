@@ -1,10 +1,14 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "e53aa55e8be7aed0f0ba619eb456c0c5ed840a54",
-  "head": "9a55e51aaa0c4823d01090e6a9a073fbcf87e413",
+  "base": "9a55e51aaa0c4823d01090e6a9a073fbcf87e413",
+  "head": "194c122cde7eaa237e03b34a09acd212fbc4b2a2",
   "index_mode": "incremental",
   "changed_files": [
+    {
+      "path": ".github/workflows/validate.yml",
+      "status": "M"
+    },
     {
       "path": "README.md",
       "status": "M"
@@ -14,35 +18,34 @@
       "status": "M"
     },
     {
+      "path": "engine_profile_validation.py",
+      "status": "A"
+    },
+    {
       "path": "godot_handoff.py",
       "status": "M"
     },
     {
-      "path": "profiles/godot4/character.json",
+      "path": "schemas/godot4-handoff-profile.schema.json",
       "status": "A"
     },
     {
-      "path": "profiles/godot4/environment.json",
+      "path": "tests/test_engine_profile_validation.py",
       "status": "A"
-    },
-    {
-      "path": "profiles/godot4/prop.json",
-      "status": "A"
-    },
-    {
-      "path": "tests/test_godot_handoff.py",
-      "status": "M"
     }
   ],
   "changed_source_files": [
     "asset_forge.py",
+    "engine_profile_validation.py",
     "godot_handoff.py",
-    "tests/test_godot_handoff.py"
+    "tests/test_engine_profile_validation.py"
   ],
   "impacted_files": [
     "asset_forge.py",
+    "engine_profile_validation.py",
     "godot_handoff.py",
     "tests/test_asset_forge.py",
+    "tests/test_engine_profile_validation.py",
     "tests/test_godot_handoff.py",
     "toolchain_3d.py"
   ],
@@ -51,139 +54,163 @@
       "name": "load_json",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 63
+      "line": 64
     },
     {
       "name": "validate_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 71
+      "line": 72
     },
     {
       "name": "is_power_of_two",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 129
+      "line": 130
     },
     {
       "name": "parse_png_chunks",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 133
+      "line": 134
     },
     {
       "name": "inspect_png",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 165
+      "line": 166
     },
     {
       "name": "sprite_grid",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 204
+      "line": 205
     },
     {
       "name": "build_atlas_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 225
+      "line": 226
     },
     {
       "name": "validate_raster_file",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 256
+      "line": 257
     },
     {
       "name": "select_tools",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 306
+      "line": 307
     },
     {
       "name": "build_plan",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 324
+      "line": 325
     },
     {
       "name": "load_valid_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 353
+      "line": 354
     },
     {
       "name": "cmd_validate",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 369
+      "line": 370
     },
     {
       "name": "cmd_plan",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 377
+      "line": 378
     },
     {
       "name": "cmd_validate_raster",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 385
+      "line": 386
     },
     {
       "name": "cmd_atlas_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 399
+      "line": 400
     },
     {
       "name": "parser",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 423
+      "line": 424
     },
     {
       "name": "main",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 554
+      "line": 557
+    },
+    {
+      "name": "_validate_object_keys",
+      "kind": "function",
+      "file": "engine_profile_validation.py",
+      "line": 26
+    },
+    {
+      "name": "validate_godot_profile_data",
+      "kind": "function",
+      "file": "engine_profile_validation.py",
+      "line": 56
+    },
+    {
+      "name": "validate_godot_profile_file",
+      "kind": "function",
+      "file": "engine_profile_validation.py",
+      "line": 111
+    },
+    {
+      "name": "validate_all_godot_profiles",
+      "kind": "function",
+      "file": "engine_profile_validation.py",
+      "line": 124
     },
     {
       "name": "detect_godot",
       "kind": "function",
       "file": "godot_handoff.py",
-      "line": 10
+      "line": 12
     },
     {
       "name": "load_godot_profile",
       "kind": "function",
       "file": "godot_handoff.py",
-      "line": 18
+      "line": 20
     },
     {
       "name": "build_import_recommendations",
       "kind": "function",
       "file": "godot_handoff.py",
-      "line": 39
+      "line": 32
     },
     {
       "name": "prepare_godot_handoff",
       "kind": "function",
       "file": "godot_handoff.py",
-      "line": 69
+      "line": 62
     },
     {
       "name": "godot_import_command",
       "kind": "function",
       "file": "godot_handoff.py",
-      "line": 174
+      "line": 167
     },
     {
       "name": "validate_godot_handoff",
       "kind": "function",
       "file": "godot_handoff.py",
-      "line": 184
+      "line": 177
     },
     {
       "name": "chunk",
@@ -286,6 +313,66 @@
       "kind": "function",
       "file": "tests/test_asset_forge.py",
       "line": 162
+    },
+    {
+      "name": "EngineProfileValidationTests",
+      "kind": "class",
+      "file": "tests/test_engine_profile_validation.py",
+      "line": 13
+    },
+    {
+      "name": "valid_profile",
+      "kind": "function",
+      "file": "tests/test_engine_profile_validation.py",
+      "line": 14
+    },
+    {
+      "name": "test_valid_profile_passes",
+      "kind": "function",
+      "file": "tests/test_engine_profile_validation.py",
+      "line": 37
+    },
+    {
+      "name": "test_missing_required_field_fails",
+      "kind": "function",
+      "file": "tests/test_engine_profile_validation.py",
+      "line": 40
+    },
+    {
+      "name": "test_unknown_field_fails",
+      "kind": "function",
+      "file": "tests/test_engine_profile_validation.py",
+      "line": 46
+    },
+    {
+      "name": "test_wrong_type_fails",
+      "kind": "function",
+      "file": "tests/test_engine_profile_validation.py",
+      "line": 52
+    },
+    {
+      "name": "test_invalid_fps_fails",
+      "kind": "function",
+      "file": "tests/test_engine_profile_validation.py",
+      "line": 58
+    },
+    {
+      "name": "test_profile_name_mismatch_fails",
+      "kind": "function",
+      "file": "tests/test_engine_profile_validation.py",
+      "line": 64
+    },
+    {
+      "name": "test_invalid_json_file_fails",
+      "kind": "function",
+      "file": "tests/test_engine_profile_validation.py",
+      "line": 69
+    },
+    {
+      "name": "test_repository_profiles_all_validate",
+      "kind": "function",
+      "file": "tests/test_engine_profile_validation.py",
+      "line": 76
     },
     {
       "name": "GodotHandoffTests",
@@ -434,6 +521,7 @@
   ],
   "selected_tests": [
     "tests/test_asset_forge.py",
+    "tests/test_engine_profile_validation.py",
     "tests/test_godot_handoff.py"
   ]
 }
