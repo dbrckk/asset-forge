@@ -15,56 +15,45 @@ def detect_godot() -> dict:
     return {"available": False, "path": None}
 
 
-def build_import_recommendations(profile: str, delivery_report: dict | None = None) -> dict:
+def load_godot_profile(profile: str, root: Path | None = None) -> dict:
     if profile not in {"prop", "environment", "character"}:
         raise ValueError("profile must be prop, environment, or character")
+    base = root or Path(__file__).resolve().parent
+    path = base / "profiles" / "godot4" / f"{profile}.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        raise ValueError(f"Godot profile not found: {path}") from exc
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Godot profile is invalid JSON: {path}") from exc
+    if not isinstance(data, dict):
+        raise ValueError("Godot profile root must be an object")
+    if data.get("assetProfile") != profile:
+        raise ValueError(f"Godot profile assetProfile mismatch: expected {profile}")
+    for section in ("sceneImport", "animation", "textures"):
+        if not isinstance(data.get(section), dict):
+            raise ValueError(f"Godot profile section {section} must be an object")
+    return data
 
-    animation_import = profile == "character"
-    profile_rules = {
-        "prop": {
-            "animationFps": 30,
-            "trimming": True,
-            "removeImmutableTracks": True,
-            "preferStaticScene": True,
-            "navigationCandidate": False,
-        },
-        "environment": {
-            "animationFps": 30,
-            "trimming": True,
-            "removeImmutableTracks": True,
-            "preferStaticScene": True,
-            "navigationCandidate": True,
-        },
-        "character": {
-            "animationFps": 60,
-            "trimming": False,
-            "removeImmutableTracks": False,
-            "preferStaticScene": False,
-            "navigationCandidate": False,
-        },
-    }[profile]
+
+def build_import_recommendations(profile: str, delivery_report: dict | None = None) -> dict:
+    profile_data = load_godot_profile(profile)
+    scene_import = dict(profile_data["sceneImport"])
+    animation = dict(profile_data["animation"])
+    textures = dict(profile_data["textures"])
 
     recommendations = {
         "sceneImport": {
             "format": "glTF 2.0 / GLB",
-            "useNameSuffixes": True,
-            "useNodeTypeSuffixes": True,
-            "generateTangentsIfMissing": True,
+            **scene_import,
         },
-        "animation": {
-            "import": animation_import,
-            "fps": profile_rules["animationFps"],
-            "trimming": profile_rules["trimming"],
-            "removeImmutableTracks": profile_rules["removeImmutableTracks"],
-        },
+        "animation": animation,
         "profile": {
-            "preferStaticScene": profile_rules["preferStaticScene"],
-            "navigationCandidate": profile_rules["navigationCandidate"],
+            "preferStaticScene": bool(scene_import.get("preferStaticScene", False)),
+            "navigationCandidate": bool(scene_import.get("navigationCandidate", False)),
         },
-        "textures": {
-            "preferEmbeddedOrProjectLocal": True,
-            "remoteUrisAllowed": False,
-        },
+        "textures": textures,
+        "profileSource": f"profiles/godot4/{profile}.json",
     }
 
     if delivery_report:
