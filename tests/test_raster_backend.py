@@ -3,8 +3,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from raster_backend import decode_webp_rgba, detect_pillow_webp
-from raster_pack import decode_raster_rgba, encode_rgba, pack_uniform_atlas
+from raster_backend import decode_webp_rgba, detect_pillow_webp, encode_webp_rgba
+from raster_pack import decode_raster_rgba, encode_rgba, encode_webp, inspect_webp, pack_uniform_atlas
 
 
 class RasterBackendTests(unittest.TestCase):
@@ -101,6 +101,60 @@ class RasterBackendTests(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, "animated WebP"):
                 decode_raster_rgba(path)
+
+    def test_webp_encoder_validates_quality_and_method_without_backend(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "x.webp"
+            with patch(
+                "raster_backend.detect_pillow_webp",
+                return_value={
+                    "available": True,
+                    "backend": "pillow",
+                    "pillowVersion": "test",
+                    "webpVersion": "test",
+                    "reason": None,
+                },
+            ):
+                with self.assertRaisesRegex(ValueError, "quality"):
+                    encode_webp_rgba(
+                        output,
+                        1,
+                        1,
+                        bytes([0, 0, 0, 255]),
+                        quality=101,
+                    )
+                with self.assertRaisesRegex(ValueError, "method"):
+                    encode_webp_rgba(
+                        output,
+                        1,
+                        1,
+                        bytes([0, 0, 0, 255]),
+                        method=7,
+                    )
+
+    @unittest.skipUnless(
+        detect_pillow_webp()["available"],
+        "Pillow with WebP support is not installed",
+    )
+    def test_encode_webp_lossless_roundtrip(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source.png"
+            output = root / "output.webp"
+            pixels = bytes([
+                10, 20, 30, 255,
+                40, 50, 60, 128,
+            ])
+            encode_rgba(source, 2, 1, pixels)
+            report = encode_webp(source, output, lossless=True, quality=100, method=6)
+            width, height, decoded = decode_raster_rgba(output)
+            info = inspect_webp(output)
+
+        self.assertEqual((width, height), (2, 1))
+        self.assertEqual(decoded, pixels)
+        self.assertEqual((info["width"], info["height"]), (2, 1))
+        self.assertTrue(report["lossless"])
+        self.assertGreater(report["afterBytes"], 0)
 
 
 if __name__ == "__main__":
