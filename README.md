@@ -259,13 +259,26 @@ python asset_forge.py prepare-godot-handoff character.glb build/handoff \
   --delivery-report build/godot4-delivery.json
 ```
 
+The handoff is strict by default: the delivery report must exist and contain `ready: true`. For controlled debugging only, `--allow-unvalidated` bypasses this gate.
+
+Attach Asset Forge provenance/licensing metadata when available:
+
+```bash
+python asset_forge.py prepare-godot-handoff character.glb build/handoff \
+  --profile character \
+  --delivery-report build/godot4-delivery.json \
+  --asset-manifest manifests/character.json
+```
+
+The manifest is validated before use. Source mode/URI/author, asset identity, project, importance, license ID, commercial-use/derivative permissions, and attribution requirements are copied into `handoff.json`.
+
 If a Godot editor executable is installed, validate the generated project with Godot's headless importer:
 
 ```bash
 python asset_forge.py validate-godot-handoff build/handoff/godot-handoff
 ```
 
-The generated handoff contains a minimal `project.godot`, a copied GLB under `assets/`, `handoff.json` with import recommendations, and a short README. When Godot is available, validation runs the documented headless `--import` workflow.
+The generated handoff contains a minimal `project.godot`, a copied GLB under `assets/`, `handoff.json` with import recommendations/provenance, and a short README. Versioned engine handoff profiles live in `profiles/godot4/` for prop, environment, and character assets. When Godot is available, validation runs the documented headless `--import` workflow.
 
 The Godot delivery report checks glTF 2.0 suitability, stable/duplicate names, Godot import suffix hints, animation naming, PBR materials, double-sided materials, normal-map tangents, remote/external images, and the existing 3D quality profile.
 
