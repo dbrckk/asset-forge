@@ -524,6 +524,7 @@ def parser() -> argparse.ArgumentParser:
     pipeline3d.add_argument("--texture-compress", choices=["webp"])
     pipeline3d.add_argument("--mesh-compression", action="store_true")
     pipeline3d.add_argument("--no-animations", action="store_true")
+    pipeline3d.add_argument("--engine", choices=["generic", "godot4"], default="generic")
 
     run3d = sub.add_parser("run-3d", help="run Blender to GLB validation/optimization pipeline")
     run3d.add_argument("source_blend", type=Path)
@@ -533,6 +534,7 @@ def parser() -> argparse.ArgumentParser:
     run3d.add_argument("--texture-compress", choices=["webp"])
     run3d.add_argument("--mesh-compression", action="store_true")
     run3d.add_argument("--no-animations", action="store_true")
+    run3d.add_argument("--engine", choices=["generic", "godot4"], default="generic")
     return result
 
 
@@ -763,6 +765,7 @@ def main() -> int:
                 texture_compress=args.texture_compress,
                 mesh_compression=args.mesh_compression,
                 animations=not args.no_animations,
+                target_engine=args.engine,
             )
             prepare_3d_pipeline(plan)
         except (OSError, ValueError) as exc:
@@ -780,6 +783,7 @@ def main() -> int:
                 texture_compress=args.texture_compress,
                 mesh_compression=args.mesh_compression,
                 animations=not args.no_animations,
+                target_engine=args.engine,
             )
             result = execute_3d_pipeline(plan, root)
         except (OSError, ValueError) as exc:
