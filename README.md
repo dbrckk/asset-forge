@@ -167,7 +167,7 @@ python asset_forge.py validate-svg hud.svg --profile ui
 python asset_forge.py validate-svg brand.svg --profile logo
 ```
 
-The current vector validator checks XML validity, SVG root type, viewBox shape, width/height consistency, scripts/foreignObject, event-handler attributes, external href/src references, editor metadata, and profile-specific complexity/shape rules. Versioned profile descriptions live under `profiles/vector/`.
+The current vector validator checks XML validity, SVG root type, viewBox shape, width/height consistency, scripts/foreignObject, event-handler attributes, external href/src references, editor metadata, and profile-specific complexity/shape rules. Versioned profiles under `profiles/vector/` are the runtime source of truth; `svg_tools.py` loads them directly instead of duplicating their rules.
 
 ## 3D / Blender workflow
 
@@ -197,7 +197,7 @@ Measure production quality and budgets:
 python asset_forge.py quality-gltf prop.glb --profile prop --output build/prop-quality.json
 ```
 
-The quality report derives vertex and triangle counts from accessor metadata, measures primitive coverage for normals/UVs/tangents/skinning, summarizes PBR texture usage, identifies external images, and evaluates the versioned profile budgets under `profiles/3d/`.
+The quality report derives vertex and triangle counts from accessor metadata, measures primitive coverage for normals/UVs/tangents/skinning, summarizes PBR texture usage, identifies external images, and evaluates the versioned profile budgets under `profiles/3d/`. These JSON profiles are now the runtime source of truth for 3D quality budgets; `gltf_quality.py` loads them directly.
 
 When image bytes are locally available, the report also reads PNG/JPEG/WebP dimensions and estimates decoded RGBA8 texture memory with mipmaps. Remote URLs are not fetched. Rig/animation metrics include joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, keyframe accessor counts, and duration when animation time accessors are locally readable.
 
@@ -286,7 +286,13 @@ Validate all engine profiles directly:
 python asset_forge.py validate-engine-profiles
 ```
 
-The contract is documented by `schemas/godot4-handoff-profile.schema.json`. Runtime validation rejects missing/unknown fields, wrong types, invalid profile identity, and animation FPS outside 1–240. CI runs this validation on every change. When Godot is available, handoff validation also runs the documented headless `--import` workflow.
+Validate the versioned 3D and vector asset profiles:
+
+```bash
+python asset_forge.py validate-asset-profiles
+```
+
+The Godot handoff contract is documented by `schemas/godot4-handoff-profile.schema.json`. The same pattern is used for `schemas/3d-quality-profile.schema.json` and `schemas/vector-profile.schema.json`. Runtime validation rejects malformed profile structures before they reach the consumers, and CI validates all three profile families on every change. When Godot is available, handoff validation also runs the documented headless `--import` workflow.
 
 The Godot delivery report checks glTF 2.0 suitability, stable/duplicate names, Godot import suffix hints, animation naming, PBR materials, double-sided materials, normal-map tangents, remote/external images, and the existing 3D quality profile.
 
