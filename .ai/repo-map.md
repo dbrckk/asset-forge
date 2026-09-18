@@ -72,6 +72,7 @@ tests/
   test_gltf_tools.py
   test_godot_3d_delivery.py
   test_godot_export.py
+  test_godot_handoff.py
   test_raster_pack.py
   test_starlist_bridge.py
   test_svg_tools.py
@@ -86,6 +87,7 @@ gltf_quality.py
 gltf_tools.py
 godot_3d_delivery.py
 godot_export.py
+godot_handoff.py
 raster_pack.py
 README.md
 starlist_bridge.py
@@ -141,7 +143,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py godot_3d_delivery.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py godot_3d_delivery.py godot_handoff.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -861,6 +863,47 @@ def test_rejects_empty_metadata(self)
 def test_rejects_invalid_fps(self)
 ````
 
+## File: tests/test_godot_handoff.py
+````python
+class GodotHandoffTests(unittest.TestCase)
+⋮----
+def test_recommendations_disable_animation_for_prop_without_clips(self)
+⋮----
+recommendations = build_import_recommendations(
+⋮----
+def test_prepare_handoff_copies_glb_and_writes_project(self)
+⋮----
+root = Path(tmp)
+source = root / "model.glb"
+⋮----
+report = {"ready": True, "scene": {"animations": 0, "godotNameSuffixes": {}}}
+⋮----
+result = prepare_godot_handoff(
+⋮----
+project_dir = Path(result["projectDir"])
+copied = Path(result["asset"])
+manifest = json.loads(Path(result["manifest"]).read_text(encoding="utf-8"))
+⋮----
+def test_non_glb_is_rejected(self)
+⋮----
+source = root / "model.gltf"
+⋮----
+def test_import_command_uses_headless_import(self)
+⋮----
+command = godot_import_command("godot", Path("project"))
+⋮----
+@patch("godot_handoff.detect_godot")
+    def test_missing_godot_is_non_blocking(self, detect)
+⋮----
+project = Path(tmp)
+⋮----
+result = validate_godot_handoff(project)
+⋮----
+@patch("godot_handoff.subprocess.run")
+@patch("godot_handoff.detect_godot")
+    def test_available_godot_import_passes(self, detect, run)
+````
+
 ## File: tests/test_raster_pack.py
 ````python
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -1292,6 +1335,10 @@ gltf_diagnose = sub.add_parser("diagnose-gltf", help="run deep accessor, skinnin
 ⋮----
 godot3d = sub.add_parser("validate-godot-3d", help="validate a glTF/GLB delivery for Godot 4")
 ⋮----
+godot_handoff = sub.add_parser("prepare-godot-handoff", help="prepare a self-contained Godot 4 handoff project")
+⋮----
+godot_import = sub.add_parser("validate-godot-handoff", help="run Godot headless import validation on a handoff")
+⋮----
 blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
 ⋮----
 toolchain_status = sub.add_parser("3d-toolchain-status", help="detect available external 3D tools")
@@ -1336,6 +1383,11 @@ result = deep_gltf_diagnostics(args.input)
 has_errors = any(
 ⋮----
 result = godot_3d_delivery_report(args.input, args.profile)
+⋮----
+delivery = load_json(args.delivery_report) if args.delivery_report else None
+result = prepare_godot_handoff(
+⋮----
+result = validate_godot_handoff(args.project_dir, executable=args.godot)
 ⋮----
 result = quality_report(args.input, args.profile)
 ⋮----
@@ -1995,6 +2047,49 @@ resource_id = resource_ids[frame["index"]]
 rendered = render_spriteframes(
 ````
 
+## File: godot_handoff.py
+````python
+def detect_godot() -> dict
+⋮----
+path = shutil.which(name)
+⋮----
+def build_import_recommendations(profile: str, delivery_report: dict | None = None) -> dict
+⋮----
+animation_import = profile == "character"
+recommendations = {
+⋮----
+scene = delivery_report.get("scene", {})
+⋮----
+source_glb = Path(source_glb)
+output_dir = Path(output_dir)
+⋮----
+project_dir = output_dir / "godot-handoff"
+asset_dir = project_dir / "assets"
+⋮----
+destination = asset_dir / source_glb.name
+⋮----
+project_file = project_dir / "project.godot"
+⋮----
+recommendations = build_import_recommendations(profile, delivery_report)
+manifest = {
+⋮----
+manifest_path = project_dir / "handoff.json"
+⋮----
+readme = project_dir / "README.md"
+⋮----
+def godot_import_command(executable: str, project_dir: Path) -> list[str]
+⋮----
+def validate_godot_handoff(project_dir: Path, executable: str | None = None) -> dict
+⋮----
+project_dir = Path(project_dir)
+⋮----
+detected = detect_godot()
+chosen = executable or detected["path"]
+⋮----
+command = godot_import_command(chosen, project_dir)
+completed = subprocess.run(
+````
+
 ## File: raster_pack.py
 ````python
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -2409,9 +2504,25 @@ python asset_forge.py validate-godot-3d character.glb \
   --output build/godot4-delivery.json
 ```
 
+Prepare a self-contained Godot handoff project:
+
+```bash
+python asset_forge.py prepare-godot-handoff character.glb build/handoff \
+  --profile character \
+  --delivery-report build/godot4-delivery.json
+```
+
+If a Godot editor executable is installed, validate the generated project with Godot's headless importer:
+
+```bash
+python asset_forge.py validate-godot-handoff build/handoff/godot-handoff
+```
+
+The generated handoff contains a minimal `project.godot`, a copied GLB under `assets/`, `handoff.json` with import recommendations, and a short README. When Godot is available, validation runs the documented headless `--import` workflow.
+
 The Godot delivery report checks glTF 2.0 suitability, stable/duplicate names, Godot import suffix hints, animation naming, PBR materials, double-sided materials, normal-map tangents, remote/external images, and the existing 3D quality profile.
 
-The generated chain is Blender export → internal structural validation → quality/budget report → optional Khronos validation → optional optimization → post-optimization structural validation → final quality report. With `--engine godot4`, a final Godot delivery gate is appended. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
+The generated chain is Blender export → internal structural validation → quality/budget report → optional Khronos validation → optional optimization → post-optimization structural validation → final quality report. With `--engine godot4`, a final Godot delivery gate is appended; after a successful run, Asset Forge also creates a self-contained Godot handoff project and attempts a headless Godot import check when the editor executable is available. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
 
 A completed run also writes `production-report.json`, which records step status and compares raw vs final vertices, triangles, and file bytes when both quality reports are available.
 
@@ -2622,6 +2733,17 @@ executed = execute_command(step["command"], cwd=repo_root)
 ⋮----
 report_path = Path(step["output"])
 ⋮----
+handoff = None
+godot_validation = None
+⋮----
+delivery_report = _read_json_if_exists(workdir / "godot4-delivery.json")
+⋮----
+handoff = prepare_godot_handoff(
+godot_validation = validate_godot_handoff(Path(handoff["projectDir"]))
+⋮----
+godot_validation = {
+⋮----
 summary = _build_production_summary(plan, success, results)
+⋮----
 report_path = Path(plan["workdir"]) / "production-report.json"
 ````

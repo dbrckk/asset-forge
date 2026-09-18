@@ -60,20 +60,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T18:21:59Z
+Generated: 2026-09-18T18:28:10Z
 
 ### Git
 - Branch: `main`
-- Head: `1e966cd6000e`
-- Commit date: 2026-09-18T20:21:30+02:00
-- Commit: docs: record Godot 4 3d delivery milestone
-- Tracked files: 91
+- Head: `e53aa55e8be7`
+- Commit date: 2026-09-18T20:28:01+02:00
+- Commit: docs: record Godot handoff milestone
+- Tracked files: 93
 
 ### Recently changed files
 - `README.md`
 - `.github/workflows/validate.yml`
-- `tests/test_toolchain_3d.py`
-- `asset_forge.py`
+- `tests/test_godot_handoff.py`
 - `toolchain_3d.py`
 
 ### Project signals

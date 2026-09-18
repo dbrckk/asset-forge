@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "2b07bfc1c3b6cc42d580ac8123c25c4a50672dc8",
-  "head": "1e966cd6000efd03a86e9ad629a3146b144a1ad3",
+  "base": "1e966cd6000efd03a86e9ad629a3146b144a1ad3",
+  "head": "e53aa55e8be7aed0f0ba619eb456c0c5ed840a54",
   "index_mode": "incremental",
   "changed_files": [
     {
@@ -18,16 +18,12 @@
       "status": "M"
     },
     {
-      "path": "godot_3d_delivery.py",
+      "path": "godot_handoff.py",
       "status": "A"
     },
     {
-      "path": "tests/test_godot_3d_delivery.py",
+      "path": "tests/test_godot_handoff.py",
       "status": "A"
-    },
-    {
-      "path": "tests/test_toolchain_3d.py",
-      "status": "M"
     },
     {
       "path": "toolchain_3d.py",
@@ -36,16 +32,15 @@
   ],
   "changed_source_files": [
     "asset_forge.py",
-    "godot_3d_delivery.py",
-    "tests/test_godot_3d_delivery.py",
-    "tests/test_toolchain_3d.py",
+    "godot_handoff.py",
+    "tests/test_godot_handoff.py",
     "toolchain_3d.py"
   ],
   "impacted_files": [
     "asset_forge.py",
-    "godot_3d_delivery.py",
+    "godot_handoff.py",
     "tests/test_asset_forge.py",
-    "tests/test_godot_3d_delivery.py",
+    "tests/test_godot_handoff.py",
     "tests/test_toolchain_3d.py",
     "toolchain_3d.py"
   ],
@@ -54,115 +49,133 @@
       "name": "load_json",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 62
+      "line": 63
     },
     {
       "name": "validate_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 70
+      "line": 71
     },
     {
       "name": "is_power_of_two",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 128
+      "line": 129
     },
     {
       "name": "parse_png_chunks",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 132
+      "line": 133
     },
     {
       "name": "inspect_png",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 164
+      "line": 165
     },
     {
       "name": "sprite_grid",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 203
+      "line": 204
     },
     {
       "name": "build_atlas_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 224
+      "line": 225
     },
     {
       "name": "validate_raster_file",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 255
+      "line": 256
     },
     {
       "name": "select_tools",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 305
+      "line": 306
     },
     {
       "name": "build_plan",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 323
+      "line": 324
     },
     {
       "name": "load_valid_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 352
+      "line": 353
     },
     {
       "name": "cmd_validate",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 368
+      "line": 369
     },
     {
       "name": "cmd_plan",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 376
+      "line": 377
     },
     {
       "name": "cmd_validate_raster",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 384
+      "line": 385
     },
     {
       "name": "cmd_atlas_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 398
+      "line": 399
     },
     {
       "name": "parser",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 422
+      "line": 423
     },
     {
       "name": "main",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 541
+      "line": 552
     },
     {
-      "name": "_name_suffixes",
+      "name": "detect_godot",
       "kind": "function",
-      "file": "godot_3d_delivery.py",
-      "line": 24
+      "file": "godot_handoff.py",
+      "line": 10
     },
     {
-      "name": "godot_3d_delivery_report",
+      "name": "build_import_recommendations",
       "kind": "function",
-      "file": "godot_3d_delivery.py",
-      "line": 38
+      "file": "godot_handoff.py",
+      "line": 18
+    },
+    {
+      "name": "prepare_godot_handoff",
+      "kind": "function",
+      "file": "godot_handoff.py",
+      "line": 52
+    },
+    {
+      "name": "godot_import_command",
+      "kind": "function",
+      "file": "godot_handoff.py",
+      "line": 125
+    },
+    {
+      "name": "validate_godot_handoff",
+      "kind": "function",
+      "file": "godot_handoff.py",
+      "line": 135
     },
     {
       "name": "chunk",
@@ -267,52 +280,46 @@
       "line": 162
     },
     {
-      "name": "Godot3DDeliveryTests",
+      "name": "GodotHandoffTests",
       "kind": "class",
-      "file": "tests/test_godot_3d_delivery.py",
-      "line": 9
-    },
-    {
-      "name": "write",
-      "kind": "function",
-      "file": "tests/test_godot_3d_delivery.py",
-      "line": 10
-    },
-    {
-      "name": "base",
-      "kind": "function",
-      "file": "tests/test_godot_3d_delivery.py",
+      "file": "tests/test_godot_handoff.py",
       "line": 15
     },
     {
-      "name": "test_detects_godot_name_suffixes",
+      "name": "test_recommendations_disable_animation_for_prop_without_clips",
       "kind": "function",
-      "file": "tests/test_godot_3d_delivery.py",
-      "line": 26
+      "file": "tests/test_godot_handoff.py",
+      "line": 16
     },
     {
-      "name": "test_duplicate_node_names_warn",
+      "name": "test_prepare_handoff_copies_glb_and_writes_project",
       "kind": "function",
-      "file": "tests/test_godot_3d_delivery.py",
-      "line": 35
+      "file": "tests/test_godot_handoff.py",
+      "line": 25
     },
     {
-      "name": "test_loop_animation_hint_detected",
+      "name": "test_non_glb_is_rejected",
       "kind": "function",
-      "file": "tests/test_godot_3d_delivery.py",
-      "line": 43
+      "file": "tests/test_godot_handoff.py",
+      "line": 48
     },
     {
-      "name": "test_remote_image_blocks_delivery",
+      "name": "test_import_command_uses_headless_import",
       "kind": "function",
-      "file": "tests/test_godot_3d_delivery.py",
-      "line": 51
+      "file": "tests/test_godot_handoff.py",
+      "line": 56
     },
     {
-      "name": "test_double_sided_material_warns",
+      "name": "test_missing_godot_is_non_blocking",
       "kind": "function",
-      "file": "tests/test_godot_3d_delivery.py",
-      "line": 61
+      "file": "tests/test_godot_handoff.py",
+      "line": 65
+    },
+    {
+      "name": "test_available_godot_import_passes",
+      "kind": "function",
+      "file": "tests/test_godot_handoff.py",
+      "line": 77
     },
     {
       "name": "Toolchain3DTests",
@@ -384,72 +391,72 @@
       "name": "detect_3d_tools",
       "kind": "function",
       "file": "toolchain_3d.py",
-      "line": 16
+      "line": 18
     },
     {
       "name": "_quote",
       "kind": "function",
       "file": "toolchain_3d.py",
-      "line": 38
+      "line": 40
     },
     {
       "name": "validator_command",
       "kind": "function",
       "file": "toolchain_3d.py",
-      "line": 42
+      "line": 44
     },
     {
       "name": "gltf_transform_command",
       "kind": "function",
       "file": "toolchain_3d.py",
-      "line": 46
+      "line": 48
     },
     {
       "name": "gltfpack_command",
       "kind": "function",
       "file": "toolchain_3d.py",
-      "line": 59
+      "line": 61
     },
     {
       "name": "build_3d_pipeline",
       "kind": "function",
       "file": "toolchain_3d.py",
-      "line": 78
+      "line": 80
     },
     {
       "name": "prepare_3d_pipeline",
       "kind": "function",
       "file": "toolchain_3d.py",
-      "line": 303
+      "line": 305
     },
     {
       "name": "execute_command",
       "kind": "function",
       "file": "toolchain_3d.py",
-      "line": 316
+      "line": 318
     },
     {
       "name": "_read_json_if_exists",
       "kind": "function",
       "file": "toolchain_3d.py",
-      "line": 334
+      "line": 336
     },
     {
       "name": "_build_production_summary",
       "kind": "function",
       "file": "toolchain_3d.py",
-      "line": 344
+      "line": 346
     },
     {
       "name": "execute_3d_pipeline",
       "kind": "function",
       "file": "toolchain_3d.py",
-      "line": 386
+      "line": 388
     }
   ],
   "selected_tests": [
     "tests/test_asset_forge.py",
-    "tests/test_godot_3d_delivery.py",
+    "tests/test_godot_handoff.py",
     "tests/test_toolchain_3d.py"
   ]
 }
