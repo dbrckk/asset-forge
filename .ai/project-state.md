@@ -93,21 +93,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T20:56:35Z
+Generated: 2026-09-18T21:04:19Z
 
 ### Git
 - Branch: `main`
-- Head: `f43a335e86f3`
-- Commit date: 2026-09-18T22:55:32+02:00
-- Commit: docs: record opt-in atlas rotation milestone
-- Tracked files: 187
+- Head: `0288881648c9`
+- Commit date: 2026-09-18T22:59:38+02:00
+- Commit: docs: record runtime atlas consumer milestone
+- Tracked files: 191
 
 ### Recently changed files
 - `README.md`
-- `tests/test_godot_export.py`
-- `tests/test_raster_pack.py`
-- `raster_pack.py`
-- `asset_forge.py`
+- `.repo-standards.yml`
+- `tests/test_runtime_atlas.py`
+- `schemas/runtime-atlas.schema.json`
+- `runtime_atlas.py`
 
 ### Project signals
 - No common build descriptor detected

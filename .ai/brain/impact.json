@@ -1,10 +1,14 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "763491c35cc2ba63a155d784bc01737f75ada061",
-  "head": "f43a335e86f341523dccc413f7e9aa8580942ccd",
+  "base": "f43a335e86f341523dccc413f7e9aa8580942ccd",
+  "head": "0288881648c99ec03f804b687beb667707e668e6",
   "index_mode": "incremental",
   "changed_files": [
+    {
+      "path": ".github/workflows/validate.yml",
+      "status": "M"
+    },
     {
       "path": ".repo-standards.yml",
       "status": "M"
@@ -18,531 +22,137 @@
       "status": "M"
     },
     {
-      "path": "godot_export.py",
-      "status": "M"
+      "path": "runtime_atlas.py",
+      "status": "A"
     },
     {
-      "path": "raster_pack.py",
-      "status": "M"
+      "path": "schemas/runtime-atlas.schema.json",
+      "status": "A"
     },
     {
-      "path": "tests/test_godot_export.py",
-      "status": "M"
-    },
-    {
-      "path": "tests/test_raster_pack.py",
-      "status": "M"
+      "path": "tests/test_runtime_atlas.py",
+      "status": "A"
     }
   ],
   "changed_source_files": [
     "asset_forge.py",
-    "godot_export.py",
-    "raster_pack.py",
-    "tests/test_godot_export.py",
-    "tests/test_raster_pack.py"
+    "runtime_atlas.py",
+    "tests/test_runtime_atlas.py"
   ],
   "impacted_files": [
     "asset_forge.py",
-    "gltf_binary_metrics.py",
-    "godot_export.py",
-    "raster_pack.py",
+    "runtime_atlas.py",
     "tests/test_asset_forge.py",
-    "tests/test_godot_export.py",
-    "tests/test_raster_backend.py",
-    "tests/test_raster_pack.py"
+    "tests/test_runtime_atlas.py"
   ],
   "impacted_symbols": [
     {
       "name": "load_json",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 65
+      "line": 66
     },
     {
       "name": "validate_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 73
+      "line": 74
     },
     {
       "name": "is_power_of_two",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 131
+      "line": 132
     },
     {
       "name": "sprite_grid",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 135
+      "line": 136
     },
     {
       "name": "build_atlas_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 156
+      "line": 157
     },
     {
       "name": "validate_raster_file",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 187
+      "line": 188
     },
     {
       "name": "select_tools",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 246
+      "line": 247
     },
     {
       "name": "build_plan",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 264
+      "line": 265
     },
     {
       "name": "load_valid_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 293
+      "line": 294
     },
     {
       "name": "cmd_validate",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 309
+      "line": 310
     },
     {
       "name": "cmd_plan",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 317
+      "line": 318
     },
     {
       "name": "cmd_validate_raster",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 325
+      "line": 326
     },
     {
       "name": "cmd_atlas_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 339
+      "line": 340
     },
     {
       "name": "parser",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 363
+      "line": 364
     },
     {
       "name": "main",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 531
+      "line": 536
     },
     {
-      "name": "_decode_data_uri",
+      "name": "_positive_int",
       "kind": "function",
-      "file": "gltf_binary_metrics.py",
-      "line": 12
+      "file": "runtime_atlas.py",
+      "line": 4
     },
     {
-      "name": "_safe_local_path",
+      "name": "_non_negative_int",
       "kind": "function",
-      "file": "gltf_binary_metrics.py",
+      "file": "runtime_atlas.py",
+      "line": 14
+    },
+    {
+      "name": "build_runtime_atlas",
+      "kind": "function",
+      "file": "runtime_atlas.py",
       "line": 24
-    },
-    {
-      "name": "_glb_bin_chunk",
-      "kind": "function",
-      "file": "gltf_binary_metrics.py",
-      "line": 36
-    },
-    {
-      "name": "load_buffer_payloads",
-      "kind": "function",
-      "file": "gltf_binary_metrics.py",
-      "line": 58
-    },
-    {
-      "name": "buffer_view_bytes",
-      "kind": "function",
-      "file": "gltf_binary_metrics.py",
-      "line": 90
-    },
-    {
-      "name": "_png_dimensions",
-      "kind": "function",
-      "file": "gltf_binary_metrics.py",
-      "line": 121
-    },
-    {
-      "name": "_jpeg_dimensions",
-      "kind": "function",
-      "file": "gltf_binary_metrics.py",
-      "line": 128
-    },
-    {
-      "name": "_webp_dimensions",
-      "kind": "function",
-      "file": "gltf_binary_metrics.py",
-      "line": 155
-    },
-    {
-      "name": "image_dimensions",
-      "kind": "function",
-      "file": "gltf_binary_metrics.py",
-      "line": 163
-    },
-    {
-      "name": "inspect_images",
-      "kind": "function",
-      "file": "gltf_binary_metrics.py",
-      "line": 175
-    },
-    {
-      "name": "inspect_rig_and_animation",
-      "kind": "function",
-      "file": "gltf_binary_metrics.py",
-      "line": 241
-    },
-    {
-      "name": "_godot_string",
-      "kind": "function",
-      "file": "godot_export.py",
-      "line": 7
-    },
-    {
-      "name": "_validate_frames",
-      "kind": "function",
-      "file": "godot_export.py",
-      "line": 11
-    },
-    {
-      "name": "_normalize_animations",
-      "kind": "function",
-      "file": "godot_export.py",
-      "line": 82
-    },
-    {
-      "name": "render_spriteframes",
-      "kind": "function",
-      "file": "godot_export.py",
-      "line": 173
-    },
-    {
-      "name": "write_spriteframes",
-      "kind": "function",
-      "file": "godot_export.py",
-      "line": 250
-    },
-    {
-      "name": "_read_webp_bytes",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 20
-    },
-    {
-      "name": "_webp_chunks",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 27
-    },
-    {
-      "name": "_webp_vp8x_info",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 60
-    },
-    {
-      "name": "_webp_vp8l_info",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 79
-    },
-    {
-      "name": "_webp_vp8_info",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 96
-    },
-    {
-      "name": "inspect_webp_bytes",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 118
-    },
-    {
-      "name": "inspect_webp",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 184
-    },
-    {
-      "name": "_read_png_bytes",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 188
-    },
-    {
-      "name": "_chunks",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 195
-    },
-    {
-      "name": "_validate_ihdr",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 262
-    },
-    {
-      "name": "_validate_palette_transparency",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 286
-    },
-    {
-      "name": "_decompress_idat",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 351
-    },
-    {
-      "name": "inspect_raster",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 380
-    },
-    {
-      "name": "inspect_png",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 391
-    },
-    {
-      "name": "_paeth",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 419
-    },
-    {
-      "name": "_unfilter_scanlines",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 431
-    },
-    {
-      "name": "_scanline_layout",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 472
-    },
-    {
-      "name": "_unpack_packed_samples",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 480
-    },
-    {
-      "name": "_sample16_to_u8",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 500
-    },
-    {
-      "name": "_adam7_extent",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 515
-    },
-    {
-      "name": "_decode_row_to_rgba",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 521
-    },
-    {
-      "name": "_decode_adam7",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 632
-    },
-    {
-      "name": "decode_raster_rgba",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 687
-    },
-    {
-      "name": "raster_backend_status",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 712
-    },
-    {
-      "name": "decode_rgba",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 727
-    },
-    {
-      "name": "_chunk",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 789
-    },
-    {
-      "name": "_filter_row",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 798
-    },
-    {
-      "name": "_filter_score",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 822
-    },
-    {
-      "name": "_png_bytes_rgba",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 826
-    },
-    {
-      "name": "encode_rgba",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 859
-    },
-    {
-      "name": "encode_webp",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 870
-    },
-    {
-      "name": "recompress_png",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 909
-    },
-    {
-      "name": "_alpha_bounds",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 934
-    },
-    {
-      "name": "_crop_rgba",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 952
-    },
-    {
-      "name": "_blit_rgba",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 974
-    },
-    {
-      "name": "_extrude_rgba",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 991
-    },
-    {
-      "name": "_rotate_rgba_clockwise",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1038
-    },
-    {
-      "name": "_prepare_frame",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1052
-    },
-    {
-      "name": "_validate_atlas_dimensions",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1077
-    },
-    {
-      "name": "_write_atlas_png",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1105
-    },
-    {
-      "name": "_next_power_of_two",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1125
-    },
-    {
-      "name": "_rects_intersect",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1131
-    },
-    {
-      "name": "_rect_contains",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1140
-    },
-    {
-      "name": "_split_free_rect",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1149
-    },
-    {
-      "name": "_prune_free_rects",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1198
-    },
-    {
-      "name": "_maxrects_score",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1211
-    },
-    {
-      "name": "_pack_maxrects",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1227
-    },
-    {
-      "name": "_render_compact_layout",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1368
-    },
-    {
-      "name": "_choose_maxrects_layout",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1409
-    },
-    {
-      "name": "pack_compact_atlas",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1523
-    },
-    {
-      "name": "pack_uniform_atlas",
-      "kind": "function",
-      "file": "raster_pack.py",
-      "line": 1667
     },
     {
       "name": "chunk",
@@ -665,634 +275,44 @@
       "line": 224
     },
     {
-      "name": "GodotExportTests",
+      "name": "RuntimeAtlasTests",
       "kind": "class",
-      "file": "tests/test_godot_export.py",
-      "line": 8
+      "file": "tests/test_runtime_atlas.py",
+      "line": 6
     },
     {
-      "name": "metadata",
+      "name": "test_exports_trim_and_rotation_semantics",
       "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 9
+      "file": "tests/test_runtime_atlas.py",
+      "line": 7
     },
     {
-      "name": "test_render_spriteframes_uses_atlas_regions",
+      "name": "test_defaults_non_rotated_source_region",
       "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 17
+      "file": "tests/test_runtime_atlas.py",
+      "line": 56
     },
     {
-      "name": "test_trimmed_frame_emits_atlas_margin",
+      "name": "test_rejects_rotation_dimension_mismatch",
       "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 35
+      "file": "tests/test_runtime_atlas.py",
+      "line": 69
     },
     {
-      "name": "test_untrimmed_frame_does_not_emit_margin",
+      "name": "test_rejects_source_trim_out_of_bounds",
       "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 58
+      "file": "tests/test_runtime_atlas.py",
+      "line": 90
     },
     {
-      "name": "test_rejects_trim_metadata_that_does_not_fit_source",
+      "name": "test_rejects_duplicate_indices",
       "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 62
-    },
-    {
-      "name": "test_rejects_frame_outside_known_atlas_bounds",
-      "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 80
-    },
-    {
-      "name": "test_rejects_rotated_atlas_frame",
-      "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 89
-    },
-    {
-      "name": "test_multiple_animations",
-      "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 108
-    },
-    {
-      "name": "test_rejects_duplicate_animation_names",
-      "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 134
-    },
-    {
-      "name": "test_rejects_out_of_range_animation_frame",
-      "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 145
-    },
-    {
-      "name": "test_write_spriteframes_creates_file",
-      "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 153
-    },
-    {
-      "name": "test_rejects_empty_metadata",
-      "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 166
-    },
-    {
-      "name": "test_rejects_invalid_fps",
-      "kind": "function",
-      "file": "tests/test_godot_export.py",
-      "line": 170
-    },
-    {
-      "name": "RasterBackendTests",
-      "kind": "class",
-      "file": "tests/test_raster_backend.py",
-      "line": 10
-    },
-    {
-      "name": "test_backend_status_shape",
-      "kind": "function",
-      "file": "tests/test_raster_backend.py",
-      "line": 11
-    },
-    {
-      "name": "test_missing_backend_returns_clear_error",
-      "kind": "function",
-      "file": "tests/test_raster_backend.py",
-      "line": 18
-    },
-    {
-      "name": "test_real_webp_lossless_decode_to_rgba",
-      "kind": "function",
-      "file": "tests/test_raster_backend.py",
-      "line": 39
-    },
-    {
-      "name": "test_pack_atlas_accepts_mixed_png_and_webp",
-      "kind": "function",
-      "file": "tests/test_raster_backend.py",
-      "line": 60
-    },
-    {
-      "name": "test_animated_webp_is_rejected_for_atlas_decode",
-      "kind": "function",
-      "file": "tests/test_raster_backend.py",
-      "line": 85
-    },
-    {
-      "name": "test_webp_encoder_validates_quality_and_method_without_backend",
-      "kind": "function",
-      "file": "tests/test_raster_backend.py",
-      "line": 105
-    },
-    {
-      "name": "test_encode_webp_lossless_roundtrip",
-      "kind": "function",
-      "file": "tests/test_raster_backend.py",
-      "line": 139
-    },
-    {
-      "name": "webp_chunk",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 14
-    },
-    {
-      "name": "webp_file",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 19
-    },
-    {
-      "name": "chunk",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 24
-    },
-    {
-      "name": "adam7_extent",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 44
-    },
-    {
-      "name": "pack_indexed_samples",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 50
-    },
-    {
-      "name": "adam7_raw",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 63
-    },
-    {
-      "name": "write_rgba_png",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 83
-    },
-    {
-      "name": "RasterPackTests",
-      "kind": "class",
-      "file": "tests/test_raster_pack.py",
-      "line": 95
-    },
-    {
-      "name": "test_pack_uniform_atlas_writes_png_and_metadata",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 96
-    },
-    {
-      "name": "test_pack_rejects_mixed_frame_sizes",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 123
-    },
-    {
-      "name": "test_rgb_png_is_promoted_to_opaque_rgba",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 134
-    },
-    {
-      "name": "test_recompress_png_preserves_pixels",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 152
-    },
-    {
-      "name": "test_recompress_png_reports_sizes",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 169
-    },
-    {
-      "name": "test_grayscale_png_decodes_to_rgba",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 185
-    },
-    {
-      "name": "test_grayscale_alpha_png_decodes_to_rgba",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 200
-    },
-    {
-      "name": "test_indexed_png_with_transparency_decodes_to_rgba",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 214
-    },
-    {
-      "name": "test_rejects_invalid_ihdr_length",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 235
-    },
-    {
-      "name": "test_rejects_zero_dimensions",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 247
-    },
-    {
-      "name": "test_rejects_duplicate_ihdr",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 260
-    },
-    {
-      "name": "test_rejects_non_consecutive_idat",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 274
-    },
-    {
-      "name": "test_rejects_trailing_data_after_iend",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 291
-    },
-    {
-      "name": "test_rejects_indexed_trns_longer_than_palette",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 299
-    },
-    {
-      "name": "test_rejects_trns_for_rgba",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 314
-    },
-    {
-      "name": "test_truecolor_trns_is_applied",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 328
-    },
-    {
-      "name": "test_rejects_decompressed_data_larger_than_expected",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 344
-    },
-    {
-      "name": "test_hardened_inspector_reports_palette_and_transparency",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 358
-    },
-    {
-      "name": "test_oversized_file_is_rejected_before_read",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 376
-    },
-    {
-      "name": "test_indexed_1bit_png_decodes_to_rgba",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 384
-    },
-    {
-      "name": "test_indexed_2bit_png_decodes_to_rgba",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 409
-    },
-    {
-      "name": "test_indexed_4bit_png_ignores_padding_nibble",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 440
-    },
-    {
-      "name": "test_indexed_low_bit_depth_transparency_is_applied",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 465
-    },
-    {
-      "name": "test_indexed_low_bit_depth_palette_limit_is_enforced",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 490
-    },
-    {
-      "name": "test_grayscale_1bit_png_decodes_to_rgba",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 509
-    },
-    {
-      "name": "test_grayscale_2bit_png_scales_samples",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 530
-    },
-    {
-      "name": "test_grayscale_4bit_png_ignores_padding_nibble",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 553
-    },
-    {
-      "name": "test_grayscale_low_bit_depth_trns_is_applied_before_scaling",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 575
-    },
-    {
-      "name": "test_grayscale_trns_out_of_range_is_rejected",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 600
-    },
-    {
-      "name": "test_grayscale_16bit_png_decodes_to_rgba8",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 614
-    },
-    {
-      "name": "test_truecolor_16bit_png_decodes_to_rgba8",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 636
-    },
-    {
-      "name": "test_grayscale_alpha_16bit_png_decodes_to_rgba8",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 651
-    },
-    {
-      "name": "test_rgba_16bit_png_decodes_to_rgba8",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 666
-    },
-    {
-      "name": "test_grayscale_16bit_trns_compares_original_sample",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 681
-    },
-    {
-      "name": "test_truecolor_16bit_trns_compares_original_samples",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 698
-    },
-    {
-      "name": "test_truecolor_8bit_trns_out_of_range_is_rejected",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 718
-    },
-    {
-      "name": "test_adam7_rgba8_reconstructs_full_image",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 732
-    },
-    {
-      "name": "pixel",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 738
-    },
-    {
-      "name": "test_adam7_indexed_1bit_reconstructs_checkerboard",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 754
-    },
-    {
-      "name": "test_adam7_rgba16_reconstructs_and_downconverts",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 794
-    },
-    {
-      "name": "pixel16",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 800
-    },
-    {
-      "name": "test_adam7_expected_size_is_bounded_and_exact",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 829
-    },
-    {
-      "name": "test_webp_vp8x_dimensions_alpha_and_animation",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 844
-    },
-    {
-      "name": "test_webp_vp8l_dimensions_and_alpha",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 859
-    },
-    {
-      "name": "test_webp_vp8_lossy_dimensions",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 870
-    },
-    {
-      "name": "test_webp_alpha_chunk_marks_alpha",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 886
-    },
-    {
-      "name": "test_webp_incomplete_vp8x_is_rejected",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 906
-    },
-    {
-      "name": "test_webp_reserved_vp8x_bits_are_rejected",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 912
-    },
-    {
-      "name": "test_webp_vp8x_dimension_mismatch_is_rejected",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 919
-    },
-    {
-      "name": "test_webp_lossy_alpha_flag_requires_alph_chunk",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 926
-    },
-    {
-      "name": "test_webp_bad_riff_size_is_rejected",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 934
-    },
-    {
-      "name": "test_webp_file_inspection_reads_from_path",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 940
-    },
-    {
-      "name": "test_uniform_atlas_trim_records_source_offsets",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 951
-    },
-    {
-      "name": "test_uniform_atlas_extrudes_edge_pixels",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 981
-    },
-    {
-      "name": "test_compact_atlas_packs_variable_size_frames",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1005
-    },
-    {
-      "name": "test_compact_atlas_rejects_frame_wider_than_budget",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1039
-    },
-    {
-      "name": "test_recompress_png_keeps_original_when_candidate_is_larger",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1052
-    },
-    {
-      "name": "test_uniform_atlas_width_budget_is_enforced",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1073
-    },
-    {
-      "name": "test_uniform_atlas_pixel_budget_is_enforced",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1088
-    },
-    {
-      "name": "test_compact_atlas_height_budget_is_enforced",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1100
-    },
-    {
-      "name": "test_atlas_byte_budget_preserves_existing_output",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1116
-    },
-    {
-      "name": "test_compact_atlas_reports_occupancy_metrics",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1135
-    },
-    {
-      "name": "test_compact_atlas_regions_do_not_overlap",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1161
-    },
-    {
-      "name": "test_maxrects_compacts_better_than_simple_shelf_case",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1198
-    },
-    {
-      "name": "test_compact_atlas_reports_wasted_pixels",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1218
-    },
-    {
-      "name": "test_compact_atlas_minimum_occupancy_can_fail_build",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1238
-    },
-    {
-      "name": "test_compact_atlas_rejects_invalid_occupancy_threshold",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1256
-    },
-    {
-      "name": "test_compact_atlas_auto_selects_best_evaluated_heuristic",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1270
-    },
-    {
-      "name": "test_compact_atlas_auto_skips_heuristic_outside_byte_budget",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1305
-    },
-    {
-      "name": "test_compact_atlas_forced_heuristic_is_respected",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1343
-    },
-    {
-      "name": "test_compact_atlas_rejects_unknown_heuristic",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1363
-    },
-    {
-      "name": "test_compact_atlas_rotation_can_fit_frame_that_is_too_wide",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1377
-    },
-    {
-      "name": "test_compact_atlas_rotation_is_disabled_by_default",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1420
-    },
-    {
-      "name": "test_compact_atlas_rotation_metadata_counts_rotated_frames",
-      "kind": "function",
-      "file": "tests/test_raster_pack.py",
-      "line": 1433
+      "file": "tests/test_runtime_atlas.py",
+      "line": 110
     }
   ],
   "selected_tests": [
     "tests/test_asset_forge.py",
-    "tests/test_godot_export.py",
-    "tests/test_raster_backend.py",
-    "tests/test_raster_pack.py"
+    "tests/test_runtime_atlas.py"
   ]
 }

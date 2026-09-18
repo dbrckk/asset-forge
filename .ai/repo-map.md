@@ -70,6 +70,7 @@ schemas/
   3d-quality-profile.schema.json
   asset-manifest.schema.json
   godot4-handoff-profile.schema.json
+  runtime-atlas.schema.json
   vector-profile.schema.json
 tests/
   test_animation_infer.py
@@ -86,6 +87,7 @@ tests/
   test_godot_handoff.py
   test_raster_backend.py
   test_raster_pack.py
+  test_runtime_atlas.py
   test_starlist_bridge.py
   test_svg_tools.py
   test_toolchain_3d.py
@@ -106,6 +108,7 @@ godot_handoff.py
 raster_backend.py
 raster_pack.py
 README.md
+runtime_atlas.py
 starlist_bridge.py
 svg_tools.py
 toolchain_3d.py
@@ -206,7 +209,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py raster_backend.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -809,6 +812,109 @@ jobs:
     }
   },
   "additionalProperties": false
+}
+````
+
+## File: schemas/runtime-atlas.schema.json
+````json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asset-forge.local/runtime-atlas.schema.json",
+  "title": "Asset Forge Runtime Atlas",
+  "type": "object",
+  "required": ["format", "version", "image", "imageSize", "frameCount", "capabilities", "frames"],
+  "additionalProperties": false,
+  "properties": {
+    "format": {"const": "asset-forge-runtime-atlas"},
+    "version": {"const": 1},
+    "image": {"type": "string", "minLength": 1},
+    "imageSize": {
+      "type": "object",
+      "required": ["width", "height"],
+      "additionalProperties": false,
+      "properties": {
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1}
+      }
+    },
+    "frameCount": {"type": "integer", "minimum": 1},
+    "capabilities": {
+      "type": "object",
+      "required": ["trimOffsets", "clockwise90Rotation"],
+      "additionalProperties": false,
+      "properties": {
+        "trimOffsets": {"const": true},
+        "clockwise90Rotation": {"const": true}
+      }
+    },
+    "frames": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["index", "atlasRegion", "uv", "sourceRegion", "sourceSize", "trimOffset", "rotation"],
+        "additionalProperties": false,
+        "properties": {
+          "index": {"type": "integer", "minimum": 0},
+          "name": {"type": ["string", "null"]},
+          "atlasRegion": {"$ref": "#/$defs/rect"},
+          "uv": {
+            "type": "object",
+            "required": ["u0", "v0", "u1", "v1"],
+            "additionalProperties": false,
+            "properties": {
+              "u0": {"type": "number", "minimum": 0, "maximum": 1},
+              "v0": {"type": "number", "minimum": 0, "maximum": 1},
+              "u1": {"type": "number", "minimum": 0, "maximum": 1},
+              "v1": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          },
+          "sourceRegion": {"$ref": "#/$defs/size"},
+          "sourceSize": {"$ref": "#/$defs/size"},
+          "trimOffset": {
+            "type": "object",
+            "required": ["x", "y"],
+            "additionalProperties": false,
+            "properties": {
+              "x": {"type": "integer", "minimum": 0},
+              "y": {"type": "integer", "minimum": 0}
+            }
+          },
+          "rotation": {
+            "type": "object",
+            "required": ["rotated", "degreesClockwise"],
+            "additionalProperties": false,
+            "properties": {
+              "rotated": {"type": "boolean"},
+              "degreesClockwise": {"enum": [0, 90]}
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "size": {
+      "type": "object",
+      "required": ["width", "height"],
+      "additionalProperties": false,
+      "properties": {
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1}
+      }
+    },
+    "rect": {
+      "type": "object",
+      "required": ["x", "y", "width", "height"],
+      "additionalProperties": false,
+      "properties": {
+        "x": {"type": "integer", "minimum": 0},
+        "y": {"type": "integer", "minimum": 0},
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
 }
 ````
 
@@ -1888,6 +1994,28 @@ def test_compact_atlas_rotation_is_disabled_by_default(self)
 def test_compact_atlas_rotation_metadata_counts_rotated_frames(self)
 ````
 
+## File: tests/test_runtime_atlas.py
+````python
+class RuntimeAtlasTests(unittest.TestCase)
+⋮----
+def test_exports_trim_and_rotation_semantics(self)
+⋮----
+metadata = {
+⋮----
+result = build_runtime_atlas(metadata)
+frame = result["frames"][0]
+⋮----
+def test_defaults_non_rotated_source_region(self)
+⋮----
+frame = build_runtime_atlas(metadata)["frames"][0]
+⋮----
+def test_rejects_rotation_dimension_mismatch(self)
+⋮----
+def test_rejects_source_trim_out_of_bounds(self)
+⋮----
+def test_rejects_duplicate_indices(self)
+````
+
 ## File: tests/test_starlist_bridge.py
 ````python
 FAKE_RECOMMENDER = r'''#!/usr/bin/env python3
@@ -2040,7 +2168,7 @@ def test_invalid_target_engine_is_rejected(self)
 ````yaml
 source: dbrckk/repo-standards
 ref: main
-version: 14
+version: 15
 adopted: true
 workflow_mode: unified-single-commit
 repo_brain: dbrckk/repo-brain@main
@@ -2049,6 +2177,7 @@ hotset_fallback: recent-project-state
 graph_routing: compact-sharded-reverse-deps
 graph_resolver: java-kotlin-tail-v2
 graph_enrichment: unique-type-symbol-references-v1
+context_budget: confidence-dynamic-3-6-12
 ai_context:
   index: .ai/index.md
   project_state: .ai/project-state.md
@@ -2306,6 +2435,8 @@ optimize = sub.add_parser("optimize-png", help="losslessly recompress a supporte
 ⋮----
 webp_encode = sub.add_parser("encode-webp", help="encode PNG or WebP input as WebP via optional Pillow/libwebp")
 ⋮----
+runtime = sub.add_parser("export-runtime-atlas", help="export normalized rotation-aware runtime atlas JSON")
+⋮----
 godot = sub.add_parser("export-godot", help="export Godot 4 SpriteFrames .tres from atlas metadata")
 ⋮----
 discover = sub.add_parser("discover-tools", help="query dbrckk/star-list for visual tooling")
@@ -2356,6 +2487,9 @@ metadata = pack_compact_atlas(
 result = recompress_png(args.input, args.output)
 ⋮----
 result = encode_webp(
+⋮----
+source = load_json(args.metadata)
+runtime = build_runtime_atlas(source)
 ⋮----
 metadata = load_json(args.metadata)
 animations = None
@@ -4250,6 +4384,72 @@ height
 For rotated frames, `width`/`height` describe the stored atlas region after rotation, while `sourceRegionWidth`/`sourceRegionHeight` describe the trimmed region before rotation. Source canvas dimensions and trim offsets remain in `sourceWidth`, `sourceHeight`, `offsetX`, and `offsetY`.
 
 The current Godot SpriteFrames exporter intentionally rejects rotated frames because Godot `AtlasTexture` regions do not automatically undo packed-image rotation. Use rotation only with consumers that explicitly understand the metadata.
+
+
+### Rotation-aware runtime atlas export
+
+A generic engine/runtime consumer can now be generated from Asset Forge atlas metadata:
+
+```bash
+python asset_forge.py export-runtime-atlas build/atlas.json build/runtime-atlas.json
+```
+
+The versioned `asset-forge-runtime-atlas` format is engine-neutral and preserves:
+
+```text
+atlasRegion
+uv
+sourceRegion
+sourceSize
+trimOffset
+rotation
+```
+
+For a rotated frame, `atlasRegion` describes the stored 90°-rotated rectangle, `sourceRegion` describes the pre-rotation trimmed sprite, and `rotation.degreesClockwise=90` tells the consumer how to restore orientation. Normalized `u0/v0/u1/v1` coordinates are included for direct texture sampling.
+
+The top-level `capabilities` object declares support for trim offsets and clockwise 90° rotation. The contract is documented in `schemas/runtime-atlas.schema.json`. This export is the rotation-aware alternative to the Godot SpriteFrames exporter, which intentionally rejects rotated regions.
+````
+
+## File: runtime_atlas.py
+````python
+def _positive_int(value, field: str) -> int
+⋮----
+result = int(value)
+⋮----
+def _non_negative_int(value, field: str) -> int
+⋮----
+def build_runtime_atlas(atlas_metadata: dict) -> dict
+⋮----
+frames = atlas_metadata.get("frames")
+⋮----
+image = atlas_metadata.get("image")
+⋮----
+atlas_width = _positive_int(atlas_metadata.get("imageWidth"), "imageWidth")
+atlas_height = _positive_int(atlas_metadata.get("imageHeight"), "imageHeight")
+⋮----
+runtime_frames = []
+seen_indices: set[int] = set()
+⋮----
+index = _non_negative_int(frame.get("index", fallback_index), f"frame {fallback_index}.index")
+⋮----
+x = _non_negative_int(frame.get("x"), f"frame {index}.x")
+y = _non_negative_int(frame.get("y"), f"frame {index}.y")
+width = _positive_int(frame.get("width"), f"frame {index}.width")
+height = _positive_int(frame.get("height"), f"frame {index}.height")
+⋮----
+rotated = bool(frame.get("rotated", False))
+rotation_degrees = int(frame.get("rotationDegrees", 90 if rotated else 0))
+⋮----
+source_region_width = _positive_int(
+source_region_height = _positive_int(
+⋮----
+expected_width = source_region_height if rotated else source_region_width
+expected_height = source_region_width if rotated else source_region_height
+⋮----
+source_width = _positive_int(
+source_height = _positive_int(
+offset_x = _non_negative_int(frame.get("offsetX", 0), f"frame {index}.offsetX")
+offset_y = _non_negative_int(frame.get("offsetY", 0), f"frame {index}.offsetY")
 ````
 
 ## File: starlist_bridge.py
