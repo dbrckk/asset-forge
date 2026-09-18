@@ -105,6 +105,12 @@ def build_runtime_atlas(atlas_metadata: dict) -> dict:
                     "width": width,
                     "height": height,
                 },
+                "uv": {
+                    "u0": x / atlas_width,
+                    "v0": y / atlas_height,
+                    "u1": (x + width) / atlas_width,
+                    "v1": (y + height) / atlas_height,
+                },
                 "sourceRegion": {
                     "width": source_region_width,
                     "height": source_region_height,
@@ -134,5 +140,9 @@ def build_runtime_atlas(atlas_metadata: dict) -> dict:
             "height": atlas_height,
         },
         "frameCount": len(runtime_frames),
+        "capabilities": {
+            "trimOffsets": True,
+            "clockwise90Rotation": True,
+        },
         "frames": runtime_frames,
     }
