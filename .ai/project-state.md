@@ -9,7 +9,8 @@ Status: active
 - glTF/GLB structural inspection validates container/version/core arrays and core index references.
 - glTF quality reporting measures accessor-derived vertices/triangles, primitive coverage for normals/UVs/tangents/skinning, PBR texture usage, image embedding/externality, materials, and textures.
 - Binary-aware 3D metrics read locally available PNG/JPEG/WebP image dimensions, estimate decoded RGBA8 texture memory with mipmaps, and do not fetch remote URLs.
-- Rig/animation metrics report joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, and keyframe accessor counts.
+- Rig/animation metrics report joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, keyframe accessor counts, and readable animation durations.
+- Deep glTF diagnostics validate accessor layouts/ranges, byteStride/component alignment, JOINTS_0/WEIGHTS_0 consistency, animation sampler/channel references, interpolation modes, target paths, output counts, and strictly increasing key times.
 - 3D profiles for prop/environment/character include versioned geometry/material/texture budgets plus max texture dimension, estimated texture-memory budget, and character joint budgets.
 - Blender adapter generates reproducible export jobs, Blender Python scripts, and background CLI commands for GLB export.
 - 3D toolchain detects Blender, Khronos glTF Validator, glTF Transform, and gltfpack when installed.
@@ -32,7 +33,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Add deeper accessor/buffer diagnostics and animation/rig consistency checks, then improve engine-specific delivery validation.
+- Improve engine-specific delivery validation, beginning with Godot 4 3D import expectations and production handoff checks.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -41,13 +42,14 @@ Status: active
 - `python asset_forge.py plan examples/asset-manifest.json`
 - `python asset_forge.py validate-svg <input.svg> [--profile icon|ui|logo]`
 - `python asset_forge.py validate-gltf <input.gltf|input.glb> [--profile prop|environment|character]`
+- `python asset_forge.py diagnose-gltf <input.gltf|input.glb> [--output report.json]`
 - `python asset_forge.py quality-gltf <input.gltf|input.glb> [--profile prop|environment|character] [--output report.json]`
 - `python asset_forge.py 3d-toolchain-status`
 - `python asset_forge.py prepare-3d <source.blend> <workdir> [--profile ...] [--optimizer ...]`
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after binary texture metrics, RGBA8+mipmap estimates, and rig/animation reporting.
+- 2026-09-18: latest GitHub source inspected after deep accessor, skinning, animation consistency, and duration diagnostics.
 
 <!-- AUTO:START -->
 ## Automatic repository state
