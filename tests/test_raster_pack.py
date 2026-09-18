@@ -20,6 +20,56 @@ def chunk(kind: bytes, payload: bytes) -> bytes:
     )
 
 
+ADAM7_PASSES = (
+    (0, 0, 8, 8),
+    (4, 0, 8, 8),
+    (0, 4, 4, 8),
+    (2, 0, 4, 4),
+    (0, 2, 2, 4),
+    (1, 0, 2, 2),
+    (0, 1, 1, 2),
+)
+
+
+def adam7_extent(size: int, start: int, step: int) -> int:
+    if size <= start:
+        return 0
+    return (size - start + step - 1) // step
+
+
+def pack_indexed_samples(samples: list[int], depth: int) -> bytes:
+    per_byte = 8 // depth
+    output = bytearray()
+    for start in range(0, len(samples), per_byte):
+        byte = 0
+        group = samples[start : start + per_byte]
+        for index, sample in enumerate(group):
+            shift = 8 - depth * (index + 1)
+            byte |= sample << shift
+        output.append(byte)
+    return bytes(output)
+
+
+def adam7_raw(
+    width: int,
+    height: int,
+    pixel_bytes,
+) -> bytes:
+    raw = bytearray()
+    for x_start, y_start, x_step, y_step in ADAM7_PASSES:
+        pass_width = adam7_extent(width, x_start, x_step)
+        pass_height = adam7_extent(height, y_start, y_step)
+        if not pass_width or not pass_height:
+            continue
+        for py in range(pass_height):
+            raw.append(0)
+            y = y_start + py * y_step
+            for px in range(pass_width):
+                x = x_start + px * x_step
+                raw.extend(pixel_bytes(x, y))
+    return bytes(raw)
+
+
 def write_rgba_png(path: Path, width: int, height: int, pixel: bytes) -> None:
     ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
     row = pixel * width
@@ -667,6 +717,118 @@ class RasterPackTests(unittest.TestCase):
                 + chunk(b"IEND", b"")
             )
             with self.assertRaisesRegex(ValueError, "tRNS sample exceeds bit depth"):
+                decode_rgba(image)
+
+    def test_adam7_rgba8_reconstructs_full_image(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "adam7-rgba.png"
+            width = height = 8
+            ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 1)
+
+            def pixel(x, y):
+                return bytes([x * 10, y * 20, (x + y) * 5, 255])
+
+            raw = adam7_raw(width, height, pixel)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            w, h, pixels = decode_rgba(image)
+
+        self.assertEqual((w, h), (8, 8))
+        self.assertEqual(pixels[(5 * 8 + 3) * 4 : (5 * 8 + 3) * 4 + 4], pixel(3, 5))
+        self.assertEqual(pixels[(7 * 8 + 7) * 4 : (7 * 8 + 7) * 4 + 4], pixel(7, 7))
+
+    def test_adam7_indexed_1bit_reconstructs_checkerboard(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "adam7-indexed.png"
+            width = height = 8
+            ihdr = struct.pack(">IIBBBBB", width, height, 1, 3, 0, 0, 1)
+            palette = bytes([0, 0, 0, 255, 255, 255])
+
+            raw = bytearray()
+            for x_start, y_start, x_step, y_step in ADAM7_PASSES:
+                pass_width = adam7_extent(width, x_start, x_step)
+                pass_height = adam7_extent(height, y_start, y_step)
+                if not pass_width or not pass_height:
+                    continue
+                for py in range(pass_height):
+                    y = y_start + py * y_step
+                    samples = [
+                        (x_start + px * x_step + y) % 2
+                        for px in range(pass_width)
+                    ]
+                    raw.append(0)
+                    raw.extend(pack_indexed_samples(samples, 1))
+
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"PLTE", palette)
+                + chunk(b"IDAT", zlib.compress(bytes(raw)))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        for y in range(height):
+            for x in range(width):
+                start = (y * width + x) * 4
+                expected = 255 if (x + y) % 2 else 0
+                self.assertEqual(
+                    pixels[start : start + 4],
+                    bytes([expected, expected, expected, 255]),
+                )
+
+    def test_adam7_rgba16_reconstructs_and_downconverts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "adam7-rgba16.png"
+            width = height = 5
+            ihdr = struct.pack(">IIBBBBB", width, height, 16, 6, 0, 0, 1)
+
+            def pixel16(x, y):
+                return struct.pack(
+                    ">HHHH",
+                    x * 10000,
+                    y * 12000,
+                    (x + y) * 7000,
+                    65535,
+                )
+
+            raw = adam7_raw(width, height, pixel16)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        x, y = 4, 3
+        start = (y * width + x) * 4
+        expected16 = (x * 10000, y * 12000, (x + y) * 7000, 65535)
+        expected = bytes([
+            (expected16[0] * 255 + 32767) // 65535,
+            (expected16[1] * 255 + 32767) // 65535,
+            (expected16[2] * 255 + 32767) // 65535,
+            255,
+        ])
+        self.assertEqual(pixels[start : start + 4], expected)
+
+    def test_adam7_expected_size_is_bounded_and_exact(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "adam7-truncated.png"
+            width = height = 8
+            ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 1)
+            raw = adam7_raw(width, height, lambda x, y: bytes([x, y, 0, 255]))
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(raw[:-1]))
+                + chunk(b"IEND", b"")
+            )
+            with self.assertRaisesRegex(ValueError, "unexpected PNG scanline length|truncated"):
                 decode_rgba(image)
 
 
