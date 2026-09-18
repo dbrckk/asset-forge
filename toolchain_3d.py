@@ -137,6 +137,28 @@ def build_3d_pipeline(
         }
     )
 
+    commands.append(
+        {
+            "id": "quality-report",
+            "required": True,
+            "tool": "asset-forge",
+            "available": True,
+            "command": _quote(
+                [
+                    "python",
+                    "asset_forge.py",
+                    "quality-gltf",
+                    str(raw_glb),
+                    "--profile",
+                    profile,
+                    "--output",
+                    str(workdir / "quality-raw.json"),
+                ]
+            ),
+            "output": str(workdir / "quality-raw.json"),
+        }
+    )
+
     validator = tools["gltf-validator"]
     commands.append(
         {
@@ -213,6 +235,27 @@ def build_3d_pipeline(
                     ]
                 ),
                 "output": None,
+            }
+        )
+        commands.append(
+            {
+                "id": "post-optimization-quality",
+                "required": True,
+                "tool": "asset-forge",
+                "available": True,
+                "command": _quote(
+                    [
+                        "python",
+                        "asset_forge.py",
+                        "quality-gltf",
+                        str(final_glb),
+                        "--profile",
+                        profile,
+                        "--output",
+                        str(workdir / "quality-final.json"),
+                    ]
+                ),
+                "output": str(workdir / "quality-final.json"),
             }
         )
 
