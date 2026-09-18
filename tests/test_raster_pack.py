@@ -1215,6 +1215,58 @@ class RasterPackTests(unittest.TestCase):
         simple_shelf_area = 8 * 8
         self.assertLessEqual(metadata["contentArea"], simple_shelf_area)
 
+    def test_compact_atlas_reports_wasted_pixels(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            a = root / "a.png"
+            b = root / "b.png"
+            write_rgba_png(a, 4, 4, bytes([1, 2, 3, 255]))
+            write_rgba_png(b, 2, 2, bytes([4, 5, 6, 255]))
+
+            metadata = pack_compact_atlas(
+                [a, b],
+                root / "atlas.png",
+                max_width=8,
+                trim=False,
+            )
+
+        self.assertEqual(
+            metadata["wastedPixels"],
+            metadata["atlasArea"] - metadata["packedArea"],
+        )
+
+    def test_compact_atlas_minimum_occupancy_can_fail_build(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            a = root / "a.png"
+            b = root / "b.png"
+            write_rgba_png(a, 4, 4, bytes([1, 2, 3, 255]))
+            write_rgba_png(b, 1, 1, bytes([4, 5, 6, 255]))
+
+            with self.assertRaisesRegex(ValueError, "below minimum"):
+                pack_compact_atlas(
+                    [a, b],
+                    root / "atlas.png",
+                    max_width=16,
+                    power_of_two=True,
+                    min_occupancy=90,
+                    trim=False,
+                )
+
+    def test_compact_atlas_rejects_invalid_occupancy_threshold(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            a = root / "a.png"
+            write_rgba_png(a, 1, 1, bytes([1, 2, 3, 255]))
+
+            with self.assertRaisesRegex(ValueError, "min occupancy"):
+                pack_compact_atlas(
+                    [a],
+                    root / "atlas.png",
+                    min_occupancy=0,
+                    trim=False,
+                )
+
 
 if __name__ == "__main__":
     unittest.main()
