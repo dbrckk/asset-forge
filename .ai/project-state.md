@@ -6,33 +6,38 @@ Status: active
 - Repository initialized as a central 2D/3D visual asset production pipeline.
 - Dependency-free Python CLI validates manifests and builds deterministic production plans.
 - PNG validation covers integrity/CRC, transparency, palette metadata, budgets, sprite grids, frame counts, and optional power-of-two atlas rules.
-- CLI emits uniform-grid atlas metadata.
 - Dependency-free atlas packer decodes non-interlaced 8-bit RGB/RGBA PNGs, supports PNG filters 0-4, assembles equal-size frames, adds optional padding/power-of-two expansion, writes an RGBA PNG atlas, and returns frame metadata.
+- PNG recompression uses adaptive per-row filters plus zlib level 9 while preserving decoded pixels for supported inputs.
+- Godot 4 export generates SpriteFrames .tres resources backed by AtlasTexture frame regions.
+- star-list integration calls dbrckk/star-list's existing recommender through its JSON CLI and can produce targeted or standard visual-tool discovery reports.
+- CI now compiles all modules, runs unit tests, checks the manifest/plan path, and smoke-tests the star-list bridge against a real checkout.
 - Atlas packer core was executed successfully in this runtime on synthetic RGBA frames.
-- Initial tool registry, manifest schema, unit tests, CI, and repo-standards adoption are present.
 
 ## Broken / blockers
-- star-list currently has no indexed matches for the first visual-production keywords checked.
-- PNG atlas packing does not yet support indexed-color, grayscale, 16-bit, or interlaced inputs.
-- PNG/WebP optimization backend is not implemented yet.
-- Real Blender/vector backends are not implemented yet.
+- PNG atlas packing/optimization currently supports non-interlaced 8-bit RGB/RGBA inputs; indexed-color, grayscale, 16-bit, and interlaced decoding are not yet supported by the packer.
+- WebP output is not implemented yet.
+- Real Blender/vector production backends are not implemented yet.
 - Direct git clone from this ChatGPT runtime is blocked by DNS.
-- GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository test suite is not yet independently confirmed here.
+- GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Harden atlas packing/import formats and add optimization, then integrate tool discovery with star-list.
+- Finish 2D engine integration/format hardening, then expand to vector/SVG and 3D backends.
 
 ## Validation
-- `python -m compileall -q asset_forge.py raster_pack.py tests`
+- `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py tests`
 - `python -m unittest discover -s tests -v`
 - `python asset_forge.py validate examples/asset-manifest.json`
 - `python asset_forge.py plan examples/asset-manifest.json`
 - `python asset_forge.py validate-raster <manifest.json> <sprite.png>`
 - `python asset_forge.py atlas-manifest <manifest.json> <sprite.png> --output <atlas.json>`
 - `python asset_forge.py pack-atlas <atlas.png> <frames...> --metadata <atlas.json> [--padding N] [--power-of-two]`
+- `python asset_forge.py optimize-png <input.png> <output.png>`
+- `python asset_forge.py export-godot <atlas.json> <sprite_frames.tres> --atlas-path res://path/to/atlas.png`
+- `python asset_forge.py discover-tools <star-list-root> "pixel art sprites atlas" --top 8`
+- `python asset_forge.py discover-tools <star-list-root> --full-report --output <report.json>`
 
 ## Last verified
-- 2026-09-18: atlas packer core executed locally on synthetic RGBA frames; GitHub source re-read after integration.
+- 2026-09-18: latest GitHub source inspected after Godot export, PNG recompression, and star-list integration changes.
 
 <!-- AUTO:START -->
 ## Automatic repository state
