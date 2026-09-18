@@ -49,7 +49,19 @@ Pack separate equal-size PNG frames into a real atlas image plus metadata:
 python asset_forge.py pack-atlas build/atlas.png frames/*.png --metadata build/atlas.json --padding 1 --power-of-two
 ```
 
-The built-in packer currently supports non-interlaced 8-bit RGB/RGBA PNG inputs and implements all five standard PNG scanline filters. It writes an RGBA PNG atlas without external image libraries.
+Losslessly recompress a supported PNG:
+
+```bash
+python asset_forge.py optimize-png build/atlas.png build/atlas.optimized.png
+```
+
+Export atlas metadata as a Godot 4 SpriteFrames resource:
+
+```bash
+python asset_forge.py export-godot build/atlas.json build/player.tres --atlas-path res://art/atlas.png --animation run --fps 12
+```
+
+The built-in packer currently supports non-interlaced 8-bit RGB/RGBA PNG inputs and implements all five standard PNG scanline filters. It writes an RGBA PNG atlas without external image libraries. The optimizer uses adaptive per-row PNG filtering and zlib level 9 while preserving decoded pixels.
 
 Run the offline test suite:
 
