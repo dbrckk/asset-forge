@@ -1,0 +1,27 @@
+name: Validate asset-forge
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile
+        run: python -m compileall -q asset_forge.py tests
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Validate example manifest
+        run: python asset_forge.py validate examples/asset-manifest.json
+      - name: Build example plan
+        run: python asset_forge.py plan examples/asset-manifest.json
