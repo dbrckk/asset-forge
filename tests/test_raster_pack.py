@@ -1267,6 +1267,72 @@ class RasterPackTests(unittest.TestCase):
                     trim=False,
                 )
 
+    def test_compact_atlas_auto_selects_best_evaluated_heuristic(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sizes = [(7, 2), (5, 4), (4, 3), (3, 6), (2, 5), (2, 2)]
+            paths = []
+            for index, (width, height) in enumerate(sizes):
+                path = root / f"{index}.png"
+                write_rgba_png(path, width, height, bytes([index + 1, 0, 0, 255]))
+                paths.append(path)
+
+            metadata = pack_compact_atlas(
+                paths,
+                root / "atlas.png",
+                max_width=10,
+                trim=False,
+                heuristic="auto",
+            )
+
+        evaluated = metadata["evaluatedHeuristics"]
+        self.assertEqual(len(evaluated), 3)
+        best = min(
+            evaluated,
+            key=lambda item: (
+                item["contentArea"],
+                item["contentHeight"],
+                item["contentWidth"],
+                item["heuristic"],
+            ),
+        )
+        self.assertEqual(metadata["selectedHeuristic"], best["heuristic"])
+        self.assertEqual(metadata["contentArea"], best["contentArea"])
+
+    def test_compact_atlas_forced_heuristic_is_respected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            a = root / "a.png"
+            b = root / "b.png"
+            write_rgba_png(a, 4, 3, bytes([1, 2, 3, 255]))
+            write_rgba_png(b, 2, 5, bytes([4, 5, 6, 255]))
+
+            metadata = pack_compact_atlas(
+                [a, b],
+                root / "atlas.png",
+                max_width=8,
+                trim=False,
+                heuristic="best-area-fit",
+            )
+
+        self.assertEqual(metadata["requestedHeuristic"], "best-area-fit")
+        self.assertEqual(metadata["selectedHeuristic"], "best-area-fit")
+        self.assertEqual(len(metadata["evaluatedHeuristics"]), 1)
+
+    def test_compact_atlas_rejects_unknown_heuristic(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            a = root / "a.png"
+            write_rgba_png(a, 1, 1, bytes([1, 2, 3, 255]))
+
+            with self.assertRaisesRegex(ValueError, "unsupported compact atlas heuristic"):
+                pack_compact_atlas(
+                    [a],
+                    root / "atlas.png",
+                    heuristic="unknown",
+                    trim=False,
+                )
+
 
 if __name__ == "__main__":
     unittest.main()
