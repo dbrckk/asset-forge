@@ -377,6 +377,17 @@ def _decompress_idat(data: bytes, expected_size: int) -> bytes:
     return raw
 
 
+def inspect_raster(path: Path) -> dict:
+    header = path.read_bytes()[:12]
+    if header.startswith(PNG_SIGNATURE):
+        info = inspect_png(path)
+        info["format"] = "png"
+        return info
+    if len(header) >= 12 and header[:4] == b"RIFF" and header[8:12] == b"WEBP":
+        return inspect_webp(path)
+    raise ValueError("unsupported raster format; expected PNG or WebP")
+
+
 def inspect_png(path: Path) -> dict:
     data = _read_png_bytes(path)
     chunks = _chunks(data)
