@@ -40,10 +40,10 @@ class GodotHandoffTests(unittest.TestCase):
             copied = Path(result["asset"])
             manifest = json.loads(Path(result["manifest"]).read_text(encoding="utf-8"))
 
-        self.assertEqual(copied.read_bytes(), b"glb-data")
-        self.assertTrue((project_dir / "project.godot").is_file())
-        self.assertEqual(manifest["asset"], "res://assets/model.glb")
-        self.assertTrue(manifest["deliveryReady"])
+            self.assertEqual(copied.read_bytes(), b"glb-data")
+            self.assertTrue((project_dir / "project.godot").is_file())
+            self.assertEqual(manifest["asset"], "res://assets/model.glb")
+            self.assertTrue(manifest["deliveryReady"])
 
     def test_non_glb_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
