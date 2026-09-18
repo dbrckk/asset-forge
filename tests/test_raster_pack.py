@@ -5,7 +5,7 @@ import zlib
 from pathlib import Path
 from unittest.mock import patch
 
-from raster_pack import decode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_uniform_atlas, recompress_png
+from raster_pack import decode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png
 
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -947,6 +947,128 @@ class RasterPackTests(unittest.TestCase):
 
         self.assertEqual((info["width"], info["height"]), (20, 10))
         self.assertEqual(info["format"], "webp")
+
+    def test_uniform_atlas_trim_records_source_offsets(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            first = root / "a.png"
+            second = root / "b.png"
+            atlas = root / "atlas.png"
+
+            pixels = bytearray(4 * 4 * 4)
+            for y in range(1, 3):
+                for x in range(1, 3):
+                    start = (y * 4 + x) * 4
+                    pixels[start : start + 4] = bytes([255, 0, 0, 255])
+            from raster_pack import encode_rgba
+            encode_rgba(first, 4, 4, bytes(pixels))
+            encode_rgba(second, 4, 4, bytes(pixels))
+
+            metadata = pack_uniform_atlas(
+                [first, second],
+                atlas,
+                columns=2,
+                trim=True,
+            )
+
+        self.assertEqual(metadata["frames"][0]["width"], 2)
+        self.assertEqual(metadata["frames"][0]["height"], 2)
+        self.assertEqual(metadata["frames"][0]["offsetX"], 1)
+        self.assertEqual(metadata["frames"][0]["offsetY"], 1)
+        self.assertEqual(metadata["frames"][0]["sourceWidth"], 4)
+        self.assertEqual(metadata["frames"][0]["sourceHeight"], 4)
+
+    def test_uniform_atlas_extrudes_edge_pixels(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "a.png"
+            atlas = root / "atlas.png"
+            write_rgba_png(source, 1, 1, bytes([7, 8, 9, 255]))
+
+            metadata = pack_uniform_atlas(
+                [source],
+                atlas,
+                columns=1,
+                extrude=1,
+            )
+            width, height, pixels = decode_rgba(atlas)
+
+        self.assertEqual((width, height), (3, 3))
+        self.assertEqual(metadata["frames"][0]["x"], 1)
+        self.assertEqual(metadata["frames"][0]["y"], 1)
+        expected = bytes([7, 8, 9, 255])
+        for y in range(3):
+            for x in range(3):
+                start = (y * 3 + x) * 4
+                self.assertEqual(pixels[start : start + 4], expected)
+
+    def test_compact_atlas_packs_variable_size_frames(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            a = root / "a.png"
+            b = root / "b.png"
+            c = root / "c.png"
+            atlas = root / "atlas.png"
+
+            write_rgba_png(a, 3, 3, bytes([255, 0, 0, 255]))
+            write_rgba_png(b, 2, 1, bytes([0, 255, 0, 255]))
+            write_rgba_png(c, 1, 2, bytes([0, 0, 255, 255]))
+
+            metadata = pack_compact_atlas(
+                [a, b, c],
+                atlas,
+                max_width=5,
+                padding=1,
+                trim=False,
+            )
+            width, height, pixels = decode_rgba(atlas)
+
+        self.assertEqual(width, metadata["imageWidth"])
+        self.assertEqual(height, metadata["imageHeight"])
+        self.assertEqual(metadata["frameCount"], 3)
+        self.assertEqual(metadata["packing"], "shelf-height-desc")
+        self.assertLessEqual(metadata["contentWidth"], 5)
+        self.assertEqual(
+            [frame["name"] for frame in metadata["frames"]],
+            ["a.png", "b.png", "c.png"],
+        )
+        for frame in metadata["frames"]:
+            start = (frame["y"] * width + frame["x"]) * 4
+            self.assertEqual(pixels[start + 3], 255)
+
+    def test_compact_atlas_rejects_frame_wider_than_budget(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "wide.png"
+            write_rgba_png(source, 8, 1, bytes([1, 2, 3, 255]))
+            with self.assertRaisesRegex(ValueError, "exceeds max atlas width"):
+                pack_compact_atlas(
+                    [source],
+                    root / "atlas.png",
+                    max_width=4,
+                    trim=False,
+                )
+
+    def test_recompress_png_keeps_original_when_candidate_is_larger(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source.png"
+            output = root / "output.png"
+            write_rgba_png(source, 1, 1, bytes([1, 2, 3, 255]))
+            original = source.read_bytes()
+
+            with patch(
+                "raster_pack._png_bytes_rgba",
+                return_value=original + b"definitely-larger",
+            ):
+                report = recompress_png(source, output)
+
+            result = output.read_bytes()
+
+        self.assertEqual(result, original)
+        self.assertFalse(report["keptOptimized"])
+        self.assertEqual(report["afterBytes"], report["beforeBytes"])
+        self.assertGreater(report["candidateBytes"], report["beforeBytes"])
 
 
 if __name__ == "__main__":
