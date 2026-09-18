@@ -537,6 +537,20 @@ class RasterPackTests(unittest.TestCase):
             ]),
         )
 
+    def test_grayscale_trns_out_of_range_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "gray2-bad-trns.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 2, 0, 0, 0, 0)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"tRNS", struct.pack(">H", 4))
+                + chunk(b"IDAT", zlib.compress(b"\x00\x00"))
+                + chunk(b"IEND", b"")
+            )
+            with self.assertRaisesRegex(ValueError, "tRNS sample exceeds bit depth"):
+                decode_rgba(image)
+
 
 if __name__ == "__main__":
     unittest.main()
