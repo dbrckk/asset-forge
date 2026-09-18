@@ -165,14 +165,23 @@ def _validate_palette_transparency(
 def _decompress_idat(data: bytes, expected_size: int) -> bytes:
     if expected_size < 0 or expected_size > MAX_DECOMPRESSED_BYTES:
         raise ValueError(f"PNG decompressed data exceeds limit {MAX_DECOMPRESSED_BYTES}")
+
     inflater = zlib.decompressobj()
     try:
         raw = inflater.decompress(data, expected_size + 1)
         if len(raw) > expected_size:
             raise ValueError("PNG decompressed data exceeds expected scanline size")
-        raw += inflater.flush()
+
+        while inflater.unconsumed_tail and not inflater.eof:
+            before = len(inflater.unconsumed_tail)
+            extra = inflater.decompress(inflater.unconsumed_tail, 1)
+            if extra:
+                raise ValueError("PNG decompressed data exceeds expected scanline size")
+            if len(inflater.unconsumed_tail) >= before and not inflater.eof:
+                raise ValueError("PNG zlib stream could not be fully consumed within bounds")
     except zlib.error as exc:
         raise ValueError(f"invalid PNG zlib stream: {exc}") from exc
+
     if len(raw) != expected_size:
         raise ValueError("unexpected PNG scanline length")
     if not inflater.eof:
