@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-forge asset manifest",
+  "type": "object",
+  "required": ["id", "project", "type", "importance", "source", "license", "target"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "project": {"type": "string", "minLength": 1},
+    "type": {"type": "string", "minLength": 1},
+    "importance": {"enum": ["primary", "secondary"]},
+    "source": {
+      "type": "object",
+      "required": ["mode"],
+      "properties": {
+        "mode": {"enum": ["custom", "external", "generated"]},
+        "uri": {"type": ["string", "null"]},
+        "author": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "license": {
+      "type": "object",
+      "required": ["id", "commercialUse", "derivatives"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "commercialUse": {"type": "boolean"},
+        "derivatives": {"type": "boolean"},
+        "attributionRequired": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "target": {
+      "type": "object",
+      "required": ["format"],
+      "properties": {
+        "engine": {"type": ["string", "null"]},
+        "format": {"type": "string", "minLength": 1},
+        "maxBytes": {"type": ["integer", "null"], "minimum": 1}
+      },
+      "additionalProperties": true
+    },
+    "constraints": {"type": "object"}
+  },
+  "additionalProperties": true
+}
