@@ -66,6 +66,7 @@ tests/
   test_animation_infer.py
   test_asset_forge.py
   test_blender_adapter.py
+  test_gltf_binary_metrics.py
   test_gltf_quality.py
   test_gltf_tools.py
   test_godot_export.py
@@ -77,6 +78,7 @@ AGENTS.md
 animation_infer.py
 asset_forge.py
 blender_adapter.py
+gltf_binary_metrics.py
 gltf_quality.py
 gltf_tools.py
 godot_export.py
@@ -135,7 +137,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -371,7 +373,9 @@ jobs:
 ````json
 {
   "id": "character",
-  "assetTypes": ["character-3d"],
+  "assetTypes": [
+    "character-3d"
+  ],
   "rules": {
     "maxMeshes": 16,
     "maxPrimitives": 64,
@@ -382,7 +386,10 @@ jobs:
     "allowAnimations": true,
     "requireSkin": true,
     "requireNormals": true,
-    "requireUvWhenTextured": true
+    "requireUvWhenTextured": true,
+    "maxTextureDimension": 4096,
+    "maxEstimatedTextureMipBytes": 268435456,
+    "maxJointsPerSkin": 128
   }
 }
 ````
@@ -391,7 +398,9 @@ jobs:
 ````json
 {
   "id": "environment",
-  "assetTypes": ["environment"],
+  "assetTypes": [
+    "environment"
+  ],
   "rules": {
     "maxMeshes": 256,
     "maxPrimitives": 1024,
@@ -402,7 +411,10 @@ jobs:
     "allowAnimations": false,
     "requireSkin": false,
     "requireNormals": true,
-    "requireUvWhenTextured": true
+    "requireUvWhenTextured": true,
+    "maxTextureDimension": 8192,
+    "maxEstimatedTextureMipBytes": 1073741824,
+    "maxJointsPerSkin": 0
   }
 }
 ````
@@ -411,7 +423,10 @@ jobs:
 ````json
 {
   "id": "prop",
-  "assetTypes": ["prop", "mesh"],
+  "assetTypes": [
+    "prop",
+    "mesh"
+  ],
   "rules": {
     "maxMeshes": 8,
     "maxPrimitives": 16,
@@ -422,7 +437,10 @@ jobs:
     "allowAnimations": false,
     "requireSkin": false,
     "requireNormals": true,
-    "requireUvWhenTextured": true
+    "requireUvWhenTextured": true,
+    "maxTextureDimension": 4096,
+    "maxEstimatedTextureMipBytes": 134217728,
+    "maxJointsPerSkin": 0
   }
 }
 ````
@@ -624,6 +642,46 @@ script = render_blender_python(job)
 def test_render_command_uses_background_mode(self)
 ⋮----
 command = render_blender_command("blender", Path("build/export.py"))
+````
+
+## File: tests/test_gltf_binary_metrics.py
+````python
+PNG_SIG = b"\x89PNG\r\n\x1a\n"
+⋮----
+def chunk(kind: bytes, payload: bytes) -> bytes
+⋮----
+def tiny_png(width=2, height=4)
+⋮----
+ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
+raw = b"".join(b"\x00" + (b"\x00\x00\x00\xff" * width) for _ in range(height))
+⋮----
+class GltfBinaryMetricsTests(unittest.TestCase)
+⋮----
+def test_data_uri_png_dimensions_and_memory(self)
+⋮----
+payload = tiny_png(2, 4)
+uri = "data:image/png;base64," + base64.b64encode(payload).decode("ascii")
+data = {
+⋮----
+path = Path(tmp) / "asset.gltf"
+⋮----
+items = inspect_images(path)
+⋮----
+def test_local_external_png_dimensions(self)
+⋮----
+root = Path(tmp)
+⋮----
+path = root / "asset.gltf"
+⋮----
+def test_animation_and_rig_metrics(self)
+⋮----
+metrics = inspect_rig_and_animation(path)
+⋮----
+def test_quality_report_includes_binary_metrics(self)
+⋮----
+payload = tiny_png(4, 4)
+⋮----
+report = quality_report(path, "prop")
 ````
 
 ## File: tests/test_gltf_quality.py
@@ -1225,6 +1283,135 @@ def render_blender_command(blender_executable: str, script_path: Path) -> str
 def write_job_manifest(job: dict, path: Path) -> None
 ````
 
+## File: gltf_binary_metrics.py
+````python
+def _decode_data_uri(uri: str) -> bytes
+⋮----
+def _safe_local_path(model_path: Path, uri: str) -> Path
+⋮----
+base = model_path.resolve().parent
+candidate = (base / unquote(uri)).resolve()
+⋮----
+def _glb_bin_chunk(path: Path) -> bytes | None
+⋮----
+raw = path.read_bytes()
+⋮----
+offset = 12
+⋮----
+end = offset + chunk_length
+⋮----
+payload = raw[offset:end]
+offset = end
+⋮----
+def load_buffer_payloads(path: Path, data: dict) -> list[bytes | None]
+⋮----
+buffers = data.get("buffers", [])
+⋮----
+glb_bin = _glb_bin_chunk(path) if path.suffix.lower() == ".glb" else None
+payloads: list[bytes | None] = []
+⋮----
+uri = buffer.get("uri")
+⋮----
+payload = _decode_data_uri(uri)
+⋮----
+payload = _safe_local_path(path, uri).read_bytes()
+⋮----
+payload = glb_bin
+⋮----
+payload = None
+⋮----
+views = data.get("bufferViews", [])
+⋮----
+view = views[view_index]
+⋮----
+buffer_index = view.get("buffer")
+⋮----
+payload = payloads[buffer_index]
+⋮----
+offset = view.get("byteOffset", 0)
+length = view.get("byteLength")
+⋮----
+end = offset + length
+⋮----
+def _png_dimensions(data: bytes) -> tuple[int, int] | None
+⋮----
+def _jpeg_dimensions(data: bytes) -> tuple[int, int] | None
+⋮----
+offset = 2
+⋮----
+marker = data[offset + 1]
+⋮----
+length = struct.unpack(">H", data[offset : offset + 2])[0]
+⋮----
+def _webp_dimensions(data: bytes) -> tuple[int, int] | None
+⋮----
+kind = data[12:16]
+⋮----
+width = 1 + int.from_bytes(data[24:27], "little")
+height = 1 + int.from_bytes(data[27:30], "little")
+⋮----
+bits = int.from_bytes(data[21:25], "little")
+width = (bits & 0x3FFF) + 1
+height = ((bits >> 14) & 0x3FFF) + 1
+⋮----
+def image_dimensions(data: bytes) -> tuple[int, int, str] | None
+⋮----
+dimensions = parser(data)
+⋮----
+def inspect_images(path: Path) -> list[dict]
+⋮----
+images = data.get("images", [])
+⋮----
+payloads = load_buffer_payloads(path, data)
+result = []
+⋮----
+item = {
+⋮----
+uri = image.get("uri")
+⋮----
+payload = buffer_view_bytes(data, payloads, image["bufferView"])
+⋮----
+dimensions = image_dimensions(payload)
+⋮----
+rgba = width * height * 4
+⋮----
+def inspect_rig_and_animation(path: Path) -> dict
+⋮----
+skins = data.get("skins", [])
+animations = data.get("animations", [])
+accessors = data.get("accessors", [])
+⋮----
+skins = []
+⋮----
+animations = []
+⋮----
+accessors = []
+⋮----
+joint_counts = []
+inverse_bind_matrices = 0
+⋮----
+joints = skin.get("joints", [])
+⋮----
+channels = 0
+samplers = 0
+target_paths: dict[str, int] = {}
+animated_nodes: set[int] = set()
+keyframe_counts = []
+invalid_targets = 0
+⋮----
+animation_samplers = animation.get("samplers", [])
+animation_channels = animation.get("channels", [])
+⋮----
+input_index = sampler.get("input")
+⋮----
+accessor = accessors[input_index]
+⋮----
+target = channel.get("target")
+⋮----
+node = target.get("node")
+path_name = target.get("path")
+````
+
 ## File: gltf_quality.py
 ````python
 QUALITY_PROFILES = {
@@ -1321,6 +1508,14 @@ data_uri_images = 0
 ⋮----
 uri = image.get("uri")
 ⋮----
+image_metrics = inspect_images(path)
+rig_animation = inspect_rig_and_animation(path)
+known_image_dimensions = [item for item in image_metrics if item.get("width") and item.get("height")]
+estimated_texture_bytes = sum(
+estimated_texture_mip_bytes = sum(
+max_texture_width = max((int(item["width"]) for item in known_image_dimensions), default=0)
+max_texture_height = max((int(item["height"]) for item in known_image_dimensions), default=0)
+⋮----
 def evaluate_quality(report: dict, profile: str) -> dict
 ⋮----
 rules = QUALITY_PROFILES[profile]
@@ -1332,6 +1527,8 @@ textures = report["textures"]
 errors: list[str] = []
 warnings: list[str] = []
 primitive_count = geometry["primitives"]
+⋮----
+rig = report.get("rigAnimation", {})
 ⋮----
 def quality_report(path: Path, profile: str | None = None) -> dict
 ⋮----
@@ -1834,6 +2031,8 @@ python asset_forge.py quality-gltf prop.glb --profile prop --output build/prop-q
 ```
 
 The quality report derives vertex and triangle counts from accessor metadata, measures primitive coverage for normals/UVs/tangents/skinning, summarizes PBR texture usage, identifies external images, and evaluates the versioned profile budgets under `profiles/3d/`.
+
+When image bytes are locally available, the report also reads PNG/JPEG/WebP dimensions and estimates decoded RGBA8 texture memory with mipmaps. Remote URLs are not fetched. Rig/animation metrics include joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, and keyframe accessor counts.
 
 Create a reproducible Blender export job and script:
 

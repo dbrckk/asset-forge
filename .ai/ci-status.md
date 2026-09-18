@@ -1,13 +1,13 @@
 # CI status
 
-Summary: 0 success / 1 failure / 5 active
+Summary: 0 success / 5 failure / 1 active
 
-- Validate asset-forge: queued / pending (6cb11d06)
-- Validate asset-forge: queued / pending (99d0523e)
-- Validate asset-forge: queued / pending (c3cfa7b3)
-- Validate asset-forge: queued / pending (c1b37b33)
-- Validate asset-forge: queued / pending (3e601a44)
-- Validate asset-forge: completed / failure (72e48201)
+- Validate asset-forge: queued / pending (56d712f0)
+- Validate asset-forge: completed / failure (545a40fe)
+- Validate asset-forge: completed / failure (e8083520)
+- Validate asset-forge: completed / failure (78b882e2)
+- Validate asset-forge: completed / failure (d021be92)
+- Validate asset-forge: completed / failure (de858cb0)
 
 ## Latest failed run structure
 - Job: test

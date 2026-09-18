@@ -52,19 +52,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T18:10:25Z
+Generated: 2026-09-18T18:14:16Z
 
 ### Git
 - Branch: `main`
-- Head: `6cb11d0654c3`
-- Commit date: 2026-09-18T20:08:33+02:00
-- Commit: docs: record measurable 3d quality milestone
-- Tracked files: 84
+- Head: `56d712f0e809`
+- Commit date: 2026-09-18T20:13:53+02:00
+- Commit: docs: record binary 3d metrics milestone
+- Tracked files: 87
 
 ### Recently changed files
 - `README.md`
-- `toolchain_3d.py`
 - `.github/workflows/validate.yml`
+- `tests/test_gltf_binary_metrics.py`
+- `gltf_quality.py`
+- `profiles/3d/character.json`
 
 ### Project signals
 - No common build descriptor detected
