@@ -430,3 +430,26 @@ python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
 ```
 
 If final atlas occupancy falls below the requested percentage, packing fails before the output PNG is written.
+
+
+### Automatic MaxRects heuristic selection
+
+`pack-atlas-compact` now supports:
+
+```text
+auto
+best-short-side-fit
+best-long-side-fit
+best-area-fit
+```
+
+The default `auto` mode evaluates all three deterministic MaxRects heuristics against the same prepared frames and selects the layout with the smallest content area, then smallest height, then smallest width. This optimizes atlas geometry, not compressed PNG byte size.
+
+Force a specific strategy when reproducibility against a known layout matters:
+
+```bash
+python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
+  --heuristic best-area-fit
+```
+
+Metadata records `requestedHeuristic`, `selectedHeuristic`, and an `evaluatedHeuristics` summary containing width, height, and content area for each evaluated strategy.
