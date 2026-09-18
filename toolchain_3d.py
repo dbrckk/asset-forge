@@ -1,0 +1,256 @@
+from __future__ import annotations
+
+import json
+import shlex
+import shutil
+import subprocess
+from pathlib import Path
+
+from blender_adapter import (
+    build_blender_export_job,
+    render_blender_command,
+    write_blender_export_script,
+)
+
+
+def detect_3d_tools() -> dict:
+    candidates = {
+        "blender": ["blender"],
+        "gltf-validator": ["gltf_validator", "gltf-validator"],
+        "gltf-transform": ["gltf-transform"],
+        "gltfpack": ["gltfpack"],
+    }
+    result = {}
+    for tool_id, names in candidates.items():
+        found = None
+        for name in names:
+            path = shutil.which(name)
+            if path:
+                found = path
+                break
+        result[tool_id] = {
+            "available": found is not None,
+            "path": found,
+        }
+    return result
+
+
+def _quote(parts: list[str]) -> str:
+    return " ".join(shlex.quote(part) for part in parts)
+
+
+def validator_command(executable: str, input_path: Path) -> str:
+    return _quote([executable, "--stdout", str(input_path)])
+
+
+def gltf_transform_command(
+    executable: str,
+    input_path: Path,
+    output_path: Path,
+    *,
+    texture_compress: str | None = None,
+) -> str:
+    parts = [executable, "optimize", str(input_path), str(output_path)]
+    if texture_compress:
+        parts.extend(["--texture-compress", texture_compress])
+    return _quote(parts)
+
+
+def gltfpack_command(
+    executable: str,
+    input_path: Path,
+    output_path: Path,
+    *,
+    compression: bool = False,
+    keep_names: bool = True,
+    keep_materials: bool = True,
+) -> str:
+    parts = [executable, "-i", str(input_path), "-o", str(output_path)]
+    if compression:
+        parts.append("-cc")
+    if keep_names:
+        parts.append("-kn")
+    if keep_materials:
+        parts.append("-km")
+    return _quote(parts)
+
+
+def build_3d_pipeline(
+    source_blend: Path,
+    workdir: Path,
+    *,
+    profile: str = "prop",
+    optimizer: str = "gltf-transform",
+    texture_compress: str | None = None,
+    mesh_compression: bool = False,
+    animations: bool = True,
+) -> dict:
+    if profile not in {"prop", "environment", "character"}:
+        raise ValueError("profile must be prop, environment, or character")
+    if optimizer not in {"none", "gltf-transform", "gltfpack"}:
+        raise ValueError("optimizer must be none, gltf-transform, or gltfpack")
+
+    workdir = Path(workdir)
+    raw_glb = workdir / "raw.glb"
+    optimized_glb = workdir / "optimized.glb"
+    blender_script = workdir / "export_blender.py"
+
+    blender_job = build_blender_export_job(
+        source_blend,
+        raw_glb,
+        animations=animations,
+    )
+
+    tools = detect_3d_tools()
+    commands = []
+    commands.append(
+        {
+            "id": "blender-export",
+            "required": True,
+            "tool": "blender",
+            "available": tools["blender"]["available"],
+            "command": render_blender_command(
+                tools["blender"]["path"] or "blender",
+                blender_script,
+            ),
+            "output": str(raw_glb),
+        }
+    )
+
+    commands.append(
+        {
+            "id": "structural-validation",
+            "required": True,
+            "tool": "asset-forge",
+            "available": True,
+            "command": _quote(
+                [
+                    "python",
+                    "asset_forge.py",
+                    "validate-gltf",
+                    str(raw_glb),
+                    "--profile",
+                    profile,
+                ]
+            ),
+            "output": None,
+        }
+    )
+
+    validator = tools["gltf-validator"]
+    commands.append(
+        {
+            "id": "khronos-validation",
+            "required": False,
+            "tool": "gltf-validator",
+            "available": validator["available"],
+            "command": validator_command(
+                validator["path"] or "gltf_validator",
+                raw_glb,
+            ),
+            "output": str(workdir / "validator-report.json"),
+        }
+    )
+
+    final_glb = raw_glb
+    if optimizer == "gltf-transform":
+        tool = tools["gltf-transform"]
+        commands.append(
+            {
+                "id": "optimize",
+                "required": False,
+                "tool": "gltf-transform",
+                "available": tool["available"],
+                "command": gltf_transform_command(
+                    tool["path"] or "gltf-transform",
+                    raw_glb,
+                    optimized_glb,
+                    texture_compress=texture_compress,
+                ),
+                "output": str(optimized_glb),
+            }
+        )
+        final_glb = optimized_glb
+    elif optimizer == "gltfpack":
+        tool = tools["gltfpack"]
+        commands.append(
+            {
+                "id": "optimize",
+                "required": False,
+                "tool": "gltfpack",
+                "available": tool["available"],
+                "command": gltfpack_command(
+                    tool["path"] or "gltfpack",
+                    raw_glb,
+                    optimized_glb,
+                    compression=mesh_compression,
+                ),
+                "output": str(optimized_glb),
+            }
+        )
+        final_glb = optimized_glb
+
+    if optimizer != "none":
+        commands.append(
+            {
+                "id": "post-optimization-validation",
+                "required": True,
+                "tool": "asset-forge",
+                "available": True,
+                "command": _quote(
+                    [
+                        "python",
+                        "asset_forge.py",
+                        "validate-gltf",
+                        str(final_glb),
+                        "--profile",
+                        profile,
+                    ]
+                ),
+                "output": None,
+            }
+        )
+
+    return {
+        "source": str(source_blend),
+        "workdir": str(workdir),
+        "profile": profile,
+        "optimizer": optimizer,
+        "tools": tools,
+        "blenderJob": blender_job,
+        "blenderScript": str(blender_script),
+        "rawOutput": str(raw_glb),
+        "finalOutput": str(final_glb),
+        "steps": commands,
+    }
+
+
+def prepare_3d_pipeline(plan: dict) -> None:
+    workdir = Path(plan["workdir"])
+    workdir.mkdir(parents=True, exist_ok=True)
+    write_blender_export_script(
+        plan["blenderJob"],
+        Path(plan["blenderScript"]),
+    )
+    (workdir / "pipeline.json").write_text(
+        json.dumps(plan, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
+def execute_command(command: str, cwd: Path | None = None) -> dict:
+    completed = subprocess.run(
+        command,
+        cwd=cwd,
+        shell=True,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    return {
+        "command": command,
+        "returnCode": completed.returncode,
+        "stdout": completed.stdout,
+        "stderr": completed.stderr,
+    }
