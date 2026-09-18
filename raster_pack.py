@@ -5,6 +5,8 @@ import struct
 import zlib
 from pathlib import Path
 
+from raster_backend import decode_webp_rgba, detect_pillow_webp
+
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 MAX_PNG_FILE_BYTES = 256 * 1024 * 1024
 MAX_PNG_CHUNK_BYTES = 64 * 1024 * 1024
@@ -671,6 +673,46 @@ def _decode_adam7(
     return bytes(rgba)
 
 
+def decode_raster_rgba(path: Path) -> tuple[int, int, bytes]:
+    suffix = path.suffix.lower()
+    if suffix == ".png":
+        return decode_rgba(path)
+    if suffix == ".webp":
+        info = inspect_webp(path)
+        return decode_webp_rgba(
+            path,
+            expected_width=info["width"],
+            expected_height=info["height"],
+        )
+
+    raw = path.read_bytes()[:12]
+    if raw.startswith(PNG_SIGNATURE):
+        return decode_rgba(path)
+    if len(raw) >= 12 and raw[:4] == b"RIFF" and raw[8:12] == b"WEBP":
+        info = inspect_webp(path)
+        return decode_webp_rgba(
+            path,
+            expected_width=info["width"],
+            expected_height=info["height"],
+        )
+    raise ValueError("unsupported raster format; expected PNG or WebP")
+
+
+def raster_backend_status() -> dict:
+    return {
+        "png": {
+            "decode": True,
+            "encode": True,
+            "dependency": "builtin",
+        },
+        "webp": {
+            "inspect": True,
+            "decode": detect_pillow_webp(),
+            "encode": False,
+        },
+    }
+
+
 def decode_rgba(path: Path) -> tuple[int, int, bytes]:
     chunks = _chunks(_read_png_bytes(path))
     width, height, depth, color_type, compression, filtering, interlace = _validate_ihdr(
@@ -849,7 +891,7 @@ def pack_uniform_atlas(
     if padding < 0:
         raise ValueError("padding must be >= 0")
 
-    decoded = [decode_rgba(Path(path)) for path in inputs]
+    decoded = [decode_raster_rgba(Path(path)) for path in inputs]
     frame_width, frame_height = decoded[0][0], decoded[0][1]
 
     if any((width, height) != (frame_width, frame_height) for width, height, _ in decoded):
