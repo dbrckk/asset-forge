@@ -11,6 +11,147 @@ MAX_PNG_CHUNK_BYTES = 64 * 1024 * 1024
 MAX_PNG_CHUNKS = 10000
 MAX_PNG_PIXELS = 100_000_000
 MAX_DECOMPRESSED_BYTES = 512 * 1024 * 1024
+MAX_WEBP_FILE_BYTES = 256 * 1024 * 1024
+MAX_WEBP_CHUNKS = 10000
+
+
+def _read_webp_bytes(path: Path) -> bytes:
+    size = path.stat().st_size
+    if size > MAX_WEBP_FILE_BYTES:
+        raise ValueError(f"WebP exceeds file limit {MAX_WEBP_FILE_BYTES}")
+    return path.read_bytes()
+
+
+def _webp_chunks(data: bytes) -> list[tuple[bytes, bytes]]:
+    if len(data) > MAX_WEBP_FILE_BYTES:
+        raise ValueError(f"WebP exceeds file limit {MAX_WEBP_FILE_BYTES}")
+    if len(data) < 12 or data[:4] != b"RIFF" or data[8:12] != b"WEBP":
+        raise ValueError("file is not a valid WebP RIFF container")
+
+    riff_size = struct.unpack("<I", data[4:8])[0]
+    if riff_size + 8 != len(data):
+        raise ValueError("WebP RIFF size does not match file length")
+
+    chunks: list[tuple[bytes, bytes]] = []
+    offset = 12
+    while offset < len(data):
+        if len(chunks) >= MAX_WEBP_CHUNKS:
+            raise ValueError(f"WebP exceeds chunk count limit {MAX_WEBP_CHUNKS}")
+        if offset + 8 > len(data):
+            raise ValueError("truncated WebP chunk header")
+        kind = data[offset : offset + 4]
+        length = struct.unpack("<I", data[offset + 4 : offset + 8])[0]
+        payload_start = offset + 8
+        payload_end = payload_start + length
+        if payload_end > len(data):
+            raise ValueError("truncated WebP chunk")
+        chunks.append((kind, data[payload_start:payload_end]))
+        offset = payload_end + (length & 1)
+
+    if offset != len(data):
+        raise ValueError("invalid WebP chunk padding")
+    if not chunks:
+        raise ValueError("WebP contains no chunks")
+    return chunks
+
+
+def _webp_vp8x_info(payload: bytes) -> dict:
+    if len(payload) != 10:
+        raise ValueError("WebP VP8X chunk must be 10 bytes")
+    if payload[1:4] != b"\x00\x00\x00":
+        raise ValueError("WebP VP8X reserved bytes must be zero")
+    width = 1 + int.from_bytes(payload[4:7], "little")
+    height = 1 + int.from_bytes(payload[7:10], "little")
+    return {
+        "width": width,
+        "height": height,
+        "hasAlpha": bool(payload[0] & 0x10),
+        "animated": bool(payload[0] & 0x02),
+        "extended": True,
+        "codec": "vp8x",
+    }
+
+
+def _webp_vp8l_info(payload: bytes) -> dict:
+    if len(payload) < 5 or payload[0] != 0x2F:
+        raise ValueError("invalid WebP VP8L header")
+    bits = int.from_bytes(payload[1:5], "little")
+    version = (bits >> 29) & 0x7
+    if version != 0:
+        raise ValueError("unsupported WebP VP8L version")
+    return {
+        "width": (bits & 0x3FFF) + 1,
+        "height": ((bits >> 14) & 0x3FFF) + 1,
+        "hasAlpha": bool((bits >> 28) & 1),
+        "animated": False,
+        "extended": False,
+        "codec": "vp8l",
+    }
+
+
+def _webp_vp8_info(payload: bytes) -> dict:
+    if len(payload) < 10:
+        raise ValueError("truncated WebP VP8 frame header")
+    frame_tag = int.from_bytes(payload[:3], "little")
+    if frame_tag & 1:
+        raise ValueError("WebP VP8 still image must start with a key frame")
+    if payload[3:6] != b"\x9d\x01\x2a":
+        raise ValueError("invalid WebP VP8 key-frame signature")
+    width = int.from_bytes(payload[6:8], "little") & 0x3FFF
+    height = int.from_bytes(payload[8:10], "little") & 0x3FFF
+    if width <= 0 or height <= 0:
+        raise ValueError("WebP VP8 width and height must be > 0")
+    return {
+        "width": width,
+        "height": height,
+        "hasAlpha": False,
+        "animated": False,
+        "extended": False,
+        "codec": "vp8",
+    }
+
+
+def inspect_webp(path: Path) -> dict:
+    data = _read_webp_bytes(path)
+    chunks = _webp_chunks(data)
+    by_kind: dict[bytes, list[bytes]] = {}
+    for kind, payload in chunks:
+        by_kind.setdefault(kind, []).append(payload)
+
+    if len(by_kind.get(b"VP8X", [])) > 1:
+        raise ValueError("WebP contains duplicate VP8X")
+    if b"VP8X" in by_kind:
+        if chunks[0][0] != b"VP8X":
+            raise ValueError("WebP VP8X must be the first chunk")
+        info = _webp_vp8x_info(by_kind[b"VP8X"][0])
+    elif b"VP8L" in by_kind:
+        if len(by_kind[b"VP8L"]) != 1:
+            raise ValueError("WebP contains duplicate VP8L image chunks")
+        info = _webp_vp8l_info(by_kind[b"VP8L"][0])
+    elif b"VP8 " in by_kind:
+        if len(by_kind[b"VP8 "]) != 1:
+            raise ValueError("WebP contains duplicate VP8 image chunks")
+        info = _webp_vp8_info(by_kind[b"VP8 "][0])
+    else:
+        raise ValueError("WebP contains no VP8X, VP8L, or VP8 image header")
+
+    if info["width"] * info["height"] > MAX_PNG_PIXELS:
+        raise ValueError(f"WebP exceeds pixel limit {MAX_PNG_PIXELS}")
+
+    if b"ALPH" in by_kind:
+        info["hasAlpha"] = True
+    if b"ANIM" in by_kind or b"ANMF" in by_kind:
+        info["animated"] = True
+
+    info.update(
+        {
+            "format": "webp",
+            "bytes": len(data),
+            "chunkCount": len(chunks),
+            "chunks": [kind.decode("latin1") for kind, _ in chunks],
+        }
+    )
+    return info
 
 
 def _read_png_bytes(path: Path) -> bytes:
