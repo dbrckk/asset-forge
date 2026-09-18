@@ -170,7 +170,12 @@ class AssetForgeTests(unittest.TestCase):
 
         width, height = 64, 32
         vp8x = bytes([0x10, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
-        body = b"WEBP" + b"VP8X" + struct.pack("<I", len(vp8x)) + vp8x
+        vp8 = (0).to_bytes(3, "little") + b"\x9d\x01\x2a" + width.to_bytes(2, "little") + height.to_bytes(2, "little")
+        chunks = (
+            b"VP8X" + struct.pack("<I", len(vp8x)) + vp8x
+            + b"VP8 " + struct.pack("<I", len(vp8)) + vp8
+        )
+        body = b"WEBP" + chunks
         data = b"RIFF" + struct.pack("<I", len(body)) + body
 
         with tempfile.TemporaryDirectory() as tmp:
@@ -190,7 +195,12 @@ class AssetForgeTests(unittest.TestCase):
 
         width = height = 32
         vp8x = bytes([0, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
-        body = b"WEBP" + b"VP8X" + struct.pack("<I", len(vp8x)) + vp8x
+        vp8 = (0).to_bytes(3, "little") + b"\x9d\x01\x2a" + width.to_bytes(2, "little") + height.to_bytes(2, "little")
+        chunks = (
+            b"VP8X" + struct.pack("<I", len(vp8x)) + vp8x
+            + b"VP8 " + struct.pack("<I", len(vp8)) + vp8
+        )
+        body = b"WEBP" + chunks
         data = b"RIFF" + struct.pack("<I", len(body)) + body
 
         with tempfile.TemporaryDirectory() as tmp:
