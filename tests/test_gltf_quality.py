@@ -31,10 +31,10 @@ class GltfQualityTests(unittest.TestCase):
                 }
             ],
             "accessors": [
-                {"count": 100},
-                {"count": 100},
-                {"count": 100},
-                {"count": 300},
+                {"componentType": 5126, "count": 100, "type": "VEC3"},
+                {"componentType": 5126, "count": 100, "type": "VEC3"},
+                {"componentType": 5126, "count": 100, "type": "VEC2"},
+                {"componentType": 5123, "count": 300, "type": "SCALAR"},
             ],
             "materials": [
                 {
