@@ -159,6 +159,8 @@ Normalize a missing viewBox from positive numeric width/height values:
 python asset_forge.py normalize-svg source.svg build/source.normalized.svg
 ```
 
+An existing malformed `viewBox` is now rejected rather than silently replaced from width/height.
+
 Apply a production profile:
 
 ```bash
@@ -167,7 +169,11 @@ python asset_forge.py validate-svg hud.svg --profile ui
 python asset_forge.py validate-svg brand.svg --profile logo
 ```
 
-The current vector validator checks XML validity, SVG root type, viewBox shape, width/height consistency, scripts/foreignObject, event-handler attributes, external href/src references, editor metadata, and profile-specific complexity/shape rules. Versioned profiles under `profiles/vector/` are the runtime source of truth; `svg_tools.py` loads them directly instead of duplicating their rules.
+The current vector validator checks XML validity, SVG root type, viewBox shape, width/height consistency, scripts/foreignObject, event-handler attributes, references, editor metadata, and profile-specific complexity/shape rules. Versioned profiles under `profiles/vector/` are the runtime source of truth; `svg_tools.py` loads them directly instead of duplicating their rules.
+
+SVG delivery now uses a strict reference policy: only internal fragment references such as `#gradient` and `url(#gradient)` are accepted. Remote URLs, relative file paths, `data:` references, CSS `@import`, and non-fragment CSS `url(...)` references are rejected. Sanitization removes unsafe reference attributes and unsafe style blocks/attributes.
+
+Vector profiles also define blocking resource caps for element count, UTF-8 file bytes, and XML depth. Current repository policy is icon: 256 elements / 256 KiB / depth 32, UI: 1200 elements / 1 MiB / depth 64, and logo: 800 elements / 512 KiB / depth 48. These are repository policy limits, not universal SVG standards. A larger absolute safety ceiling is also enforced before recursive processing.
 
 ## 3D / Blender workflow
 
