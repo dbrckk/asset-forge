@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency-free asset-forge manifest validator, planner, and PNG inspector."""
+"""Dependency-free asset-forge manifest validator, planner, PNG inspector, and atlas metadata builder."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import argparse
 import json
 import struct
 import sys
+import zlib
 from pathlib import Path
 
 PIPELINES = {
@@ -46,6 +47,7 @@ def load_json(path: Path) -> dict:
 
 def validate_manifest(manifest: dict) -> list[str]:
     errors: list[str] = []
+
     for field in ("id", "project", "type"):
         value = manifest.get(field)
         if not isinstance(value, str) or not value.strip():
@@ -90,29 +92,141 @@ def validate_manifest(manifest: dict) -> list[str]:
     constraints = manifest.get("constraints", {})
     if constraints is not None and not isinstance(constraints, dict):
         errors.append("constraints: object required when present")
+    elif isinstance(constraints, dict):
+        if constraints.get("pixelArt") is True and constraints.get("interpolation", "nearest") != "nearest":
+            errors.append("constraints.interpolation: pixelArt assets must use nearest")
+        for field in ("frameWidth", "frameHeight", "maxColors", "expectedFrames"):
+            value = constraints.get(field)
+            if value is not None and (not isinstance(value, int) or value <= 0):
+                errors.append(f"constraints.{field}: positive integer required when present")
+
     return errors
+
+
+def is_power_of_two(value: int) -> bool:
+    return value > 0 and (value & (value - 1)) == 0
+
+
+def parse_png_chunks(data: bytes) -> list[tuple[bytes, bytes]]:
+    if len(data) < 33 or data[:8] != PNG_SIGNATURE:
+        raise ValueError("file is not a valid PNG")
+
+    chunks: list[tuple[bytes, bytes]] = []
+    offset = 8
+    saw_iend = False
+
+    while offset < len(data):
+        if offset + 12 > len(data):
+            raise ValueError("PNG contains a truncated chunk header")
+        length = struct.unpack(">I", data[offset : offset + 4])[0]
+        kind = data[offset + 4 : offset + 8]
+        end = offset + 12 + length
+        if end > len(data):
+            raise ValueError(f"PNG chunk {kind.decode('latin1')} is truncated")
+        payload = data[offset + 8 : offset + 8 + length]
+        expected_crc = struct.unpack(">I", data[offset + 8 + length : end])[0]
+        actual_crc = zlib.crc32(kind + payload) & 0xFFFFFFFF
+        if expected_crc != actual_crc:
+            raise ValueError(f"PNG chunk {kind.decode('latin1')} has invalid CRC")
+        chunks.append((kind, payload))
+        offset = end
+        if kind == b"IEND":
+            saw_iend = True
+            break
+
+    if not saw_iend:
+        raise ValueError("PNG is missing IEND")
+    return chunks
 
 
 def inspect_png(path: Path) -> dict:
     data = path.read_bytes()
-    if len(data) < 33 or data[:8] != PNG_SIGNATURE:
-        raise ValueError("file is not a valid PNG")
-    length = struct.unpack(">I", data[8:12])[0]
-    if data[12:16] != b"IHDR" or length != 13:
+    chunks = parse_png_chunks(data)
+    if not chunks or chunks[0][0] != b"IHDR" or len(chunks[0][1]) != 13:
         raise ValueError("PNG is missing a valid IHDR chunk")
+
     width, height, bit_depth, color_type, compression, filtering, interlace = struct.unpack(
-        ">IIBBBBB", data[16:29]
+        ">IIBBBBB", chunks[0][1]
     )
+    palette_entries = None
+    has_trns = False
+    idat_bytes = 0
+
+    for kind, payload in chunks[1:]:
+        if kind == b"PLTE":
+            if len(payload) % 3 != 0:
+                raise ValueError("PNG PLTE chunk length must be divisible by 3")
+            palette_entries = len(payload) // 3
+        elif kind == b"tRNS":
+            has_trns = True
+        elif kind == b"IDAT":
+            idat_bytes += len(payload)
+
+    has_alpha = color_type in {4, 6} or has_trns
     return {
         "width": width,
         "height": height,
         "bitDepth": bit_depth,
         "colorType": color_type,
-        "hasAlpha": color_type in {4, 6},
+        "hasAlpha": has_alpha,
+        "paletteEntries": palette_entries,
+        "compressedImageBytes": idat_bytes,
         "compression": compression,
         "filter": filtering,
         "interlace": interlace,
         "bytes": len(data),
+    }
+
+
+def sprite_grid(info: dict, constraints: dict) -> dict:
+    frame_width = constraints.get("frameWidth")
+    frame_height = constraints.get("frameHeight")
+    if not isinstance(frame_width, int) or frame_width <= 0:
+        raise ValueError("frameWidth is required to derive a sprite grid")
+    if not isinstance(frame_height, int) or frame_height <= 0:
+        raise ValueError("frameHeight is required to derive a sprite grid")
+    if info["width"] % frame_width != 0 or info["height"] % frame_height != 0:
+        raise ValueError("sprite dimensions are not divisible by frame dimensions")
+
+    columns = info["width"] // frame_width
+    rows = info["height"] // frame_height
+    return {
+        "frameWidth": frame_width,
+        "frameHeight": frame_height,
+        "columns": columns,
+        "rows": rows,
+        "frameCount": columns * rows,
+    }
+
+
+def build_atlas_manifest(path: Path, manifest: dict) -> dict:
+    info = inspect_png(path)
+    constraints = manifest.get("constraints", {}) or {}
+    grid = sprite_grid(info, constraints)
+    frames = []
+    index = 0
+    for row in range(grid["rows"]):
+        for column in range(grid["columns"]):
+            frames.append(
+                {
+                    "index": index,
+                    "x": column * grid["frameWidth"],
+                    "y": row * grid["frameHeight"],
+                    "width": grid["frameWidth"],
+                    "height": grid["frameHeight"],
+                }
+            )
+            index += 1
+
+    return {
+        "assetId": manifest["id"],
+        "image": path.name,
+        "imageWidth": info["width"],
+        "imageHeight": info["height"],
+        "columns": grid["columns"],
+        "rows": grid["rows"],
+        "frameCount": grid["frameCount"],
+        "frames": frames,
     }
 
 
@@ -137,7 +251,31 @@ def validate_raster_file(path: Path, manifest: dict) -> tuple[dict, list[str]]:
         errors.append(f"file size {info['bytes']} exceeds maxBytes {max_bytes}")
 
     if constraints.get("requiresAlpha") is True and not info["hasAlpha"]:
-        errors.append("PNG does not contain an alpha channel")
+        errors.append("PNG does not contain transparency")
+
+    max_colors = constraints.get("maxColors")
+    if isinstance(max_colors, int) and info["paletteEntries"] is not None and info["paletteEntries"] > max_colors:
+        errors.append(f"palette has {info['paletteEntries']} entries, exceeds maxColors {max_colors}")
+
+    if constraints.get("powerOfTwoAtlas") is True:
+        if not is_power_of_two(info["width"]) or not is_power_of_two(info["height"]):
+            errors.append("atlas dimensions must be powers of two")
+
+    if (
+        isinstance(frame_width, int)
+        and frame_width > 0
+        and isinstance(frame_height, int)
+        and frame_height > 0
+        and info["width"] % frame_width == 0
+        and info["height"] % frame_height == 0
+    ):
+        grid = sprite_grid(info, constraints)
+        info["grid"] = grid
+        expected_frames = constraints.get("expectedFrames")
+        if isinstance(expected_frames, int) and grid["frameCount"] != expected_frames:
+            errors.append(
+                f"frameCount {grid['frameCount']} does not match expectedFrames {expected_frames}"
+            )
 
     return info, errors
 
@@ -148,7 +286,13 @@ def select_tools(asset_type: str, registry: dict) -> list[dict]:
     for tool in registry.get("tools", []):
         overlap = sorted(wanted & set(tool.get("domains", [])))
         if overlap:
-            matches.append({"id": tool.get("id"), "status": tool.get("status"), "matchedDomains": overlap})
+            matches.append(
+                {
+                    "id": tool.get("id"),
+                    "status": tool.get("status"),
+                    "matchedDomains": overlap,
+                }
+            )
     status_rank = {"preferred": 0, "approved": 1, "candidate": 2}
     matches.sort(key=lambda item: (status_rank.get(item.get("status"), 9), item.get("id") or ""))
     return matches
@@ -189,6 +333,7 @@ def load_valid_manifest(path: Path) -> tuple[dict | None, int]:
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"INVALID: {exc}", file=sys.stderr)
         return None, 2
+
     errors = validate_manifest(manifest)
     if errors:
         print("INVALID")
@@ -228,6 +373,30 @@ def cmd_validate_raster(manifest_path: Path, asset_path: Path) -> int:
     return 1 if errors else 0
 
 
+def cmd_atlas_manifest(manifest_path: Path, asset_path: Path, output: Path | None) -> int:
+    manifest, code = load_valid_manifest(manifest_path)
+    if manifest is None:
+        return code
+    try:
+        _, errors = validate_raster_file(asset_path, manifest)
+        if errors:
+            print(json.dumps({"errors": errors}, indent=2), file=sys.stderr)
+            return 1
+        atlas = build_atlas_manifest(asset_path, manifest)
+    except (OSError, ValueError) as exc:
+        print(f"INVALID: {exc}", file=sys.stderr)
+        return 2
+
+    rendered = json.dumps(atlas, indent=2, sort_keys=True) + "\n"
+    if output is None:
+        print(rendered, end="")
+    else:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(rendered, encoding="utf-8")
+        print(str(output))
+    return 0
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(prog="asset-forge")
     sub = result.add_subparsers(dest="command", required=True)
@@ -241,18 +410,26 @@ def parser() -> argparse.ArgumentParser:
     raster = sub.add_parser("validate-raster", help="validate a PNG against an asset manifest")
     raster.add_argument("manifest", type=Path)
     raster.add_argument("asset", type=Path)
+
+    atlas = sub.add_parser("atlas-manifest", help="build uniform-grid atlas metadata from a PNG")
+    atlas.add_argument("manifest", type=Path)
+    atlas.add_argument("asset", type=Path)
+    atlas.add_argument("--output", type=Path)
     return result
 
 
 def main() -> int:
     args = parser().parse_args()
     root = Path(__file__).resolve().parent
+
     if args.command == "validate":
         return cmd_validate(args.manifest)
     if args.command == "plan":
         return cmd_plan(args.manifest, root)
     if args.command == "validate-raster":
         return cmd_validate_raster(args.manifest, args.asset)
+    if args.command == "atlas-manifest":
+        return cmd_atlas_manifest(args.manifest, args.asset, args.output)
     return 2
 
 
