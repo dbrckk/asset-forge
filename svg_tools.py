@@ -5,7 +5,6 @@ import xml.etree.ElementTree as ET
 
 from asset_profile_validation import load_vector_profile
 from pathlib import Path
-from urllib.parse import urlparse
 
 SVG_NS = "http://www.w3.org/2000/svg"
 XLINK_NS = "http://www.w3.org/1999/xlink"
@@ -274,6 +273,9 @@ def sanitize_svg(
     remove_metadata: bool = True,
 ) -> dict:
     raw = input_path.read_text(encoding="utf-8")
+    raw_bytes = len(raw.encode("utf-8"))
+    if raw_bytes > ABSOLUTE_MAX_BYTES:
+        raise ValueError(f"SVG exceeds absolute byte limit {ABSOLUTE_MAX_BYTES}")
     lowered = raw.lower()
     if "<!doctype" in lowered or "<!entity" in lowered:
         raise ValueError("DOCTYPE/ENTITY declarations are not allowed")
