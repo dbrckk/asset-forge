@@ -18,10 +18,17 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
         run: python asset_forge.py validate examples/asset-manifest.json
       - name: Build example plan
         run: python asset_forge.py plan examples/asset-manifest.json
+      - name: Checkout star-list
+        uses: actions/checkout@v4
+        with:
+          repository: dbrckk/star-list
+          path: star-list
+      - name: Smoke-test star-list bridge
+        run: python asset_forge.py discover-tools star-list "pixel art sprites atlas" --top 3
