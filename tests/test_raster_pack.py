@@ -1104,7 +1104,7 @@ class RasterPackTests(unittest.TestCase):
             b = root / "b.png"
             write_rgba_png(a, 4, 4, bytes([1, 2, 3, 255]))
             write_rgba_png(b, 4, 4, bytes([4, 5, 6, 255]))
-            with self.assertRaisesRegex(ValueError, "atlas height"):
+            with self.assertRaisesRegex(ValueError, "atlas budgets"):
                 pack_compact_atlas(
                     [a, b],
                     root / "atlas.png",
@@ -1288,16 +1288,57 @@ class RasterPackTests(unittest.TestCase):
         evaluated = metadata["evaluatedHeuristics"]
         self.assertEqual(len(evaluated), 3)
         best = min(
-            evaluated,
+            (item for item in evaluated if item["withinBudgets"]),
             key=lambda item: (
+                item["encodedBytes"],
+                item["atlasArea"],
                 item["contentArea"],
                 item["contentHeight"],
                 item["contentWidth"],
                 item["heuristic"],
             ),
         )
+        self.assertEqual(metadata["selectionMetric"], "encoded-png-bytes")
         self.assertEqual(metadata["selectedHeuristic"], best["heuristic"])
-        self.assertEqual(metadata["contentArea"], best["contentArea"])
+        self.assertEqual(metadata["outputBytes"], best["encodedBytes"])
+
+    def test_compact_atlas_auto_skips_heuristic_outside_byte_budget(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sizes = [(7, 2), (5, 4), (4, 3), (3, 6), (2, 5), (2, 2)]
+            paths = []
+            for index, (width, height) in enumerate(sizes):
+                path = root / f"{index}.png"
+                write_rgba_png(path, width, height, bytes([index * 20, 10, 255 - index * 20, 255]))
+                paths.append(path)
+
+            baseline = pack_compact_atlas(
+                paths,
+                root / "baseline.png",
+                max_width=10,
+                trim=False,
+                heuristic="auto",
+            )
+            evaluated = sorted(
+                baseline["evaluatedHeuristics"],
+                key=lambda item: item["encodedBytes"],
+            )
+            if evaluated[0]["encodedBytes"] < evaluated[-1]["encodedBytes"]:
+                budget = evaluated[-1]["encodedBytes"] - 1
+                constrained = pack_compact_atlas(
+                    paths,
+                    root / "constrained.png",
+                    max_width=10,
+                    max_bytes=budget,
+                    trim=False,
+                    heuristic="auto",
+                )
+                selected = next(
+                    item for item in constrained["evaluatedHeuristics"]
+                    if item["heuristic"] == constrained["selectedHeuristic"]
+                )
+                self.assertTrue(selected["withinBudgets"])
+                self.assertLessEqual(selected["encodedBytes"], budget)
 
     def test_compact_atlas_forced_heuristic_is_respected(self):
         with tempfile.TemporaryDirectory() as tmp:
