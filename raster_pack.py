@@ -140,8 +140,25 @@ def inspect_webp_bytes(data: bytes) -> dict:
         if info["animated"]:
             if b"ANIM" not in by_kind or b"ANMF" not in by_kind:
                 raise ValueError("animated WebP requires ANIM and ANMF chunks")
-        elif b"VP8 " not in by_kind and b"VP8L" not in by_kind:
-            raise ValueError("extended WebP requires VP8 or VP8L image data")
+        else:
+            image_kinds = [kind for kind in (b"VP8 ", b"VP8L") if kind in by_kind]
+            if len(image_kinds) != 1:
+                raise ValueError("extended WebP requires exactly one VP8 or VP8L image chunk")
+            image_kind = image_kinds[0]
+            if len(by_kind[image_kind]) != 1:
+                raise ValueError("extended WebP contains duplicate image chunks")
+            image_info = (
+                _webp_vp8_info(by_kind[image_kind][0])
+                if image_kind == b"VP8 "
+                else _webp_vp8l_info(by_kind[image_kind][0])
+            )
+            if (image_info["width"], image_info["height"]) != (
+                info["width"],
+                info["height"],
+            ):
+                raise ValueError("WebP VP8X canvas dimensions do not match image dimensions")
+            if image_kind == b"VP8 " and info["hasAlpha"] and b"ALPH" not in by_kind:
+                raise ValueError("lossy extended WebP with alpha requires ALPH chunk")
 
     if info["width"] * info["height"] > MAX_PNG_PIXELS:
         raise ValueError(f"WebP exceeds pixel limit {MAX_PNG_PIXELS}")
