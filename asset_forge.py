@@ -20,7 +20,7 @@ from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_3d_delivery import godot_3d_delivery_report
 from godot_handoff import prepare_godot_handoff, validate_godot_handoff
 from godot_export import write_spriteframes
-from raster_pack import inspect_png, inspect_webp, pack_uniform_atlas, recompress_png
+from raster_pack import inspect_png, inspect_raster, pack_uniform_atlas, raster_backend_status, recompress_png
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
 from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline
 from svg_tools import inspect_svg, normalize_viewbox, sanitize_svg, validate_svg_profile
@@ -154,7 +154,7 @@ def sprite_grid(info: dict, constraints: dict) -> dict:
 
 
 def build_atlas_manifest(path: Path, manifest: dict) -> dict:
-    info = inspect_png(path)
+    info = inspect_raster(path)
     constraints = manifest.get("constraints", {}) or {}
     grid = sprite_grid(info, constraints)
     frames = []
@@ -188,13 +188,14 @@ def validate_raster_file(path: Path, manifest: dict) -> tuple[dict, list[str]]:
     errors: list[str] = []
     target = manifest.get("target", {})
     target_format = str(target.get("format", "")).lower()
-    if target_format == "png":
-        info = inspect_png(path)
-        info["format"] = "png"
-    elif target_format == "webp":
-        info = inspect_webp(path)
-    else:
+    if target_format not in {"png", "webp"}:
         return {}, ["raster validation supports target.format=png or webp"]
+
+    info = inspect_raster(path)
+    if info["format"] != target_format:
+        errors.append(
+            f"asset format {info['format']} does not match target.format {target_format}"
+        )
 
     constraints = manifest.get("constraints", {}) or {}
     frame_width = constraints.get("frameWidth")
@@ -369,16 +370,16 @@ def parser() -> argparse.ArgumentParser:
     plan = sub.add_parser("plan", help="build a deterministic asset production plan")
     plan.add_argument("manifest", type=Path)
 
-    raster = sub.add_parser("validate-raster", help="validate a PNG against an asset manifest")
+    raster = sub.add_parser("validate-raster", help="validate a PNG or WebP against an asset manifest")
     raster.add_argument("manifest", type=Path)
     raster.add_argument("asset", type=Path)
 
-    atlas = sub.add_parser("atlas-manifest", help="build uniform-grid atlas metadata from a PNG")
+    atlas = sub.add_parser("atlas-manifest", help="build uniform-grid atlas metadata from PNG or WebP")
     atlas.add_argument("manifest", type=Path)
     atlas.add_argument("asset", type=Path)
     atlas.add_argument("--output", type=Path)
 
-    pack = sub.add_parser("pack-atlas", help="pack equal-size RGB/RGBA PNG frames into an atlas")
+    pack = sub.add_parser("pack-atlas", help="pack equal-size PNG/WebP frames into a PNG atlas")
     pack.add_argument("output", type=Path)
     pack.add_argument("inputs", type=Path, nargs="+")
     pack.add_argument("--metadata", type=Path)
@@ -469,6 +470,7 @@ def parser() -> argparse.ArgumentParser:
     blender_job.add_argument("--no-animations", action="store_true")
     blender_job.add_argument("--no-apply-modifiers", action="store_true")
 
+    raster_status = sub.add_parser("raster-backend-status", help="detect optional raster pixel backends")
     toolchain_status = sub.add_parser("3d-toolchain-status", help="detect available external 3D tools")
 
     pipeline3d = sub.add_parser("prepare-3d", help="prepare Blender to GLB validation/optimization pipeline")
@@ -499,6 +501,9 @@ def main() -> int:
 
     if args.command == "validate":
         return cmd_validate(args.manifest)
+    if args.command == "raster-backend-status":
+        print(json.dumps(raster_backend_status(), indent=2, sort_keys=True))
+        return 0
     if args.command == "plan":
         return cmd_plan(args.manifest, root)
     if args.command == "validate-raster":
