@@ -6,6 +6,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from engine_profile_validation import validate_godot_profile_file
+
 
 def detect_godot() -> dict:
     for name in ("godot", "godot4", "Godot"):
@@ -20,19 +22,10 @@ def load_godot_profile(profile: str, root: Path | None = None) -> dict:
         raise ValueError("profile must be prop, environment, or character")
     base = root or Path(__file__).resolve().parent
     path = base / "profiles" / "godot4" / f"{profile}.json"
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except OSError as exc:
-        raise ValueError(f"Godot profile not found: {path}") from exc
-    except json.JSONDecodeError as exc:
-        raise ValueError(f"Godot profile is invalid JSON: {path}") from exc
-    if not isinstance(data, dict):
-        raise ValueError("Godot profile root must be an object")
-    if data.get("assetProfile") != profile:
-        raise ValueError(f"Godot profile assetProfile mismatch: expected {profile}")
-    for section in ("sceneImport", "animation", "textures"):
-        if not isinstance(data.get(section), dict):
-            raise ValueError(f"Godot profile section {section} must be an object")
+    data, errors = validate_godot_profile_file(path, expected_profile=profile)
+    if errors:
+        raise ValueError("Godot profile invalid: " + "; ".join(errors))
+    assert data is not None
     return data
 
 
