@@ -1355,7 +1355,10 @@ def _choose_maxrects_layout(
     heuristic: str,
     *,
     power_of_two: bool,
-) -> tuple[list[dict], int, int, int, int, bytes, str, list[dict]]:
+    max_height: int | None,
+    max_pixels: int | None,
+    max_bytes: int | None,
+) -> tuple[list[dict], int, int, int, int, bytes, bytes, str, list[dict]]:
     candidates = []
     heuristics = MAXRECTS_HEURISTICS if heuristic == "auto" else (heuristic,)
 
@@ -1382,6 +1385,15 @@ def _choose_maxrects_layout(
             pixels,
             adaptive=True,
         )
+        budget_errors = []
+        if max_height is not None and atlas_height > max_height:
+            budget_errors.append(f"height>{max_height}")
+        atlas_area = atlas_width * atlas_height
+        if max_pixels is not None and atlas_area > max_pixels:
+            budget_errors.append(f"pixels>{max_pixels}")
+        if max_bytes is not None and len(png_bytes) > max_bytes:
+            budget_errors.append(f"bytes>{max_bytes}")
+
         candidates.append(
             {
                 "heuristic": name,
@@ -1391,14 +1403,25 @@ def _choose_maxrects_layout(
                 "contentArea": content_width * content_height,
                 "atlasWidth": atlas_width,
                 "atlasHeight": atlas_height,
-                "atlasArea": atlas_width * atlas_height,
+                "atlasArea": atlas_area,
                 "encodedBytes": len(png_bytes),
                 "pixels": pixels,
+                "pngBytes": png_bytes,
+                "withinBudgets": not budget_errors,
+                "budgetErrors": budget_errors,
             }
         )
 
+    eligible = [item for item in candidates if item["withinBudgets"]]
+    if not eligible:
+        details = "; ".join(
+            f'{item["heuristic"]}: {", ".join(item["budgetErrors"]) or "no fit"}'
+            for item in candidates
+        )
+        raise ValueError(f"no MaxRects heuristic satisfies atlas budgets: {details}")
+
     winner = min(
-        candidates,
+        eligible,
         key=lambda item: (
             item["encodedBytes"],
             item["atlasArea"],
@@ -1418,6 +1441,8 @@ def _choose_maxrects_layout(
             "atlasHeight": item["atlasHeight"],
             "atlasArea": item["atlasArea"],
             "encodedBytes": item["encodedBytes"],
+            "withinBudgets": item["withinBudgets"],
+            "budgetErrors": item["budgetErrors"],
         }
         for item in candidates
     ]
@@ -1428,6 +1453,7 @@ def _choose_maxrects_layout(
         winner["atlasWidth"],
         winner["atlasHeight"],
         winner["pixels"],
+        winner["pngBytes"],
         winner["heuristic"],
         evaluated,
     )
@@ -1466,6 +1492,7 @@ def pack_compact_atlas(
         atlas_width,
         atlas_height,
         rendered_pixels,
+        rendered_png,
         selected_heuristic,
         evaluated_heuristics,
     ) = _choose_maxrects_layout(
@@ -1475,6 +1502,9 @@ def pack_compact_atlas(
         extrude=extrude,
         heuristic=heuristic,
         power_of_two=power_of_two,
+        max_height=max_height,
+        max_pixels=max_pixels,
+        max_bytes=max_bytes,
     )
 
     _validate_atlas_dimensions(
@@ -1519,13 +1549,9 @@ def pack_compact_atlas(
                 f"atlas occupancy {occupancy:.2f}% is below minimum {min_occupancy:.2f}%"
             )
 
-    output_bytes = _write_atlas_png(
-        output,
-        atlas_width,
-        atlas_height,
-        rendered_pixels,
-        max_bytes,
-    )
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_bytes(rendered_png)
+    output_bytes = len(rendered_png)
     return {
         "image": output.name,
         "imageWidth": atlas_width,
