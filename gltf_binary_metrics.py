@@ -6,6 +6,7 @@ from pathlib import Path
 from urllib.parse import unquote
 
 from gltf_tools import GLB_BIN_CHUNK, GLB_JSON_CHUNK, GLB_MAGIC, load_gltf_json
+from raster_pack import inspect_webp_bytes
 
 
 def _decode_data_uri(uri: str) -> bytes:
@@ -152,19 +153,11 @@ def _jpeg_dimensions(data: bytes) -> tuple[int, int] | None:
 
 
 def _webp_dimensions(data: bytes) -> tuple[int, int] | None:
-    if len(data) < 30 or data[:4] != b"RIFF" or data[8:12] != b"WEBP":
+    try:
+        info = inspect_webp_bytes(data)
+    except ValueError:
         return None
-    kind = data[12:16]
-    if kind == b"VP8X" and len(data) >= 30:
-        width = 1 + int.from_bytes(data[24:27], "little")
-        height = 1 + int.from_bytes(data[27:30], "little")
-        return width, height
-    if kind == b"VP8L" and len(data) >= 25 and data[20] == 0x2F:
-        bits = int.from_bytes(data[21:25], "little")
-        width = (bits & 0x3FFF) + 1
-        height = ((bits >> 14) & 0x3FFF) + 1
-        return width, height
-    return None
+    return info["width"], info["height"]
 
 
 def image_dimensions(data: bytes) -> tuple[int, int, str] | None:
