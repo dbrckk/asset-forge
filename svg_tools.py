@@ -15,6 +15,9 @@ EVENT_ATTRIBUTE = re.compile(r"^on[a-z]+$", re.IGNORECASE)
 LENGTH = re.compile(r"^\s*([0-9]+(?:\.[0-9]+)?)(px)?\s*$", re.IGNORECASE)
 CSS_URL = re.compile(r"url\(\s*(['\"]?)(.*?)\1\s*\)", re.IGNORECASE)
 CSS_IMPORT = re.compile(r"@import\b", re.IGNORECASE)
+ABSOLUTE_MAX_BYTES = 8 * 1024 * 1024
+ABSOLUTE_MAX_ELEMENTS = 100_000
+ABSOLUTE_MAX_DEPTH = 256
 
 def _local_name(name: str) -> str:
     return name.rsplit("}", 1)[-1]
@@ -72,6 +75,10 @@ def inspect_svg(path: Path) -> tuple[dict, list[str], list[str]]:
     raw = path.read_text(encoding="utf-8")
     errors: list[str] = []
     warnings: list[str] = []
+
+    raw_bytes = len(raw.encode("utf-8"))
+    if raw_bytes > ABSOLUTE_MAX_BYTES:
+        return {}, [f"SVG exceeds absolute byte limit {ABSOLUTE_MAX_BYTES}"], warnings
 
     lowered = raw.lower()
     if "<!doctype" in lowered or "<!entity" in lowered:
@@ -138,8 +145,14 @@ def inspect_svg(path: Path) -> tuple[dict, list[str], list[str]]:
                 event_attributes.append(local_key)
             if local_key in {"href", "src"} and _is_unsafe_reference(value):
                 external_refs.append(value)
-            if local_key == "style":
+            if "url(" in value.lower() or local_key == "style":
                 css_refs.extend(_unsafe_css_references(value))
+
+    maximum_depth = _max_depth(root)
+    if element_count > ABSOLUTE_MAX_ELEMENTS:
+        errors.append(f"element count {element_count} exceeds absolute limit {ABSOLUTE_MAX_ELEMENTS}")
+    if maximum_depth > ABSOLUTE_MAX_DEPTH:
+        errors.append(f"XML depth {maximum_depth} exceeds absolute limit {ABSOLUTE_MAX_DEPTH}")
 
     if dangerous_tags:
         errors.append("disallowed executable/embedded tags: " + ", ".join(sorted(set(dangerous_tags))))
@@ -160,9 +173,9 @@ def inspect_svg(path: Path) -> tuple[dict, list[str], list[str]]:
         "viewBox": view_box,
         "viewBoxValues": list(view_box_values) if view_box_values else None,
         "elements": element_count,
-        "maxDepth": _max_depth(root),
+        "maxDepth": maximum_depth,
         "metadataElements": metadata_elements,
-        "bytes": len(raw.encode("utf-8")),
+        "bytes": raw_bytes,
     }
     return info, errors, warnings
 
@@ -202,6 +215,9 @@ def validate_svg_profile(path: Path, profile: str) -> tuple[dict, list[str], lis
 
 def normalize_viewbox(input_path: Path, output_path: Path) -> dict:
     raw = input_path.read_text(encoding="utf-8")
+    raw_bytes = len(raw.encode("utf-8"))
+    if raw_bytes > ABSOLUTE_MAX_BYTES:
+        raise ValueError(f"SVG exceeds absolute byte limit {ABSOLUTE_MAX_BYTES}")
     lowered = raw.lower()
     if "<!doctype" in lowered or "<!entity" in lowered:
         raise ValueError("DOCTYPE/ENTITY declarations are not allowed")
@@ -267,6 +283,13 @@ def sanitize_svg(
     except ET.ParseError as exc:
         raise ValueError(f"invalid XML: {exc}") from exc
 
+    depth = _max_depth(root)
+    if depth > ABSOLUTE_MAX_DEPTH:
+        raise ValueError(f"XML depth {depth} exceeds absolute limit {ABSOLUTE_MAX_DEPTH}")
+    element_count = sum(1 for _ in root.iter())
+    if element_count > ABSOLUTE_MAX_ELEMENTS:
+        raise ValueError(f"element count {element_count} exceeds absolute limit {ABSOLUTE_MAX_ELEMENTS}")
+
     removed_elements = 0
     removed_attributes = 0
 
@@ -293,7 +316,7 @@ def sanitize_svg(
                 elif local_key in {"href", "src"} and _is_unsafe_reference(value):
                     del child.attrib[key]
                     removed_attributes += 1
-                elif local_key == "style" and _unsafe_css_references(value):
+                elif _unsafe_css_references(value):
                     del child.attrib[key]
                     removed_attributes += 1
             clean(child)
@@ -307,7 +330,7 @@ def sanitize_svg(
         elif local_key in {"href", "src"} and _is_unsafe_reference(value):
             del root.attrib[key]
             removed_attributes += 1
-        elif local_key == "style" and _unsafe_css_references(value):
+        elif _unsafe_css_references(value):
             del root.attrib[key]
             removed_attributes += 1
 
