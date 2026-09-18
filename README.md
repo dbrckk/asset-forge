@@ -139,6 +139,22 @@ The bridge invokes star-list's own recommender and consumes its JSON result inst
 
 Discovery is advisory: a newly discovered repository is never trusted automatically.
 
+## SVG/vector workflow
+
+Validate an SVG before it enters a project:
+
+```bash
+python asset_forge.py validate-svg path/to/icon.svg
+```
+
+Create a sanitized copy that removes executable/unsafe SVG content and external references:
+
+```bash
+python asset_forge.py sanitize-svg path/to/icon.svg build/icon.safe.svg
+```
+
+The current vector validator checks XML validity, SVG root type, viewBox shape, dimensions, scripts/foreignObject, event-handler attributes, and external href/src references.
+
 ## Initial interoperability
 
 - glTF/GLB for portable 3D delivery
