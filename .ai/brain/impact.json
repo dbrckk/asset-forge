@@ -1,12 +1,481 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "HEAD~1",
-  "head": "56d712f0e809b80c567070d2e3e3be4c73959538",
-  "index_mode": "full",
-  "changed_files": [],
-  "changed_source_files": [],
-  "impacted_files": [],
-  "impacted_symbols": [],
-  "selected_tests": []
+  "base": "56d712f0e809b80c567070d2e3e3be4c73959538",
+  "head": "2b07bfc1c3b6cc42d580ac8123c25c4a50672dc8",
+  "index_mode": "incremental",
+  "changed_files": [
+    {
+      "path": ".github/workflows/validate.yml",
+      "status": "M"
+    },
+    {
+      "path": "README.md",
+      "status": "M"
+    },
+    {
+      "path": "asset_forge.py",
+      "status": "M"
+    },
+    {
+      "path": "gltf_diagnostics.py",
+      "status": "A"
+    },
+    {
+      "path": "gltf_quality.py",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_gltf_diagnostics.py",
+      "status": "A"
+    },
+    {
+      "path": "tests/test_gltf_quality.py",
+      "status": "M"
+    }
+  ],
+  "changed_source_files": [
+    "asset_forge.py",
+    "gltf_diagnostics.py",
+    "gltf_quality.py",
+    "tests/test_gltf_diagnostics.py",
+    "tests/test_gltf_quality.py"
+  ],
+  "impacted_files": [
+    "asset_forge.py",
+    "gltf_diagnostics.py",
+    "gltf_quality.py",
+    "tests/test_asset_forge.py",
+    "tests/test_gltf_binary_metrics.py",
+    "tests/test_gltf_diagnostics.py",
+    "tests/test_gltf_quality.py"
+  ],
+  "impacted_symbols": [
+    {
+      "name": "load_json",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 61
+    },
+    {
+      "name": "validate_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 69
+    },
+    {
+      "name": "is_power_of_two",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 127
+    },
+    {
+      "name": "parse_png_chunks",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 131
+    },
+    {
+      "name": "inspect_png",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 163
+    },
+    {
+      "name": "sprite_grid",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 202
+    },
+    {
+      "name": "build_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 223
+    },
+    {
+      "name": "validate_raster_file",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 254
+    },
+    {
+      "name": "select_tools",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 304
+    },
+    {
+      "name": "build_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 322
+    },
+    {
+      "name": "load_valid_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 351
+    },
+    {
+      "name": "cmd_validate",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 367
+    },
+    {
+      "name": "cmd_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 375
+    },
+    {
+      "name": "cmd_validate_raster",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 383
+    },
+    {
+      "name": "cmd_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 397
+    },
+    {
+      "name": "parser",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 421
+    },
+    {
+      "name": "main",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 533
+    },
+    {
+      "name": "accessor_layout",
+      "kind": "function",
+      "file": "gltf_diagnostics.py",
+      "line": 31
+    },
+    {
+      "name": "inspect_accessors",
+      "kind": "function",
+      "file": "gltf_diagnostics.py",
+      "line": 62
+    },
+    {
+      "name": "_read_scalar_accessor",
+      "kind": "function",
+      "file": "gltf_diagnostics.py",
+      "line": 184
+    },
+    {
+      "name": "inspect_skinning_consistency",
+      "kind": "function",
+      "file": "gltf_diagnostics.py",
+      "line": 242
+    },
+    {
+      "name": "inspect_animation_consistency",
+      "kind": "function",
+      "file": "gltf_diagnostics.py",
+      "line": 316
+    },
+    {
+      "name": "deep_gltf_diagnostics",
+      "kind": "function",
+      "file": "gltf_diagnostics.py",
+      "line": 459
+    },
+    {
+      "name": "_accessor_count",
+      "kind": "function",
+      "file": "gltf_quality.py",
+      "line": 50
+    },
+    {
+      "name": "_triangle_count",
+      "kind": "function",
+      "file": "gltf_quality.py",
+      "line": 62
+    },
+    {
+      "name": "build_quality_report",
+      "kind": "function",
+      "file": "gltf_quality.py",
+      "line": 70
+    },
+    {
+      "name": "evaluate_quality",
+      "kind": "function",
+      "file": "gltf_quality.py",
+      "line": 294
+    },
+    {
+      "name": "quality_report",
+      "kind": "function",
+      "file": "gltf_quality.py",
+      "line": 408
+    },
+    {
+      "name": "chunk",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 13
+    },
+    {
+      "name": "write_png",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 22
+    },
+    {
+      "name": "AssetForgeTests",
+      "kind": "class",
+      "file": "tests/test_asset_forge.py",
+      "line": 50
+    },
+    {
+      "name": "load_example",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 51
+    },
+    {
+      "name": "test_example_manifest_is_valid",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 54
+    },
+    {
+      "name": "test_pixel_art_rejects_non_nearest_interpolation",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 57
+    },
+    {
+      "name": "test_external_asset_requires_uri",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 65
+    },
+    {
+      "name": "test_incompatible_commercial_license_is_rejected",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 71
+    },
+    {
+      "name": "test_plan_routes_sprite_to_2d_pipeline",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 80
+    },
+    {
+      "name": "test_secondary_custom_asset_prompts_reuse_search",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 88
+    },
+    {
+      "name": "test_png_sprite_grid_validation_passes",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 97
+    },
+    {
+      "name": "test_png_sprite_grid_validation_rejects_bad_width",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 108
+    },
+    {
+      "name": "test_png_alpha_requirement",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 116
+    },
+    {
+      "name": "test_palette_transparency_and_max_colors",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 125
+    },
+    {
+      "name": "test_power_of_two_atlas",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 137
+    },
+    {
+      "name": "test_atlas_manifest_contains_frame_rectangles",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 148
+    },
+    {
+      "name": "test_invalid_png_crc_is_rejected",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 162
+    },
+    {
+      "name": "chunk",
+      "kind": "function",
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 16
+    },
+    {
+      "name": "tiny_png",
+      "kind": "function",
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 25
+    },
+    {
+      "name": "GltfBinaryMetricsTests",
+      "kind": "class",
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 31
+    },
+    {
+      "name": "test_data_uri_png_dimensions_and_memory",
+      "kind": "function",
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 32
+    },
+    {
+      "name": "test_local_external_png_dimensions",
+      "kind": "function",
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 50
+    },
+    {
+      "name": "test_animation_and_rig_metrics",
+      "kind": "function",
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 65
+    },
+    {
+      "name": "test_quality_report_includes_binary_metrics",
+      "kind": "function",
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 91
+    },
+    {
+      "name": "GltfDiagnosticsTests",
+      "kind": "class",
+      "file": "tests/test_gltf_diagnostics.py",
+      "line": 16
+    },
+    {
+      "name": "write",
+      "kind": "function",
+      "file": "tests/test_gltf_diagnostics.py",
+      "line": 17
+    },
+    {
+      "name": "test_accessor_byte_range_and_layout",
+      "kind": "function",
+      "file": "tests/test_gltf_diagnostics.py",
+      "line": 22
+    },
+    {
+      "name": "test_accessor_overrun_is_rejected",
+      "kind": "function",
+      "file": "tests/test_gltf_diagnostics.py",
+      "line": 47
+    },
+    {
+      "name": "test_skinning_requires_matching_vec4_attributes",
+      "kind": "function",
+      "file": "tests/test_gltf_diagnostics.py",
+      "line": 66
+    },
+    {
+      "name": "test_animation_duration_reads_real_key_times",
+      "kind": "function",
+      "file": "tests/test_gltf_diagnostics.py",
+      "line": 93
+    },
+    {
+      "name": "test_non_increasing_animation_times_are_rejected",
+      "kind": "function",
+      "file": "tests/test_gltf_diagnostics.py",
+      "line": 125
+    },
+    {
+      "name": "test_deep_report_has_all_sections",
+      "kind": "function",
+      "file": "tests/test_gltf_diagnostics.py",
+      "line": 154
+    },
+    {
+      "name": "GltfQualityTests",
+      "kind": "class",
+      "file": "tests/test_gltf_quality.py",
+      "line": 9
+    },
+    {
+      "name": "write",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 10
+    },
+    {
+      "name": "base",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 15
+    },
+    {
+      "name": "test_counts_vertices_and_triangles",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 50
+    },
+    {
+      "name": "test_triangle_strip_count",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 59
+    },
+    {
+      "name": "test_character_quality_requires_skin_attributes",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 68
+    },
+    {
+      "name": "test_textured_primitive_requires_uv",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 76
+    },
+    {
+      "name": "test_normal_map_without_tangent_warns",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 85
+    },
+    {
+      "name": "test_external_image_is_reported",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 93
+    },
+    {
+      "name": "test_untextured_primitive_does_not_require_uv",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 100
+    }
+  ],
+  "selected_tests": [
+    "tests/test_asset_forge.py",
+    "tests/test_gltf_binary_metrics.py",
+    "tests/test_gltf_diagnostics.py",
+    "tests/test_gltf_quality.py"
+  ]
 }

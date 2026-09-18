@@ -54,21 +54,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T18:14:16Z
+Generated: 2026-09-18T18:17:55Z
 
 ### Git
 - Branch: `main`
-- Head: `56d712f0e809`
-- Commit date: 2026-09-18T20:13:53+02:00
-- Commit: docs: record binary 3d metrics milestone
-- Tracked files: 87
+- Head: `2b07bfc1c3b6`
+- Commit date: 2026-09-18T20:17:33+02:00
+- Commit: docs: record deep gltf diagnostics milestone
+- Tracked files: 89
 
 ### Recently changed files
 - `README.md`
 - `.github/workflows/validate.yml`
-- `tests/test_gltf_binary_metrics.py`
-- `gltf_quality.py`
-- `profiles/3d/character.json`
+- `asset_forge.py`
+- `gltf_diagnostics.py`
+- `tests/test_gltf_quality.py`
 
 ### Project signals
 - No common build descriptor detected

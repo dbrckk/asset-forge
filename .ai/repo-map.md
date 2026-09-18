@@ -67,6 +67,7 @@ tests/
   test_asset_forge.py
   test_blender_adapter.py
   test_gltf_binary_metrics.py
+  test_gltf_diagnostics.py
   test_gltf_quality.py
   test_gltf_tools.py
   test_godot_export.py
@@ -79,6 +80,7 @@ animation_infer.py
 asset_forge.py
 blender_adapter.py
 gltf_binary_metrics.py
+gltf_diagnostics.py
 gltf_quality.py
 gltf_tools.py
 godot_export.py
@@ -137,7 +139,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -684,6 +686,46 @@ payload = tiny_png(4, 4)
 report = quality_report(path, "prop")
 ````
 
+## File: tests/test_gltf_diagnostics.py
+````python
+class GltfDiagnosticsTests(unittest.TestCase)
+⋮----
+def write(self, root: Path, data: dict) -> Path
+⋮----
+path = root / "asset.gltf"
+⋮----
+def test_accessor_byte_range_and_layout(self)
+⋮----
+payload = struct.pack("<9f", *[float(i) for i in range(9)])
+uri = "data:application/octet-stream;base64," + base64.b64encode(payload).decode("ascii")
+data = {
+⋮----
+report = inspect_accessors(self.write(Path(tmp), data))
+⋮----
+def test_accessor_overrun_is_rejected(self)
+⋮----
+def test_skinning_requires_matching_vec4_attributes(self)
+⋮----
+report = inspect_skinning_consistency(self.write(Path(tmp), data))
+⋮----
+def test_animation_duration_reads_real_key_times(self)
+⋮----
+times = struct.pack("<3f", 0.0, 0.5, 2.0)
+output = struct.pack("<9f", *([0.0] * 9))
+payload = times + output
+⋮----
+report = inspect_animation_consistency(self.write(Path(tmp), data))
+⋮----
+def test_non_increasing_animation_times_are_rejected(self)
+⋮----
+times = struct.pack("<3f", 0.0, 1.0, 1.0)
+⋮----
+def test_deep_report_has_all_sections(self)
+⋮----
+path = self.write(Path(tmp), {"asset": {"version": "2.0"}})
+report = deep_gltf_diagnostics(path)
+````
+
 ## File: tests/test_gltf_quality.py
 ````python
 class GltfQualityTests(unittest.TestCase)
@@ -1212,6 +1254,8 @@ gltf_validate = sub.add_parser("validate-gltf", help="validate glTF/GLB structur
 ⋮----
 gltf_quality = sub.add_parser("quality-gltf", help="measure glTF/GLB production quality")
 ⋮----
+gltf_diagnose = sub.add_parser("diagnose-gltf", help="run deep accessor, skinning, and animation diagnostics")
+⋮----
 blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
 ⋮----
 toolchain_status = sub.add_parser("3d-toolchain-status", help="detect available external 3D tools")
@@ -1250,6 +1294,10 @@ result = {"file": str(args.input), "info": info, "errors": errors, "warnings": w
 result = sanitize_svg(args.input, args.output)
 ⋮----
 result = normalize_viewbox(args.input, args.output)
+⋮----
+result = deep_gltf_diagnostics(args.input)
+⋮----
+has_errors = any(
 ⋮----
 result = quality_report(args.input, args.profile)
 ⋮----
@@ -1412,6 +1460,171 @@ node = target.get("node")
 path_name = target.get("path")
 ````
 
+## File: gltf_diagnostics.py
+````python
+COMPONENT_INFO = {
+⋮----
+TYPE_COMPONENTS = {
+⋮----
+def accessor_layout(accessor: dict) -> dict
+⋮----
+component_type = accessor.get("componentType")
+accessor_type = accessor.get("type")
+count = accessor.get("count")
+⋮----
+info = COMPONENT_INFO.get(component_type)
+components = TYPE_COMPONENTS.get(accessor_type)
+⋮----
+component_bytes = info[1]
+element_bytes = component_bytes * components
+⋮----
+def inspect_accessors(path: Path) -> dict
+⋮----
+accessors = data.get("accessors", [])
+buffer_views = data.get("bufferViews", [])
+buffers = data.get("buffers", [])
+⋮----
+accessors = []
+⋮----
+buffer_views = []
+⋮----
+buffers = []
+⋮----
+payloads = load_buffer_payloads(path, data)
+items = []
+errors: list[str] = []
+warnings: list[str] = []
+total_packed_bytes = 0
+⋮----
+item = {"index": index}
+⋮----
+layout = accessor_layout(accessor)
+⋮----
+view_index = accessor.get("bufferView")
+byte_offset = accessor.get("byteOffset", 0)
+⋮----
+view = buffer_views[view_index]
+⋮----
+stride = view.get("byteStride", layout["elementBytes"])
+⋮----
+required = byte_offset
+⋮----
+view_length = view.get("byteLength")
+⋮----
+buffer_index = view.get("buffer")
+⋮----
+payload = payloads[buffer_index]
+⋮----
+view_offset = view.get("byteOffset", 0)
+⋮----
+start = view_offset + byte_offset
+end = start + (stride * (layout["count"] - 1) + layout["elementBytes"] if layout["count"] else 0)
+⋮----
+def _read_scalar_accessor(path: Path, accessor_index: int) -> list[float] | None
+⋮----
+views = data.get("bufferViews", [])
+⋮----
+accessor = accessors[accessor_index]
+⋮----
+view = views[view_index]
+⋮----
+fmt = COMPONENT_INFO[accessor["componentType"]][0]
+⋮----
+accessor_offset = accessor.get("byteOffset", 0)
+⋮----
+start = view_offset + accessor_offset
+⋮----
+values = []
+⋮----
+offset = start + i * stride
+end = offset + layout["componentBytes"]
+⋮----
+value = struct.unpack_from("<" + fmt, payload, offset)[0]
+⋮----
+def inspect_skinning_consistency(path: Path) -> dict
+⋮----
+meshes = data.get("meshes", [])
+⋮----
+meshes = []
+⋮----
+skinned_primitives = 0
+⋮----
+primitives = mesh.get("primitives", [])
+⋮----
+attrs = primitive.get("attributes", {})
+⋮----
+joints_index = attrs.get("JOINTS_0")
+weights_index = attrs.get("WEIGHTS_0")
+⋮----
+label = f"mesh {mesh_index} primitive {primitive_index}"
+⋮----
+joints = accessors[joints_index]
+weights = accessors[weights_index]
+⋮----
+joints_count = joints.get("count")
+weights_count = weights.get("count")
+⋮----
+position_index = attrs.get("POSITION")
+⋮----
+position = accessors[position_index]
+⋮----
+def inspect_animation_consistency(path: Path) -> dict
+⋮----
+animations = data.get("animations", [])
+⋮----
+nodes = data.get("nodes", [])
+⋮----
+animations = []
+⋮----
+nodes = []
+⋮----
+samplers = animation.get("samplers", [])
+channels = animation.get("channels", [])
+⋮----
+samplers = []
+⋮----
+channels = []
+⋮----
+animation_start = None
+animation_end = None
+used_samplers = set()
+⋮----
+input_index = sampler.get("input")
+output_index = sampler.get("output")
+interpolation = sampler.get("interpolation", "LINEAR")
+⋮----
+input_accessor = accessors[input_index]
+⋮----
+input_count = input_accessor.get("count")
+output_accessor = accessors[output_index]
+output_count = output_accessor.get("count") if isinstance(output_accessor, dict) else None
+expected_multiplier = 3 if interpolation == "CUBICSPLINE" else 1
+⋮----
+values = _read_scalar_accessor(path, input_index)
+⋮----
+start = values[0]
+end = values[-1]
+animation_start = start if animation_start is None else min(animation_start, start)
+animation_end = end if animation_end is None else max(animation_end, end)
+⋮----
+sampler_index = channel.get("sampler")
+⋮----
+target = channel.get("target")
+⋮----
+node = target.get("node")
+target_path = target.get("path")
+⋮----
+unused = sorted(set(range(len(samplers))) - used_samplers)
+⋮----
+duration = None
+⋮----
+duration = max(0.0, animation_end - animation_start)
+⋮----
+durations = [item["durationSeconds"] for item in items if item["durationSeconds"] is not None]
+⋮----
+def deep_gltf_diagnostics(path: Path) -> dict
+````
+
 ## File: gltf_quality.py
 ````python
 QUALITY_PROFILES = {
@@ -1510,6 +1723,7 @@ uri = image.get("uri")
 ⋮----
 image_metrics = inspect_images(path)
 rig_animation = inspect_rig_and_animation(path)
+diagnostics = deep_gltf_diagnostics(path)
 known_image_dimensions = [item for item in image_metrics if item.get("width") and item.get("height")]
 estimated_texture_bytes = sum(
 estimated_texture_mip_bytes = sum(
@@ -1529,6 +1743,10 @@ warnings: list[str] = []
 primitive_count = geometry["primitives"]
 ⋮----
 rig = report.get("rigAnimation", {})
+diagnostics = report.get("diagnostics", {})
+accessor_diag = diagnostics.get("accessors", {})
+skin_diag = diagnostics.get("skinning", {})
+animation_diag = diagnostics.get("animations", {})
 ⋮----
 def quality_report(path: Path, profile: str | None = None) -> dict
 ⋮----
@@ -2024,6 +2242,12 @@ python asset_forge.py validate-gltf level.glb --profile environment
 python asset_forge.py validate-gltf character.glb --profile character
 ```
 
+Run deep accessor/skinning/animation diagnostics:
+
+```bash
+python asset_forge.py diagnose-gltf model.glb --output build/model-diagnostics.json
+```
+
 Measure production quality and budgets:
 
 ```bash
@@ -2032,7 +2256,9 @@ python asset_forge.py quality-gltf prop.glb --profile prop --output build/prop-q
 
 The quality report derives vertex and triangle counts from accessor metadata, measures primitive coverage for normals/UVs/tangents/skinning, summarizes PBR texture usage, identifies external images, and evaluates the versioned profile budgets under `profiles/3d/`.
 
-When image bytes are locally available, the report also reads PNG/JPEG/WebP dimensions and estimates decoded RGBA8 texture memory with mipmaps. Remote URLs are not fetched. Rig/animation metrics include joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, and keyframe accessor counts.
+When image bytes are locally available, the report also reads PNG/JPEG/WebP dimensions and estimates decoded RGBA8 texture memory with mipmaps. Remote URLs are not fetched. Rig/animation metrics include joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, keyframe accessor counts, and duration when animation time accessors are locally readable.
+
+Deep diagnostics additionally check accessor layout/ranges, byteStride alignment, JOINTS_0/WEIGHTS_0 type and count consistency, animation sampler input/output counts, interpolation modes, sampler/channel references, target nodes/paths, unused samplers, and strictly increasing key times.
 
 Create a reproducible Blender export job and script:
 

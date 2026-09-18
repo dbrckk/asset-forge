@@ -4,5 +4,1919 @@
   "scope": "symbols defined in changed source files",
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
-  "symbols": {}
+  "symbols": {
+    "load_json": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 61,
+        "end": 66
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "validate_manifest": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 69,
+        "end": 124
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "is_power_of_two": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 127,
+        "end": 128
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "parse_png_chunks": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 131,
+        "end": 160
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "inspect_png": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 163,
+        "end": 199
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "parse_png_chunks",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 131,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "sprite_grid": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 202,
+        "end": 220
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "build_atlas_manifest": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 223,
+        "end": 251
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "inspect_png",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 163,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sprite_grid",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 202,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "validate_raster_file": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 254,
+        "end": 301
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "inspect_png",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 163,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "is_power_of_two",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 127,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sprite_grid",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 202,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "select_tools": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 304,
+        "end": 319
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "build_plan": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 322,
+        "end": 348
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_json",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 61,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "select_tools",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 304,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "load_valid_manifest": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 351,
+        "end": 364
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_json",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 61,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 69,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "cmd_validate": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 367,
+        "end": 372
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_valid_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 351,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "cmd_plan": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 375,
+        "end": 380
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_plan",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 322,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "load_valid_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 351,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "cmd_validate_raster": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 383,
+        "end": 394
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_valid_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 351,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_raster_file",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 254,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "cmd_atlas_manifest": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 397,
+        "end": 418
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_atlas_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 223,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "load_valid_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 351,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_raster_file",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 254,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "parser": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 421,
+        "end": 530
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "main": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 533,
+        "end": 770
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_3d_pipeline",
+          "definitions": [
+            {
+              "file": "toolchain_3d.py",
+              "line": 78,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "build_blender_export_job",
+          "definitions": [
+            {
+              "file": "blender_adapter.py",
+              "line": 20,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "build_visual_discovery_report",
+          "definitions": [
+            {
+              "file": "starlist_bridge.py",
+              "line": 65,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "cmd_atlas_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 397,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "cmd_plan",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 375,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "cmd_validate",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 367,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "cmd_validate_raster",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 383,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "deep_gltf_diagnostics",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 459,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "detect_3d_tools",
+          "definitions": [
+            {
+              "file": "toolchain_3d.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_3d_pipeline",
+          "definitions": [
+            {
+              "file": "toolchain_3d.py",
+              "line": 358,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "infer_animations",
+          "definitions": [
+            {
+              "file": "animation_infer.py",
+              "line": 9,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_gltf",
+          "definitions": [
+            {
+              "file": "gltf_tools.py",
+              "line": 200,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_svg",
+          "definitions": [
+            {
+              "file": "svg_tools.py",
+              "line": 71,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "load_json",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 61,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalize_viewbox",
+          "definitions": [
+            {
+              "file": "svg_tools.py",
+              "line": 188,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "pack_uniform_atlas",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 272,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "parser",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 421,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "prepare_3d_pipeline",
+          "definitions": [
+            {
+              "file": "toolchain_3d.py",
+              "line": 276,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "quality_report",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 408,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "recompress_png",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 249,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "render_blender_command",
+          "definitions": [
+            {
+              "file": "blender_adapter.py",
+              "line": 71,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "run_starlist_recommender",
+          "definitions": [
+            {
+              "file": "starlist_bridge.py",
+              "line": 9,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "sanitize_svg",
+          "definitions": [
+            {
+              "file": "svg_tools.py",
+              "line": 236,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_gltf_profile",
+          "definitions": [
+            {
+              "file": "gltf_tools.py",
+              "line": 314,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_svg_profile",
+          "definitions": [
+            {
+              "file": "svg_tools.py",
+              "line": 162,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write_blender_export_script",
+          "definitions": [
+            {
+              "file": "blender_adapter.py",
+              "line": 66,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write_job_manifest",
+          "definitions": [
+            {
+              "file": "blender_adapter.py",
+              "line": 83,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write_spriteframes",
+          "definitions": [
+            {
+              "file": "godot_export.py",
+              "line": 206,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 28
+    },
+    "accessor_layout": {
+      "source": {
+        "file": "gltf_diagnostics.py",
+        "start": 31,
+        "end": 59
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "inspect_accessors": {
+      "source": {
+        "file": "gltf_diagnostics.py",
+        "start": 62,
+        "end": 181
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "accessor_layout",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 31,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "load_buffer_payloads",
+          "definitions": [
+            {
+              "file": "gltf_binary_metrics.py",
+              "line": 57,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "load_gltf_json",
+          "definitions": [
+            {
+              "file": "gltf_tools.py",
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "_read_scalar_accessor": {
+      "source": {
+        "file": "gltf_diagnostics.py",
+        "start": 184,
+        "end": 239
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "accessor_layout",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 31,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "load_buffer_payloads",
+          "definitions": [
+            {
+              "file": "gltf_binary_metrics.py",
+              "line": 57,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "load_gltf_json",
+          "definitions": [
+            {
+              "file": "gltf_tools.py",
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "inspect_skinning_consistency": {
+      "source": {
+        "file": "gltf_diagnostics.py",
+        "start": 242,
+        "end": 313
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_gltf_json",
+          "definitions": [
+            {
+              "file": "gltf_tools.py",
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "inspect_animation_consistency": {
+      "source": {
+        "file": "gltf_diagnostics.py",
+        "start": 316,
+        "end": 456
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_read_scalar_accessor",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 184,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "load_gltf_json",
+          "definitions": [
+            {
+              "file": "gltf_tools.py",
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "deep_gltf_diagnostics": {
+      "source": {
+        "file": "gltf_diagnostics.py",
+        "start": 459,
+        "end": 464
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "inspect_accessors",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 62,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "inspect_animation_consistency",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 316,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "inspect_skinning_consistency",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 242,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "_accessor_count": {
+      "source": {
+        "file": "gltf_quality.py",
+        "start": 50,
+        "end": 59
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_triangle_count": {
+      "source": {
+        "file": "gltf_quality.py",
+        "start": 62,
+        "end": 67
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "build_quality_report": {
+      "source": {
+        "file": "gltf_quality.py",
+        "start": 70,
+        "end": 291
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_accessor_count",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 50,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_triangle_count",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 62,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "deep_gltf_diagnostics",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 459,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_images",
+          "definitions": [
+            {
+              "file": "gltf_binary_metrics.py",
+              "line": 182,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_rig_and_animation",
+          "definitions": [
+            {
+              "file": "gltf_binary_metrics.py",
+              "line": 248,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "load_gltf_json",
+          "definitions": [
+            {
+              "file": "gltf_tools.py",
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 6
+    },
+    "evaluate_quality": {
+      "source": {
+        "file": "gltf_quality.py",
+        "start": 294,
+        "end": 405
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "quality_report": {
+      "source": {
+        "file": "gltf_quality.py",
+        "start": 408,
+        "end": 412
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_quality_report",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 70,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "evaluate_quality",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 294,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "GltfDiagnosticsTests": {
+      "source": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "start": 16,
+        "end": 161
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "deep_gltf_diagnostics",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 459,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_accessors",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 62,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_animation_consistency",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 316,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_skinning_consistency",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 242,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_accessor_byte_range_and_layout",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_accessor_overrun_is_rejected",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 47,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_animation_duration_reads_real_key_times",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 93,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_deep_report_has_all_sections",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 154,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_non_increasing_animation_times_are_rejected",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 125,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_skinning_requires_matching_vec4_attributes",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 66,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 11
+    },
+    "write": {
+      "source": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "start": 17,
+        "end": 20
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "test_accessor_byte_range_and_layout": {
+      "source": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "start": 22,
+        "end": 45
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "inspect_accessors",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 62,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_accessor_overrun_is_rejected": {
+      "source": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "start": 47,
+        "end": 64
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "inspect_accessors",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 62,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_skinning_requires_matching_vec4_attributes": {
+      "source": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "start": 66,
+        "end": 91
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "inspect_skinning_consistency",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 242,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_animation_duration_reads_real_key_times": {
+      "source": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "start": 93,
+        "end": 123
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "inspect_animation_consistency",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 316,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_non_increasing_animation_times_are_rejected": {
+      "source": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "start": 125,
+        "end": 152
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "inspect_animation_consistency",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 316,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_deep_report_has_all_sections": {
+      "source": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "start": 154,
+        "end": 161
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "deep_gltf_diagnostics",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 459,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_diagnostics.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "GltfQualityTests": {
+      "source": {
+        "file": "tests/test_gltf_quality.py",
+        "start": 9,
+        "end": 109
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "base",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_quality_report",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 70,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "evaluate_quality",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 294,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "quality_report",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 408,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_character_quality_requires_skin_attributes",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 68,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_counts_vertices_and_triangles",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 50,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_external_image_is_reported",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 93,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_normal_map_without_tangent_warns",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 85,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_textured_primitive_requires_uv",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 76,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_triangle_strip_count",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 59,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_untextured_primitive_does_not_require_uv",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 100,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 12
+    },
+    "base": {
+      "source": {
+        "file": "tests/test_gltf_quality.py",
+        "start": 15,
+        "end": 48
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "test_counts_vertices_and_triangles": {
+      "source": {
+        "file": "tests/test_gltf_quality.py",
+        "start": 50,
+        "end": 57
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "base",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_quality_report",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 70,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_triangle_strip_count": {
+      "source": {
+        "file": "tests/test_gltf_quality.py",
+        "start": 59,
+        "end": 66
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "base",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_quality_report",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 70,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_character_quality_requires_skin_attributes": {
+      "source": {
+        "file": "tests/test_gltf_quality.py",
+        "start": 68,
+        "end": 74
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "base",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_quality_report",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 70,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "evaluate_quality",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 294,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "test_textured_primitive_requires_uv": {
+      "source": {
+        "file": "tests/test_gltf_quality.py",
+        "start": 76,
+        "end": 83
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "base",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "quality_report",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 408,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_normal_map_without_tangent_warns": {
+      "source": {
+        "file": "tests/test_gltf_quality.py",
+        "start": 85,
+        "end": 91
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "base",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "quality_report",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 408,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_external_image_is_reported": {
+      "source": {
+        "file": "tests/test_gltf_quality.py",
+        "start": 93,
+        "end": 98
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "base",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "quality_report",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 408,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_untextured_primitive_does_not_require_uv": {
+      "source": {
+        "file": "tests/test_gltf_quality.py",
+        "start": 100,
+        "end": 109
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "base",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "quality_report",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 408,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write",
+          "definitions": [
+            {
+              "file": "tests/test_gltf_quality.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    }
+  }
 }

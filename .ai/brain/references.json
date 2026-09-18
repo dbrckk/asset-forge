@@ -4,5 +4,1557 @@
   "scope": "symbols defined in changed source files",
   "semantic": false,
   "note": "Occurrences are lexical word matches; verify source/LSP/compiler data before relying on them.",
-  "symbols": {}
+  "symbols": {
+    "load_json": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 61,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 61,
+          "preview": "def load_json(path: Path) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 335,
+          "preview": "pipeline = load_json(root / pipeline_path) if pipeline_path else None",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 336,
+          "preview": "registry = load_json(root / \"config/tooling.json\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 353,
+          "preview": "manifest = load_json(path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 575,
+          "preview": "metadata = load_json(args.metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 578,
+          "preview": "animation_config = load_json(args.animations)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 621,
+          "preview": "metadata = load_json(args.metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 52,
+          "preview": "return asset_forge.load_json(ROOT / \"examples/asset-manifest.json\")",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 8
+    },
+    "validate_manifest": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 69,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 69,
+          "preview": "def validate_manifest(manifest: dict) -> list[str]:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 358,
+          "preview": "errors = validate_manifest(manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 55,
+          "preview": "self.assertEqual(asset_forge.validate_manifest(self.load_example()), [])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 62,
+          "preview": "asset_forge.validate_manifest(manifest),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 68,
+          "preview": "errors = asset_forge.validate_manifest(manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 74,
+          "preview": "errors = asset_forge.validate_manifest(manifest)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 6
+    },
+    "is_power_of_two": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 127,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 127,
+          "preview": "def is_power_of_two(value: int) -> bool:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 282,
+          "preview": "if not is_power_of_two(info[\"width\"]) or not is_power_of_two(info[\"height\"]):",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "parse_png_chunks": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 131,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 131,
+          "preview": "def parse_png_chunks(data: bytes) -> list[tuple[bytes, bytes]]:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 165,
+          "preview": "chunks = parse_png_chunks(data)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "inspect_png": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 163,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 163,
+          "preview": "def inspect_png(path: Path) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 224,
+          "preview": "info = inspect_png(path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 260,
+          "preview": "info = inspect_png(path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 170,
+          "preview": "asset_forge.inspect_png(image)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 4
+    },
+    "sprite_grid": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 202,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 202,
+          "preview": "def sprite_grid(info: dict, constraints: dict) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 226,
+          "preview": "grid = sprite_grid(info, constraints)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 293,
+          "preview": "grid = sprite_grid(info, constraints)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 3
+    },
+    "build_atlas_manifest": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 223,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 223,
+          "preview": "def build_atlas_manifest(path: Path, manifest: dict) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 406,
+          "preview": "atlas = build_atlas_manifest(asset_path, manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 153,
+          "preview": "atlas = asset_forge.build_atlas_manifest(image, manifest)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 3
+    },
+    "validate_raster_file": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 254,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 254,
+          "preview": "def validate_raster_file(path: Path, manifest: dict) -> tuple[dict, list[str]]:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 388,
+          "preview": "info, errors = validate_raster_file(asset_path, manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 402,
+          "preview": "_, errors = validate_raster_file(asset_path, manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 103,
+          "preview": "info, errors = asset_forge.validate_raster_file(image, manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 113,
+          "preview": "_, errors = asset_forge.validate_raster_file(image, manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 122,
+          "preview": "_, errors = asset_forge.validate_raster_file(image, manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 132,
+          "preview": "info, errors = asset_forge.validate_raster_file(image, manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 145,
+          "preview": "_, errors = asset_forge.validate_raster_file(image, manifest)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 8
+    },
+    "select_tools": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 304,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 304,
+          "preview": "def select_tools(asset_type: str, registry: dict) -> list[dict]:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 345,
+          "preview": "\"candidateTools\": select_tools(asset_type, registry),",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "build_plan": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 322,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 322,
+          "preview": "def build_plan(manifest: dict, root: Path) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 379,
+          "preview": "print(json.dumps(build_plan(manifest, root), indent=2, sort_keys=True))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 82,
+          "preview": "plan = asset_forge.build_plan(manifest, ROOT)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 91,
+          "preview": "plan = asset_forge.build_plan(manifest, ROOT)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 4
+    },
+    "load_valid_manifest": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 351,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 351,
+          "preview": "def load_valid_manifest(path: Path) -> tuple[dict | None, int]:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 368,
+          "preview": "manifest, code = load_valid_manifest(path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 376,
+          "preview": "manifest, code = load_valid_manifest(path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 384,
+          "preview": "manifest, code = load_valid_manifest(manifest_path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 398,
+          "preview": "manifest, code = load_valid_manifest(manifest_path)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 5
+    },
+    "cmd_validate": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 367,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 367,
+          "preview": "def cmd_validate(path: Path) -> int:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 538,
+          "preview": "return cmd_validate(args.manifest)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "cmd_plan": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 375,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 375,
+          "preview": "def cmd_plan(path: Path, root: Path) -> int:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 540,
+          "preview": "return cmd_plan(args.manifest, root)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "cmd_validate_raster": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 383,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 383,
+          "preview": "def cmd_validate_raster(manifest_path: Path, asset_path: Path) -> int:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 542,
+          "preview": "return cmd_validate_raster(args.manifest, args.asset)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "cmd_atlas_manifest": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 397,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 397,
+          "preview": "def cmd_atlas_manifest(manifest_path: Path, asset_path: Path, output: Path | None) -> int:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 544,
+          "preview": "return cmd_atlas_manifest(args.manifest, args.asset, args.output)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "parser": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 421,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 421,
+          "preview": "def parser() -> argparse.ArgumentParser:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 534,
+          "preview": "args = parser().parse_args()",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_binary_metrics.py",
+          "line": 171,
+          "preview": "for fmt, parser in (",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_binary_metrics.py",
+          "line": 176,
+          "preview": "dimensions = parser(data)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 4
+    },
+    "main": {
+      "definition": {
+        "file": "asset_forge.py",
+        "line": 533,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 533,
+          "preview": "def main() -> int:",
+          "definition_candidate": true
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 774,
+          "preview": "raise SystemExit(main())",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_animation_infer.py",
+          "line": 56,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 174,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_blender_adapter.py",
+          "line": 58,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_binary_metrics.py",
+          "line": 112,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 165,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 113,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_tools.py",
+          "line": 115,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 103,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 176,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_starlist_bridge.py",
+          "line": 68,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_svg_tools.py",
+          "line": 158,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_toolchain_3d.py",
+          "line": 189,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 14
+    },
+    "accessor_layout": {
+      "definition": {
+        "file": "gltf_diagnostics.py",
+        "line": 31,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 31,
+          "preview": "def accessor_layout(accessor: dict) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 88,
+          "preview": "layout = accessor_layout(accessor)",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 196,
+          "preview": "layout = accessor_layout(accessor)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 3
+    },
+    "inspect_accessors": {
+      "definition": {
+        "file": "gltf_diagnostics.py",
+        "line": 62,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 62,
+          "preview": "def inspect_accessors(path: Path) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 461,
+          "preview": "\"accessors\": inspect_accessors(path),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 10,
+          "preview": "inspect_accessors,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 40,
+          "preview": "report = inspect_accessors(self.write(Path(tmp), data))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 62,
+          "preview": "report = inspect_accessors(self.write(Path(tmp), data))",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 5
+    },
+    "_read_scalar_accessor": {
+      "definition": {
+        "file": "gltf_diagnostics.py",
+        "line": 184,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 184,
+          "preview": "def _read_scalar_accessor(path: Path, accessor_index: int) -> list[float] | None:",
+          "definition_candidate": true
+        },
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 393,
+          "preview": "values = _read_scalar_accessor(path, input_index)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "inspect_skinning_consistency": {
+      "definition": {
+        "file": "gltf_diagnostics.py",
+        "line": 242,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 242,
+          "preview": "def inspect_skinning_consistency(path: Path) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 462,
+          "preview": "\"skinning\": inspect_skinning_consistency(path),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 12,
+          "preview": "inspect_skinning_consistency,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 89,
+          "preview": "report = inspect_skinning_consistency(self.write(Path(tmp), data))",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 4
+    },
+    "inspect_animation_consistency": {
+      "definition": {
+        "file": "gltf_diagnostics.py",
+        "line": 316,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 316,
+          "preview": "def inspect_animation_consistency(path: Path) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 463,
+          "preview": "\"animations\": inspect_animation_consistency(path),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 11,
+          "preview": "inspect_animation_consistency,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 119,
+          "preview": "report = inspect_animation_consistency(self.write(Path(tmp), data))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 150,
+          "preview": "report = inspect_animation_consistency(self.write(Path(tmp), data))",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 5
+    },
+    "deep_gltf_diagnostics": {
+      "definition": {
+        "file": "gltf_diagnostics.py",
+        "line": 459,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 15,
+          "preview": "from gltf_diagnostics import deep_gltf_diagnostics",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 680,
+          "preview": "result = deep_gltf_diagnostics(args.input)",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 459,
+          "preview": "def deep_gltf_diagnostics(path: Path) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "gltf_quality.py",
+          "line": 6,
+          "preview": "from gltf_diagnostics import deep_gltf_diagnostics",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_quality.py",
+          "line": 229,
+          "preview": "diagnostics = deep_gltf_diagnostics(path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 9,
+          "preview": "deep_gltf_diagnostics,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 157,
+          "preview": "report = deep_gltf_diagnostics(path)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 7
+    },
+    "_accessor_count": {
+      "definition": {
+        "file": "gltf_quality.py",
+        "line": 50,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "gltf_quality.py",
+          "line": 50,
+          "preview": "def _accessor_count(accessors: list, index) -> int | None:",
+          "definition_candidate": true
+        },
+        {
+          "file": "gltf_quality.py",
+          "line": 138,
+          "preview": "position_count = _accessor_count(accessors, attributes.get(\"POSITION\"))",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_quality.py",
+          "line": 149,
+          "preview": "element_count = _accessor_count(accessors, primitive.get(\"indices\"))",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 3
+    },
+    "_triangle_count": {
+      "definition": {
+        "file": "gltf_quality.py",
+        "line": 62,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "gltf_quality.py",
+          "line": 62,
+          "preview": "def _triangle_count(mode: int, element_count: int) -> int:",
+          "definition_candidate": true
+        },
+        {
+          "file": "gltf_quality.py",
+          "line": 154,
+          "preview": "triangles += _triangle_count(mode, element_count)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "build_quality_report": {
+      "definition": {
+        "file": "gltf_quality.py",
+        "line": 70,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "gltf_quality.py",
+          "line": 70,
+          "preview": "def build_quality_report(path: Path) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "gltf_quality.py",
+          "line": 409,
+          "preview": "report = build_quality_report(path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 6,
+          "preview": "from gltf_quality import build_quality_report, evaluate_quality, quality_report",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 52,
+          "preview": "report = build_quality_report(self.write(Path(tmp), self.base()))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 64,
+          "preview": "report = build_quality_report(self.write(Path(tmp), data))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 70,
+          "preview": "report = build_quality_report(self.write(Path(tmp), self.base()))",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 6
+    },
+    "evaluate_quality": {
+      "definition": {
+        "file": "gltf_quality.py",
+        "line": 294,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "gltf_quality.py",
+          "line": 294,
+          "preview": "def evaluate_quality(report: dict, profile: str) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "gltf_quality.py",
+          "line": 411,
+          "preview": "report[\"evaluation\"] = evaluate_quality(report, profile)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 6,
+          "preview": "from gltf_quality import build_quality_report, evaluate_quality, quality_report",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 71,
+          "preview": "evaluation = evaluate_quality(report, \"character\")",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 4
+    },
+    "quality_report": {
+      "definition": {
+        "file": "gltf_quality.py",
+        "line": 408,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 16,
+          "preview": "from gltf_quality import quality_report",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 698,
+          "preview": "result = quality_report(args.input, args.profile)",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_quality.py",
+          "line": 408,
+          "preview": "def quality_report(path: Path, profile: str | None = None) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "tests/test_gltf_binary_metrics.py",
+          "line": 10,
+          "preview": "from gltf_quality import quality_report",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_binary_metrics.py",
+          "line": 104,
+          "preview": "report = quality_report(path, \"prop\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 6,
+          "preview": "from gltf_quality import build_quality_report, evaluate_quality, quality_report",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 80,
+          "preview": "report = quality_report(self.write(Path(tmp), data), \"prop\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 89,
+          "preview": "report = quality_report(self.write(Path(tmp), data), \"prop\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 95,
+          "preview": "report = quality_report(self.write(Path(tmp), self.base()), \"prop\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 107,
+          "preview": "report = quality_report(self.write(Path(tmp), data), \"prop\")",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 10
+    },
+    "GltfDiagnosticsTests": {
+      "definition": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "line": 16,
+        "kind": "class",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 16,
+          "preview": "class GltfDiagnosticsTests(unittest.TestCase):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "write": {
+      "definition": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "line": 17,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "svg_tools.py",
+          "line": 216,
+          "preview": "ET.ElementTree(root).write(",
+          "definition_candidate": false
+        },
+        {
+          "file": "svg_tools.py",
+          "line": 290,
+          "preview": "ET.ElementTree(root).write(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 17,
+          "preview": "def write(self, root: Path, data: dict) -> Path:",
+          "definition_candidate": true
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 40,
+          "preview": "report = inspect_accessors(self.write(Path(tmp), data))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 62,
+          "preview": "report = inspect_accessors(self.write(Path(tmp), data))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 89,
+          "preview": "report = inspect_skinning_consistency(self.write(Path(tmp), data))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 119,
+          "preview": "report = inspect_animation_consistency(self.write(Path(tmp), data))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 150,
+          "preview": "report = inspect_animation_consistency(self.write(Path(tmp), data))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 156,
+          "preview": "path = self.write(Path(tmp), {\"asset\": {\"version\": \"2.0\"}})",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 10,
+          "preview": "def write(self, root: Path, data: dict) -> Path:",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 52,
+          "preview": "report = build_quality_report(self.write(Path(tmp), self.base()))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 64,
+          "preview": "report = build_quality_report(self.write(Path(tmp), data))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 70,
+          "preview": "report = build_quality_report(self.write(Path(tmp), self.base()))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 80,
+          "preview": "report = quality_report(self.write(Path(tmp), data), \"prop\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 89,
+          "preview": "report = quality_report(self.write(Path(tmp), data), \"prop\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 95,
+          "preview": "report = quality_report(self.write(Path(tmp), self.base()), \"prop\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 107,
+          "preview": "report = quality_report(self.write(Path(tmp), data), \"prop\")",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 17
+    },
+    "test_accessor_byte_range_and_layout": {
+      "definition": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "line": 22,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 22,
+          "preview": "def test_accessor_byte_range_and_layout(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_accessor_overrun_is_rejected": {
+      "definition": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "line": 47,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 47,
+          "preview": "def test_accessor_overrun_is_rejected(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_skinning_requires_matching_vec4_attributes": {
+      "definition": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "line": 66,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 66,
+          "preview": "def test_skinning_requires_matching_vec4_attributes(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_animation_duration_reads_real_key_times": {
+      "definition": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "line": 93,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 93,
+          "preview": "def test_animation_duration_reads_real_key_times(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_non_increasing_animation_times_are_rejected": {
+      "definition": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "line": 125,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 125,
+          "preview": "def test_non_increasing_animation_times_are_rejected(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_deep_report_has_all_sections": {
+      "definition": {
+        "file": "tests/test_gltf_diagnostics.py",
+        "line": 154,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 154,
+          "preview": "def test_deep_report_has_all_sections(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "GltfQualityTests": {
+      "definition": {
+        "file": "tests/test_gltf_quality.py",
+        "line": 9,
+        "kind": "class",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 9,
+          "preview": "class GltfQualityTests(unittest.TestCase):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "base": {
+      "definition": {
+        "file": "tests/test_gltf_quality.py",
+        "line": 15,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "gltf_binary_metrics.py",
+          "line": 26,
+          "preview": "base = model_path.resolve().parent",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_binary_metrics.py",
+          "line": 27,
+          "preview": "candidate = (base / unquote(uri)).resolve()",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_binary_metrics.py",
+          "line": 29,
+          "preview": "candidate.relative_to(base)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 15,
+          "preview": "def base(self):",
+          "definition_candidate": true
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 52,
+          "preview": "report = build_quality_report(self.write(Path(tmp), self.base()))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 60,
+          "preview": "data = self.base()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 70,
+          "preview": "report = build_quality_report(self.write(Path(tmp), self.base()))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 77,
+          "preview": "data = self.base()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 86,
+          "preview": "data = self.base()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 95,
+          "preview": "report = quality_report(self.write(Path(tmp), self.base()), \"prop\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 101,
+          "preview": "data = self.base()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_tools.py",
+          "line": 23,
+          "preview": "def base(self):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_tools.py",
+          "line": 35,
+          "preview": "path.write_text(json.dumps(self.base()), encoding=\"utf-8\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_tools.py",
+          "line": 47,
+          "preview": "data = self.base()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_tools.py",
+          "line": 57,
+          "preview": "path.write_bytes(make_glb(self.base()))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_tools.py",
+          "line": 67,
+          "preview": "path.write_text(json.dumps(self.base()), encoding=\"utf-8\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_tools.py",
+          "line": 75,
+          "preview": "data = self.base()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_tools.py",
+          "line": 85,
+          "preview": "data = self.base()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_tools.py",
+          "line": 95,
+          "preview": "data = self.base()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_tools.py",
+          "line": 105,
+          "preview": "data = self.base()",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 20
+    },
+    "test_counts_vertices_and_triangles": {
+      "definition": {
+        "file": "tests/test_gltf_quality.py",
+        "line": 50,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 50,
+          "preview": "def test_counts_vertices_and_triangles(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_triangle_strip_count": {
+      "definition": {
+        "file": "tests/test_gltf_quality.py",
+        "line": 59,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 59,
+          "preview": "def test_triangle_strip_count(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_character_quality_requires_skin_attributes": {
+      "definition": {
+        "file": "tests/test_gltf_quality.py",
+        "line": 68,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 68,
+          "preview": "def test_character_quality_requires_skin_attributes(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_textured_primitive_requires_uv": {
+      "definition": {
+        "file": "tests/test_gltf_quality.py",
+        "line": 76,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 76,
+          "preview": "def test_textured_primitive_requires_uv(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_normal_map_without_tangent_warns": {
+      "definition": {
+        "file": "tests/test_gltf_quality.py",
+        "line": 85,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 85,
+          "preview": "def test_normal_map_without_tangent_warns(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_external_image_is_reported": {
+      "definition": {
+        "file": "tests/test_gltf_quality.py",
+        "line": 93,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 93,
+          "preview": "def test_external_image_is_reported(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_untextured_primitive_does_not_require_uv": {
+      "definition": {
+        "file": "tests/test_gltf_quality.py",
+        "line": 100,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 100,
+          "preview": "def test_untextured_primitive_does_not_require_uv(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    }
+  }
 }
