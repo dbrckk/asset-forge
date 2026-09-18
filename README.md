@@ -322,3 +322,6 @@ PNG parsing now applies repository safety caps to total file bytes, chunk bytes/
 
 
 Indexed PNG decoding now calculates packed scanline byte widths correctly, applies PNG filters with the proper byte-distance rule, unpacks 1/2/4-bit palette indices most-significant bits first, ignores row padding bits beyond the declared width, and preserves palette transparency through RGBA conversion.
+
+
+Low-bit grayscale decoding shares the packed-sample scanline path used by indexed PNGs. Samples are unpacked most-significant bits first, row padding is ignored, values are scaled to 8-bit luminance, and grayscale `tRNS` is matched against the original unscaled sample. Out-of-range `tRNS` samples are rejected.
