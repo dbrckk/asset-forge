@@ -388,12 +388,19 @@ def parser() -> argparse.ArgumentParser:
     pack.add_argument("--power-of-two", action="store_true")
     pack.add_argument("--trim", action="store_true")
     pack.add_argument("--extrude", type=int, default=0)
+    pack.add_argument("--max-width", type=int)
+    pack.add_argument("--max-height", type=int)
+    pack.add_argument("--max-pixels", type=int)
+    pack.add_argument("--max-bytes", type=int)
 
     compact = sub.add_parser("pack-atlas-compact", help="pack variable-size PNG/WebP frames into a compact PNG atlas")
     compact.add_argument("output", type=Path)
     compact.add_argument("inputs", type=Path, nargs="+")
     compact.add_argument("--metadata", type=Path)
     compact.add_argument("--max-width", type=int, default=2048)
+    compact.add_argument("--max-height", type=int)
+    compact.add_argument("--max-pixels", type=int)
+    compact.add_argument("--max-bytes", type=int)
     compact.add_argument("--padding", type=int, default=0)
     compact.add_argument("--power-of-two", action="store_true")
     compact.add_argument("--no-trim", action="store_true")
@@ -539,6 +546,10 @@ def main() -> int:
                 power_of_two=args.power_of_two,
                 trim=args.trim,
                 extrude=args.extrude,
+                max_width=args.max_width,
+                max_height=args.max_height,
+                max_pixels=args.max_pixels,
+                max_bytes=args.max_bytes,
             )
         except (OSError, ValueError, zlib.error) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
@@ -557,6 +568,9 @@ def main() -> int:
                 args.inputs,
                 args.output,
                 max_width=args.max_width,
+                max_height=args.max_height,
+                max_pixels=args.max_pixels,
+                max_bytes=args.max_bytes,
                 padding=args.padding,
                 power_of_two=args.power_of_two,
                 trim=not args.no_trim,
