@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from gltf_binary_metrics import inspect_images, inspect_rig_and_animation
+from gltf_diagnostics import deep_gltf_diagnostics
 from gltf_tools import load_gltf_json
 
 
@@ -225,6 +226,7 @@ def build_quality_report(path: Path) -> dict:
 
     image_metrics = inspect_images(path)
     rig_animation = inspect_rig_and_animation(path)
+    diagnostics = deep_gltf_diagnostics(path)
     known_image_dimensions = [item for item in image_metrics if item.get("width") and item.get("height")]
     estimated_texture_bytes = sum(
         int(item.get("estimatedRgba8Bytes") or 0)
@@ -285,6 +287,7 @@ def build_quality_report(path: Path) -> dict:
             "items": image_metrics,
         },
         "rigAnimation": rig_animation,
+        "diagnostics": diagnostics,
     }
 
 
@@ -356,6 +359,10 @@ def evaluate_quality(report: dict, profile: str) -> dict:
         errors.append("character profile requires JOINTS_0 and WEIGHTS_0 on skinned geometry")
 
     rig = report.get("rigAnimation", {})
+    diagnostics = report.get("diagnostics", {})
+    accessor_diag = diagnostics.get("accessors", {})
+    skin_diag = diagnostics.get("skinning", {})
+    animation_diag = diagnostics.get("animations", {})
     if rules["maxJointsPerSkin"] and rig.get("maxJointsPerSkin", 0) > rules["maxJointsPerSkin"]:
         warnings.append(
             f"max joints per skin {rig['maxJointsPerSkin']} exceed profile budget "
@@ -367,6 +374,13 @@ def evaluate_quality(report: dict, profile: str) -> dict:
         errors.append(
             f"{rig['invalidAnimationTargets']} animation target field(s) are invalid"
         )
+
+    errors.extend(accessor_diag.get("errors", []))
+    warnings.extend(accessor_diag.get("warnings", []))
+    errors.extend(skin_diag.get("errors", []))
+    warnings.extend(skin_diag.get("warnings", []))
+    errors.extend(animation_diag.get("errors", []))
+    warnings.extend(animation_diag.get("warnings", []))
 
     if (
         attributes["normalMappedPrimitives"] > 0
