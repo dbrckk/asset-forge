@@ -1316,37 +1316,92 @@ MAXRECTS_HEURISTICS = (
 )
 
 
+def _render_compact_layout(
+    frames: list[dict],
+    placements: list[dict],
+    width: int,
+    height: int,
+    extrude: int,
+) -> bytes:
+    canvas = bytearray(width * height * 4)
+    for placement, frame in zip(placements, frames):
+        _blit_rgba(
+            canvas,
+            width,
+            placement["x"],
+            placement["y"],
+            frame["width"],
+            frame["height"],
+            frame["pixels"],
+        )
+        _extrude_rgba(
+            canvas,
+            width,
+            height,
+            placement["x"],
+            placement["y"],
+            frame["width"],
+            frame["height"],
+            extrude,
+        )
+    return bytes(canvas)
+
+
 def _choose_maxrects_layout(
     frames: list[dict],
     max_width: int,
     padding: int,
     extrude: int,
     heuristic: str,
-) -> tuple[list[dict], int, int, str, list[dict]]:
+    *,
+    power_of_two: bool,
+) -> tuple[list[dict], int, int, int, int, bytes, str, list[dict]]:
     candidates = []
     heuristics = MAXRECTS_HEURISTICS if heuristic == "auto" else (heuristic,)
 
     for name in heuristics:
-        placements, width, height = _pack_maxrects(
+        placements, content_width, content_height = _pack_maxrects(
             frames,
             max_width=max_width,
             padding=padding,
             extrude=extrude,
             heuristic=name,
         )
+        atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
+        atlas_height = _next_power_of_two(content_height) if power_of_two else content_height
+        pixels = _render_compact_layout(
+            frames,
+            placements,
+            atlas_width,
+            atlas_height,
+            extrude,
+        )
+        png_bytes = _png_bytes_rgba(
+            atlas_width,
+            atlas_height,
+            pixels,
+            adaptive=True,
+        )
         candidates.append(
             {
                 "heuristic": name,
                 "placements": placements,
-                "contentWidth": width,
-                "contentHeight": height,
-                "contentArea": width * height,
+                "contentWidth": content_width,
+                "contentHeight": content_height,
+                "contentArea": content_width * content_height,
+                "atlasWidth": atlas_width,
+                "atlasHeight": atlas_height,
+                "atlasArea": atlas_width * atlas_height,
+                "encodedBytes": len(png_bytes),
+                "pixels": pixels,
             }
         )
 
     winner = min(
         candidates,
         key=lambda item: (
+            item["encodedBytes"],
+            item["atlasArea"],
             item["contentArea"],
             item["contentHeight"],
             item["contentWidth"],
@@ -1359,6 +1414,10 @@ def _choose_maxrects_layout(
             "contentWidth": item["contentWidth"],
             "contentHeight": item["contentHeight"],
             "contentArea": item["contentArea"],
+            "atlasWidth": item["atlasWidth"],
+            "atlasHeight": item["atlasHeight"],
+            "atlasArea": item["atlasArea"],
+            "encodedBytes": item["encodedBytes"],
         }
         for item in candidates
     ]
@@ -1366,6 +1425,9 @@ def _choose_maxrects_layout(
         winner["placements"],
         winner["contentWidth"],
         winner["contentHeight"],
+        winner["atlasWidth"],
+        winner["atlasHeight"],
+        winner["pixels"],
         winner["heuristic"],
         evaluated,
     )
@@ -1401,6 +1463,9 @@ def pack_compact_atlas(
         placements,
         content_width,
         content_height,
+        atlas_width,
+        atlas_height,
+        rendered_pixels,
         selected_heuristic,
         evaluated_heuristics,
     ) = _choose_maxrects_layout(
@@ -1409,10 +1474,9 @@ def pack_compact_atlas(
         padding=padding,
         extrude=extrude,
         heuristic=heuristic,
+        power_of_two=power_of_two,
     )
 
-    atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
-    atlas_height = _next_power_of_two(content_height) if power_of_two else content_height
     _validate_atlas_dimensions(
         atlas_width,
         atlas_height,
@@ -1420,29 +1484,9 @@ def pack_compact_atlas(
         max_height=max_height,
         max_pixels=max_pixels,
     )
-    canvas = bytearray(atlas_width * atlas_height * 4)
     frames = []
 
     for placement, frame in zip(placements, frames_data):
-        _blit_rgba(
-            canvas,
-            atlas_width,
-            placement["x"],
-            placement["y"],
-            frame["width"],
-            frame["height"],
-            frame["pixels"],
-        )
-        _extrude_rgba(
-            canvas,
-            atlas_width,
-            atlas_height,
-            placement["x"],
-            placement["y"],
-            frame["width"],
-            frame["height"],
-            extrude,
-        )
         frames.append(
             {
                 "index": placement["index"],
@@ -1479,7 +1523,7 @@ def pack_compact_atlas(
         output,
         atlas_width,
         atlas_height,
-        bytes(canvas),
+        rendered_pixels,
         max_bytes,
     )
     return {
@@ -1500,6 +1544,7 @@ def pack_compact_atlas(
         "packing": f"maxrects-{selected_heuristic}",
         "requestedHeuristic": heuristic,
         "selectedHeuristic": selected_heuristic,
+        "selectionMetric": "encoded-png-bytes",
         "evaluatedHeuristics": evaluated_heuristics,
         "spriteArea": sum(frame["width"] * frame["height"] for frame in frames_data),
         "packedArea": packed_area,
