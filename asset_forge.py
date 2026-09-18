@@ -10,6 +10,8 @@ import sys
 import zlib
 from pathlib import Path
 
+from raster_pack import pack_uniform_atlas
+
 PIPELINES = {
     "sprite": "pipelines/sprite-2d.json",
     "sprite-sheet": "pipelines/sprite-2d.json",
@@ -415,6 +417,14 @@ def parser() -> argparse.ArgumentParser:
     atlas.add_argument("manifest", type=Path)
     atlas.add_argument("asset", type=Path)
     atlas.add_argument("--output", type=Path)
+
+    pack = sub.add_parser("pack-atlas", help="pack equal-size RGB/RGBA PNG frames into an atlas")
+    pack.add_argument("output", type=Path)
+    pack.add_argument("inputs", type=Path, nargs="+")
+    pack.add_argument("--metadata", type=Path)
+    pack.add_argument("--columns", type=int)
+    pack.add_argument("--padding", type=int, default=0)
+    pack.add_argument("--power-of-two", action="store_true")
     return result
 
 
@@ -430,6 +440,26 @@ def main() -> int:
         return cmd_validate_raster(args.manifest, args.asset)
     if args.command == "atlas-manifest":
         return cmd_atlas_manifest(args.manifest, args.asset, args.output)
+    if args.command == "pack-atlas":
+        try:
+            metadata = pack_uniform_atlas(
+                args.inputs,
+                args.output,
+                columns=args.columns,
+                padding=args.padding,
+                power_of_two=args.power_of_two,
+            )
+        except (OSError, ValueError, zlib.error) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        rendered = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
+        if args.metadata:
+            args.metadata.parent.mkdir(parents=True, exist_ok=True)
+            args.metadata.write_text(rendered, encoding="utf-8")
+            print(str(args.metadata))
+        else:
+            print(rendered, end="")
+        return 0
     return 2
 
 
