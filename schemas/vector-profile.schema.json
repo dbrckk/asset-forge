@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-forge vector validation profile",
+  "type": "object",
+  "required": ["id", "assetTypes", "rules"],
+  "properties": {
+    "id": {"enum": ["icon", "ui", "logo"]},
+    "assetTypes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "rules": {
+      "type": "object",
+      "required": [
+        "requireViewBox",
+        "requireSquareViewBox",
+        "maxElements",
+        "allowExternalReferences",
+        "removeMetadata"
+      ],
+      "properties": {
+        "requireViewBox": {"type": "boolean"},
+        "requireSquareViewBox": {"type": "boolean"},
+        "maxElements": {"type": "integer", "minimum": 1},
+        "allowExternalReferences": {"type": "boolean"},
+        "removeMetadata": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
