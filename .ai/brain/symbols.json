@@ -131,56 +131,56 @@
       "language": "python",
       "kind": "function",
       "name": "_load_json",
-      "line": 35
+      "line": 37
     },
     {
       "file": "asset_profile_validation.py",
       "language": "python",
       "kind": "function",
       "name": "_validate_rule_types",
-      "line": 47
+      "line": 49
     },
     {
       "file": "asset_profile_validation.py",
       "language": "python",
       "kind": "function",
       "name": "validate_3d_profile_data",
-      "line": 66
+      "line": 68
     },
     {
       "file": "asset_profile_validation.py",
       "language": "python",
       "kind": "function",
       "name": "validate_vector_profile_data",
-      "line": 113
+      "line": 115
     },
     {
       "file": "asset_profile_validation.py",
       "language": "python",
       "kind": "function",
       "name": "validate_profile_file",
-      "line": 144
+      "line": 147
     },
     {
       "file": "asset_profile_validation.py",
       "language": "python",
       "kind": "function",
       "name": "load_3d_profile",
-      "line": 162
+      "line": 165
     },
     {
       "file": "asset_profile_validation.py",
       "language": "python",
       "kind": "function",
       "name": "load_vector_profile",
-      "line": 174
+      "line": 177
     },
     {
       "file": "asset_profile_validation.py",
       "language": "python",
       "kind": "function",
       "name": "validate_all_asset_profiles",
-      "line": 186
+      "line": 189
     },
     {
       "file": "blender_adapter.py",
@@ -635,63 +635,77 @@
       "language": "python",
       "kind": "function",
       "name": "_local_name",
-      "line": 17
-    },
-    {
-      "file": "svg_tools.py",
-      "language": "python",
-      "kind": "function",
-      "name": "_is_external_reference",
       "line": 21
     },
     {
       "file": "svg_tools.py",
       "language": "python",
       "kind": "function",
+      "name": "_is_unsafe_reference",
+      "line": 25
+    },
+    {
+      "file": "svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "_unsafe_css_references",
+      "line": 30
+    },
+    {
+      "file": "svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "_max_depth",
+      "line": 41
+    },
+    {
+      "file": "svg_tools.py",
+      "language": "python",
+      "kind": "function",
       "name": "_parse_length",
-      "line": 29
-    },
-    {
-      "file": "svg_tools.py",
-      "language": "python",
-      "kind": "function",
-      "name": "_parse_viewbox",
-      "line": 38
-    },
-    {
-      "file": "svg_tools.py",
-      "language": "python",
-      "kind": "function",
-      "name": "inspect_svg",
       "line": 51
     },
     {
       "file": "svg_tools.py",
       "language": "python",
       "kind": "function",
+      "name": "_parse_viewbox",
+      "line": 60
+    },
+    {
+      "file": "svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "inspect_svg",
+      "line": 73
+    },
+    {
+      "file": "svg_tools.py",
+      "language": "python",
+      "kind": "function",
       "name": "validate_svg_profile",
-      "line": 142
+      "line": 182
     },
     {
       "file": "svg_tools.py",
       "language": "python",
       "kind": "function",
       "name": "normalize_viewbox",
-      "line": 167
-    },
-    {
-      "file": "svg_tools.py",
-      "language": "python",
-      "kind": "function",
-      "name": "sanitize_svg",
       "line": 215
     },
     {
       "file": "svg_tools.py",
       "language": "python",
       "kind": "function",
+      "name": "sanitize_svg",
+      "line": 269
+    },
+    {
+      "file": "svg_tools.py",
+      "language": "python",
+      "kind": "function",
       "name": "clean",
-      "line": 234
+      "line": 298
     },
     {
       "file": "tests/test_animation_infer.py",
@@ -894,14 +908,14 @@
       "language": "python",
       "kind": "function",
       "name": "test_3d_loader_uses_file_as_source_of_truth",
-      "line": 70
+      "line": 72
     },
     {
       "file": "tests/test_asset_profile_validation.py",
       "language": "python",
       "kind": "function",
       "name": "test_vector_loader_uses_file_as_source_of_truth",
-      "line": 100
+      "line": 102
     },
     {
       "file": "tests/test_blender_adapter.py",
@@ -1658,6 +1672,83 @@
       "kind": "function",
       "name": "test_sanitize_removes_metadata",
       "line": 138
+    },
+    {
+      "file": "tests/test_svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_data_uri_reference_is_rejected",
+      "line": 156
+    },
+    {
+      "file": "tests/test_svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_relative_reference_is_rejected",
+      "line": 168
+    },
+    {
+      "file": "tests/test_svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_internal_fragment_reference_is_allowed",
+      "line": 180
+    },
+    {
+      "file": "tests/test_svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_css_external_url_is_rejected",
+      "line": 193
+    },
+    {
+      "file": "tests/test_svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_presentation_attribute_external_url_is_rejected",
+      "line": 206
+    },
+    {
+      "file": "tests/test_svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_css_import_is_rejected",
+      "line": 219
+    },
+    {
+      "file": "tests/test_svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_sanitize_removes_unsafe_css",
+      "line": 231
+    },
+    {
+      "file": "tests/test_svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_profile_depth_limit_is_blocking",
+      "line": 249
+    },
+    {
+      "file": "tests/test_svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_profile_element_limit_is_blocking",
+      "line": 266
+    },
+    {
+      "file": "tests/test_svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_profile_file_size_limit_is_blocking",
+      "line": 281
+    },
+    {
+      "file": "tests/test_svg_tools.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_existing_malformed_viewbox_is_not_overwritten",
+      "line": 295
     },
     {
       "file": "tests/test_toolchain_3d.py",

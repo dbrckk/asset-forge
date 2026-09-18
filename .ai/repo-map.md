@@ -546,13 +546,17 @@ jobs:
 ````json
 {
   "id": "icon",
-  "assetTypes": ["icon"],
+  "assetTypes": [
+    "icon"
+  ],
   "rules": {
     "requireViewBox": true,
     "requireSquareViewBox": true,
     "maxElements": 256,
     "allowExternalReferences": false,
-    "removeMetadata": true
+    "removeMetadata": true,
+    "maxBytes": 262144,
+    "maxDepth": 32
   }
 }
 ````
@@ -561,13 +565,17 @@ jobs:
 ````json
 {
   "id": "logo",
-  "assetTypes": ["logo"],
+  "assetTypes": [
+    "logo"
+  ],
   "rules": {
     "requireViewBox": true,
     "requireSquareViewBox": false,
     "maxElements": 800,
     "allowExternalReferences": false,
-    "removeMetadata": true
+    "removeMetadata": true,
+    "maxBytes": 524288,
+    "maxDepth": 48
   }
 }
 ````
@@ -576,13 +584,18 @@ jobs:
 ````json
 {
   "id": "ui",
-  "assetTypes": ["ui-vector", "vector"],
+  "assetTypes": [
+    "ui-vector",
+    "vector"
+  ],
   "rules": {
     "requireViewBox": true,
     "requireSquareViewBox": false,
     "maxElements": 1200,
     "allowExternalReferences": false,
-    "removeMetadata": true
+    "removeMetadata": true,
+    "maxBytes": 1048576,
+    "maxDepth": 64
   }
 }
 ````
@@ -739,13 +752,26 @@ jobs:
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "asset-forge vector validation profile",
   "type": "object",
-  "required": ["id", "assetTypes", "rules"],
+  "required": [
+    "id",
+    "assetTypes",
+    "rules"
+  ],
   "properties": {
-    "id": {"enum": ["icon", "ui", "logo"]},
+    "id": {
+      "enum": [
+        "icon",
+        "ui",
+        "logo"
+      ]
+    },
     "assetTypes": {
       "type": "array",
       "minItems": 1,
-      "items": {"type": "string", "minLength": 1}
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "rules": {
       "type": "object",
@@ -754,14 +780,35 @@ jobs:
         "requireSquareViewBox",
         "maxElements",
         "allowExternalReferences",
-        "removeMetadata"
+        "removeMetadata",
+        "maxBytes",
+        "maxDepth"
       ],
       "properties": {
-        "requireViewBox": {"type": "boolean"},
-        "requireSquareViewBox": {"type": "boolean"},
-        "maxElements": {"type": "integer", "minimum": 1},
-        "allowExternalReferences": {"type": "boolean"},
-        "removeMetadata": {"type": "boolean"}
+        "requireViewBox": {
+          "type": "boolean"
+        },
+        "requireSquareViewBox": {
+          "type": "boolean"
+        },
+        "maxElements": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "allowExternalReferences": {
+          "type": "boolean"
+        },
+        "removeMetadata": {
+          "type": "boolean"
+        },
+        "maxBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxDepth": {
+          "type": "integer",
+          "minimum": 1
+        }
       },
       "additionalProperties": false
     }
@@ -1355,6 +1402,41 @@ output = Path(tmp) / "normalized.svg"
 report = normalize_viewbox(source, output)
 ⋮----
 def test_sanitize_removes_metadata(self)
+⋮----
+def test_data_uri_reference_is_rejected(self)
+⋮----
+def test_relative_reference_is_rejected(self)
+⋮----
+def test_internal_fragment_reference_is_allowed(self)
+⋮----
+path = Path(tmp) / "ok.svg"
+⋮----
+def test_css_external_url_is_rejected(self)
+⋮----
+def test_presentation_attribute_external_url_is_rejected(self)
+⋮----
+def test_css_import_is_rejected(self)
+⋮----
+def test_sanitize_removes_unsafe_css(self)
+⋮----
+def test_profile_depth_limit_is_blocking(self)
+⋮----
+path = Path(tmp) / "deep.svg"
+inner = '<rect width="1" height="1"/>'
+⋮----
+inner = f"<g>{inner}</g>"
+⋮----
+def test_profile_element_limit_is_blocking(self)
+⋮----
+path = Path(tmp) / "complex.svg"
+body = "".join('<rect width="1" height="1"/>' for _ in range(260))
+⋮----
+def test_profile_file_size_limit_is_blocking(self)
+⋮----
+path = Path(tmp) / "large.svg"
+payload = "x" * 270000
+⋮----
+def test_existing_malformed_viewbox_is_not_overwritten(self)
 ````
 
 ## File: tests/test_toolchain_3d.py
@@ -1767,8 +1849,6 @@ positive_or_zero = {
 value = rules.get(key)
 ⋮----
 def validate_vector_profile_data(data: dict, expected_profile: str | None = None) -> list[str]
-⋮----
-max_elements = rules.get("maxElements")
 ⋮----
 def load_3d_profile(profile: str, root: Path | None = None) -> dict
 ⋮----
@@ -2856,6 +2936,8 @@ Normalize a missing viewBox from positive numeric width/height values:
 python asset_forge.py normalize-svg source.svg build/source.normalized.svg
 ```
 
+An existing malformed `viewBox` is now rejected rather than silently replaced from width/height.
+
 Apply a production profile:
 
 ```bash
@@ -2864,7 +2946,11 @@ python asset_forge.py validate-svg hud.svg --profile ui
 python asset_forge.py validate-svg brand.svg --profile logo
 ```
 
-The current vector validator checks XML validity, SVG root type, viewBox shape, width/height consistency, scripts/foreignObject, event-handler attributes, external href/src references, editor metadata, and profile-specific complexity/shape rules. Versioned profiles under `profiles/vector/` are the runtime source of truth; `svg_tools.py` loads them directly instead of duplicating their rules.
+The current vector validator checks XML validity, SVG root type, viewBox shape, width/height consistency, scripts/foreignObject, event-handler attributes, references, editor metadata, and profile-specific complexity/shape rules. Versioned profiles under `profiles/vector/` are the runtime source of truth; `svg_tools.py` loads them directly instead of duplicating their rules.
+
+SVG delivery now uses a strict reference policy: only internal fragment references such as `#gradient` and `url(#gradient)` are accepted. Remote URLs, relative file paths, `data:` references, CSS `@import`, and non-fragment CSS `url(...)` references are rejected. Sanitization removes unsafe reference attributes and unsafe style blocks/attributes.
+
+Vector profiles also define blocking resource caps for element count, UTF-8 file bytes, and XML depth. Current repository policy is icon: 256 elements / 256 KiB / depth 32, UI: 1200 elements / 1 MiB / depth 64, and logo: 800 elements / 512 KiB / depth 48. These are repository policy limits, not universal SVG standards. A larger absolute safety ceiling is also enforced before recursive processing.
 
 ## 3D / Blender workflow
 
@@ -3039,14 +3125,30 @@ DANGEROUS_TAGS = {"script", "foreignObject"}
 METADATA_TAGS = {"metadata"}
 EVENT_ATTRIBUTE = re.compile(r"^on[a-z]+$", re.IGNORECASE)
 LENGTH = re.compile(r"^\s*([0-9]+(?:\.[0-9]+)?)(px)?\s*$", re.IGNORECASE)
+CSS_URL = re.compile(r"url\(\s*(['\"]?)(.*?)\1\s*\)", re.IGNORECASE)
+CSS_IMPORT = re.compile(r"@import\b", re.IGNORECASE)
+ABSOLUTE_MAX_BYTES = 8 * 1024 * 1024
+ABSOLUTE_MAX_ELEMENTS = 100_000
+ABSOLUTE_MAX_DEPTH = 256
 ⋮----
 def _local_name(name: str) -> str
 ⋮----
-def _is_external_reference(value: str) -> bool
+def _is_unsafe_reference(value: str) -> bool
 ⋮----
 value = value.strip()
 ⋮----
-parsed = urlparse(value)
+def _unsafe_css_references(value: str) -> list[str]
+⋮----
+unsafe = []
+⋮----
+target = match.group(2).strip()
+⋮----
+def _max_depth(root: ET.Element) -> int
+⋮----
+maximum = 0
+stack = [(root, 1)]
+⋮----
+maximum = max(maximum, depth)
 ⋮----
 def _parse_length(value: str | None) -> float | None
 ⋮----
@@ -3066,6 +3168,8 @@ raw = path.read_text(encoding="utf-8")
 errors: list[str] = []
 warnings: list[str] = []
 ⋮----
+raw_bytes = len(raw.encode("utf-8"))
+⋮----
 lowered = raw.lower()
 ⋮----
 root = ET.fromstring(raw)
@@ -3083,6 +3187,7 @@ view_ratio = view_box_values[2] / view_box_values[3] if view_box_values[3] else 
 ⋮----
 element_count = 0
 external_refs: list[str] = []
+css_refs: list[str] = []
 dangerous_tags: list[str] = []
 event_attributes: list[str] = []
 metadata_elements = 0
@@ -3090,6 +3195,8 @@ metadata_elements = 0
 tag = _local_name(element.tag)
 ⋮----
 local_key = _local_name(key)
+⋮----
+maximum_depth = _max_depth(root)
 ⋮----
 info = {
 ⋮----
@@ -3104,13 +3211,18 @@ def normalize_viewbox(input_path: Path, output_path: Path) -> dict
 ⋮----
 raw = input_path.read_text(encoding="utf-8")
 ⋮----
-current = _parse_viewbox(root.attrib.get("viewBox"))
+existing_viewbox = root.attrib.get("viewBox")
+current = _parse_viewbox(existing_viewbox)
 changed = False
 ⋮----
 width = _parse_length(root.attrib.get("width"))
 height = _parse_length(root.attrib.get("height"))
 ⋮----
 changed = True
+⋮----
+depth = _max_depth(root)
+⋮----
+element_count = sum(1 for _ in root.iter())
 ⋮----
 removed_elements = 0
 removed_attributes = 0

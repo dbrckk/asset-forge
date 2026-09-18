@@ -75,21 +75,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T18:55:51Z
+Generated: 2026-09-18T19:01:18Z
 
 ### Git
 - Branch: `main`
-- Head: `ea8a294cb14f`
-- Commit date: 2026-09-18T20:55:04+02:00
-- Commit: docs: record single-source 3d and vector profile milestone
+- Head: `8f0dd5d24894`
+- Commit date: 2026-09-18T21:00:54+02:00
+- Commit: docs: record hardened SVG safety milestone
 - Tracked files: 104
 
 ### Recently changed files
 - `README.md`
-- `.github/workflows/validate.yml`
+- `tests/test_svg_tools.py`
+- `svg_tools.py`
 - `tests/test_asset_profile_validation.py`
-- `asset_forge.py`
-- `schemas/vector-profile.schema.json`
 
 ### Project signals
 - No common build descriptor detected
