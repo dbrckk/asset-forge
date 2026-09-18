@@ -171,6 +171,129 @@ class RasterPackTests(unittest.TestCase):
             bytes([255, 0, 0, 255, 0, 255, 0, 64]),
         )
 
+    def test_rejects_invalid_ihdr_length(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "bad.png"
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", b"short")
+                + chunk(b"IDAT", zlib.compress(b""))
+                + chunk(b"IEND", b"")
+            )
+            with self.assertRaisesRegex(ValueError, "13-byte IHDR|IHDR must be 13 bytes"):
+                decode_rgba(image)
+
+    def test_rejects_zero_dimensions(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "bad.png"
+            ihdr = struct.pack(">IIBBBBB", 0, 1, 8, 6, 0, 0, 0)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(b""))
+                + chunk(b"IEND", b"")
+            )
+            with self.assertRaisesRegex(ValueError, "width and height must be > 0"):
+                decode_rgba(image)
+
+    def test_rejects_duplicate_ihdr(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "bad.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(b"\x00\x00\x00\x00\xff"))
+                + chunk(b"IEND", b"")
+            )
+            with self.assertRaisesRegex(ValueError, "duplicate IHDR"):
+                decode_rgba(image)
+
+    def test_rejects_non_consecutive_idat(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "bad.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0)
+            compressed = zlib.compress(b"\x00\x00\x00\x00\xff")
+            split = max(1, len(compressed) // 2)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", compressed[:split])
+                + chunk(b"tEXt", b"k\x00v")
+                + chunk(b"IDAT", compressed[split:])
+                + chunk(b"IEND", b"")
+            )
+            with self.assertRaisesRegex(ValueError, "IDAT chunks must be consecutive"):
+                decode_rgba(image)
+
+    def test_rejects_trailing_data_after_iend(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "bad.png"
+            write_rgba_png(image, 1, 1, bytes([1, 2, 3, 255]))
+            image.write_bytes(image.read_bytes() + b"trailing")
+            with self.assertRaisesRegex(ValueError, "trailing data after IEND"):
+                decode_rgba(image)
+
+    def test_rejects_indexed_trns_longer_than_palette(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "bad.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 3, 0, 0, 0)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"PLTE", bytes([255, 0, 0]))
+                + chunk(b"tRNS", bytes([255, 128]))
+                + chunk(b"IDAT", zlib.compress(b"\x00\x00"))
+                + chunk(b"IEND", b"")
+            )
+            with self.assertRaisesRegex(ValueError, "tRNS exceeds palette length"):
+                decode_rgba(image)
+
+    def test_rejects_trns_for_rgba(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "bad.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"tRNS", b"\x00")
+                + chunk(b"IDAT", zlib.compress(b"\x00\x00\x00\x00\xff"))
+                + chunk(b"IEND", b"")
+            )
+            with self.assertRaisesRegex(ValueError, "tRNS is not allowed"):
+                decode_rgba(image)
+
+    def test_truecolor_trns_is_applied(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "rgb-trns.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0)
+            transparency = struct.pack(">HHH", 7, 8, 9)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"tRNS", transparency)
+                + chunk(b"IDAT", zlib.compress(b"\x00\x07\x08\x09"))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(pixels, bytes([7, 8, 9, 0]))
+
+    def test_rejects_decompressed_data_larger_than_expected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "bomb.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0)
+            raw = b"\x00\x00\x00\x00\xff" + (b"x" * 1000)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            with self.assertRaisesRegex(ValueError, "exceeds expected scanline size"):
+                decode_rgba(image)
+
 
 if __name__ == "__main__":
     unittest.main()
