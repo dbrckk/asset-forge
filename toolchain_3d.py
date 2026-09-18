@@ -6,6 +6,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from godot_handoff import prepare_godot_handoff, validate_godot_handoff
+
 from blender_adapter import (
     build_blender_export_job,
     render_blender_command,
@@ -423,7 +425,32 @@ def execute_3d_pipeline(plan: dict, repo_root: Path) -> dict:
             if step["required"] or step["id"] in {"khronos-validation", "optimize"}:
                 break
 
+    handoff = None
+    godot_validation = None
+    if success and plan.get("targetEngine") == "godot4":
+        workdir = Path(plan["workdir"])
+        delivery_report = _read_json_if_exists(workdir / "godot4-delivery.json")
+        try:
+            handoff = prepare_godot_handoff(
+                Path(plan["finalOutput"]),
+                workdir,
+                profile=plan["profile"],
+                delivery_report=delivery_report,
+            )
+            godot_validation = validate_godot_handoff(Path(handoff["projectDir"]))
+        except (OSError, ValueError) as exc:
+            success = False
+            godot_validation = {
+                "available": False,
+                "passed": False,
+                "error": str(exc),
+            }
+
     summary = _build_production_summary(plan, success, results)
+    if handoff is not None:
+        summary["godotHandoff"] = handoff
+    if godot_validation is not None:
+        summary["godotImportValidation"] = godot_validation
     report_path = Path(plan["workdir"]) / "production-report.json"
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
@@ -435,6 +462,8 @@ def execute_3d_pipeline(plan: dict, repo_root: Path) -> dict:
         "success": success,
         "finalOutput": plan["finalOutput"],
         "productionReport": str(report_path),
+        "godotHandoff": handoff,
+        "godotImportValidation": godot_validation,
         "summary": summary,
         "results": results,
     }
