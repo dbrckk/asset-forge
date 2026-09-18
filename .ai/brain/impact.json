@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "0932b5c3c7ab7953b178c8bdd94028b2d4b81b6d",
-  "head": "6bf880edb10c39a5f8638866e71fd94fa30512c8",
+  "base": "6bf880edb10c39a5f8638866e71fd94fa30512c8",
+  "head": "a188aa0a6292abb3e298d518102719acf41ea044",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": ".repo-standards.yml",
+      "path": ".github/workflows/validate.yml",
       "status": "M"
     },
     {
@@ -18,8 +18,8 @@
       "status": "M"
     },
     {
-      "path": "gltf_binary_metrics.py",
-      "status": "M"
+      "path": "raster_backend.py",
+      "status": "A"
     },
     {
       "path": "raster_pack.py",
@@ -30,30 +30,24 @@
       "status": "M"
     },
     {
-      "path": "tests/test_gltf_binary_metrics.py",
-      "status": "M"
-    },
-    {
-      "path": "tests/test_raster_pack.py",
-      "status": "M"
+      "path": "tests/test_raster_backend.py",
+      "status": "A"
     }
   ],
   "changed_source_files": [
     "asset_forge.py",
-    "gltf_binary_metrics.py",
+    "raster_backend.py",
     "raster_pack.py",
     "tests/test_asset_forge.py",
-    "tests/test_gltf_binary_metrics.py",
-    "tests/test_raster_pack.py"
+    "tests/test_raster_backend.py"
   ],
   "impacted_files": [
     "asset_forge.py",
     "gltf_binary_metrics.py",
-    "gltf_diagnostics.py",
-    "gltf_quality.py",
+    "raster_backend.py",
     "raster_pack.py",
     "tests/test_asset_forge.py",
-    "tests/test_gltf_binary_metrics.py",
+    "tests/test_raster_backend.py",
     "tests/test_raster_pack.py"
   ],
   "impacted_symbols": [
@@ -97,55 +91,55 @@
       "name": "select_tools",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 245
+      "line": 246
     },
     {
       "name": "build_plan",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 263
+      "line": 264
     },
     {
       "name": "load_valid_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 292
+      "line": 293
     },
     {
       "name": "cmd_validate",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 308
+      "line": 309
     },
     {
       "name": "cmd_plan",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 316
+      "line": 317
     },
     {
       "name": "cmd_validate_raster",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 324
+      "line": 325
     },
     {
       "name": "cmd_atlas_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 338
+      "line": 339
     },
     {
       "name": "parser",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 362
+      "line": 363
     },
     {
       "name": "main",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 496
+      "line": 505
     },
     {
       "name": "_decode_data_uri",
@@ -214,250 +208,226 @@
       "line": 241
     },
     {
-      "name": "accessor_layout",
+      "name": "detect_pillow_webp",
       "kind": "function",
-      "file": "gltf_diagnostics.py",
-      "line": 31
+      "file": "raster_backend.py",
+      "line": 6
     },
     {
-      "name": "inspect_accessors",
+      "name": "decode_webp_rgba",
       "kind": "function",
-      "file": "gltf_diagnostics.py",
-      "line": 62
+      "file": "raster_backend.py",
+      "line": 40
     },
     {
-      "name": "_read_scalar_accessor",
+      "name": "encode_webp_rgba",
       "kind": "function",
-      "file": "gltf_diagnostics.py",
-      "line": 184
-    },
-    {
-      "name": "inspect_skinning_consistency",
-      "kind": "function",
-      "file": "gltf_diagnostics.py",
-      "line": 242
-    },
-    {
-      "name": "inspect_animation_consistency",
-      "kind": "function",
-      "file": "gltf_diagnostics.py",
-      "line": 316
-    },
-    {
-      "name": "deep_gltf_diagnostics",
-      "kind": "function",
-      "file": "gltf_diagnostics.py",
-      "line": 459
-    },
-    {
-      "name": "_accessor_count",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 11
-    },
-    {
-      "name": "_triangle_count",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 23
-    },
-    {
-      "name": "build_quality_report",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 31
-    },
-    {
-      "name": "evaluate_quality",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 255
-    },
-    {
-      "name": "quality_report",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 367
+      "file": "raster_backend.py",
+      "line": 71
     },
     {
       "name": "_read_webp_bytes",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 18
+      "line": 20
     },
     {
       "name": "_webp_chunks",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 25
+      "line": 27
     },
     {
       "name": "_webp_vp8x_info",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 58
+      "line": 60
     },
     {
       "name": "_webp_vp8l_info",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 77
+      "line": 79
     },
     {
       "name": "_webp_vp8_info",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 94
+      "line": 96
     },
     {
       "name": "inspect_webp_bytes",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 116
+      "line": 118
     },
     {
       "name": "inspect_webp",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 182
+      "line": 184
     },
     {
       "name": "_read_png_bytes",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 186
+      "line": 188
     },
     {
       "name": "_chunks",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 193
+      "line": 195
     },
     {
       "name": "_validate_ihdr",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 260
+      "line": 262
     },
     {
       "name": "_validate_palette_transparency",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 284
+      "line": 286
     },
     {
       "name": "_decompress_idat",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 349
+      "line": 351
+    },
+    {
+      "name": "inspect_raster",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 380
     },
     {
       "name": "inspect_png",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 378
+      "line": 391
     },
     {
       "name": "_paeth",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 406
+      "line": 419
     },
     {
       "name": "_unfilter_scanlines",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 418
+      "line": 431
     },
     {
       "name": "_scanline_layout",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 459
+      "line": 472
     },
     {
       "name": "_unpack_packed_samples",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 467
+      "line": 480
     },
     {
       "name": "_sample16_to_u8",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 487
+      "line": 500
     },
     {
       "name": "_adam7_extent",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 502
+      "line": 515
     },
     {
       "name": "_decode_row_to_rgba",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 508
+      "line": 521
     },
     {
       "name": "_decode_adam7",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 619
+      "line": 632
+    },
+    {
+      "name": "decode_raster_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 687
+    },
+    {
+      "name": "raster_backend_status",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 712
     },
     {
       "name": "decode_rgba",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 674
+      "line": 727
     },
     {
       "name": "_chunk",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 736
+      "line": 789
     },
     {
       "name": "_filter_row",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 745
+      "line": 798
     },
     {
       "name": "_filter_score",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 769
+      "line": 822
     },
     {
       "name": "_png_bytes_rgba",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 773
+      "line": 826
     },
     {
       "name": "encode_rgba",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 806
+      "line": 859
+    },
+    {
+      "name": "encode_webp",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 870
     },
     {
       "name": "recompress_png",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 817
+      "line": 909
     },
     {
       "name": "_next_power_of_two",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 834
+      "line": 926
     },
     {
       "name": "pack_uniform_atlas",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 840
+      "line": 932
     },
     {
       "name": "chunk",
@@ -568,58 +538,64 @@
       "line": 191
     },
     {
-      "name": "test_invalid_png_crc_is_rejected",
+      "name": "test_raster_target_format_mismatch_is_reported",
       "kind": "function",
       "file": "tests/test_asset_forge.py",
       "line": 213
     },
     {
-      "name": "chunk",
+      "name": "test_invalid_png_crc_is_rejected",
       "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 16
+      "file": "tests/test_asset_forge.py",
+      "line": 224
     },
     {
-      "name": "tiny_png",
-      "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 25
-    },
-    {
-      "name": "GltfBinaryMetricsTests",
+      "name": "RasterBackendTests",
       "kind": "class",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 31
+      "file": "tests/test_raster_backend.py",
+      "line": 10
     },
     {
-      "name": "test_data_uri_png_dimensions_and_memory",
+      "name": "test_backend_status_shape",
       "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 32
+      "file": "tests/test_raster_backend.py",
+      "line": 11
     },
     {
-      "name": "test_local_external_png_dimensions",
+      "name": "test_missing_backend_returns_clear_error",
       "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 50
+      "file": "tests/test_raster_backend.py",
+      "line": 18
     },
     {
-      "name": "test_data_uri_webp_dimensions_use_shared_inspector",
+      "name": "test_real_webp_lossless_decode_to_rgba",
       "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 65
+      "file": "tests/test_raster_backend.py",
+      "line": 39
     },
     {
-      "name": "test_animation_and_rig_metrics",
+      "name": "test_pack_atlas_accepts_mixed_png_and_webp",
       "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 86
+      "file": "tests/test_raster_backend.py",
+      "line": 60
     },
     {
-      "name": "test_quality_report_includes_binary_metrics",
+      "name": "test_animated_webp_is_rejected_for_atlas_decode",
       "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 112
+      "file": "tests/test_raster_backend.py",
+      "line": 85
+    },
+    {
+      "name": "test_webp_encoder_validates_quality_and_method_without_backend",
+      "kind": "function",
+      "file": "tests/test_raster_backend.py",
+      "line": 105
+    },
+    {
+      "name": "test_encode_webp_lossless_roundtrip",
+      "kind": "function",
+      "file": "tests/test_raster_backend.py",
+      "line": 139
     },
     {
       "name": "webp_chunk",
@@ -984,7 +960,7 @@
   ],
   "selected_tests": [
     "tests/test_asset_forge.py",
-    "tests/test_gltf_binary_metrics.py",
+    "tests/test_raster_backend.py",
     "tests/test_raster_pack.py"
   ]
 }

@@ -84,6 +84,7 @@ tests/
   test_godot_3d_delivery.py
   test_godot_export.py
   test_godot_handoff.py
+  test_raster_backend.py
   test_raster_pack.py
   test_starlist_bridge.py
   test_svg_tools.py
@@ -102,6 +103,7 @@ gltf_tools.py
 godot_3d_delivery.py
 godot_export.py
 godot_handoff.py
+raster_backend.py
 raster_pack.py
 README.md
 starlist_bridge.py
@@ -204,7 +206,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py raster_backend.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -224,6 +226,20 @@ jobs:
           path: star-list
       - name: Smoke-test star-list bridge
         run: python asset_forge.py discover-tools star-list "pixel art sprites atlas" --top 3
+
+  webp-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install optional WebP backend
+        run: python -m pip install "Pillow>=12.2,<13"
+      - name: Inspect raster backend
+        run: python asset_forge.py raster-backend-status
+      - name: WebP backend tests
+        run: python -m unittest discover -s tests -p "test_raster_backend.py" -v
 ````
 
 ## File: config/tooling.json
@@ -961,6 +977,8 @@ def test_webp_max_colors_constraint_is_rejected(self)
 width = height = 32
 vp8x = bytes([0, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
 ⋮----
+def test_raster_target_format_mismatch_is_reported(self)
+⋮----
 def test_invalid_png_crc_is_rejected(self)
 ⋮----
 image = Path(tmp) / "bad.png"
@@ -1345,6 +1363,54 @@ result = validate_godot_handoff(project)
 @patch("godot_handoff.subprocess.run")
 @patch("godot_handoff.detect_godot")
     def test_available_godot_import_passes(self, detect, run)
+````
+
+## File: tests/test_raster_backend.py
+````python
+class RasterBackendTests(unittest.TestCase)
+⋮----
+def test_backend_status_shape(self)
+⋮----
+status = detect_pillow_webp()
+⋮----
+def test_missing_backend_returns_clear_error(self)
+⋮----
+path = Path(tmp) / "image.webp"
+⋮----
+def test_real_webp_lossless_decode_to_rgba(self)
+⋮----
+image = Image.new("RGBA", (2, 1))
+⋮----
+def test_pack_atlas_accepts_mixed_png_and_webp(self)
+⋮----
+root = Path(tmp)
+png = root / "a.png"
+webp = root / "b.webp"
+atlas = root / "atlas.png"
+⋮----
+image = Image.new("RGBA", (1, 1), (0, 255, 0, 255))
+⋮----
+report = pack_uniform_atlas([png, webp], atlas, columns=2)
+⋮----
+def test_animated_webp_is_rejected_for_atlas_decode(self)
+⋮----
+path = Path(tmp) / "animated.webp"
+first = Image.new("RGBA", (1, 1), (255, 0, 0, 255))
+second = Image.new("RGBA", (1, 1), (0, 255, 0, 255))
+⋮----
+def test_webp_encoder_validates_quality_and_method_without_backend(self)
+⋮----
+output = Path(tmp) / "x.webp"
+⋮----
+def test_encode_webp_lossless_roundtrip(self)
+⋮----
+source = root / "source.png"
+output = root / "output.webp"
+pixels = bytes([
+⋮----
+report = encode_webp(source, output, lossless=True, quality=100, method=6)
+⋮----
+info = inspect_webp(output)
 ````
 
 ## File: tests/test_raster_pack.py
@@ -2028,7 +2094,7 @@ rows = info["height"] // frame_height
 ⋮----
 def build_atlas_manifest(path: Path, manifest: dict) -> dict
 ⋮----
-info = inspect_png(path)
+info = inspect_raster(path)
 constraints = manifest.get("constraints", {}) or {}
 grid = sprite_grid(info, constraints)
 frames = []
@@ -2038,8 +2104,6 @@ def validate_raster_file(path: Path, manifest: dict) -> tuple[dict, list[str]]
 ⋮----
 target = manifest.get("target", {})
 target_format = str(target.get("format", "")).lower()
-⋮----
-info = inspect_webp(path)
 ⋮----
 max_colors = constraints.get("maxColors")
 ⋮----
@@ -2099,13 +2163,15 @@ validate = sub.add_parser("validate", help="validate an asset manifest")
 ⋮----
 plan = sub.add_parser("plan", help="build a deterministic asset production plan")
 ⋮----
-raster = sub.add_parser("validate-raster", help="validate a PNG against an asset manifest")
+raster = sub.add_parser("validate-raster", help="validate a PNG or WebP against an asset manifest")
 ⋮----
-atlas = sub.add_parser("atlas-manifest", help="build uniform-grid atlas metadata from a PNG")
+atlas = sub.add_parser("atlas-manifest", help="build uniform-grid atlas metadata from PNG or WebP")
 ⋮----
-pack = sub.add_parser("pack-atlas", help="pack equal-size RGB/RGBA PNG frames into an atlas")
+pack = sub.add_parser("pack-atlas", help="pack equal-size PNG/WebP frames into a PNG atlas")
 ⋮----
 optimize = sub.add_parser("optimize-png", help="losslessly recompress a supported PNG")
+⋮----
+webp_encode = sub.add_parser("encode-webp", help="encode PNG or WebP input as WebP via optional Pillow/libwebp")
 ⋮----
 godot = sub.add_parser("export-godot", help="export Godot 4 SpriteFrames .tres from atlas metadata")
 ⋮----
@@ -2136,6 +2202,7 @@ asset_profiles = sub.add_parser("validate-asset-profiles", help="validate versio
 ⋮----
 blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
 ⋮----
+raster_status = sub.add_parser("raster-backend-status", help="detect optional raster pixel backends")
 toolchain_status = sub.add_parser("3d-toolchain-status", help="detect available external 3D tools")
 ⋮----
 pipeline3d = sub.add_parser("prepare-3d", help="prepare Blender to GLB validation/optimization pipeline")
@@ -2152,6 +2219,8 @@ metadata = pack_uniform_atlas(
 rendered = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
 ⋮----
 result = recompress_png(args.input, args.output)
+⋮----
+result = encode_webp(
 ⋮----
 metadata = load_json(args.metadata)
 animations = None
@@ -2995,6 +3064,30 @@ command = godot_import_command(chosen, project_dir)
 completed = subprocess.run(
 ````
 
+## File: raster_backend.py
+````python
+def detect_pillow_webp() -> dict
+⋮----
+supported = bool(features.check_module("webp"))
+⋮----
+supported = False
+⋮----
+webp_version = None
+⋮----
+webp_version = features.version_module("webp")
+⋮----
+def decode_webp_rgba(path: Path, *, expected_width: int, expected_height: int) -> tuple[int, int, bytes]
+⋮----
+status = detect_pillow_webp()
+⋮----
+rgba = image.convert("RGBA")
+pixels = rgba.tobytes()
+⋮----
+expected_bytes = expected_width * expected_height * 4
+⋮----
+image = Image.frombytes("RGBA", (width, height), pixels)
+````
+
 ## File: raster_pack.py
 ````python
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -3119,6 +3212,12 @@ raw = inflater.decompress(data, expected_size + 1)
 before = len(inflater.unconsumed_tail)
 extra = inflater.decompress(inflater.unconsumed_tail, 1)
 ⋮----
+def inspect_raster(path: Path) -> dict
+⋮----
+header = path.read_bytes()[:12]
+⋮----
+info = inspect_png(path)
+⋮----
 def inspect_png(path: Path) -> dict
 ⋮----
 data = _read_png_bytes(path)
@@ -3242,6 +3341,16 @@ target_x = x_start + pass_x * x_step
 source_start = pass_x * 4
 target_start = (target_y * width + target_x) * 4
 ⋮----
+def decode_raster_rgba(path: Path) -> tuple[int, int, bytes]
+⋮----
+suffix = path.suffix.lower()
+⋮----
+info = inspect_webp(path)
+⋮----
+raw = path.read_bytes()[:12]
+⋮----
+def raster_backend_status() -> dict
+⋮----
 def decode_rgba(path: Path) -> tuple[int, int, bytes]
 ⋮----
 chunks = _chunks(_read_png_bytes(path))
@@ -3295,15 +3404,17 @@ previous = row
 ⋮----
 ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
 ⋮----
-def recompress_png(input_path: Path, output_path: Path) -> dict
-⋮----
 before = input_path.stat().st_size
+⋮----
+info = inspect_webp(output_path)
 ⋮----
 after = output_path.stat().st_size
 ⋮----
+def recompress_png(input_path: Path, output_path: Path) -> dict
+⋮----
 def _next_power_of_two(value: int) -> int
 ⋮----
-decoded = [decode_rgba(Path(path)) for path in inputs]
+decoded = [decode_raster_rgba(Path(path)) for path in inputs]
 ⋮----
 frame_count = len(decoded)
 column_count = columns or math.ceil(math.sqrt(frame_count))
@@ -3362,10 +3473,11 @@ Build its deterministic production plan:
 python asset_forge.py plan examples/asset-manifest.json
 ```
 
-Validate a PNG/sprite sheet against its manifest:
+Validate a PNG or WebP sprite sheet against its manifest:
 
 ```bash
 python asset_forge.py validate-raster examples/asset-manifest.json path/to/sprite.png
+python asset_forge.py validate-raster examples/webp-manifest.json path/to/sprite.webp
 ```
 
 Generate uniform-grid atlas metadata:
@@ -3374,7 +3486,7 @@ Generate uniform-grid atlas metadata:
 python asset_forge.py atlas-manifest examples/asset-manifest.json path/to/sprite.png --output build/sprite.atlas.json
 ```
 
-Pack separate equal-size PNG frames into a real atlas image plus metadata:
+Pack separate equal-size PNG frames — or PNG/WebP frames when the optional WebP backend is available — into a real PNG atlas plus metadata:
 
 ```bash
 python asset_forge.py pack-atlas build/atlas.png frames/*.png --metadata build/atlas.json --padding 1 --power-of-two
@@ -3408,7 +3520,7 @@ python asset_forge.py export-godot build/atlas.json build/player.tres \
 
 The animation config can define per-animation FPS, loop behavior, frame order, and optional per-frame duration multipliers. A versioned example is available at `examples/godot-animations.json`.
 
-The built-in packer currently supports non-interlaced 8-bit RGB/RGBA PNG inputs and implements all five standard PNG scanline filters. It writes an RGBA PNG atlas without external image libraries. The optimizer uses adaptive per-row PNG filtering and zlib level 9 while preserving decoded pixels.
+The built-in PNG decoder supports the validated PNG depth/color/interlace combinations documented below and implements all five standard PNG scanline filters. Atlas output remains RGBA PNG. Atlas inputs may also be WebP when the optional Pillow/libwebp backend is available; the dependency-free core still handles PNG plus WebP container inspection without Pillow.
 
 Run the offline test suite:
 
@@ -3669,6 +3781,26 @@ Adam7 decoding computes the exact byte budget for all seven passes before zlib d
 Asset Forge now validates WebP RIFF containers without external dependencies. It understands simple lossy `VP8 `, lossless `VP8L`, and extended `VP8X` headers, reports dimensions/alpha/animation/chunk metadata, validates RIFF length and chunk padding, checks reserved VP8X fields, and cross-checks extended canvas dimensions against static image data. `validate-raster` accepts `target.format=webp` for metadata/grid/size/alpha validation, and glTF texture metrics reuse the same WebP parser.
 
 This milestone is inspection/validation only: WebP pixel decoding, atlas input decoding, recompression, and WebP encoding are not implemented yet. PNG remains the decoded/encoded raster working format.
+
+
+### Optional WebP pixel backend
+
+The dependency-free core validates WebP containers without decoding their pixels. Pixel decode/encode is enabled when Pillow is installed with libwebp support. Pillow's documented WebP plugin reads and writes WebP, while `PIL.features.check_module("webp")` is used to detect runtime support.
+
+Inspect availability:
+
+```bash
+python asset_forge.py raster-backend-status
+```
+
+Encode any supported decoded raster input as WebP:
+
+```bash
+python asset_forge.py encode-webp source.png build/source.webp
+python asset_forge.py encode-webp source.png build/source-lossy.webp --lossy --quality 82 --method 6
+```
+
+Lossless is the default. The encoder validates quality `0..100` and method `0..6`, writes through Pillow/libwebp, then re-inspects the WebP container to verify output dimensions. Animated WebP is inspectable but intentionally rejected as a single-frame atlas input.
 ````
 
 ## File: starlist_bridge.py

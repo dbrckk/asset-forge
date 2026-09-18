@@ -85,21 +85,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T20:15:25Z
+Generated: 2026-09-18T20:24:23Z
 
 ### Git
 - Branch: `main`
-- Head: `6bf880edb10c`
-- Commit date: 2026-09-18T22:13:56+02:00
-- Commit: docs: record WebP inspection milestone
-- Tracked files: 151
+- Head: `a188aa0a6292`
+- Commit date: 2026-09-18T22:24:12+02:00
+- Commit: docs: record optional WebP pixel backend milestone
+- Tracked files: 153
 
 ### Recently changed files
 - `README.md`
-- `tests/test_raster_pack.py`
-- `raster_pack.py`
-- `tests/test_gltf_binary_metrics.py`
 - `tests/test_asset_forge.py`
+- `tests/test_raster_backend.py`
+- `.github/workflows/validate.yml`
+- `asset_forge.py`
 
 ### Project signals
 - No common build descriptor detected

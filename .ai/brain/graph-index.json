@@ -12,6 +12,7 @@
     "godot-3d-delivery.py",
     "godot-export.py",
     "godot-handoff.py",
+    "raster-backend.py",
     "raster-pack.py",
     "starlist-bridge.py",
     "svg-tools.py",
@@ -76,6 +77,34 @@
     },
     {
       "dependencies": [
+        "raster_backend.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "gltf_binary_metrics.py",
+        "tests/test_raster_backend.py",
+        "tests/test_raster_pack.py"
+      ],
+      "in_degree": 4,
+      "out_degree": 1,
+      "path": "raster_pack.py"
+    },
+    {
+      "dependencies": [
+        "gltf_tools.py",
+        "raster_pack.py"
+      ],
+      "dependents": [
+        "gltf_diagnostics.py",
+        "gltf_quality.py",
+        "tests/test_gltf_binary_metrics.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 2,
+      "path": "gltf_binary_metrics.py"
+    },
+    {
+      "dependencies": [
         "gltf_binary_metrics.py",
         "gltf_tools.py"
       ],
@@ -99,19 +128,6 @@
       "in_degree": 4,
       "out_degree": 0,
       "path": "asset_profile_validation.py"
-    },
-    {
-      "dependencies": [
-        "gltf_tools.py"
-      ],
-      "dependents": [
-        "gltf_diagnostics.py",
-        "gltf_quality.py",
-        "tests/test_gltf_binary_metrics.py"
-      ],
-      "in_degree": 3,
-      "out_degree": 1,
-      "path": "gltf_binary_metrics.py"
     },
     {
       "dependencies": [
@@ -209,12 +225,12 @@
     {
       "dependencies": [],
       "dependents": [
-        "asset_forge.py",
-        "tests/test_raster_pack.py"
+        "raster_pack.py",
+        "tests/test_raster_backend.py"
       ],
       "in_degree": 2,
       "out_degree": 0,
-      "path": "raster_pack.py"
+      "path": "raster_backend.py"
     },
     {
       "dependencies": [],
@@ -235,6 +251,16 @@
       "in_degree": 0,
       "out_degree": 2,
       "path": "tests/test_gltf_binary_metrics.py"
+    },
+    {
+      "dependencies": [
+        "raster_backend.py",
+        "raster_pack.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 2,
+      "path": "tests/test_raster_backend.py"
     },
     {
       "dependencies": [
@@ -372,8 +398,8 @@
       "path": "tests/test_toolchain_3d.py"
     }
   ],
-  "edge_count": 44,
+  "edge_count": 48,
   "generated_by": "dbrckk/repo-brain-v7-graph",
-  "node_count": 32,
+  "node_count": 34,
   "schema_version": 1
 }
