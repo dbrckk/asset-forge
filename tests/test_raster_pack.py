@@ -5,7 +5,7 @@ import zlib
 from pathlib import Path
 from unittest.mock import patch
 
-from raster_pack import decode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png
+from raster_pack import decode_rgba, encode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png
 
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -1373,6 +1373,80 @@ class RasterPackTests(unittest.TestCase):
                     heuristic="unknown",
                     trim=False,
                 )
+
+    def test_compact_atlas_rotation_can_fit_frame_that_is_too_wide(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "wide.png"
+            atlas = root / "atlas.png"
+            pixels = bytes([
+                255, 0, 0, 255,
+                0, 255, 0, 255,
+                0, 0, 255, 255,
+                255, 255, 0, 255,
+                255, 0, 255, 255,
+                0, 255, 255, 255,
+                10, 20, 30, 255,
+                40, 50, 60, 255,
+            ])
+            encode_rgba(source, 4, 2, pixels)
+
+            metadata = pack_compact_atlas(
+                [source],
+                atlas,
+                max_width=2,
+                trim=False,
+                allow_rotation=True,
+                heuristic="best-short-side-fit",
+            )
+            width, height, packed = decode_rgba(atlas)
+
+        frame = metadata["frames"][0]
+        self.assertTrue(frame["rotated"])
+        self.assertEqual(frame["rotationDegrees"], 90)
+        self.assertEqual((frame["width"], frame["height"]), (2, 4))
+        self.assertEqual((frame["sourceRegionWidth"], frame["sourceRegionHeight"]), (4, 2))
+        self.assertEqual((width, height), (2, 4))
+        self.assertEqual(
+            packed,
+            bytes([
+                255, 0, 255, 255, 255, 0, 0, 255,
+                0, 255, 255, 255, 0, 255, 0, 255,
+                10, 20, 30, 255, 0, 0, 255, 255,
+                40, 50, 60, 255, 255, 255, 0, 255,
+            ]),
+        )
+
+    def test_compact_atlas_rotation_is_disabled_by_default(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "wide.png"
+            write_rgba_png(source, 4, 2, bytes([1, 2, 3, 255]))
+            with self.assertRaisesRegex(ValueError, "cannot fit max atlas width"):
+                pack_compact_atlas(
+                    [source],
+                    root / "atlas.png",
+                    max_width=2,
+                    trim=False,
+                )
+
+    def test_compact_atlas_rotation_metadata_counts_rotated_frames(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            a = root / "a.png"
+            b = root / "b.png"
+            write_rgba_png(a, 4, 2, bytes([1, 2, 3, 255]))
+            write_rgba_png(b, 1, 1, bytes([4, 5, 6, 255]))
+            metadata = pack_compact_atlas(
+                [a, b],
+                root / "atlas.png",
+                max_width=2,
+                trim=False,
+                allow_rotation=True,
+            )
+
+        self.assertTrue(metadata["rotationAllowed"])
+        self.assertGreaterEqual(metadata["rotatedFrameCount"], 1)
 
 
 if __name__ == "__main__":
