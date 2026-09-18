@@ -17,15 +17,49 @@ Supported domains include 2D illustration, pixel-art sprites and tilesets, vecto
 5. Validate every generated or imported asset before integration.
 6. Keep project art direction in the consuming project and reusable production logic here.
 
-## Planned workflow
+## Quick start
+
+Validate a manifest:
+
+```bash
+python asset_forge.py validate examples/asset-manifest.json
+```
+
+Build its deterministic production plan:
+
+```bash
+python asset_forge.py plan examples/asset-manifest.json
+```
+
+Run the offline test suite:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+## Repository layout
+
+```text
+asset_forge.py
+config/tooling.json
+pipelines/
+schemas/
+examples/
+tests/
+.ai/project-state.md
+```
+
+## Discovery workflow
 
 1. Read the consuming project's art direction and technical constraints.
 2. Check the approved tool registry.
-3. Query dbrckk/star-list for relevant capabilities.
+3. Query `dbrckk/star-list` for relevant capabilities.
 4. If coverage is insufficient, discover candidates on GitHub/web.
 5. Review licensing, maintenance, automation support, and output quality.
 6. Create/source the asset.
 7. Validate, optimize, record provenance, and export it for the target project.
+
+Discovery is advisory: a newly discovered repository is never trusted automatically.
 
 ## Initial interoperability
 
