@@ -226,6 +226,8 @@ python asset_forge.py run-3d source.blend build/model \
 
 The generated chain is Blender export → internal structural validation → quality/budget report → optional Khronos validation → optional optimization → post-optimization structural validation → final quality report. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
 
+A completed run also writes `production-report.json`, which records step status and compares raw vs final vertices, triangles, and file bytes when both quality reports are available.
+
 ## Initial interoperability
 
 - glTF/GLB for portable 3D delivery
