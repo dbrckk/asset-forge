@@ -1035,6 +1035,20 @@ def _extrude_rgba(
                     canvas[dst : dst + 4] = canvas[src : src + 4]
 
 
+def _rotate_rgba_clockwise(width: int, height: int, pixels: bytes) -> tuple[int, int, bytes]:
+    rotated_width = height
+    rotated_height = width
+    rotated = bytearray(rotated_width * rotated_height * 4)
+    for y in range(height):
+        for x in range(width):
+            source = (y * width + x) * 4
+            target_x = height - 1 - y
+            target_y = x
+            target = (target_y * rotated_width + target_x) * 4
+            rotated[target : target + 4] = pixels[source : source + 4]
+    return rotated_width, rotated_height, bytes(rotated)
+
+
 def _prepare_frame(path: Path, trim: bool) -> dict:
     source_width, source_height, pixels = decode_raster_rgba(path)
     if trim:
@@ -1217,6 +1231,7 @@ def _pack_maxrects(
     extrude: int,
     *,
     heuristic: str = "best-short-side-fit",
+    allow_rotation: bool = False,
 ) -> tuple[list[dict], int, int]:
     if max_width <= 0:
         raise ValueError("max_width must be > 0")
@@ -1242,35 +1257,57 @@ def _pack_maxrects(
     placements: list[dict] = []
 
     for original_index, frame in ordered:
-        packed_width = frame["width"] + extrude * 2
-        packed_height = frame["height"] + extrude * 2
-        if packed_width > max_width:
-            raise ValueError(
-                f"frame {frame['path'].name} width {packed_width} exceeds max atlas width {max_width}"
+        orientations = [
+            {
+                "rotated": False,
+                "width": frame["width"],
+                "height": frame["height"],
+            }
+        ]
+        if allow_rotation and frame["width"] != frame["height"]:
+            orientations.append(
+                {
+                    "rotated": True,
+                    "width": frame["height"],
+                    "height": frame["width"],
+                }
             )
 
-        reserve_width = packed_width + padding
-        reserve_height = packed_height + padding
         candidates = []
-        for free_index, free in enumerate(free_rects):
-            if reserve_width <= free["width"] and reserve_height <= free["height"]:
-                candidates.append(
-                    (
-                        *_maxrects_score(
-                            free,
-                            reserve_width,
-                            reserve_height,
-                            heuristic,
-                        ),
-                        free_index,
+        for orientation in orientations:
+            packed_width = orientation["width"] + extrude * 2
+            packed_height = orientation["height"] + extrude * 2
+            if packed_width > max_width:
+                continue
+            reserve_width = packed_width + padding
+            reserve_height = packed_height + padding
+            for free_index, free in enumerate(free_rects):
+                if reserve_width <= free["width"] and reserve_height <= free["height"]:
+                    candidates.append(
+                        (
+                            *_maxrects_score(
+                                free,
+                                reserve_width,
+                                reserve_height,
+                                heuristic,
+                            ),
+                            1 if orientation["rotated"] else 0,
+                            free_index,
+                            orientation,
+                        )
                     )
-                )
 
         if not candidates:
-            raise ValueError(f"could not pack frame {frame['path'].name}")
+            raise ValueError(
+                f"frame {frame['path'].name} cannot fit max atlas width {max_width}"
+            )
 
-        *_, free_index = min(candidates)
+        *_, free_index, orientation = min(candidates)
         free = free_rects[free_index]
+        packed_width = orientation["width"] + extrude * 2
+        packed_height = orientation["height"] + extrude * 2
+        reserve_width = packed_width + padding
+        reserve_height = packed_height + padding
         used = {
             "x": free["x"],
             "y": free["y"],
@@ -1290,8 +1327,11 @@ def _pack_maxrects(
                 "cellY": used["y"],
                 "x": used["x"] + extrude,
                 "y": used["y"] + extrude,
-                "width": frame["width"],
-                "height": frame["height"],
+                "width": orientation["width"],
+                "height": orientation["height"],
+                "sourceRegionWidth": frame["width"],
+                "sourceRegionHeight": frame["height"],
+                "rotated": orientation["rotated"],
                 "packedWidth": packed_width,
                 "packedHeight": packed_height,
             }
@@ -1325,14 +1365,24 @@ def _render_compact_layout(
 ) -> bytes:
     canvas = bytearray(width * height * 4)
     for placement, frame in zip(placements, frames):
+        if placement.get("rotated"):
+            render_width, render_height, render_pixels = _rotate_rgba_clockwise(
+                frame["width"],
+                frame["height"],
+                frame["pixels"],
+            )
+        else:
+            render_width = frame["width"]
+            render_height = frame["height"]
+            render_pixels = frame["pixels"]
         _blit_rgba(
             canvas,
             width,
             placement["x"],
             placement["y"],
-            frame["width"],
-            frame["height"],
-            frame["pixels"],
+            render_width,
+            render_height,
+            render_pixels,
         )
         _extrude_rgba(
             canvas,
@@ -1340,8 +1390,8 @@ def _render_compact_layout(
             height,
             placement["x"],
             placement["y"],
-            frame["width"],
-            frame["height"],
+            render_width,
+            render_height,
             extrude,
         )
     return bytes(canvas)
@@ -1354,6 +1404,7 @@ def _choose_maxrects_layout(
     extrude: int,
     heuristic: str,
     *,
+    allow_rotation: bool,
     power_of_two: bool,
     max_height: int | None,
     max_pixels: int | None,
@@ -1369,6 +1420,7 @@ def _choose_maxrects_layout(
             padding=padding,
             extrude=extrude,
             heuristic=name,
+            allow_rotation=allow_rotation,
         )
         atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
         atlas_height = _next_power_of_two(content_height) if power_of_two else content_height
@@ -1469,6 +1521,7 @@ def pack_compact_atlas(
     max_bytes: int | None = None,
     min_occupancy: float | None = None,
     heuristic: str = "auto",
+    allow_rotation: bool = False,
     padding: int = 0,
     power_of_two: bool = False,
     trim: bool = True,
@@ -1501,6 +1554,7 @@ def pack_compact_atlas(
         padding=padding,
         extrude=extrude,
         heuristic=heuristic,
+        allow_rotation=allow_rotation,
         power_of_two=power_of_two,
         max_height=max_height,
         max_pixels=max_pixels,
@@ -1523,8 +1577,12 @@ def pack_compact_atlas(
                 "name": frame["path"].name,
                 "x": placement["x"],
                 "y": placement["y"],
-                "width": frame["width"],
-                "height": frame["height"],
+                "width": placement["width"],
+                "height": placement["height"],
+                "sourceRegionWidth": frame["width"],
+                "sourceRegionHeight": frame["height"],
+                "rotated": bool(placement.get("rotated")),
+                "rotationDegrees": 90 if placement.get("rotated") else 0,
                 "sourceWidth": frame["sourceWidth"],
                 "sourceHeight": frame["sourceHeight"],
                 "offsetX": frame["offsetX"],
@@ -1568,6 +1626,8 @@ def pack_compact_atlas(
         "maxBytes": max_bytes,
         "outputBytes": output_bytes,
         "packing": f"maxrects-{selected_heuristic}",
+        "rotationAllowed": allow_rotation,
+        "rotatedFrameCount": sum(1 for frame in frames if frame["rotated"]),
         "requestedHeuristic": heuristic,
         "selectedHeuristic": selected_heuristic,
         "selectionMetric": "encoded-png-bytes",
