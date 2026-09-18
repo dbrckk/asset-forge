@@ -504,7 +504,7 @@ def parser() -> argparse.ArgumentParser:
     pipeline3d.add_argument("workdir", type=Path)
     pipeline3d.add_argument("--profile", choices=["prop", "environment", "character"], default="prop")
     pipeline3d.add_argument("--optimizer", choices=["none", "gltf-transform", "gltfpack"], default="gltf-transform")
-    pipeline3d.add_argument("--texture-compress", choices=["webp", "ktx2"])
+    pipeline3d.add_argument("--texture-compress", choices=["webp"])
     pipeline3d.add_argument("--mesh-compression", action="store_true")
     pipeline3d.add_argument("--no-animations", action="store_true")
     return result
