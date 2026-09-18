@@ -15,6 +15,9 @@ QUALITY_PROFILES = {
         "requireNormals": True,
         "requireUvWhenTextured": True,
         "requireSkinning": False,
+        "maxTextureDimension": 4096,
+        "maxEstimatedTextureMipBytes": 134217728,
+        "maxJointsPerSkin": 0,
     },
     "environment": {
         "maxVertices": 2_000_000,
@@ -24,6 +27,9 @@ QUALITY_PROFILES = {
         "requireNormals": True,
         "requireUvWhenTextured": True,
         "requireSkinning": False,
+        "maxTextureDimension": 8192,
+        "maxEstimatedTextureMipBytes": 1073741824,
+        "maxJointsPerSkin": 0,
     },
     "character": {
         "maxVertices": 150_000,
@@ -33,6 +39,9 @@ QUALITY_PROFILES = {
         "requireNormals": True,
         "requireUvWhenTextured": True,
         "requireSkinning": True,
+        "maxTextureDimension": 4096,
+        "maxEstimatedTextureMipBytes": 268435456,
+        "maxJointsPerSkin": 128,
     },
 }
 
@@ -305,6 +314,18 @@ def evaluate_quality(report: dict, profile: str) -> dict:
         warnings.append(
             f"textures {textures['count']} exceed profile budget {rules['maxTextures']}"
         )
+    if max(textures.get("maxWidth", 0), textures.get("maxHeight", 0)) > rules["maxTextureDimension"]:
+        warnings.append(
+            "texture dimension "
+            f"{max(textures.get('maxWidth', 0), textures.get('maxHeight', 0))} "
+            f"exceeds profile budget {rules['maxTextureDimension']}"
+        )
+    if textures.get("estimatedRgba8MipBytes", 0) > rules["maxEstimatedTextureMipBytes"]:
+        warnings.append(
+            "estimated RGBA8+mip texture memory "
+            f"{textures['estimatedRgba8MipBytes']} exceeds profile budget "
+            f"{rules['maxEstimatedTextureMipBytes']}"
+        )
     if materials["count"] > rules["maxMaterials"]:
         warnings.append(
             f"materials {materials['count']} exceed profile budget {rules['maxMaterials']}"
@@ -333,6 +354,19 @@ def evaluate_quality(report: dict, profile: str) -> dict:
 
     if rules["requireSkinning"] and primitive_count and attributes["skinned"] == 0:
         errors.append("character profile requires JOINTS_0 and WEIGHTS_0 on skinned geometry")
+
+    rig = report.get("rigAnimation", {})
+    if rules["maxJointsPerSkin"] and rig.get("maxJointsPerSkin", 0) > rules["maxJointsPerSkin"]:
+        warnings.append(
+            f"max joints per skin {rig['maxJointsPerSkin']} exceed profile budget "
+            f"{rules['maxJointsPerSkin']}"
+        )
+    if profile == "character" and rig.get("skins", 0) and rig.get("skinsWithInverseBindMatrices", 0) == 0:
+        warnings.append("character skin has no inverseBindMatrices accessor")
+    if rig.get("invalidAnimationTargets", 0):
+        errors.append(
+            f"{rig['invalidAnimationTargets']} animation target field(s) are invalid"
+        )
 
     if (
         attributes["normalMappedPrimitives"] > 0
