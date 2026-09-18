@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-forge 3D quality profile",
+  "type": "object",
+  "required": ["id", "assetTypes", "rules"],
+  "properties": {
+    "id": {"enum": ["prop", "environment", "character"]},
+    "assetTypes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "rules": {
+      "type": "object",
+      "required": [
+        "maxMeshes", "maxPrimitives", "maxMaterials", "maxVertices",
+        "maxTriangles", "maxTextures", "allowAnimations", "requireSkin",
+        "requireNormals", "requireUvWhenTextured", "maxTextureDimension",
+        "maxEstimatedTextureMipBytes", "maxJointsPerSkin"
+      ],
+      "properties": {
+        "maxMeshes": {"type": "integer", "minimum": 1},
+        "maxPrimitives": {"type": "integer", "minimum": 1},
+        "maxMaterials": {"type": "integer", "minimum": 1},
+        "maxVertices": {"type": "integer", "minimum": 1},
+        "maxTriangles": {"type": "integer", "minimum": 1},
+        "maxTextures": {"type": "integer", "minimum": 1},
+        "allowAnimations": {"type": "boolean"},
+        "requireSkin": {"type": "boolean"},
+        "requireNormals": {"type": "boolean"},
+        "requireUvWhenTextured": {"type": "boolean"},
+        "maxTextureDimension": {"type": "integer", "minimum": 1},
+        "maxEstimatedTextureMipBytes": {"type": "integer", "minimum": 1},
+        "maxJointsPerSkin": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
