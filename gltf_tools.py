@@ -94,6 +94,109 @@ def _count_primitives(data: dict) -> tuple[int, int]:
     return primitive_count, indexed_primitive_count
 
 
+
+def _validate_index_references(data: dict) -> list[str]:
+    errors: list[str] = []
+    nodes = data.get("nodes", [])
+    meshes = data.get("meshes", [])
+    materials = data.get("materials", [])
+    accessors = data.get("accessors", [])
+    buffer_views = data.get("bufferViews", [])
+    buffers = data.get("buffers", [])
+    textures = data.get("textures", [])
+    images = data.get("images", [])
+    samplers = data.get("samplers", [])
+    skins = data.get("skins", [])
+
+    def check(value, size, label):
+        if not isinstance(value, int) or value < 0 or value >= size:
+            errors.append(f"{label} index {value!r} is out of range")
+
+    if isinstance(nodes, list):
+        for node_index, node in enumerate(nodes):
+            if not isinstance(node, dict):
+                continue
+            if "mesh" in node and isinstance(meshes, list):
+                check(node["mesh"], len(meshes), f"nodes[{node_index}].mesh")
+            if "skin" in node and isinstance(skins, list):
+                check(node["skin"], len(skins), f"nodes[{node_index}].skin")
+            children = node.get("children", [])
+            if isinstance(children, list):
+                for child_pos, child in enumerate(children):
+                    check(child, len(nodes), f"nodes[{node_index}].children[{child_pos}]")
+
+    if isinstance(meshes, list):
+        for mesh_index, mesh in enumerate(meshes):
+            if not isinstance(mesh, dict):
+                continue
+            primitives = mesh.get("primitives", [])
+            if not isinstance(primitives, list):
+                continue
+            for primitive_index, primitive in enumerate(primitives):
+                if not isinstance(primitive, dict):
+                    continue
+                attributes = primitive.get("attributes", {})
+                if isinstance(attributes, dict) and isinstance(accessors, list):
+                    for semantic, accessor_index in attributes.items():
+                        check(
+                            accessor_index,
+                            len(accessors),
+                            f"meshes[{mesh_index}].primitives[{primitive_index}].attributes.{semantic}",
+                        )
+                if "indices" in primitive and isinstance(accessors, list):
+                    check(
+                        primitive["indices"],
+                        len(accessors),
+                        f"meshes[{mesh_index}].primitives[{primitive_index}].indices",
+                    )
+                if "material" in primitive and isinstance(materials, list):
+                    check(
+                        primitive["material"],
+                        len(materials),
+                        f"meshes[{mesh_index}].primitives[{primitive_index}].material",
+                    )
+
+    if isinstance(accessors, list) and isinstance(buffer_views, list):
+        for accessor_index, accessor in enumerate(accessors):
+            if isinstance(accessor, dict) and "bufferView" in accessor:
+                check(
+                    accessor["bufferView"],
+                    len(buffer_views),
+                    f"accessors[{accessor_index}].bufferView",
+                )
+
+    if isinstance(buffer_views, list) and isinstance(buffers, list):
+        for view_index, view in enumerate(buffer_views):
+            if isinstance(view, dict) and "buffer" in view:
+                check(
+                    view["buffer"],
+                    len(buffers),
+                    f"bufferViews[{view_index}].buffer",
+                )
+
+    if isinstance(textures, list):
+        for texture_index, texture in enumerate(textures):
+            if not isinstance(texture, dict):
+                continue
+            if "source" in texture and isinstance(images, list):
+                check(texture["source"], len(images), f"textures[{texture_index}].source")
+            if "sampler" in texture and isinstance(samplers, list):
+                check(texture["sampler"], len(samplers), f"textures[{texture_index}].sampler")
+
+    if isinstance(skins, list) and isinstance(nodes, list):
+        for skin_index, skin in enumerate(skins):
+            if not isinstance(skin, dict):
+                continue
+            joints = skin.get("joints", [])
+            if isinstance(joints, list):
+                for joint_pos, joint in enumerate(joints):
+                    check(joint, len(nodes), f"skins[{skin_index}].joints[{joint_pos}]")
+            if "skeleton" in skin:
+                check(skin["skeleton"], len(nodes), f"skins[{skin_index}].skeleton")
+
+    return errors
+
+
 def inspect_gltf(path: Path) -> tuple[dict, list[str], list[str]]:
     try:
         data, container = load_gltf_json(path)
@@ -144,6 +247,7 @@ def inspect_gltf(path: Path) -> tuple[dict, list[str], list[str]]:
         warnings.append("asset contains no meshes")
 
     primitive_count, indexed_primitive_count = _count_primitives(data)
+    errors.extend(_validate_index_references(data))
 
     extensions_used = data.get("extensionsUsed", [])
     extensions_required = data.get("extensionsRequired", [])
