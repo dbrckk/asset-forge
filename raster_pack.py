@@ -238,8 +238,7 @@ def _paeth(a: int, b: int, c: int) -> int:
     return c
 
 
-def _unfilter_scanlines(raw: bytes, width: int, height: int, bpp: int) -> list[bytearray]:
-    stride = width * bpp
+def _unfilter_scanlines(raw: bytes, stride: int, height: int, filter_bpp: int) -> list[bytearray]:
     if len(raw) != (stride + 1) * height:
         raise ValueError("unexpected PNG scanline length")
 
@@ -255,9 +254,9 @@ def _unfilter_scanlines(raw: bytes, width: int, height: int, bpp: int) -> list[b
         reconstructed = bytearray(stride)
 
         for index, value in enumerate(scanline):
-            left = reconstructed[index - bpp] if index >= bpp else 0
+            left = reconstructed[index - filter_bpp] if index >= filter_bpp else 0
             above = previous[index]
-            upper_left = previous[index - bpp] if index >= bpp else 0
+            upper_left = previous[index - filter_bpp] if index >= filter_bpp else 0
 
             if filter_type == 0:
                 reconstructed_value = value
@@ -280,20 +279,49 @@ def _unfilter_scanlines(raw: bytes, width: int, height: int, bpp: int) -> list[b
     return rows
 
 
+def _scanline_layout(width: int, depth: int, color_type: int) -> tuple[int, int]:
+    channels = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}[color_type]
+    bits_per_pixel = channels * depth
+    stride = (width * bits_per_pixel + 7) // 8
+    filter_bpp = max(1, (bits_per_pixel + 7) // 8)
+    return stride, filter_bpp
+
+
+def _unpack_indexed_row(row: bytes, width: int, depth: int) -> list[int]:
+    if depth == 8:
+        return list(row[:width])
+    if depth not in {1, 2, 4}:
+        raise ValueError(f"unsupported indexed PNG bit depth {depth}")
+
+    mask = (1 << depth) - 1
+    values: list[int] = []
+    for byte in row:
+        shift = 8 - depth
+        while shift >= 0 and len(values) < width:
+            values.append((byte >> shift) & mask)
+            shift -= depth
+        if len(values) >= width:
+            break
+    if len(values) != width:
+        raise ValueError("indexed PNG row does not contain enough samples")
+    return values
+
+
 def decode_rgba(path: Path) -> tuple[int, int, bytes]:
     chunks = _chunks(_read_png_bytes(path))
     width, height, depth, color_type, compression, filtering, interlace = _validate_ihdr(
         chunks[0][1]
     )
-    if depth != 8 or compression != 0 or filtering != 0 or interlace != 0:
-        raise ValueError("packing supports non-interlaced 8-bit PNG only")
+    if compression != 0 or filtering != 0 or interlace != 0:
+        raise ValueError("packing supports non-interlaced PNG only")
+    if color_type != 3 and depth != 8:
+        raise ValueError("packing currently supports 8-bit non-indexed PNG only")
 
-    bpp_by_type = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}
-    bpp = bpp_by_type[color_type]
-    expected_size = (width * bpp + 1) * height
+    stride, filter_bpp = _scanline_layout(width, depth, color_type)
+    expected_size = (stride + 1) * height
     compressed = b"".join(payload for kind, payload in chunks if kind == b"IDAT")
     raw = _decompress_idat(compressed, expected_size)
-    rows = _unfilter_scanlines(raw, width, height, bpp)
+    rows = _unfilter_scanlines(raw, stride, height, filter_bpp)
 
     palette, transparency = _validate_palette_transparency(
         chunks,
@@ -305,6 +333,19 @@ def decode_rgba(path: Path) -> tuple[int, int, bytes]:
     destination = 0
 
     for row in rows:
+        if color_type == 3:
+            indexed_samples = _unpack_indexed_row(row, width, depth)
+            for palette_index in indexed_samples:
+                if palette_index >= len(palette):
+                    raise ValueError("palette index out of range")
+                red, green, blue = palette[palette_index]
+                alpha = transparency[palette_index] if palette_index < len(transparency) else 255
+                rgba[destination : destination + 4] = bytes((red, green, blue, alpha))
+                destination += 4
+            continue
+
+        bpp_by_type = {0: 1, 2: 3, 4: 2, 6: 4}
+        bpp = bpp_by_type[color_type]
         for index in range(0, len(row), bpp):
             if color_type == 0:
                 gray = row[index]
@@ -321,12 +362,6 @@ def decode_rgba(path: Path) -> tuple[int, int, bytes]:
                     tr, tg, tb = struct.unpack(">HHH", transparency)
                     if (red, green, blue) == (tr, tg, tb):
                         alpha = 0
-            elif color_type == 3:
-                palette_index = row[index]
-                if palette_index >= len(palette):
-                    raise ValueError("palette index out of range")
-                red, green, blue = palette[palette_index]
-                alpha = transparency[palette_index] if palette_index < len(transparency) else 255
             elif color_type == 4:
                 gray, alpha = row[index : index + 2]
                 red = green = blue = gray
@@ -351,9 +386,9 @@ def _chunk(kind: bytes, payload: bytes) -> bytes:
 def _filter_row(row: bytes, previous: bytes, bpp: int, filter_type: int) -> bytes:
     output = bytearray(len(row))
     for index, value in enumerate(row):
-        left = row[index - bpp] if index >= bpp else 0
+        left = row[index - filter_bpp] if index >= filter_bpp else 0
         above = previous[index]
-        upper_left = previous[index - bpp] if index >= bpp else 0
+        upper_left = previous[index - filter_bpp] if index >= filter_bpp else 0
 
         if filter_type == 0:
             predictor = 0
