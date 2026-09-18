@@ -84,11 +84,14 @@ def build_3d_pipeline(
     texture_compress: str | None = None,
     mesh_compression: bool = False,
     animations: bool = True,
+    target_engine: str = "generic",
 ) -> dict:
     if profile not in {"prop", "environment", "character"}:
         raise ValueError("profile must be prop, environment, or character")
     if optimizer not in {"none", "gltf-transform", "gltfpack"}:
         raise ValueError("optimizer must be none, gltf-transform, or gltfpack")
+    if target_engine not in {"generic", "godot4"}:
+        raise ValueError("target_engine must be generic or godot4")
 
     workdir = Path(workdir)
     raw_glb = workdir / "raw.glb"
@@ -259,11 +262,35 @@ def build_3d_pipeline(
             }
         )
 
+    if target_engine == "godot4":
+        commands.append(
+            {
+                "id": "godot4-delivery",
+                "required": True,
+                "tool": "asset-forge",
+                "available": True,
+                "command": _quote(
+                    [
+                        "python",
+                        "asset_forge.py",
+                        "validate-godot-3d",
+                        str(final_glb),
+                        "--profile",
+                        profile,
+                        "--output",
+                        str(workdir / "godot4-delivery.json"),
+                    ]
+                ),
+                "output": str(workdir / "godot4-delivery.json"),
+            }
+        )
+
     return {
         "source": str(source_blend),
         "workdir": str(workdir),
         "profile": profile,
         "optimizer": optimizer,
+        "targetEngine": target_engine,
         "tools": tools,
         "blenderJob": blender_job,
         "blenderScript": str(blender_script),
@@ -323,6 +350,7 @@ def _build_production_summary(plan: dict, success: bool, results: list[dict]) ->
         "success": success,
         "profile": plan.get("profile"),
         "optimizer": plan.get("optimizer"),
+        "targetEngine": plan.get("targetEngine"),
         "rawOutput": plan.get("rawOutput"),
         "finalOutput": plan.get("finalOutput"),
         "steps": [
