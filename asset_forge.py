@@ -20,7 +20,7 @@ from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_3d_delivery import godot_3d_delivery_report
 from godot_handoff import prepare_godot_handoff, validate_godot_handoff
 from godot_export import write_spriteframes
-from raster_pack import inspect_png, inspect_raster, pack_uniform_atlas, raster_backend_status, recompress_png
+from raster_pack import encode_webp, inspect_png, inspect_raster, pack_uniform_atlas, raster_backend_status, recompress_png
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
 from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline
 from svg_tools import inspect_svg, normalize_viewbox, sanitize_svg, validate_svg_profile
@@ -391,6 +391,13 @@ def parser() -> argparse.ArgumentParser:
     optimize.add_argument("input", type=Path)
     optimize.add_argument("output", type=Path)
 
+    webp_encode = sub.add_parser("encode-webp", help="encode PNG or WebP input as WebP via optional Pillow/libwebp")
+    webp_encode.add_argument("input", type=Path)
+    webp_encode.add_argument("output", type=Path)
+    webp_encode.add_argument("--lossy", action="store_true")
+    webp_encode.add_argument("--quality", type=int, default=90)
+    webp_encode.add_argument("--method", type=int, default=6)
+
     godot = sub.add_parser("export-godot", help="export Godot 4 SpriteFrames .tres from atlas metadata")
     godot.add_argument("metadata", type=Path)
     godot.add_argument("output", type=Path)
@@ -534,6 +541,20 @@ def main() -> int:
         try:
             result = recompress_png(args.input, args.output)
         except (OSError, ValueError, zlib.error) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+    if args.command == "encode-webp":
+        try:
+            result = encode_webp(
+                args.input,
+                args.output,
+                lossless=not args.lossy,
+                quality=args.quality,
+                method=args.method,
+            )
+        except (OSError, ValueError) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
         print(json.dumps(result, indent=2, sort_keys=True))
