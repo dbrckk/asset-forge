@@ -278,7 +278,15 @@ If a Godot editor executable is installed, validate the generated project with G
 python asset_forge.py validate-godot-handoff build/handoff/godot-handoff
 ```
 
-The generated handoff contains a minimal `project.godot`, a copied GLB under `assets/`, `handoff.json` with import recommendations/provenance, and a short README. Versioned engine handoff profiles live in `profiles/godot4/` for prop, environment, and character assets. These JSON files are the runtime source of truth for handoff recommendations; the Python code loads and validates them instead of duplicating their settings. When Godot is available, validation runs the documented headless `--import` workflow.
+The generated handoff contains a minimal `project.godot`, a copied GLB under `assets/`, `handoff.json` with import recommendations/provenance, and a short README. Versioned engine handoff profiles live in `profiles/godot4/` for prop, environment, and character assets. These JSON files are the runtime source of truth for handoff recommendations; the Python code loads and validates them instead of duplicating their settings.
+
+Validate all engine profiles directly:
+
+```bash
+python asset_forge.py validate-engine-profiles
+```
+
+The contract is documented by `schemas/godot4-handoff-profile.schema.json`. Runtime validation rejects missing/unknown fields, wrong types, invalid profile identity, and animation FPS outside 1–240. CI runs this validation on every change. When Godot is available, handoff validation also runs the documented headless `--import` workflow.
 
 The Godot delivery report checks glTF 2.0 suitability, stable/duplicate names, Godot import suffix hints, animation naming, PBR materials, double-sided materials, normal-map tangents, remote/external images, and the existing 3D quality profile.
 
