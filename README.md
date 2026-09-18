@@ -193,7 +193,30 @@ python asset_forge.py blender-export-job source.blend build/model.glb \
   --job-manifest build/export_job.json
 ```
 
-The command returns the exact Blender background command to run. Current validation is structural and profile-based; Khronos glTF Validator remains the preferred deeper conformance backend when available.
+Inspect external 3D tool availability:
+
+```bash
+python asset_forge.py 3d-toolchain-status
+```
+
+Prepare a complete production pipeline:
+
+```bash
+python asset_forge.py prepare-3d source.blend build/model \
+  --profile prop \
+  --optimizer gltf-transform \
+  --texture-compress webp
+```
+
+Run it end to end when the required local tools are available:
+
+```bash
+python asset_forge.py run-3d source.blend build/model \
+  --profile prop \
+  --optimizer gltf-transform
+```
+
+The generated chain is Blender export → internal structural/profile validation → optional Khronos validation → optional optimization → post-optimization validation. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
 
 ## Initial interoperability
 
