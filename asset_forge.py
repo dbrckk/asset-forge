@@ -21,6 +21,7 @@ from godot_3d_delivery import godot_3d_delivery_report
 from godot_handoff import prepare_godot_handoff, validate_godot_handoff
 from godot_export import write_spriteframes
 from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png
+from runtime_atlas import build_runtime_atlas
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
 from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline
 from svg_tools import inspect_svg, normalize_viewbox, sanitize_svg, validate_svg_profile
@@ -424,6 +425,10 @@ def parser() -> argparse.ArgumentParser:
     webp_encode.add_argument("--quality", type=int, default=90)
     webp_encode.add_argument("--method", type=int, default=6)
 
+    runtime = sub.add_parser("export-runtime-atlas", help="export normalized rotation-aware runtime atlas JSON")
+    runtime.add_argument("metadata", type=Path)
+    runtime.add_argument("output", type=Path)
+
     godot = sub.add_parser("export-godot", help="export Godot 4 SpriteFrames .tres from atlas metadata")
     godot.add_argument("metadata", type=Path)
     godot.add_argument("output", type=Path)
@@ -618,6 +623,20 @@ def main() -> int:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
         print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+    if args.command == "export-runtime-atlas":
+        try:
+            source = load_json(args.metadata)
+            runtime = build_runtime_atlas(source)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(
+            json.dumps(runtime, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        print(str(args.output))
         return 0
     if args.command == "export-godot":
         try:
