@@ -325,3 +325,6 @@ Indexed PNG decoding now calculates packed scanline byte widths correctly, appli
 
 
 Low-bit grayscale decoding shares the packed-sample scanline path used by indexed PNGs. Samples are unpacked most-significant bits first, row padding is ignored, values are scaled to 8-bit luminance, and grayscale `tRNS` is matched against the original unscaled sample. Out-of-range `tRNS` samples are rejected.
+
+
+16-bit PNG decoding is supported for grayscale, RGB, grayscale+alpha, and RGBA. Samples are read big-endian after PNG unfiltering and converted to RGBA8 with deterministic rounding. For grayscale/RGB `tRNS`, transparency matching is performed on the original 16-bit samples before down-conversion, preserving exact transparent-color semantics.
