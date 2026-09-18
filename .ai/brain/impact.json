@@ -1,10 +1,14 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "637c2793dba47468122435382fdeab1b7ed675c4",
-  "head": "763491c35cc2ba63a155d784bc01737f75ada061",
+  "base": "763491c35cc2ba63a155d784bc01737f75ada061",
+  "head": "f43a335e86f341523dccc413f7e9aa8580942ccd",
   "index_mode": "incremental",
   "changed_files": [
+    {
+      "path": ".repo-standards.yml",
+      "status": "M"
+    },
     {
       "path": "README.md",
       "status": "M"
@@ -14,7 +18,15 @@
       "status": "M"
     },
     {
+      "path": "godot_export.py",
+      "status": "M"
+    },
+    {
       "path": "raster_pack.py",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_godot_export.py",
       "status": "M"
     },
     {
@@ -24,14 +36,18 @@
   ],
   "changed_source_files": [
     "asset_forge.py",
+    "godot_export.py",
     "raster_pack.py",
+    "tests/test_godot_export.py",
     "tests/test_raster_pack.py"
   ],
   "impacted_files": [
     "asset_forge.py",
     "gltf_binary_metrics.py",
+    "godot_export.py",
     "raster_pack.py",
     "tests/test_asset_forge.py",
+    "tests/test_godot_export.py",
     "tests/test_raster_backend.py",
     "tests/test_raster_pack.py"
   ],
@@ -124,7 +140,7 @@
       "name": "main",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 530
+      "line": 531
     },
     {
       "name": "_decode_data_uri",
@@ -191,6 +207,36 @@
       "kind": "function",
       "file": "gltf_binary_metrics.py",
       "line": 241
+    },
+    {
+      "name": "_godot_string",
+      "kind": "function",
+      "file": "godot_export.py",
+      "line": 7
+    },
+    {
+      "name": "_validate_frames",
+      "kind": "function",
+      "file": "godot_export.py",
+      "line": 11
+    },
+    {
+      "name": "_normalize_animations",
+      "kind": "function",
+      "file": "godot_export.py",
+      "line": 82
+    },
+    {
+      "name": "render_spriteframes",
+      "kind": "function",
+      "file": "godot_export.py",
+      "line": 173
+    },
+    {
+      "name": "write_spriteframes",
+      "kind": "function",
+      "file": "godot_export.py",
+      "line": 250
     },
     {
       "name": "_read_webp_bytes",
@@ -409,82 +455,94 @@
       "line": 991
     },
     {
-      "name": "_prepare_frame",
+      "name": "_rotate_rgba_clockwise",
       "kind": "function",
       "file": "raster_pack.py",
       "line": 1038
     },
     {
+      "name": "_prepare_frame",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1052
+    },
+    {
       "name": "_validate_atlas_dimensions",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 1063
+      "line": 1077
     },
     {
       "name": "_write_atlas_png",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 1091
+      "line": 1105
     },
     {
       "name": "_next_power_of_two",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 1111
+      "line": 1125
     },
     {
       "name": "_rects_intersect",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 1117
+      "line": 1131
     },
     {
       "name": "_rect_contains",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 1126
+      "line": 1140
     },
     {
       "name": "_split_free_rect",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 1135
+      "line": 1149
     },
     {
       "name": "_prune_free_rects",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 1184
+      "line": 1198
     },
     {
       "name": "_maxrects_score",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 1197
+      "line": 1211
     },
     {
       "name": "_pack_maxrects",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 1213
+      "line": 1227
+    },
+    {
+      "name": "_render_compact_layout",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1368
     },
     {
       "name": "_choose_maxrects_layout",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 1319
+      "line": 1409
     },
     {
       "name": "pack_compact_atlas",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 1374
+      "line": 1523
     },
     {
       "name": "pack_uniform_atlas",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 1527
+      "line": 1667
     },
     {
       "name": "chunk",
@@ -605,6 +663,90 @@
       "kind": "function",
       "file": "tests/test_asset_forge.py",
       "line": 224
+    },
+    {
+      "name": "GodotExportTests",
+      "kind": "class",
+      "file": "tests/test_godot_export.py",
+      "line": 8
+    },
+    {
+      "name": "metadata",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 9
+    },
+    {
+      "name": "test_render_spriteframes_uses_atlas_regions",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 17
+    },
+    {
+      "name": "test_trimmed_frame_emits_atlas_margin",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 35
+    },
+    {
+      "name": "test_untrimmed_frame_does_not_emit_margin",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 58
+    },
+    {
+      "name": "test_rejects_trim_metadata_that_does_not_fit_source",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 62
+    },
+    {
+      "name": "test_rejects_frame_outside_known_atlas_bounds",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 80
+    },
+    {
+      "name": "test_rejects_rotated_atlas_frame",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 89
+    },
+    {
+      "name": "test_multiple_animations",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 108
+    },
+    {
+      "name": "test_rejects_duplicate_animation_names",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 134
+    },
+    {
+      "name": "test_rejects_out_of_range_animation_frame",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 145
+    },
+    {
+      "name": "test_write_spriteframes_creates_file",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 153
+    },
+    {
+      "name": "test_rejects_empty_metadata",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 166
+    },
+    {
+      "name": "test_rejects_invalid_fps",
+      "kind": "function",
+      "file": "tests/test_godot_export.py",
+      "line": 170
     },
     {
       "name": "RasterBackendTests",
@@ -1111,20 +1253,45 @@
       "line": 1270
     },
     {
+      "name": "test_compact_atlas_auto_skips_heuristic_outside_byte_budget",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1305
+    },
+    {
       "name": "test_compact_atlas_forced_heuristic_is_respected",
       "kind": "function",
       "file": "tests/test_raster_pack.py",
-      "line": 1302
+      "line": 1343
     },
     {
       "name": "test_compact_atlas_rejects_unknown_heuristic",
       "kind": "function",
       "file": "tests/test_raster_pack.py",
-      "line": 1322
+      "line": 1363
+    },
+    {
+      "name": "test_compact_atlas_rotation_can_fit_frame_that_is_too_wide",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1377
+    },
+    {
+      "name": "test_compact_atlas_rotation_is_disabled_by_default",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1420
+    },
+    {
+      "name": "test_compact_atlas_rotation_metadata_counts_rotated_frames",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1433
     }
   ],
   "selected_tests": [
     "tests/test_asset_forge.py",
+    "tests/test_godot_export.py",
     "tests/test_raster_backend.py",
     "tests/test_raster_pack.py"
   ]

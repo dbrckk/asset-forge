@@ -1297,6 +1297,8 @@ def test_rejects_trim_metadata_that_does_not_fit_source(self)
 ⋮----
 def test_rejects_frame_outside_known_atlas_bounds(self)
 ⋮----
+def test_rejects_rotated_atlas_frame(self)
+⋮----
 def test_multiple_animations(self)
 ⋮----
 def test_rejects_duplicate_animation_names(self)
@@ -1862,9 +1864,28 @@ evaluated = metadata["evaluatedHeuristics"]
 ⋮----
 best = min(
 ⋮----
+def test_compact_atlas_auto_skips_heuristic_outside_byte_budget(self)
+⋮----
+baseline = pack_compact_atlas(
+evaluated = sorted(
+⋮----
+budget = evaluated[-1]["encodedBytes"] - 1
+constrained = pack_compact_atlas(
+selected = next(
+⋮----
 def test_compact_atlas_forced_heuristic_is_respected(self)
 ⋮----
 def test_compact_atlas_rejects_unknown_heuristic(self)
+⋮----
+def test_compact_atlas_rotation_can_fit_frame_that_is_too_wide(self)
+⋮----
+pixels = bytes([
+⋮----
+frame = metadata["frames"][0]
+⋮----
+def test_compact_atlas_rotation_is_disabled_by_default(self)
+⋮----
+def test_compact_atlas_rotation_metadata_counts_rotated_frames(self)
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -2027,6 +2048,7 @@ repo_brain_fallback: portable-full-rebuild
 hotset_fallback: recent-project-state
 graph_routing: compact-sharded-reverse-deps
 graph_resolver: java-kotlin-tail-v2
+graph_enrichment: unique-type-symbol-references-v1
 ai_context:
   index: .ai/index.md
   project_state: .ai/project-state.md
@@ -2051,6 +2073,7 @@ ai_context:
   brain_symbols: .ai/brain/symbols.json
   brain_graph: .ai/brain/code-graph.json
   brain_graph_index: .ai/brain/graph-index.json
+  brain_graph_enrichment: .ai/brain/graph-enrichment.json
   brain_graph_manifest: .ai/brain/graph-manifest.json
   brain_graph_shards: .ai/brain/graph-shards/
   brain_reverse_deps: .ai/brain/reverse-deps.json
@@ -3085,6 +3108,8 @@ y = int(frame["y"])
 width = int(frame["width"])
 height = int(frame["height"])
 ⋮----
+rotated = bool(frame.get("rotated", False))
+⋮----
 source_width = int(frame.get("sourceWidth", width))
 source_height = int(frame.get("sourceHeight", height))
 offset_x = int(frame.get("offsetX", 0))
@@ -3592,6 +3617,17 @@ dst = (top_y * atlas_width + tx) * 4
 src = ((y + height - 1) * atlas_width + src_x) * 4
 dst = (bottom_y * atlas_width + tx) * 4
 ⋮----
+def _rotate_rgba_clockwise(width: int, height: int, pixels: bytes) -> tuple[int, int, bytes]
+⋮----
+rotated_width = height
+rotated_height = width
+rotated = bytearray(rotated_width * rotated_height * 4)
+⋮----
+source = (y * width + x) * 4
+target_x = height - 1 - y
+target_y = x
+target = (target_y * rotated_width + target_x) * 4
+⋮----
 def _prepare_frame(path: Path, trim: bool) -> dict
 ⋮----
 bounds = _alpha_bounds(source_width, source_height, pixels)
@@ -3628,18 +3664,22 @@ area_fit = free["width"] * free["height"] - reserve_width * reserve_height
 ⋮----
 ordered = sorted(
 ⋮----
-total_height = sum(frame["height"] + extrude * 2 + padding for _, frame in ordered)
+total_height = sum(
 free_rects = [
 placements: list[dict] = []
 ⋮----
-packed_width = frame["width"] + extrude * 2
-packed_height = frame["height"] + extrude * 2
+orientations = [
+⋮----
+candidates = []
+⋮----
+packed_width = orientation["width"] + extrude * 2
+packed_height = orientation["height"] + extrude * 2
 ⋮----
 reserve_width = packed_width + padding
 reserve_height = packed_height + padding
-candidates = []
 ⋮----
 free = free_rects[free_index]
+⋮----
 used = {
 ⋮----
 new_free = []
@@ -3651,24 +3691,38 @@ content_height = max(
 ⋮----
 MAXRECTS_HEURISTICS = (
 ⋮----
+canvas = bytearray(width * height * 4)
+⋮----
+render_width = frame["width"]
+render_height = frame["height"]
+render_pixels = frame["pixels"]
+⋮----
 heuristics = MAXRECTS_HEURISTICS if heuristic == "auto" else (heuristic,)
+⋮----
+atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
+atlas_height = _next_power_of_two(content_height) if power_of_two else content_height
+pixels = _render_compact_layout(
+png_bytes = _png_bytes_rgba(
+budget_errors = []
+⋮----
+atlas_area = atlas_width * atlas_height
+⋮----
+eligible = [item for item in candidates if item["withinBudgets"]]
+⋮----
+details = "; ".join(
 ⋮----
 winner = min(
 evaluated = [
 ⋮----
 frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]
 ⋮----
-atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
-atlas_height = _next_power_of_two(content_height) if power_of_two else content_height
-⋮----
-canvas = bytearray(atlas_width * atlas_height * 4)
 frames = []
 ⋮----
 packed_area = sum(
-atlas_area = atlas_width * atlas_height
+⋮----
 occupancy = packed_area / atlas_area * 100.0
 ⋮----
-output_bytes = _write_atlas_png(
+output_bytes = len(rendered_png)
 ⋮----
 frame_count = len(frames_data)
 column_count = columns or math.ceil(math.sqrt(frame_count))
@@ -3679,6 +3733,8 @@ cell_height = frame_height + extrude * 2
 gap = padding
 content_width = column_count * cell_width + max(0, column_count - 1) * gap
 content_height = row_count * cell_height + max(0, row_count - 1) * gap
+⋮----
+canvas = bytearray(atlas_width * atlas_height * 4)
 ⋮----
 column = index % column_count
 row = index // column_count
@@ -4147,6 +4203,53 @@ python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
 ```
 
 Metadata records `requestedHeuristic`, `selectedHeuristic`, and an `evaluatedHeuristics` summary containing width, height, and content area for each evaluated strategy.
+
+
+### Encoded-size-aware atlas auto selection
+
+Automatic compact-atlas selection now renders each MaxRects candidate in memory and encodes its PNG bytes before choosing a winner. No temporary atlas files are written during comparison.
+
+Selection order is now:
+
+```text
+1. smallest encoded PNG byte size
+2. smallest final atlas area
+3. smallest content area
+4. smallest content height
+5. smallest content width
+6. heuristic name as deterministic tie-break
+```
+
+Per-strategy audit metadata now also includes `atlasWidth`, `atlasHeight`, `atlasArea`, `encodedBytes`, `withinBudgets`, and `budgetErrors`.
+
+When `max-height`, `max-pixels`, or `max-bytes` is supplied, `auto` excludes candidates that violate those budgets before selecting the winner. If no heuristic fits, packing fails without replacing the output file. The already-encoded bytes of the winning candidate are reused for the final write, avoiding a second PNG encode.
+
+
+### Optional compact-atlas rotation
+
+Compact MaxRects packing can now rotate sprites 90° clockwise when explicitly enabled:
+
+```bash
+python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
+  --allow-rotation
+```
+
+Rotation is disabled by default. When enabled, MaxRects evaluates both orientations for non-square frames and may select rotation when it improves fit or allows a frame to satisfy the width budget.
+
+Per-frame metadata records:
+
+```text
+rotated
+rotationDegrees
+sourceRegionWidth
+sourceRegionHeight
+width
+height
+```
+
+For rotated frames, `width`/`height` describe the stored atlas region after rotation, while `sourceRegionWidth`/`sourceRegionHeight` describe the trimmed region before rotation. Source canvas dimensions and trim offsets remain in `sourceWidth`, `sourceHeight`, `offsetX`, and `offsetY`.
+
+The current Godot SpriteFrames exporter intentionally rejects rotated frames because Godot `AtlasTexture` regions do not automatically undo packed-image rotation. Use rotation only with consumers that explicitly understand the metadata.
 ````
 
 ## File: starlist_bridge.py

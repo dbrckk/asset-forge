@@ -92,20 +92,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T20:48:48Z
+Generated: 2026-09-18T20:56:35Z
 
 ### Git
 - Branch: `main`
-- Head: `763491c35cc2`
-- Commit date: 2026-09-18T22:48:24+02:00
-- Commit: docs: record automatic MaxRects heuristic milestone
+- Head: `f43a335e86f3`
+- Commit date: 2026-09-18T22:55:32+02:00
+- Commit: docs: record opt-in atlas rotation milestone
 - Tracked files: 187
 
 ### Recently changed files
 - `README.md`
+- `tests/test_godot_export.py`
 - `tests/test_raster_pack.py`
-- `asset_forge.py`
 - `raster_pack.py`
+- `asset_forge.py`
 
 ### Project signals
 - No common build descriptor detected
