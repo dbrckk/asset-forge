@@ -304,6 +304,57 @@ def execute_command(command: str, cwd: Path | None = None) -> dict:
     }
 
 
+def _read_json_if_exists(path: Path) -> dict | None:
+    if not path.is_file():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def _build_production_summary(plan: dict, success: bool, results: list[dict]) -> dict:
+    workdir = Path(plan["workdir"])
+    raw_report = _read_json_if_exists(workdir / "quality-raw.json")
+    final_report = _read_json_if_exists(workdir / "quality-final.json") or raw_report
+
+    summary = {
+        "success": success,
+        "profile": plan["profile"],
+        "optimizer": plan["optimizer"],
+        "rawOutput": plan["rawOutput"],
+        "finalOutput": plan["finalOutput"],
+        "steps": [
+            {
+                "id": item["id"],
+                "status": item["status"],
+                "tool": item["tool"],
+                "returnCode": item.get("returnCode"),
+            }
+            for item in results
+        ],
+        "quality": {
+            "raw": raw_report,
+            "final": final_report,
+            "delta": None,
+        },
+    }
+
+    if raw_report and final_report:
+        raw_geometry = raw_report.get("geometry", {})
+        final_geometry = final_report.get("geometry", {})
+        raw_container = raw_report.get("container", {})
+        final_container = final_report.get("container", {})
+        summary["quality"]["delta"] = {
+            "vertices": final_geometry.get("vertices", 0) - raw_geometry.get("vertices", 0),
+            "triangles": final_geometry.get("triangles", 0) - raw_geometry.get("triangles", 0),
+            "bytes": final_container.get("bytes", 0) - raw_container.get("bytes", 0),
+        }
+
+    return summary
+
+
 def execute_3d_pipeline(plan: dict, repo_root: Path) -> dict:
     prepare_3d_pipeline(plan)
     results = []
@@ -344,8 +395,18 @@ def execute_3d_pipeline(plan: dict, repo_root: Path) -> dict:
             if step["required"] or step["id"] in {"khronos-validation", "optimize"}:
                 break
 
+    summary = _build_production_summary(plan, success, results)
+    report_path = Path(plan["workdir"]) / "production-report.json"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(
+        json.dumps(summary, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
     return {
         "success": success,
         "finalOutput": plan["finalOutput"],
+        "productionReport": str(report_path),
+        "summary": summary,
         "results": results,
     }
