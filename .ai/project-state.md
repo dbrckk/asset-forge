@@ -5,7 +5,8 @@ Status: active
 ## Working
 - Repository is a central visual-asset production pipeline spanning raster 2D, SVG/vector, and 3D.
 - PNG validation/decoding/atlas/optimization and Godot animation export are implemented for common non-interlaced and Adam7-interlaced workflows.
-- Atlas packing supports optional transparent trim, original source offsets/dimensions, edge extrusion, and deterministic compact shelf packing for variable-size PNG/WebP inputs.
+- Atlas packing supports optional transparent trim, original source offsets/dimensions, edge extrusion, deterministic compact shelf packing for variable-size PNG/WebP inputs, and explicit width/height/pixel/encoded-byte budgets.
+- Godot SpriteFrames export now maps trim metadata to AtlasTexture.margin and validates atlas bounds/source-offset consistency before emitting resources.
 - PNG recompression is no-growth: the original bytes are retained whenever the adaptive candidate is not smaller, including in-place output.
 - Indexed PNG decoding supports 1/2/4/8-bit palette indices with packed scanline layout, PNG filtering, row-padding handling, and tRNS palette alpha.
 - Grayscale PNG decoding supports 1/2/4/8/16-bit non-interlaced samples, scales low-bit/16-bit luminance to RGBA8, ignores packed padding bits, and applies validated grayscale tRNS transparency.
@@ -50,7 +51,7 @@ Status: active
 ## Broken / blockers
 - PNG decoding now covers Adam7; remaining raster format gap is primarily WebP pixel decoding/output and broader optimization behavior.
 - WebP metadata/container validation is dependency-free. Pixel decode/atlas input/encoding are implemented through optional Pillow+libwebp; native dependency-free WebP pixel decoding is not implemented.
-- Compact atlas packing currently does not rotate frames; trimmed source offsets are recorded, but the simple Godot SpriteFrames exporter does not yet reconstruct trimmed source offsets.
+- Compact atlas packing currently does not rotate frames. Trimmed source offsets are now preserved by the Godot SpriteFrames exporter through AtlasTexture.margin.
 - SVG geometric path simplification and raster preview generation are not implemented yet.
 - SVG CSS parsing is intentionally lightweight rather than a full CSS parser; current safety logic targets @import and url(...) references.
 - Internal glTF validation is still intentionally narrower than Khronos glTF Validator's full specification validation.
@@ -62,7 +63,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Extend atlas metadata/export consumers to understand trim offsets, then consider stronger bin-packing/optional rotation and explicit atlas dimension/byte budgets.
+- Consider stronger bin-packing/optional rotation, atlas occupancy metrics, and additional consumer adapters while keeping trim metadata semantics stable.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -83,7 +84,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after adding trim/extrusion, deterministic variable-size shelf packing, CLI support, and no-growth PNG optimization.
+- 2026-09-18: latest GitHub source inspected after adding Godot trim-margin export and pre-allocation/pre-write atlas production budgets.
 
 <!-- AUTO:START -->
 ## Automatic repository state
