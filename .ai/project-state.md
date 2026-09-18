@@ -80,16 +80,18 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T19:55:23Z
+Generated: 2026-09-18T20:00:21Z
 
 ### Git
 - Branch: `main`
-- Head: `7fb38655e674`
-- Commit date: 2026-09-18T21:54:54+02:00
-- Commit: docs: record low-bit grayscale PNG milestone
-- Tracked files: 150
+- Head: `c2153519906a`
+- Commit date: 2026-09-18T21:57:01+02:00
+- Commit: chore(ai): add precise semantic refresh
+- Tracked files: 151
 
 ### Recently changed files
+- `.github/workflows/semantic-refresh.yml`
+- `.repo-standards.yml`
 - `README.md`
 - `tests/test_raster_pack.py`
 - `raster_pack.py`
