@@ -203,6 +203,19 @@ class SvgToolsTests(unittest.TestCase):
 
         self.assertTrue(any("unsafe CSS references" in error for error in errors))
 
+    def test_presentation_attribute_external_url_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bad.svg"
+            path.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
+                '<rect fill="url(texture.svg#paint)" width="10" height="10"/>'
+                '</svg>',
+                encoding="utf-8",
+            )
+            _, errors, _ = inspect_svg(path)
+
+        self.assertTrue(any("unsafe CSS references" in error for error in errors))
+
     def test_css_import_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "bad.svg"
@@ -249,6 +262,21 @@ class SvgToolsTests(unittest.TestCase):
 
         self.assertGreater(info["maxDepth"], 32)
         self.assertTrue(any("XML depth" in error for error in errors))
+
+    def test_profile_element_limit_is_blocking(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "complex.svg"
+            body = "".join('<rect width="1" height="1"/>' for _ in range(260))
+            path.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">'
+                + body
+                + '</svg>',
+                encoding="utf-8",
+            )
+            info, errors, _ = validate_svg_profile(path, "icon")
+
+        self.assertGreater(info["elements"], 256)
+        self.assertTrue(any("element count" in error for error in errors))
 
     def test_profile_file_size_limit_is_blocking(self):
         with tempfile.TemporaryDirectory() as tmp:
