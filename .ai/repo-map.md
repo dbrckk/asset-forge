@@ -946,6 +946,21 @@ def test_atlas_manifest_contains_frame_rectangles(self)
 ⋮----
 atlas = asset_forge.build_atlas_manifest(image, manifest)
 ⋮----
+def test_webp_raster_validation_supports_dimensions_and_alpha(self)
+⋮----
+vp8x = bytes([0x10, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
+vp8 = (0).to_bytes(3, "little") + b"\x9d\x01\x2a" + width.to_bytes(2, "little") + height.to_bytes(2, "little")
+chunks = (
+body = b"WEBP" + chunks
+data = b"RIFF" + struct.pack("<I", len(body)) + body
+⋮----
+image = Path(tmp) / "sprite.webp"
+⋮----
+def test_webp_max_colors_constraint_is_rejected(self)
+⋮----
+width = height = 32
+vp8x = bytes([0, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
+⋮----
 def test_invalid_png_crc_is_rejected(self)
 ⋮----
 image = Path(tmp) / "bad.png"
@@ -1074,6 +1089,15 @@ def test_local_external_png_dimensions(self)
 root = Path(tmp)
 ⋮----
 path = root / "asset.gltf"
+⋮----
+def test_data_uri_webp_dimensions_use_shared_inspector(self)
+⋮----
+bits = (width - 1) | ((height - 1) << 14)
+vp8l = b"\x2f" + bits.to_bytes(4, "little")
+chunk_bytes = b"VP8L" + struct.pack("<I", len(vp8l)) + vp8l + b"\x00"
+body = b"WEBP" + chunk_bytes
+payload = b"RIFF" + struct.pack("<I", len(body)) + body
+uri = "data:image/webp;base64," + base64.b64encode(payload).decode("ascii")
 ⋮----
 def test_animation_and_rig_metrics(self)
 ⋮----
@@ -1327,7 +1351,38 @@ result = validate_godot_handoff(project)
 ````python
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 ⋮----
+def webp_chunk(kind: bytes, payload: bytes) -> bytes
+⋮----
+padding = b"\x00" if len(payload) & 1 else b""
+⋮----
+def webp_file(*chunks: bytes) -> bytes
+⋮----
+body = b"WEBP" + b"".join(chunks)
+⋮----
 def chunk(kind: bytes, payload: bytes) -> bytes
+⋮----
+ADAM7_PASSES = (
+⋮----
+def adam7_extent(size: int, start: int, step: int) -> int
+⋮----
+def pack_indexed_samples(samples: list[int], depth: int) -> bytes
+⋮----
+per_byte = 8 // depth
+output = bytearray()
+⋮----
+byte = 0
+group = samples[start : start + per_byte]
+⋮----
+shift = 8 - depth * (index + 1)
+⋮----
+raw = bytearray()
+⋮----
+pass_width = adam7_extent(width, x_start, x_step)
+pass_height = adam7_extent(height, y_start, y_step)
+⋮----
+y = y_start + py * y_step
+⋮----
+x = x_start + px * x_step
 ⋮----
 def write_rgba_png(path: Path, width: int, height: int, pixel: bytes) -> None
 ⋮----
@@ -1538,6 +1593,104 @@ expected = [
 def test_truecolor_8bit_trns_out_of_range_is_rejected(self)
 ⋮----
 image = Path(tmp) / "rgb8-bad-trns.png"
+⋮----
+def test_adam7_rgba8_reconstructs_full_image(self)
+⋮----
+image = Path(tmp) / "adam7-rgba.png"
+width = height = 8
+ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 1)
+⋮----
+def pixel(x, y)
+⋮----
+raw = adam7_raw(width, height, pixel)
+⋮----
+def test_adam7_indexed_1bit_reconstructs_checkerboard(self)
+⋮----
+image = Path(tmp) / "adam7-indexed.png"
+⋮----
+ihdr = struct.pack(">IIBBBBB", width, height, 1, 3, 0, 0, 1)
+⋮----
+samples = [
+⋮----
+start = (y * width + x) * 4
+expected = 255 if (x + y) % 2 else 0
+⋮----
+def test_adam7_rgba16_reconstructs_and_downconverts(self)
+⋮----
+image = Path(tmp) / "adam7-rgba16.png"
+width = height = 5
+ihdr = struct.pack(">IIBBBBB", width, height, 16, 6, 0, 0, 1)
+⋮----
+def pixel16(x, y)
+⋮----
+raw = adam7_raw(width, height, pixel16)
+⋮----
+expected16 = (x * 10000, y * 12000, (x + y) * 7000, 65535)
+expected = bytes([
+⋮----
+def test_adam7_expected_size_is_bounded_and_exact(self)
+⋮----
+image = Path(tmp) / "adam7-truncated.png"
+⋮----
+raw = adam7_raw(width, height, lambda x, y: bytes([x, y, 0, 255]))
+⋮----
+def test_webp_vp8x_dimensions_alpha_and_animation(self)
+⋮----
+payload = bytes([0x12, 0, 0, 0]) + (319).to_bytes(3, "little") + (199).to_bytes(3, "little")
+anmf = b"\x00" * 16
+data = webp_file(
+info = inspect_webp_bytes(data)
+⋮----
+def test_webp_vp8l_dimensions_and_alpha(self)
+⋮----
+bits = (width - 1) | ((height - 1) << 14) | (1 << 28)
+payload = b"\x2f" + bits.to_bytes(4, "little")
+data = webp_file(webp_chunk(b"VP8L", payload))
+⋮----
+def test_webp_vp8_lossy_dimensions(self)
+⋮----
+frame_tag = (0).to_bytes(3, "little")
+payload = (
+data = webp_file(webp_chunk(b"VP8 ", payload))
+⋮----
+def test_webp_alpha_chunk_marks_alpha(self)
+⋮----
+vp8 = (
+vp8x = bytes([0, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
+⋮----
+def test_webp_incomplete_vp8x_is_rejected(self)
+⋮----
+payload = bytes([0, 0, 0, 0]) + (9).to_bytes(3, "little") + (9).to_bytes(3, "little")
+data = webp_file(webp_chunk(b"VP8X", payload))
+⋮----
+def test_webp_reserved_vp8x_bits_are_rejected(self)
+⋮----
+payload = bytes([0x01, 0, 0, 0]) + (9).to_bytes(3, "little") + (9).to_bytes(3, "little")
+vp8 = (0).to_bytes(3, "little") + b"\x9d\x01\x2a" + (10).to_bytes(2, "little") + (10).to_bytes(2, "little")
+data = webp_file(webp_chunk(b"VP8X", payload), webp_chunk(b"VP8 ", vp8))
+⋮----
+def test_webp_vp8x_dimension_mismatch_is_rejected(self)
+⋮----
+vp8x = bytes([0, 0, 0, 0]) + (19).to_bytes(3, "little") + (9).to_bytes(3, "little")
+vp8 = (0).to_bytes(3, "little") + b"\x9d\x01\x2a" + (21).to_bytes(2, "little") + (10).to_bytes(2, "little")
+data = webp_file(webp_chunk(b"VP8X", vp8x), webp_chunk(b"VP8 ", vp8))
+⋮----
+def test_webp_lossy_alpha_flag_requires_alph_chunk(self)
+⋮----
+vp8x = bytes([0x10, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
+vp8 = (0).to_bytes(3, "little") + b"\x9d\x01\x2a" + width.to_bytes(2, "little") + height.to_bytes(2, "little")
+⋮----
+def test_webp_bad_riff_size_is_rejected(self)
+⋮----
+data = bytearray(webp_file(webp_chunk(b"VP8L", b"\x2f\x00\x00\x00\x00")))
+⋮----
+def test_webp_file_inspection_reads_from_path(self)
+⋮----
+path = Path(tmp) / "image.webp"
+⋮----
+bits = (width - 1) | ((height - 1) << 14)
+⋮----
+info = inspect_webp(path)
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -1692,13 +1845,14 @@ def test_invalid_target_engine_is_rejected(self)
 ````yaml
 source: dbrckk/repo-standards
 ref: main
-version: 13
+version: 14
 adopted: true
 workflow_mode: unified-single-commit
 repo_brain: dbrckk/repo-brain@main
 repo_brain_fallback: portable-full-rebuild
 hotset_fallback: recent-project-state
 graph_routing: compact-sharded-reverse-deps
+graph_resolver: java-kotlin-tail-v2
 ai_context:
   index: .ai/index.md
   project_state: .ai/project-state.md
@@ -1729,6 +1883,9 @@ ai_context:
   brain_architecture_mermaid: .ai/brain/architecture.mmd
   brain_semantic_plan: .ai/brain/semantic-plan.json
   brain_semantic_index: .ai/brain/semantic-index.json
+  brain_search_manifest: .ai/brain/search-manifest.json
+  brain_search_shards: .ai/brain/search-shards/
+  brain_query_cache: .ai/brain/query-cache.json
   brain_hotset: .ai/brain/hotset.json
   brain_context_manifest: .ai/brain/context-manifest.json
   brain_context_packets: .ai/brain/context/
@@ -1821,7 +1978,7 @@ ordered = sorted(groups[name], key=lambda item: (item[0], item[1]))
 ## File: asset_forge.py
 ````python
 #!/usr/bin/env python3
-"""Dependency-free asset-forge manifest validator, planner, PNG inspector, and atlas metadata builder."""
+"""Dependency-free asset-forge manifest validator, planner, raster inspector, and atlas metadata builder."""
 ⋮----
 PIPELINES = {
 ⋮----
@@ -1880,6 +2037,9 @@ index = 0
 def validate_raster_file(path: Path, manifest: dict) -> tuple[dict, list[str]]
 ⋮----
 target = manifest.get("target", {})
+target_format = str(target.get("format", "")).lower()
+⋮----
+info = inspect_webp(path)
 ⋮----
 max_colors = constraints.get("maxColors")
 ⋮----
@@ -2220,14 +2380,7 @@ length = struct.unpack(">H", data[offset : offset + 2])[0]
 ⋮----
 def _webp_dimensions(data: bytes) -> tuple[int, int] | None
 ⋮----
-kind = data[12:16]
-⋮----
-width = 1 + int.from_bytes(data[24:27], "little")
-height = 1 + int.from_bytes(data[27:30], "little")
-⋮----
-bits = int.from_bytes(data[21:25], "little")
-width = (bits & 0x3FFF) + 1
-height = ((bits >> 14) & 0x3FFF) + 1
+info = inspect_webp_bytes(data)
 ⋮----
 def image_dimensions(data: bytes) -> tuple[int, int, str] | None
 ⋮----
@@ -2850,14 +3003,67 @@ MAX_PNG_CHUNK_BYTES = 64 * 1024 * 1024
 MAX_PNG_CHUNKS = 10000
 MAX_PNG_PIXELS = 100_000_000
 MAX_DECOMPRESSED_BYTES = 512 * 1024 * 1024
+MAX_WEBP_FILE_BYTES = 256 * 1024 * 1024
+MAX_WEBP_CHUNKS = 10000
 ⋮----
-def _read_png_bytes(path: Path) -> bytes
+def _read_webp_bytes(path: Path) -> bytes
 ⋮----
 size = path.stat().st_size
 ⋮----
-def _chunks(data: bytes) -> list[tuple[bytes, bytes]]
+def _webp_chunks(data: bytes) -> list[tuple[bytes, bytes]]
+⋮----
+riff_size = struct.unpack("<I", data[4:8])[0]
 ⋮----
 chunks: list[tuple[bytes, bytes]] = []
+offset = 12
+⋮----
+kind = data[offset : offset + 4]
+length = struct.unpack("<I", data[offset + 4 : offset + 8])[0]
+payload_start = offset + 8
+payload_end = payload_start + length
+⋮----
+offset = payload_end + (length & 1)
+⋮----
+def _webp_vp8x_info(payload: bytes) -> dict
+⋮----
+width = 1 + int.from_bytes(payload[4:7], "little")
+height = 1 + int.from_bytes(payload[7:10], "little")
+⋮----
+def _webp_vp8l_info(payload: bytes) -> dict
+⋮----
+bits = int.from_bytes(payload[1:5], "little")
+version = (bits >> 29) & 0x7
+⋮----
+def _webp_vp8_info(payload: bytes) -> dict
+⋮----
+frame_tag = int.from_bytes(payload[:3], "little")
+⋮----
+width = int.from_bytes(payload[6:8], "little") & 0x3FFF
+height = int.from_bytes(payload[8:10], "little") & 0x3FFF
+⋮----
+def inspect_webp_bytes(data: bytes) -> dict
+⋮----
+chunks = _webp_chunks(data)
+by_kind: dict[bytes, list[bytes]] = {}
+⋮----
+info = _webp_vp8x_info(by_kind[b"VP8X"][0])
+⋮----
+info = _webp_vp8l_info(by_kind[b"VP8L"][0])
+⋮----
+info = _webp_vp8_info(by_kind[b"VP8 "][0])
+⋮----
+image_kinds = [kind for kind in (b"VP8 ", b"VP8L") if kind in by_kind]
+⋮----
+image_kind = image_kinds[0]
+⋮----
+image_info = (
+⋮----
+def inspect_webp(path: Path) -> dict
+⋮----
+def _read_png_bytes(path: Path) -> bytes
+⋮----
+def _chunks(data: bytes) -> list[tuple[bytes, bytes]]
+⋮----
 offset = 8
 saw_iend = False
 saw_ihdr = False
@@ -2969,16 +3175,11 @@ shift = 8 - depth
 ⋮----
 def _sample16_to_u8(value: int) -> int
 ⋮----
-def decode_rgba(path: Path) -> tuple[int, int, bytes]
+ADAM7_PASSES = (
 ⋮----
-chunks = _chunks(_read_png_bytes(path))
+def _adam7_extent(size: int, start: int, step: int) -> int
 ⋮----
-expected_size = (stride + 1) * height
-compressed = b"".join(payload for kind, payload in chunks if kind == b"IDAT")
-raw = _decompress_idat(compressed, expected_size)
-rows = _unfilter_scanlines(raw, stride, height, filter_bpp)
-⋮----
-rgba = bytearray(width * height * 4)
+rgba = bytearray(width * 4)
 destination = 0
 ⋮----
 indexed_samples = _unpack_packed_samples(row, width, depth)
@@ -3022,6 +3223,38 @@ alpha = 255
 transparent_gray = struct.unpack(">H", transparency[:2])[0]
 ⋮----
 alpha = 0
+⋮----
+rgba = bytearray(width * height * 4)
+⋮----
+pass_width = _adam7_extent(width, x_start, x_step)
+pass_height = _adam7_extent(height, y_start, y_step)
+⋮----
+pass_size = (stride + 1) * pass_height
+end = position + pass_size
+⋮----
+rows = _unfilter_scanlines(
+position = end
+⋮----
+row_rgba = _decode_row_to_rgba(
+target_y = y_start + pass_y * y_step
+⋮----
+target_x = x_start + pass_x * x_step
+source_start = pass_x * 4
+target_start = (target_y * width + target_x) * 4
+⋮----
+def decode_rgba(path: Path) -> tuple[int, int, bytes]
+⋮----
+chunks = _chunks(_read_png_bytes(path))
+⋮----
+compressed = b"".join(payload for kind, payload in chunks if kind == b"IDAT")
+⋮----
+expected_size = (stride + 1) * height
+raw = _decompress_idat(compressed, expected_size)
+rows = _unfilter_scanlines(raw, stride, height, filter_bpp)
+⋮----
+expected_size = 0
+⋮----
+pixels = _decode_adam7(
 ⋮----
 def _chunk(kind: bytes, payload: bytes) -> bytes
 ⋮----
@@ -3426,6 +3659,16 @@ Low-bit grayscale decoding shares the packed-sample scanline path used by indexe
 
 
 16-bit PNG decoding is supported for grayscale, RGB, grayscale+alpha, and RGBA. Samples are read big-endian after PNG unfiltering and converted to RGBA8 with deterministic rounding. For grayscale/RGB `tRNS`, transparency matching is performed on the original 16-bit samples before down-conversion, preserving exact transparent-color semantics.
+
+
+Adam7 decoding computes the exact byte budget for all seven passes before zlib decompression, unfilters each pass independently with that pass's scanline width, converts pass rows through the same bit-depth/color-type conversion path as non-interlaced PNGs, and scatters decoded pixels back into final image coordinates. Empty passes for small images are skipped safely.
+
+
+### WebP raster inspection
+
+Asset Forge now validates WebP RIFF containers without external dependencies. It understands simple lossy `VP8 `, lossless `VP8L`, and extended `VP8X` headers, reports dimensions/alpha/animation/chunk metadata, validates RIFF length and chunk padding, checks reserved VP8X fields, and cross-checks extended canvas dimensions against static image data. `validate-raster` accepts `target.format=webp` for metadata/grid/size/alpha validation, and glTF texture metrics reuse the same WebP parser.
+
+This milestone is inspection/validation only: WebP pixel decoding, atlas input decoding, recompression, and WebP encoding are not implemented yet. PNG remains the decoded/encoded raster working format.
 ````
 
 ## File: starlist_bridge.py

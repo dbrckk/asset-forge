@@ -83,21 +83,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T20:07:41Z
+Generated: 2026-09-18T20:15:25Z
 
 ### Git
 - Branch: `main`
-- Head: `0932b5c3c7ab`
-- Commit date: 2026-09-18T22:07:23+02:00
-- Commit: docs: record 16-bit PNG decoding milestone
+- Head: `6bf880edb10c`
+- Commit date: 2026-09-18T22:13:56+02:00
+- Commit: docs: record WebP inspection milestone
 - Tracked files: 151
 
 ### Recently changed files
 - `README.md`
 - `tests/test_raster_pack.py`
 - `raster_pack.py`
-- `.github/workflows/semantic-refresh.yml`
-- `.repo-standards.yml`
+- `tests/test_gltf_binary_metrics.py`
+- `tests/test_asset_forge.py`
 
 ### Project signals
 - No common build descriptor detected
