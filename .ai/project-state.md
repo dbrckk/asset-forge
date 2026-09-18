@@ -4,10 +4,11 @@ Status: active
 
 ## Working
 - Repository is a central visual-asset production pipeline spanning raster 2D, SVG/vector, and 3D.
-- PNG validation/decoding/atlas/optimization and Godot animation export are implemented for common non-interlaced workflows.
+- PNG validation/decoding/atlas/optimization and Godot animation export are implemented for common non-interlaced and Adam7-interlaced workflows.
 - Indexed PNG decoding supports 1/2/4/8-bit palette indices with packed scanline layout, PNG filtering, row-padding handling, and tRNS palette alpha.
 - Grayscale PNG decoding supports 1/2/4/8/16-bit non-interlaced samples, scales low-bit/16-bit luminance to RGBA8, ignores packed padding bits, and applies validated grayscale tRNS transparency.
-- Non-interlaced RGB, grayscale+alpha, and RGBA decode at both 8-bit and 16-bit depths; 16-bit samples are converted to RGBA8 with deterministic rounding and exact pre-conversion tRNS matching.
+- RGB, grayscale+alpha, and RGBA decode at both 8-bit and 16-bit depths for non-interlaced and Adam7 images; 16-bit samples are converted to RGBA8 with deterministic rounding and exact pre-conversion tRNS matching.
+- Adam7 decoding calculates the exact decompressed byte count across seven passes, unfilters each pass independently, skips empty passes, and reconstructs final pixel coordinates through the shared row decoder.
 - PNG parsing now enforces file/chunk/chunk-count/pixel/decompressed-byte ceilings before or during processing, validates IHDR/IDAT/IEND structure, PLTE/tRNS constraints, zlib completion, and exact decompressed scanline size.
 - validate-raster now reuses the hardened raster_pack PNG inspector instead of maintaining a weaker duplicate parser.
 - 8-bit truecolor tRNS transparency is now applied during RGB→RGBA decoding.
@@ -42,7 +43,7 @@ Status: active
 - CI compiles all current modules, runs unit tests, checks manifest/plan paths, inspects the 3D toolchain, and smoke-tests the star-list bridge.
 
 ## Broken / blockers
-- PNG decoding still does not support Adam7/interlaced PNGs.
+- PNG decoding now covers Adam7; remaining raster format gap is primarily WebP output/processing and broader optimization behavior.
 - WebP raster output is not implemented yet.
 - SVG geometric path simplification and raster preview generation are not implemented yet.
 - SVG CSS parsing is intentionally lightweight rather than a full CSS parser; current safety logic targets @import and url(...) references.
@@ -55,7 +56,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Add Adam7/interlaced PNG decoding or WebP raster handling next, while preserving bounded-memory guarantees.
+- Add WebP raster handling and improve optimization/atlas features while preserving bounded-memory guarantees.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -76,7 +77,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after adding non-interlaced 16-bit grayscale/RGB/grayscale-alpha/RGBA decoding with RGBA8 conversion and exact tRNS matching.
+- 2026-09-18: latest GitHub source inspected after adding Adam7 reconstruction across supported PNG color types/depths with exact pass-size budgeting and bounded decompression.
 
 <!-- AUTO:START -->
 ## Automatic repository state
