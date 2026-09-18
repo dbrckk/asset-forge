@@ -5,6 +5,8 @@ Status: active
 ## Working
 - Repository is a central visual-asset production pipeline spanning raster 2D, SVG/vector, and 3D.
 - PNG validation/decoding/atlas/optimization and Godot animation export are implemented for common non-interlaced and Adam7-interlaced workflows.
+- Atlas packing supports optional transparent trim, original source offsets/dimensions, edge extrusion, and deterministic compact shelf packing for variable-size PNG/WebP inputs.
+- PNG recompression is no-growth: the original bytes are retained whenever the adaptive candidate is not smaller, including in-place output.
 - Indexed PNG decoding supports 1/2/4/8-bit palette indices with packed scanline layout, PNG filtering, row-padding handling, and tRNS palette alpha.
 - Grayscale PNG decoding supports 1/2/4/8/16-bit non-interlaced samples, scales low-bit/16-bit luminance to RGBA8, ignores packed padding bits, and applies validated grayscale tRNS transparency.
 - RGB, grayscale+alpha, and RGBA decode at both 8-bit and 16-bit depths for non-interlaced and Adam7 images; 16-bit samples are converted to RGBA8 with deterministic rounding and exact pre-conversion tRNS matching.
@@ -48,6 +50,7 @@ Status: active
 ## Broken / blockers
 - PNG decoding now covers Adam7; remaining raster format gap is primarily WebP pixel decoding/output and broader optimization behavior.
 - WebP metadata/container validation is dependency-free. Pixel decode/atlas input/encoding are implemented through optional Pillow+libwebp; native dependency-free WebP pixel decoding is not implemented.
+- Compact atlas packing currently does not rotate frames; trimmed source offsets are recorded, but the simple Godot SpriteFrames exporter does not yet reconstruct trimmed source offsets.
 - SVG geometric path simplification and raster preview generation are not implemented yet.
 - SVG CSS parsing is intentionally lightweight rather than a full CSS parser; current safety logic targets @import and url(...) references.
 - Internal glTF validation is still intentionally narrower than Khronos glTF Validator's full specification validation.
@@ -59,7 +62,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Improve atlas packing with trim/extrusion/bin-packing and prevent optimizers from growing outputs; keep optional WebP backend behavior deterministic and bounded.
+- Extend atlas metadata/export consumers to understand trim offsets, then consider stronger bin-packing/optional rotation and explicit atlas dimension/byte budgets.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -80,7 +83,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after adding optional Pillow/libwebp pixel decode/encode, mixed PNG/WebP atlas input, backend status reporting, and a dedicated optional-backend CI job.
+- 2026-09-18: latest GitHub source inspected after adding trim/extrusion, deterministic variable-size shelf packing, CLI support, and no-growth PNG optimization.
 
 <!-- AUTO:START -->
 ## Automatic repository state
