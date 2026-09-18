@@ -410,6 +410,7 @@ def parser() -> argparse.ArgumentParser:
     compact.add_argument("--padding", type=int, default=0)
     compact.add_argument("--power-of-two", action="store_true")
     compact.add_argument("--no-trim", action="store_true")
+    compact.add_argument("--allow-rotation", action="store_true")
     compact.add_argument("--extrude", type=int, default=0)
 
     optimize = sub.add_parser("optimize-png", help="losslessly recompress a supported PNG")
@@ -579,6 +580,7 @@ def main() -> int:
                 max_bytes=args.max_bytes,
                 min_occupancy=args.min_occupancy,
                 heuristic=args.heuristic,
+                allow_rotation=args.allow_rotation,
                 padding=args.padding,
                 power_of_two=args.power_of_two,
                 trim=not args.no_trim,
