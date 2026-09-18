@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "selectionPolicy": {
+    "preferOpenSource": true,
+    "requireKnownLicense": true,
+    "discoveryOrder": [
+      "approved-registry",
+      "dbrckk/star-list",
+      "github",
+      "web"
+    ]
+  },
+  "tools": [
+    {
+      "id": "blender",
+      "name": "Blender",
+      "status": "preferred",
+      "domains": ["3d", "rigging", "animation-3d", "rendering", "uv"],
+      "automation": ["python", "cli"],
+      "outputs": ["blend", "gltf", "glb", "fbx", "obj"],
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "id": "gltf-validator",
+      "name": "Khronos glTF Validator",
+      "status": "candidate",
+      "domains": ["3d-validation", "gltf"],
+      "automation": ["cli", "library"],
+      "outputs": ["validation-report"],
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "gltf-transform",
+      "name": "glTF Transform",
+      "status": "candidate",
+      "domains": ["3d-optimization", "gltf", "texture-optimization"],
+      "automation": ["cli", "library"],
+      "outputs": ["gltf", "glb"],
+      "license": "MIT"
+    },
+    {
+      "id": "meshoptimizer",
+      "name": "meshoptimizer",
+      "status": "candidate",
+      "domains": ["mesh-optimization", "gltf"],
+      "automation": ["cli", "library"],
+      "outputs": ["optimized-mesh", "glb"],
+      "license": "MIT"
+    },
+    {
+      "id": "pixelorama",
+      "name": "Pixelorama",
+      "status": "candidate",
+      "domains": ["pixel-art", "sprites", "animation-2d"],
+      "automation": [],
+      "outputs": ["png", "sprite-sheet"],
+      "license": "MIT"
+    },
+    {
+      "id": "inkscape",
+      "name": "Inkscape",
+      "status": "candidate",
+      "domains": ["vector", "svg", "ui"],
+      "automation": ["cli"],
+      "outputs": ["svg", "png", "pdf"],
+      "license": "GPL-2.0-or-later"
+    }
+  ]
+}
