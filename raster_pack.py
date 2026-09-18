@@ -111,8 +111,7 @@ def _webp_vp8_info(payload: bytes) -> dict:
     }
 
 
-def inspect_webp(path: Path) -> dict:
-    data = _read_webp_bytes(path)
+def inspect_webp_bytes(data: bytes) -> dict:
     chunks = _webp_chunks(data)
     by_kind: dict[bytes, list[bytes]] = {}
     for kind, payload in chunks:
@@ -152,6 +151,10 @@ def inspect_webp(path: Path) -> dict:
         }
     )
     return info
+
+
+def inspect_webp(path: Path) -> dict:
+    return inspect_webp_bytes(_read_webp_bytes(path))
 
 
 def _read_png_bytes(path: Path) -> bytes:
