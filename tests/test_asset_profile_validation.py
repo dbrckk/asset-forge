@@ -62,6 +62,8 @@ class AssetProfileValidationTests(unittest.TestCase):
                 "maxElements": "256",
                 "allowExternalReferences": False,
                 "removeMetadata": True,
+                "maxBytes": 262144,
+                "maxDepth": 32,
             },
         }
         errors = validate_vector_profile_data(data, "icon")
@@ -111,6 +113,8 @@ class AssetProfileValidationTests(unittest.TestCase):
                     "maxElements": 99,
                     "allowExternalReferences": False,
                     "removeMetadata": True,
+                    "maxBytes": 262144,
+                    "maxDepth": 32,
                 },
             }
             (profile_dir / "icon.json").write_text(json.dumps(data), encoding="utf-8")
