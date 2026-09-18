@@ -97,6 +97,17 @@ class GltfQualityTests(unittest.TestCase):
         self.assertEqual(report["textures"]["externalImages"], 1)
         self.assertTrue(any("external image" in item for item in report["evaluation"]["warnings"]))
 
+    def test_untextured_primitive_does_not_require_uv(self):
+        data = self.base()
+        data["materials"] = [{}]
+        data["textures"] = []
+        data["images"] = []
+        del data["meshes"][0]["primitives"][0]["attributes"]["TEXCOORD_0"]
+        with tempfile.TemporaryDirectory() as tmp:
+            report = quality_report(self.write(Path(tmp), data), "prop")
+
+        self.assertTrue(report["evaluation"]["passed"])
+
 
 if __name__ == "__main__":
     unittest.main()
