@@ -29,11 +29,30 @@ class GodotHandoffTests(unittest.TestCase):
             source.write_bytes(b"glb-data")
             report = {"ready": True, "scene": {"animations": 0, "godotNameSuffixes": {}}}
 
+            asset_manifest = {
+                "id": "crate",
+                "project": "demo",
+                "type": "prop",
+                "importance": "secondary",
+                "source": {
+                    "mode": "external",
+                    "uri": "https://example.invalid/crate",
+                    "author": "Example Artist",
+                },
+                "license": {
+                    "id": "CC-BY-4.0",
+                    "commercialUse": True,
+                    "derivatives": True,
+                    "attributionRequired": True,
+                },
+                "target": {"engine": "godot", "format": "glb"},
+            }
             result = prepare_godot_handoff(
                 source,
                 root / "build",
                 profile="prop",
                 delivery_report=report,
+                asset_manifest=asset_manifest,
             )
 
             project_dir = Path(result["projectDir"])
@@ -44,6 +63,49 @@ class GodotHandoffTests(unittest.TestCase):
             self.assertTrue((project_dir / "project.godot").is_file())
             self.assertEqual(manifest["asset"], "res://assets/model.glb")
             self.assertTrue(manifest["deliveryReady"])
+            self.assertEqual(manifest["provenance"]["assetId"], "crate")
+            self.assertEqual(manifest["provenance"]["license"]["id"], "CC-BY-4.0")
+            self.assertTrue(manifest["provenance"]["license"]["attributionRequired"])
+
+    def test_missing_delivery_report_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "model.glb"
+            source.write_bytes(b"glb-data")
+            with self.assertRaisesRegex(ValueError, "delivery report is required"):
+                prepare_godot_handoff(
+                    source,
+                    root / "build",
+                    profile="prop",
+                    delivery_report={"ready": True},
+                )
+
+    def test_failed_delivery_report_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "model.glb"
+            source.write_bytes(b"glb-data")
+            with self.assertRaisesRegex(ValueError, "is not ready"):
+                prepare_godot_handoff(
+                    source,
+                    root / "build",
+                    profile="prop",
+                    delivery_report={"ready": False},
+                )
+
+    def test_allow_unvalidated_override(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "model.glb"
+            source.write_bytes(b"glb-data")
+            result = prepare_godot_handoff(
+                source,
+                root / "build",
+                profile="prop",
+                allow_unvalidated=True,
+            )
+
+            self.assertTrue(Path(result["projectFile"]).is_file())
 
     def test_non_glb_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
