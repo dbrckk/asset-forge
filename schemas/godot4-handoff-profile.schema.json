@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-forge Godot 4 handoff profile",
+  "type": "object",
+  "required": ["id", "engine", "assetProfile", "sceneImport", "animation", "textures"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "engine": {"const": "Godot 4"},
+    "assetProfile": {"enum": ["prop", "environment", "character"]},
+    "sceneImport": {
+      "type": "object",
+      "required": [
+        "useNameSuffixes",
+        "useNodeTypeSuffixes",
+        "generateTangentsIfMissing",
+        "preferStaticScene"
+      ],
+      "properties": {
+        "useNameSuffixes": {"type": "boolean"},
+        "useNodeTypeSuffixes": {"type": "boolean"},
+        "generateTangentsIfMissing": {"type": "boolean"},
+        "preferStaticScene": {"type": "boolean"},
+        "navigationCandidate": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "animation": {
+      "type": "object",
+      "required": ["import", "fps", "trimming", "removeImmutableTracks"],
+      "properties": {
+        "import": {"type": "boolean"},
+        "fps": {"type": "integer", "minimum": 1, "maximum": 240},
+        "trimming": {"type": "boolean"},
+        "removeImmutableTracks": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "textures": {
+      "type": "object",
+      "required": ["preferEmbeddedOrProjectLocal", "remoteUrisAllowed"],
+      "properties": {
+        "preferEmbeddedOrProjectLocal": {"type": "boolean"},
+        "remoteUrisAllowed": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
