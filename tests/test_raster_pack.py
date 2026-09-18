@@ -5,10 +5,20 @@ import zlib
 from pathlib import Path
 from unittest.mock import patch
 
-from raster_pack import decode_rgba, inspect_png, pack_uniform_atlas, recompress_png
+from raster_pack import decode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_uniform_atlas, recompress_png
 
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+
+
+def webp_chunk(kind: bytes, payload: bytes) -> bytes:
+    padding = b"\x00" if len(payload) & 1 else b""
+    return kind + struct.pack("<I", len(payload)) + payload + padding
+
+
+def webp_file(*chunks: bytes) -> bytes:
+    body = b"WEBP" + b"".join(chunks)
+    return b"RIFF" + struct.pack("<I", len(body)) + body
 
 
 def chunk(kind: bytes, payload: bytes) -> bytes:
@@ -830,6 +840,80 @@ class RasterPackTests(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "unexpected PNG scanline length|truncated"):
                 decode_rgba(image)
+
+    def test_webp_vp8x_dimensions_alpha_and_animation(self):
+        payload = bytes([0x12, 0, 0, 0]) + (319).to_bytes(3, "little") + (199).to_bytes(3, "little")
+        data = webp_file(webp_chunk(b"VP8X", payload))
+        info = inspect_webp_bytes(data)
+
+        self.assertEqual((info["width"], info["height"]), (320, 200))
+        self.assertTrue(info["hasAlpha"])
+        self.assertTrue(info["animated"])
+        self.assertEqual(info["codec"], "vp8x")
+
+    def test_webp_vp8l_dimensions_and_alpha(self):
+        width, height = 17, 9
+        bits = (width - 1) | ((height - 1) << 14) | (1 << 28)
+        payload = b"\x2f" + bits.to_bytes(4, "little")
+        data = webp_file(webp_chunk(b"VP8L", payload))
+        info = inspect_webp_bytes(data)
+
+        self.assertEqual((info["width"], info["height"]), (width, height))
+        self.assertTrue(info["hasAlpha"])
+        self.assertEqual(info["codec"], "vp8l")
+
+    def test_webp_vp8_lossy_dimensions(self):
+        width, height = 640, 360
+        frame_tag = (0).to_bytes(3, "little")
+        payload = (
+            frame_tag
+            + b"\x9d\x01\x2a"
+            + width.to_bytes(2, "little")
+            + height.to_bytes(2, "little")
+        )
+        data = webp_file(webp_chunk(b"VP8 ", payload))
+        info = inspect_webp_bytes(data)
+
+        self.assertEqual((info["width"], info["height"]), (width, height))
+        self.assertFalse(info["hasAlpha"])
+        self.assertEqual(info["codec"], "vp8")
+
+    def test_webp_alpha_chunk_marks_alpha(self):
+        width, height = 12, 7
+        frame_tag = (0).to_bytes(3, "little")
+        vp8 = (
+            frame_tag
+            + b"\x9d\x01\x2a"
+            + width.to_bytes(2, "little")
+            + height.to_bytes(2, "little")
+        )
+        vp8x = bytes([0, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
+        data = webp_file(
+            webp_chunk(b"VP8X", vp8x),
+            webp_chunk(b"ALPH", b"\x00"),
+            webp_chunk(b"VP8 ", vp8),
+        )
+        info = inspect_webp_bytes(data)
+
+        self.assertTrue(info["hasAlpha"])
+        self.assertIn("ALPH", info["chunks"])
+
+    def test_webp_bad_riff_size_is_rejected(self):
+        data = bytearray(webp_file(webp_chunk(b"VP8L", b"\x2f\x00\x00\x00\x00")))
+        data[4:8] = (1).to_bytes(4, "little")
+        with self.assertRaisesRegex(ValueError, "RIFF size"):
+            inspect_webp_bytes(bytes(data))
+
+    def test_webp_file_inspection_reads_from_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "image.webp"
+            width, height = 20, 10
+            bits = (width - 1) | ((height - 1) << 14)
+            path.write_bytes(webp_file(webp_chunk(b"VP8L", b"\x2f" + bits.to_bytes(4, "little"))))
+            info = inspect_webp(path)
+
+        self.assertEqual((info["width"], info["height"]), (20, 10))
+        self.assertEqual(info["format"], "webp")
 
 
 if __name__ == "__main__":
