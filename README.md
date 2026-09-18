@@ -314,3 +314,8 @@ A completed run also writes `production-report.json`, which records step status 
 - sprite sheets/atlases for 2D animation
 
 The repository starts deliberately small. Tooling is added only after validation.
+
+
+### Hardened PNG parsing
+
+PNG parsing now applies repository safety caps to total file bytes, chunk bytes/count, pixel count, and decompressed scanline bytes. IHDR/IDAT/IEND structure, PLTE/tRNS rules, zlib completion, and expected scanline size are validated consistently by raster validation, packing, and recompression.
