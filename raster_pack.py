@@ -1088,16 +1088,24 @@ def _validate_atlas_dimensions(
             raise ValueError(f"atlas pixel count {pixels} exceeds maximum {max_pixels}")
 
 
-def _enforce_atlas_file_budget(output: Path, max_bytes: int | None) -> int:
-    size = output.stat().st_size
+def _write_atlas_png(
+    output: Path,
+    width: int,
+    height: int,
+    pixels: bytes,
+    max_bytes: int | None,
+) -> int:
+    candidate = _png_bytes_rgba(width, height, pixels, adaptive=True)
     if max_bytes is not None:
         if max_bytes <= 0:
-            output.unlink(missing_ok=True)
             raise ValueError("max atlas bytes must be > 0")
-        if size > max_bytes:
-            output.unlink(missing_ok=True)
-            raise ValueError(f"atlas file size {size} exceeds maximum {max_bytes}")
-    return size
+        if len(candidate) > max_bytes:
+            raise ValueError(
+                f"atlas file size {len(candidate)} exceeds maximum {max_bytes}"
+            )
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_bytes(candidate)
+    return len(candidate)
 
 
 def _next_power_of_two(value: int) -> int:
@@ -1231,8 +1239,13 @@ def pack_compact_atlas(
         )
 
     frames.sort(key=lambda item: item["index"])
-    encode_rgba(output, atlas_width, atlas_height, bytes(canvas), adaptive=True)
-    output_bytes = _enforce_atlas_file_budget(output, max_bytes)
+    output_bytes = _write_atlas_png(
+        output,
+        atlas_width,
+        atlas_height,
+        bytes(canvas),
+        max_bytes,
+    )
     return {
         "image": output.name,
         "imageWidth": atlas_width,
