@@ -37,20 +37,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T16:17:33Z
+Generated: 2026-09-18T16:20:08Z
 
 ### Git
 - Branch: `main`
-- Head: `4939b96e5f59`
-- Commit date: 2026-09-18T18:17:21+02:00
-- Commit: feat: refine 2d sprite production stages
-- Tracked files: 51
+- Head: `406e7843f701`
+- Commit date: 2026-09-18T18:20:01+02:00
+- Commit: docs: record real atlas packing milestone
+- Tracked files: 53
 
 ### Recently changed files
-- `pipelines/sprite-2d.json`
 - `README.md`
-- `tests/test_asset_forge.py`
+- `.github/workflows/validate.yml`
+- `tests/test_raster_pack.py`
 - `asset_forge.py`
+- `raster_pack.py`
 
 ### Project signals
 - No common build descriptor detected

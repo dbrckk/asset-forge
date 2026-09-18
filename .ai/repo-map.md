@@ -53,8 +53,10 @@ schemas/
   asset-manifest.schema.json
 tests/
   test_asset_forge.py
+  test_raster_pack.py
 AGENTS.md
 asset_forge.py
+raster_pack.py
 README.md
 ````
 
@@ -106,7 +108,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -387,6 +389,41 @@ image = Path(tmp) / "bad.png"
 data = bytearray(image.read_bytes())
 ````
 
+## File: tests/test_raster_pack.py
+````python
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+⋮----
+def chunk(kind: bytes, payload: bytes) -> bytes
+⋮----
+def write_rgba_png(path: Path, width: int, height: int, pixel: bytes) -> None
+⋮----
+ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
+row = pixel * width
+raw = b"".join(b"\x00" + row for _ in range(height))
+⋮----
+class RasterPackTests(unittest.TestCase)
+⋮----
+def test_pack_uniform_atlas_writes_png_and_metadata(self)
+⋮----
+root = Path(tmp)
+red = root / "red.png"
+green = root / "green.png"
+atlas = root / "atlas.png"
+⋮----
+metadata = pack_uniform_atlas(
+⋮----
+def test_pack_rejects_mixed_frame_sizes(self)
+⋮----
+first = root / "a.png"
+second = root / "b.png"
+⋮----
+def test_rgb_png_is_promoted_to_opaque_rgba(self)
+⋮----
+image = root / "rgb.png"
+ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0)
+raw = b"\x00" + bytes([7, 8, 9])
+````
+
 ## File: AGENTS.md
 ````markdown
 # asset-forge agent instructions
@@ -586,10 +623,118 @@ raster = sub.add_parser("validate-raster", help="validate a PNG against an asset
 ⋮----
 atlas = sub.add_parser("atlas-manifest", help="build uniform-grid atlas metadata from a PNG")
 ⋮----
+pack = sub.add_parser("pack-atlas", help="pack equal-size RGB/RGBA PNG frames into an atlas")
+⋮----
 def main() -> int
 ⋮----
 args = parser().parse_args()
 root = Path(__file__).resolve().parent
+⋮----
+metadata = pack_uniform_atlas(
+⋮----
+rendered = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
+````
+
+## File: raster_pack.py
+````python
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+⋮----
+def _chunks(data: bytes) -> list[tuple[bytes, bytes]]
+⋮----
+chunks: list[tuple[bytes, bytes]] = []
+offset = 8
+saw_iend = False
+⋮----
+length = struct.unpack(">I", data[offset : offset + 4])[0]
+kind = data[offset + 4 : offset + 8]
+end = offset + 12 + length
+⋮----
+payload = data[offset + 8 : offset + 8 + length]
+expected_crc = struct.unpack(">I", data[offset + 8 + length : end])[0]
+actual_crc = zlib.crc32(kind + payload) & 0xFFFFFFFF
+⋮----
+offset = end
+⋮----
+saw_iend = True
+⋮----
+def _paeth(a: int, b: int, c: int) -> int
+⋮----
+prediction = a + b - c
+pa = abs(prediction - a)
+pb = abs(prediction - b)
+pc = abs(prediction - c)
+⋮----
+def decode_rgba(path: Path) -> tuple[int, int, bytes]
+⋮----
+chunks = _chunks(path.read_bytes())
+⋮----
+bytes_per_pixel = 4 if color_type == 6 else 3
+stride = width * bytes_per_pixel
+raw = zlib.decompress(b"".join(payload for kind, payload in chunks if kind == b"IDAT"))
+⋮----
+rows: list[bytearray] = []
+previous = bytearray(stride)
+position = 0
+⋮----
+filter_type = raw[position]
+⋮----
+scanline = bytearray(raw[position : position + stride])
+⋮----
+reconstructed = bytearray(stride)
+⋮----
+left = reconstructed[index - bytes_per_pixel] if index >= bytes_per_pixel else 0
+above = previous[index]
+upper_left = previous[index - bytes_per_pixel] if index >= bytes_per_pixel else 0
+⋮----
+reconstructed_value = value
+⋮----
+reconstructed_value = (value + left) & 255
+⋮----
+reconstructed_value = (value + above) & 255
+⋮----
+reconstructed_value = (value + ((left + above) // 2)) & 255
+⋮----
+reconstructed_value = (value + _paeth(left, above, upper_left)) & 255
+⋮----
+previous = reconstructed
+⋮----
+rgba = bytearray(width * height * 4)
+destination = 0
+⋮----
+def _chunk(kind: bytes, payload: bytes) -> bytes
+⋮----
+def encode_rgba(path: Path, width: int, height: int, pixels: bytes) -> None
+⋮----
+rows = []
+⋮----
+start = y * width * 4
+⋮----
+ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
+⋮----
+def _next_power_of_two(value: int) -> int
+⋮----
+decoded = [decode_rgba(Path(path)) for path in inputs]
+⋮----
+frame_count = len(decoded)
+column_count = columns or math.ceil(math.sqrt(frame_count))
+⋮----
+row_count = math.ceil(frame_count / column_count)
+content_width = column_count * frame_width + max(0, column_count - 1) * padding
+content_height = row_count * frame_height + max(0, row_count - 1) * padding
+⋮----
+atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
+atlas_height = _next_power_of_two(content_height) if power_of_two else content_height
+⋮----
+canvas = bytearray(atlas_width * atlas_height * 4)
+frames = []
+⋮----
+column = index % column_count
+row = index // column_count
+x = column * (frame_width + padding)
+y = row * (frame_height + padding)
+⋮----
+source_start = source_y * frame_width * 4
+destination_start = ((y + source_y) * atlas_width + x) * 4
 ````
 
 ## File: README.md
@@ -638,6 +783,14 @@ Generate uniform-grid atlas metadata:
 ```bash
 python asset_forge.py atlas-manifest examples/asset-manifest.json path/to/sprite.png --output build/sprite.atlas.json
 ```
+
+Pack separate equal-size PNG frames into a real atlas image plus metadata:
+
+```bash
+python asset_forge.py pack-atlas build/atlas.png frames/*.png --metadata build/atlas.json --padding 1 --power-of-two
+```
+
+The built-in packer currently supports non-interlaced 8-bit RGB/RGBA PNG inputs and implements all five standard PNG scanline filters. It writes an RGBA PNG atlas without external image libraries.
 
 Run the offline test suite:
 

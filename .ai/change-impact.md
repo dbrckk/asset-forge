@@ -1,13 +1,13 @@
 # Change impact
 
-Base: 2de811e422fff3a334edc80f2a9a9eb064cf6130
-Head: 4939b96e5f59f909d404c0a39811b2865e80407f
+Base: e206b86f6eeb8c162eda7acda8063c90f65df9a6
+Head: b0d360e27c8854d362ef2fd57a4d832be0e9ef69
 
 ## Changed files
-- M pipelines/sprite-2d.json
+- M README.md
 
 ## Affected areas
-- pipelines
+- (root)
 
 ## Related test candidates
 - No direct filename-based test match detected.
