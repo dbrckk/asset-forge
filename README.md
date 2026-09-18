@@ -31,10 +31,11 @@ Build its deterministic production plan:
 python asset_forge.py plan examples/asset-manifest.json
 ```
 
-Validate a PNG/sprite sheet against its manifest:
+Validate a PNG or WebP sprite sheet against its manifest:
 
 ```bash
 python asset_forge.py validate-raster examples/asset-manifest.json path/to/sprite.png
+python asset_forge.py validate-raster examples/webp-manifest.json path/to/sprite.webp
 ```
 
 Generate uniform-grid atlas metadata:
@@ -43,7 +44,7 @@ Generate uniform-grid atlas metadata:
 python asset_forge.py atlas-manifest examples/asset-manifest.json path/to/sprite.png --output build/sprite.atlas.json
 ```
 
-Pack separate equal-size PNG frames into a real atlas image plus metadata:
+Pack separate equal-size PNG frames — or PNG/WebP frames when the optional WebP backend is available — into a real PNG atlas plus metadata:
 
 ```bash
 python asset_forge.py pack-atlas build/atlas.png frames/*.png --metadata build/atlas.json --padding 1 --power-of-two
@@ -77,7 +78,7 @@ python asset_forge.py export-godot build/atlas.json build/player.tres \
 
 The animation config can define per-animation FPS, loop behavior, frame order, and optional per-frame duration multipliers. A versioned example is available at `examples/godot-animations.json`.
 
-The built-in packer currently supports non-interlaced 8-bit RGB/RGBA PNG inputs and implements all five standard PNG scanline filters. It writes an RGBA PNG atlas without external image libraries. The optimizer uses adaptive per-row PNG filtering and zlib level 9 while preserving decoded pixels.
+The built-in PNG decoder supports the validated PNG depth/color/interlace combinations documented below and implements all five standard PNG scanline filters. Atlas output remains RGBA PNG. Atlas inputs may also be WebP when the optional Pillow/libwebp backend is available; the dependency-free core still handles PNG plus WebP container inspection without Pillow.
 
 Run the offline test suite:
 
@@ -338,3 +339,23 @@ Adam7 decoding computes the exact byte budget for all seven passes before zlib d
 Asset Forge now validates WebP RIFF containers without external dependencies. It understands simple lossy `VP8 `, lossless `VP8L`, and extended `VP8X` headers, reports dimensions/alpha/animation/chunk metadata, validates RIFF length and chunk padding, checks reserved VP8X fields, and cross-checks extended canvas dimensions against static image data. `validate-raster` accepts `target.format=webp` for metadata/grid/size/alpha validation, and glTF texture metrics reuse the same WebP parser.
 
 This milestone is inspection/validation only: WebP pixel decoding, atlas input decoding, recompression, and WebP encoding are not implemented yet. PNG remains the decoded/encoded raster working format.
+
+
+### Optional WebP pixel backend
+
+The dependency-free core validates WebP containers without decoding their pixels. Pixel decode/encode is enabled when Pillow is installed with libwebp support. Pillow's documented WebP plugin reads and writes WebP, while `PIL.features.check_module("webp")` is used to detect runtime support.
+
+Inspect availability:
+
+```bash
+python asset_forge.py raster-backend-status
+```
+
+Encode any supported decoded raster input as WebP:
+
+```bash
+python asset_forge.py encode-webp source.png build/source.webp
+python asset_forge.py encode-webp source.png build/source-lossy.webp --lossy --quality 82 --method 6
+```
+
+Lossless is the default. The encoder validates quality `0..100` and method `0..6`, writes through Pillow/libwebp, then re-inspects the WebP container to verify output dimensions. Animated WebP is inspectable but intentionally rejected as a single-frame atlas input.
