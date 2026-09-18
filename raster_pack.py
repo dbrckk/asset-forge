@@ -162,6 +162,10 @@ def _validate_palette_transparency(
             elif color_type == 2:
                 if len(payload) != 6:
                     raise ValueError("truecolor PNG tRNS must be 6 bytes")
+                transparent_rgb = struct.unpack(">HHH", payload)
+                max_sample = (1 << depth) - 1
+                if any(sample > max_sample for sample in transparent_rgb):
+                    raise ValueError("truecolor PNG tRNS sample exceeds bit depth")
             else:
                 raise ValueError("PNG tRNS is not allowed for alpha color types")
             transparency = payload
@@ -310,6 +314,10 @@ def _unpack_packed_samples(row: bytes, width: int, depth: int) -> list[int]:
     return values
 
 
+def _sample16_to_u8(value: int) -> int:
+    return (value * 255 + 32767) // 65535
+
+
 def decode_rgba(path: Path) -> tuple[int, int, bytes]:
     chunks = _chunks(_read_png_bytes(path))
     width, height, depth, color_type, compression, filtering, interlace = _validate_ihdr(
@@ -317,8 +325,8 @@ def decode_rgba(path: Path) -> tuple[int, int, bytes]:
     )
     if compression != 0 or filtering != 0 or interlace != 0:
         raise ValueError("packing supports non-interlaced PNG only")
-    if color_type not in {0, 3} and depth != 8:
-        raise ValueError("packing currently supports 8-bit truecolor/alpha PNG only")
+    if depth not in {1, 2, 4, 8, 16}:
+        raise ValueError(f"unsupported PNG bit depth {depth}")
 
     stride, filter_bpp = _scanline_layout(width, depth, color_type)
     expected_size = (stride + 1) * height
@@ -357,6 +365,52 @@ def decode_rgba(path: Path) -> tuple[int, int, bytes]:
                 gray = (sample * 255 + max_sample // 2) // max_sample
                 alpha = 0 if transparent_gray == sample else 255
                 rgba[destination : destination + 4] = bytes((gray, gray, gray, alpha))
+                destination += 4
+            continue
+
+        if depth == 16:
+            channels_by_type = {0: 1, 2: 3, 4: 2, 6: 4}
+            channels = channels_by_type[color_type]
+            bpp = channels * 2
+            transparent_gray = (
+                struct.unpack(">H", transparency)[0]
+                if color_type == 0 and len(transparency) == 2
+                else None
+            )
+            transparent_rgb = (
+                struct.unpack(">HHH", transparency)
+                if color_type == 2 and len(transparency) == 6
+                else None
+            )
+            for index in range(0, len(row), bpp):
+                samples = [
+                    struct.unpack(">H", row[index + offset : index + offset + 2])[0]
+                    for offset in range(0, bpp, 2)
+                ]
+                if color_type == 0:
+                    gray16 = samples[0]
+                    gray = _sample16_to_u8(gray16)
+                    alpha = 0 if transparent_gray == gray16 else 255
+                    red = green = blue = gray
+                elif color_type == 2:
+                    red16, green16, blue16 = samples
+                    red = _sample16_to_u8(red16)
+                    green = _sample16_to_u8(green16)
+                    blue = _sample16_to_u8(blue16)
+                    alpha = 0 if transparent_rgb == (red16, green16, blue16) else 255
+                elif color_type == 4:
+                    gray16, alpha16 = samples
+                    gray = _sample16_to_u8(gray16)
+                    red = green = blue = gray
+                    alpha = _sample16_to_u8(alpha16)
+                else:
+                    red16, green16, blue16, alpha16 = samples
+                    red = _sample16_to_u8(red16)
+                    green = _sample16_to_u8(green16)
+                    blue = _sample16_to_u8(blue16)
+                    alpha = _sample16_to_u8(alpha16)
+
+                rgba[destination : destination + 4] = bytes((red, green, blue, alpha))
                 destination += 4
             continue
 
