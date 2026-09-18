@@ -1060,6 +1060,46 @@ def _prepare_frame(path: Path, trim: bool) -> dict:
     }
 
 
+def _validate_atlas_dimensions(
+    width: int,
+    height: int,
+    *,
+    max_width: int | None = None,
+    max_height: int | None = None,
+    max_pixels: int | None = None,
+) -> None:
+    if width <= 0 or height <= 0:
+        raise ValueError("atlas dimensions must be > 0")
+    if max_width is not None:
+        if max_width <= 0:
+            raise ValueError("max atlas width must be > 0")
+        if width > max_width:
+            raise ValueError(f"atlas width {width} exceeds maximum {max_width}")
+    if max_height is not None:
+        if max_height <= 0:
+            raise ValueError("max atlas height must be > 0")
+        if height > max_height:
+            raise ValueError(f"atlas height {height} exceeds maximum {max_height}")
+    if max_pixels is not None:
+        if max_pixels <= 0:
+            raise ValueError("max atlas pixels must be > 0")
+        pixels = width * height
+        if pixels > max_pixels:
+            raise ValueError(f"atlas pixel count {pixels} exceeds maximum {max_pixels}")
+
+
+def _enforce_atlas_file_budget(output: Path, max_bytes: int | None) -> int:
+    size = output.stat().st_size
+    if max_bytes is not None:
+        if max_bytes <= 0:
+            output.unlink(missing_ok=True)
+            raise ValueError("max atlas bytes must be > 0")
+        if size > max_bytes:
+            output.unlink(missing_ok=True)
+            raise ValueError(f"atlas file size {size} exceeds maximum {max_bytes}")
+    return size
+
+
 def _next_power_of_two(value: int) -> int:
     if value <= 1:
         return 1
@@ -1118,6 +1158,9 @@ def pack_compact_atlas(
     output: Path,
     *,
     max_width: int = 2048,
+    max_height: int | None = None,
+    max_pixels: int | None = None,
+    max_bytes: int | None = None,
     padding: int = 0,
     power_of_two: bool = False,
     trim: bool = True,
@@ -1140,6 +1183,13 @@ def pack_compact_atlas(
 
     atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
     atlas_height = _next_power_of_two(content_height) if power_of_two else content_height
+    _validate_atlas_dimensions(
+        atlas_width,
+        atlas_height,
+        max_width=max_width,
+        max_height=max_height,
+        max_pixels=max_pixels,
+    )
     canvas = bytearray(atlas_width * atlas_height * 4)
     frames = []
 
@@ -1182,6 +1232,7 @@ def pack_compact_atlas(
 
     frames.sort(key=lambda item: item["index"])
     encode_rgba(output, atlas_width, atlas_height, bytes(canvas), adaptive=True)
+    output_bytes = _enforce_atlas_file_budget(output, max_bytes)
     return {
         "image": output.name,
         "imageWidth": atlas_width,
@@ -1193,6 +1244,10 @@ def pack_compact_atlas(
         "trim": trim,
         "extrude": extrude,
         "maxWidth": max_width,
+        "maxHeight": max_height,
+        "maxPixels": max_pixels,
+        "maxBytes": max_bytes,
+        "outputBytes": output_bytes,
         "packing": "shelf-height-desc",
         "frames": frames,
     }
@@ -1207,6 +1262,10 @@ def pack_uniform_atlas(
     *,
     trim: bool = False,
     extrude: int = 0,
+    max_width: int | None = None,
+    max_height: int | None = None,
+    max_pixels: int | None = None,
+    max_bytes: int | None = None,
 ) -> dict:
     if not inputs:
         raise ValueError("at least one input PNG is required")
@@ -1238,6 +1297,13 @@ def pack_uniform_atlas(
 
     atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
     atlas_height = _next_power_of_two(content_height) if power_of_two else content_height
+    _validate_atlas_dimensions(
+        atlas_width,
+        atlas_height,
+        max_width=max_width,
+        max_height=max_height,
+        max_pixels=max_pixels,
+    )
 
     canvas = bytearray(atlas_width * atlas_height * 4)
     frames = []
@@ -1288,6 +1354,7 @@ def pack_uniform_atlas(
         )
 
     encode_rgba(output, atlas_width, atlas_height, bytes(canvas), adaptive=True)
+    output_bytes = _enforce_atlas_file_budget(output, max_bytes)
 
     return {
         "image": output.name,
@@ -1301,5 +1368,10 @@ def pack_uniform_atlas(
         "padding": padding,
         "trim": trim,
         "extrude": extrude,
+        "maxWidth": max_width,
+        "maxHeight": max_height,
+        "maxPixels": max_pixels,
+        "maxBytes": max_bytes,
+        "outputBytes": output_bytes,
         "frames": frames,
     }
