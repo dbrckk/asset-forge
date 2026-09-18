@@ -79,6 +79,37 @@ class GltfToolsTests(unittest.TestCase):
 
         self.assertEqual(errors, [])
 
+    def test_out_of_range_mesh_reference_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bad.gltf"
+            data = self.base()
+            data["nodes"][0]["mesh"] = 4
+            path.write_text(json.dumps(data), encoding="utf-8")
+            _, errors, _ = inspect_gltf(path)
+
+        self.assertTrue(any("nodes[0].mesh" in error for error in errors))
+
+    def test_out_of_range_accessor_reference_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bad.gltf"
+            data = self.base()
+            data["meshes"][0]["primitives"][0]["attributes"]["POSITION"] = 8
+            path.write_text(json.dumps(data), encoding="utf-8")
+            _, errors, _ = inspect_gltf(path)
+
+        self.assertTrue(any("attributes.POSITION" in error for error in errors))
+
+    def test_valid_skin_joint_reference_passes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "skin.gltf"
+            data = self.base()
+            data["skins"] = [{"joints": [0]}]
+            data["nodes"][0]["skin"] = 0
+            path.write_text(json.dumps(data), encoding="utf-8")
+            _, errors, _ = inspect_gltf(path)
+
+        self.assertEqual(errors, [])
+
 
 if __name__ == "__main__":
     unittest.main()
