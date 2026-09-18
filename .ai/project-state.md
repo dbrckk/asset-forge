@@ -11,10 +11,11 @@ Status: active
 - Binary-aware 3D metrics read locally available PNG/JPEG/WebP image dimensions, estimate decoded RGBA8 texture memory with mipmaps, and do not fetch remote URLs.
 - Rig/animation metrics report joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, keyframe accessor counts, and readable animation durations.
 - Deep glTF diagnostics validate accessor layouts/ranges, byteStride/component alignment, JOINTS_0/WEIGHTS_0 consistency, animation sampler/channel references, interpolation modes, target paths, output counts, and strictly increasing key times.
+- Godot 4 3D delivery validation checks glTF suitability, stable names, import suffix hints, animation naming, PBR/double-sided materials, tangent needs, remote images, and existing quality-profile results.
 - 3D profiles for prop/environment/character include versioned geometry/material/texture budgets plus max texture dimension, estimated texture-memory budget, and character joint budgets.
 - Blender adapter generates reproducible export jobs, Blender Python scripts, and background CLI commands for GLB export.
 - 3D toolchain detects Blender, Khronos glTF Validator, glTF Transform, and gltfpack when installed.
-- prepare-3d generates Blender → structural validation → quality report → optional Khronos validation → optimization → final validation/quality stages.
+- prepare-3d generates Blender → structural validation → quality report → optional Khronos validation → optimization → final validation/quality stages, with optional Godot 4 delivery gating.
 - run-3d executes available stages, stops on blocking failures, falls back to validated raw.glb when an optional optimizer is absent, and writes production-report.json.
 - production-report.json summarizes step status and raw-vs-final vertex/triangle/file-byte deltas when reports are available.
 - star-list integration calls dbrckk/star-list's recommender through its JSON CLI.
@@ -33,7 +34,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Improve engine-specific delivery validation, beginning with Godot 4 3D import expectations and production handoff checks.
+- Add engine-specific handoff generation around the new Godot 4 gate (import presets/report packaging), then add equivalent profiles for additional engines as needed.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -43,13 +44,14 @@ Status: active
 - `python asset_forge.py validate-svg <input.svg> [--profile icon|ui|logo]`
 - `python asset_forge.py validate-gltf <input.gltf|input.glb> [--profile prop|environment|character]`
 - `python asset_forge.py diagnose-gltf <input.gltf|input.glb> [--output report.json]`
+- `python asset_forge.py validate-godot-3d <input.gltf|input.glb> [--profile prop|environment|character] [--output report.json]`
 - `python asset_forge.py quality-gltf <input.gltf|input.glb> [--profile prop|environment|character] [--output report.json]`
 - `python asset_forge.py 3d-toolchain-status`
-- `python asset_forge.py prepare-3d <source.blend> <workdir> [--profile ...] [--optimizer ...]`
-- `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...]`
+- `python asset_forge.py prepare-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
+- `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after deep accessor, skinning, animation consistency, and duration diagnostics.
+- 2026-09-18: latest GitHub source inspected after Godot 4 3D delivery validation and optional engine-target pipeline gating.
 
 <!-- AUTO:START -->
 ## Automatic repository state
