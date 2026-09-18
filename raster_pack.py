@@ -191,6 +191,34 @@ def _decompress_idat(data: bytes, expected_size: int) -> bytes:
     return raw
 
 
+def inspect_png(path: Path) -> dict:
+    data = path.read_bytes()
+    chunks = _chunks(data)
+    width, height, bit_depth, color_type, compression, filtering, interlace = _validate_ihdr(
+        chunks[0][1]
+    )
+    palette, transparency = _validate_palette_transparency(
+        chunks,
+        depth=bit_depth,
+        color_type=color_type,
+    )
+    return {
+        "width": width,
+        "height": height,
+        "bitDepth": bit_depth,
+        "colorType": color_type,
+        "hasAlpha": color_type in {4, 6} or bool(transparency),
+        "paletteEntries": len(palette) if palette else None,
+        "compressedImageBytes": sum(
+            len(payload) for kind, payload in chunks if kind == b"IDAT"
+        ),
+        "compression": compression,
+        "filter": filtering,
+        "interlace": interlace,
+        "bytes": len(data),
+    }
+
+
 def _paeth(a: int, b: int, c: int) -> int:
     prediction = a + b - c
     pa = abs(prediction - a)
