@@ -1,3 +1,7 @@
+# Shared repository intelligence
+
+This repository uses `dbrckk/repo-standards` and `dbrckk/repo-brain`. Before substantial work, follow `.repo-standards.yml` and the bounded-context reading order from the central standards. Preserve the repository-specific instructions below.
+
 # asset-forge agent instructions
 
 This repository inherits global conventions from `dbrckk/repo-standards`.
