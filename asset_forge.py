@@ -11,6 +11,7 @@ import zlib
 from pathlib import Path
 
 from animation_infer import infer_animations
+from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_export import write_spriteframes
 from raster_pack import pack_uniform_atlas, recompress_png
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
@@ -479,6 +480,10 @@ def parser() -> argparse.ArgumentParser:
     svg_normalize = sub.add_parser("normalize-svg", help="ensure SVG has a usable viewBox")
     svg_normalize.add_argument("input", type=Path)
     svg_normalize.add_argument("output", type=Path)
+
+    gltf_validate = sub.add_parser("validate-gltf", help="validate glTF/GLB structure")
+    gltf_validate.add_argument("input", type=Path)
+    gltf_validate.add_argument("--profile", choices=["prop", "environment", "character"])
     return result
 
 
@@ -615,6 +620,18 @@ def main() -> int:
             return 2
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0
+    if args.command == "validate-gltf":
+        try:
+            if args.profile:
+                info, errors, warnings = validate_gltf_profile(args.input, args.profile)
+            else:
+                info, errors, warnings = inspect_gltf(args.input)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        result = {"file": str(args.input), "info": info, "errors": errors, "warnings": warnings}
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 1 if errors else 0
     return 2
 
 
