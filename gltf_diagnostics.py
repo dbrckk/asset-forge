@@ -217,9 +217,16 @@ def _read_scalar_accessor(path: Path, accessor_index: int) -> list[float] | None
     if not isinstance(stride, int) or stride < layout["elementBytes"]:
         return None
 
-    start = view.get("byteOffset", 0) + accessor.get("byteOffset", 0)
-    if not isinstance(start, int) or start < 0:
+    view_offset = view.get("byteOffset", 0)
+    accessor_offset = accessor.get("byteOffset", 0)
+    if (
+        not isinstance(view_offset, int)
+        or view_offset < 0
+        or not isinstance(accessor_offset, int)
+        or accessor_offset < 0
+    ):
         return None
+    start = view_offset + accessor_offset
 
     values = []
     for i in range(layout["count"]):
