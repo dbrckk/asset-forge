@@ -75,6 +75,22 @@ def build_quality_report(path: Path) -> dict:
     if not isinstance(images, list):
         images = []
 
+    material_usage = []
+    for material in materials:
+        if not isinstance(material, dict):
+            material_usage.append({"textured": False, "normalMapped": False})
+            continue
+        pbr = material.get("pbrMetallicRoughness")
+        textured = False
+        if isinstance(pbr, dict):
+            textured = any(
+                isinstance(pbr.get(key), dict)
+                for key in ("baseColorTexture", "metallicRoughnessTexture")
+            )
+        normal_mapped = isinstance(material.get("normalTexture"), dict)
+        textured = textured or normal_mapped or isinstance(material.get("occlusionTexture"), dict) or isinstance(material.get("emissiveTexture"), dict)
+        material_usage.append({"textured": textured, "normalMapped": normal_mapped})
+
     primitives = 0
     vertices = 0
     triangles = 0
@@ -87,6 +103,10 @@ def build_quality_report(path: Path) -> dict:
     colors = 0
     skinned = 0
     material_bound = 0
+    textured_primitives = 0
+    textured_primitives_with_uv0 = 0
+    normal_mapped_primitives = 0
+    normal_mapped_primitives_with_tangent = 0
     non_triangle_primitives = 0
 
     for mesh in meshes:
@@ -139,6 +159,20 @@ def build_quality_report(path: Path) -> dict:
                 skinned += 1
             if "material" in primitive:
                 material_bound += 1
+                material_index = primitive.get("material")
+                if (
+                    isinstance(material_index, int)
+                    and 0 <= material_index < len(material_usage)
+                ):
+                    usage = material_usage[material_index]
+                    if usage["textured"]:
+                        textured_primitives += 1
+                        if "TEXCOORD_0" in attributes:
+                            textured_primitives_with_uv0 += 1
+                    if usage["normalMapped"]:
+                        normal_mapped_primitives += 1
+                        if "TANGENT" in attributes:
+                            normal_mapped_primitives_with_tangent += 1
 
     pbr_materials = 0
     base_color_textures = 0
@@ -199,6 +233,10 @@ def build_quality_report(path: Path) -> dict:
             "colors": colors,
             "skinned": skinned,
             "materialBound": material_bound,
+            "texturedPrimitives": textured_primitives,
+            "texturedPrimitivesWithUv0": textured_primitives_with_uv0,
+            "normalMappedPrimitives": normal_mapped_primitives,
+            "normalMappedPrimitivesWithTangent": normal_mapped_primitives_with_tangent,
         },
         "materials": {
             "count": len(materials),
@@ -262,20 +300,25 @@ def evaluate_quality(report: dict, profile: str) -> dict:
 
     if (
         rules["requireUvWhenTextured"]
-        and textures["count"] > 0
-        and primitive_count
-        and attributes["uv0"] != primitive_count
+        and attributes["texturedPrimitives"] > 0
+        and attributes["texturedPrimitivesWithUv0"] != attributes["texturedPrimitives"]
     ):
         errors.append(
-            f"TEXCOORD_0 present on {attributes['uv0']}/{primitive_count} textured primitives"
+            "TEXCOORD_0 present on "
+            f"{attributes['texturedPrimitivesWithUv0']}/{attributes['texturedPrimitives']} "
+            "textured primitives"
         )
 
     if rules["requireSkinning"] and primitive_count and attributes["skinned"] == 0:
         errors.append("character profile requires JOINTS_0 and WEIGHTS_0 on skinned geometry")
 
-    if materials["normalTextures"] > 0 and attributes["tangents"] != primitive_count:
+    if (
+        attributes["normalMappedPrimitives"] > 0
+        and attributes["normalMappedPrimitivesWithTangent"]
+        != attributes["normalMappedPrimitives"]
+    ):
         warnings.append(
-            "normal maps are present but not every primitive provides TANGENT; target runtime may need tangent generation"
+            "normal-mapped primitives are missing TANGENT data; target runtime may need tangent generation"
         )
 
     if textures["externalImages"] > 0:
