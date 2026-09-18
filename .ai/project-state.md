@@ -12,11 +12,13 @@ Status: active
 - Rig/animation metrics report joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, keyframe accessor counts, and readable animation durations.
 - Deep glTF diagnostics validate accessor layouts/ranges, byteStride/component alignment, JOINTS_0/WEIGHTS_0 consistency, animation sampler/channel references, interpolation modes, target paths, output counts, and strictly increasing key times.
 - Godot 4 3D delivery validation checks glTF suitability, stable names, import suffix hints, animation naming, PBR/double-sided materials, tangent needs, remote images, and existing quality-profile results.
+- Godot handoff generation creates a minimal importable project with project.godot, copied GLB, manifest/import recommendations, and README.
+- When a Godot editor binary is available, handoff validation uses headless --import to exercise the real importer; missing Godot remains non-blocking.
 - 3D profiles for prop/environment/character include versioned geometry/material/texture budgets plus max texture dimension, estimated texture-memory budget, and character joint budgets.
 - Blender adapter generates reproducible export jobs, Blender Python scripts, and background CLI commands for GLB export.
 - 3D toolchain detects Blender, Khronos glTF Validator, glTF Transform, and gltfpack when installed.
 - prepare-3d generates Blender → structural validation → quality report → optional Khronos validation → optimization → final validation/quality stages, with optional Godot 4 delivery gating.
-- run-3d executes available stages, stops on blocking failures, falls back to validated raw.glb when an optional optimizer is absent, and writes production-report.json.
+- run-3d executes available stages, stops on blocking failures, falls back to validated raw.glb when an optional optimizer is absent, writes production-report.json, and for Godot 4 also emits a handoff project plus optional real import validation.
 - production-report.json summarizes step status and raw-vs-final vertex/triangle/file-byte deltas when reports are available.
 - star-list integration calls dbrckk/star-list's recommender through its JSON CLI.
 - CI compiles all current modules, runs unit tests, checks manifest/plan paths, inspects the 3D toolchain, and smoke-tests the star-list bridge.
@@ -34,7 +36,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Add engine-specific handoff generation around the new Godot 4 gate (import presets/report packaging), then add equivalent profiles for additional engines as needed.
+- Harden the generated Godot handoff/import recommendations, then add equivalent engine delivery adapters only when needed by a consuming project.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -45,13 +47,15 @@ Status: active
 - `python asset_forge.py validate-gltf <input.gltf|input.glb> [--profile prop|environment|character]`
 - `python asset_forge.py diagnose-gltf <input.gltf|input.glb> [--output report.json]`
 - `python asset_forge.py validate-godot-3d <input.gltf|input.glb> [--profile prop|environment|character] [--output report.json]`
+- `python asset_forge.py prepare-godot-handoff <input.glb> <output_dir> [--profile ...] [--delivery-report report.json]`
+- `python asset_forge.py validate-godot-handoff <project_dir> [--godot executable]`
 - `python asset_forge.py quality-gltf <input.gltf|input.glb> [--profile prop|environment|character] [--output report.json]`
 - `python asset_forge.py 3d-toolchain-status`
 - `python asset_forge.py prepare-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after Godot 4 3D delivery validation and optional engine-target pipeline gating.
+- 2026-09-18: latest GitHub source inspected after Godot handoff generation and optional headless importer validation.
 
 <!-- AUTO:START -->
 ## Automatic repository state
