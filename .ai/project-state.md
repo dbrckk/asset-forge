@@ -79,20 +79,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T19:37:47Z
+Generated: 2026-09-18T19:42:39Z
 
 ### Git
 - Branch: `main`
-- Head: `fdd1f0e46108`
-- Commit date: 2026-09-18T21:34:20+02:00
-- Commit: docs: record hardened PNG parsing milestone
-- Tracked files: 106
+- Head: `92b388cf0e8f`
+- Commit date: 2026-09-18T21:42:16+02:00
+- Commit: docs: record low-bit indexed PNG milestone
+- Tracked files: 150
 
 ### Recently changed files
 - `README.md`
 - `tests/test_raster_pack.py`
 - `raster_pack.py`
-- `asset_forge.py`
 
 ### Project signals
 - No common build descriptor detected

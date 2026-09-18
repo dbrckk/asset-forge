@@ -1406,6 +1406,43 @@ info = inspect_png(image)
 def test_oversized_file_is_rejected_before_read(self)
 ⋮----
 image = Path(tmp) / "small.png"
+⋮----
+def test_indexed_1bit_png_decodes_to_rgba(self)
+⋮----
+image = Path(tmp) / "indexed1.png"
+ihdr = struct.pack(">IIBBBBB", 8, 1, 1, 3, 0, 0, 0)
+palette = bytes([0, 0, 0, 255, 255, 255])
+# samples: 0,1,0,1,1,0,1,0 => 0b01011010
+raw = b"\x00" + bytes([0b01011010])
+⋮----
+def test_indexed_2bit_png_decodes_to_rgba(self)
+⋮----
+image = Path(tmp) / "indexed2.png"
+ihdr = struct.pack(">IIBBBBB", 4, 1, 2, 3, 0, 0, 0)
+palette = bytes([
+# samples 0,1,2,3 => 00 01 10 11
+raw = b"\x00" + bytes([0b00011011])
+⋮----
+def test_indexed_4bit_png_ignores_padding_nibble(self)
+⋮----
+image = Path(tmp) / "indexed4.png"
+ihdr = struct.pack(">IIBBBBB", 3, 1, 4, 3, 0, 0, 0)
+palette = b"".join(bytes([i, 0, 0]) for i in range(16))
+# samples 1,2,3; low nibble of second byte is row padding and must be ignored
+raw = b"\x00" + bytes([0x12, 0x3F])
+⋮----
+def test_indexed_low_bit_depth_transparency_is_applied(self)
+⋮----
+image = Path(tmp) / "indexed-trns.png"
+ihdr = struct.pack(">IIBBBBB", 2, 1, 1, 3, 0, 0, 0)
+palette = bytes([10, 20, 30, 40, 50, 60])
+transparency = bytes([255, 0])
+raw = b"\x00" + bytes([0b01000000])
+⋮----
+def test_indexed_low_bit_depth_palette_limit_is_enforced(self)
+⋮----
+image = Path(tmp) / "bad-indexed.png"
+ihdr = struct.pack(">IIBBBBB", 1, 1, 1, 3, 0, 0, 0)
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -2785,9 +2822,7 @@ pa = abs(prediction - a)
 pb = abs(prediction - b)
 pc = abs(prediction - c)
 ⋮----
-def _unfilter_scanlines(raw: bytes, width: int, height: int, bpp: int) -> list[bytearray]
-⋮----
-stride = width * bpp
+def _unfilter_scanlines(raw: bytes, stride: int, height: int, filter_bpp: int) -> list[bytearray]
 ⋮----
 rows: list[bytearray] = []
 previous = bytearray(stride)
@@ -2799,9 +2834,9 @@ scanline = bytearray(raw[position : position + stride])
 ⋮----
 reconstructed = bytearray(stride)
 ⋮----
-left = reconstructed[index - bpp] if index >= bpp else 0
+left = reconstructed[index - filter_bpp] if index >= filter_bpp else 0
 above = previous[index]
-upper_left = previous[index - bpp] if index >= bpp else 0
+upper_left = previous[index - filter_bpp] if index >= filter_bpp else 0
 ⋮----
 reconstructed_value = value
 ⋮----
@@ -2815,19 +2850,38 @@ reconstructed_value = (value + _paeth(left, above, upper_left)) & 255
 ⋮----
 previous = reconstructed
 ⋮----
+def _scanline_layout(width: int, depth: int, color_type: int) -> tuple[int, int]
+⋮----
+channels = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}[color_type]
+bits_per_pixel = channels * depth
+stride = (width * bits_per_pixel + 7) // 8
+filter_bpp = max(1, (bits_per_pixel + 7) // 8)
+⋮----
+def _unpack_indexed_row(row: bytes, width: int, depth: int) -> list[int]
+⋮----
+mask = (1 << depth) - 1
+values: list[int] = []
+⋮----
+shift = 8 - depth
+⋮----
 def decode_rgba(path: Path) -> tuple[int, int, bytes]
 ⋮----
 chunks = _chunks(_read_png_bytes(path))
 ⋮----
-bpp_by_type = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}
-bpp = bpp_by_type[color_type]
-expected_size = (width * bpp + 1) * height
+expected_size = (stride + 1) * height
 compressed = b"".join(payload for kind, payload in chunks if kind == b"IDAT")
 raw = _decompress_idat(compressed, expected_size)
-rows = _unfilter_scanlines(raw, width, height, bpp)
+rows = _unfilter_scanlines(raw, stride, height, filter_bpp)
 ⋮----
 rgba = bytearray(width * height * 4)
 destination = 0
+⋮----
+indexed_samples = _unpack_indexed_row(row, width, depth)
+⋮----
+alpha = transparency[palette_index] if palette_index < len(transparency) else 255
+⋮----
+bpp_by_type = {0: 1, 2: 3, 4: 2, 6: 4}
+bpp = bpp_by_type[color_type]
 ⋮----
 gray = row[index]
 red = green = blue = gray
@@ -2837,10 +2891,6 @@ transparent_gray = struct.unpack(">H", transparency[:2])[0]
 ⋮----
 alpha = 0
 ⋮----
-palette_index = row[index]
-⋮----
-alpha = transparency[palette_index] if palette_index < len(transparency) else 255
-⋮----
 def _chunk(kind: bytes, payload: bytes) -> bytes
 ⋮----
 def _filter_row(row: bytes, previous: bytes, bpp: int, filter_type: int) -> bytes
@@ -2848,6 +2898,8 @@ def _filter_row(row: bytes, previous: bytes, bpp: int, filter_type: int) -> byte
 output = bytearray(len(row))
 ⋮----
 left = row[index - bpp] if index >= bpp else 0
+⋮----
+upper_left = previous[index - bpp] if index >= bpp else 0
 ⋮----
 predictor = 0
 ⋮----
@@ -3233,6 +3285,9 @@ The repository starts deliberately small. Tooling is added only after validation
 ### Hardened PNG parsing
 
 PNG parsing now applies repository safety caps to total file bytes, chunk bytes/count, pixel count, and decompressed scanline bytes. IHDR/IDAT/IEND structure, PLTE/tRNS rules, zlib completion, and expected scanline size are validated consistently by raster validation, packing, and recompression.
+
+
+Indexed PNG decoding now calculates packed scanline byte widths correctly, applies PNG filters with the proper byte-distance rule, unpacks 1/2/4-bit palette indices most-significant bits first, ignores row padding bits beyond the declared width, and preserves palette transparency through RGBA conversion.
 ````
 
 ## File: starlist_bridge.py
