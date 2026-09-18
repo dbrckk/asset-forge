@@ -14,6 +14,7 @@ from animation_infer import infer_animations
 from godot_export import write_spriteframes
 from raster_pack import pack_uniform_atlas, recompress_png
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
+from svg_tools import inspect_svg, sanitize_svg
 
 PIPELINES = {
     "sprite": "pipelines/sprite-2d.json",
@@ -24,6 +25,11 @@ PIPELINES = {
     "prop": "pipelines/model-3d.json",
     "environment": "pipelines/model-3d.json",
     "character-3d": "pipelines/model-3d.json",
+    "vector": "pipelines/vector-svg.json",
+    "svg": "pipelines/vector-svg.json",
+    "icon": "pipelines/vector-svg.json",
+    "ui-vector": "pipelines/vector-svg.json",
+    "logo": "pipelines/vector-svg.json",
 }
 
 TOOL_DOMAINS = {
@@ -35,6 +41,11 @@ TOOL_DOMAINS = {
     "prop": {"3d", "mesh-optimization", "3d-validation"},
     "environment": {"3d", "mesh-optimization", "3d-validation"},
     "character-3d": {"3d", "rigging", "animation-3d", "3d-validation"},
+    "vector": {"vector", "svg", "ui"},
+    "svg": {"vector", "svg", "ui"},
+    "icon": {"vector", "svg", "ui"},
+    "ui-vector": {"vector", "svg", "ui"},
+    "logo": {"vector", "svg"},
 }
 
 ALLOWED_IMPORTANCE = {"primary", "secondary"}
@@ -456,6 +467,13 @@ def parser() -> argparse.ArgumentParser:
     infer.add_argument("--fps", type=float, default=12.0)
     infer.add_argument("--no-loop", action="store_true")
     infer.add_argument("--output", type=Path)
+
+    svg_validate = sub.add_parser("validate-svg", help="validate an SVG for safe project use")
+    svg_validate.add_argument("input", type=Path)
+
+    svg_sanitize = sub.add_parser("sanitize-svg", help="remove unsafe SVG content")
+    svg_sanitize.add_argument("input", type=Path)
+    svg_sanitize.add_argument("output", type=Path)
     return result
 
 
@@ -563,6 +581,23 @@ def main() -> int:
             print(str(args.output))
         else:
             print(rendered, end="")
+        return 0
+    if args.command == "validate-svg":
+        try:
+            info, errors, warnings = inspect_svg(args.input)
+        except OSError as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        result = {"file": str(args.input), "info": info, "errors": errors, "warnings": warnings}
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 1 if errors else 0
+    if args.command == "sanitize-svg":
+        try:
+            result = sanitize_svg(args.input, args.output)
+        except (OSError, ValueError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(result, indent=2, sort_keys=True))
         return 0
     return 2
 
