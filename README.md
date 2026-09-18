@@ -359,3 +359,26 @@ python asset_forge.py encode-webp source.png build/source-lossy.webp --lossy --q
 ```
 
 Lossless is the default. The encoder validates quality `0..100` and method `0..6`, writes through Pillow/libwebp, then re-inspects the WebP container to verify output dimensions. Animated WebP is inspectable but intentionally rejected as a single-frame atlas input.
+
+
+### Advanced atlas packing
+
+Uniform atlas packing now supports transparent trim and edge extrusion:
+
+```bash
+python asset_forge.py pack-atlas build/atlas.png frames/*.png \
+  --trim --extrude 1 --padding 1 --metadata build/atlas.json
+```
+
+Trim metadata records the original source dimensions plus `offsetX`/`offsetY`, while the stored `x`/`y`/`width`/`height` describe the trimmed atlas region. Edge extrusion duplicates border pixels around the packed region to reduce texture bleeding.
+
+Variable-size sprites can use deterministic shelf packing:
+
+```bash
+python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
+  --max-width 2048 --padding 1 --extrude 1 --metadata build/atlas.json
+```
+
+The compact packer sorts by height/width for placement but restores original input order in metadata. Rotation is intentionally not implemented yet. Consumers that need original untrimmed positioning must use the source dimension/offset metadata; the existing simple Godot SpriteFrames export still consumes atlas regions only.
+
+PNG optimization is now no-growth: `optimize-png` keeps the original bytes whenever the recompressed candidate is not smaller, including in-place optimization.
