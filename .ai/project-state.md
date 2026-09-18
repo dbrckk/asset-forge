@@ -48,21 +48,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T16:45:18Z
+Generated: 2026-09-18T17:03:05Z
 
 ### Git
 - Branch: `main`
-- Head: `f5eba048f16e`
-- Commit date: 2026-09-18T18:45:12+02:00
-- Commit: docs: record multi-animation Godot milestone
-- Tracked files: 65
+- Head: `9c1c7ff00863`
+- Commit date: 2026-09-18T19:03:00+02:00
+- Commit: docs: record expanded png and svg pipeline milestone
+- Tracked files: 68
 
 ### Recently changed files
 - `README.md`
 - `.github/workflows/validate.yml`
-- `tests/test_animation_infer.py`
 - `asset_forge.py`
-- `animation_infer.py`
+- `tests/test_svg_tools.py`
+- `pipelines/vector-svg.json`
 
 ### Project signals
 - No common build descriptor detected

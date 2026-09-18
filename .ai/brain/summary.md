@@ -1,23 +1,25 @@
 # Repo Brain
 
 - Index mode: full
-- Files indexed: 10
-- Files reparsed this run: 10
-- Symbols: 80
-- Internal import edges: 9
+- Files indexed: 12
+- Files reparsed this run: 12
+- Symbols: 95
+- Internal import edges: 11
 - Impacted files: 0
 - Selected tests: 0
 
 ## Languages
-- python: 10 files
+- python: 12 files
 
 ## Highest-density symbol files
 - asset_forge.py: 17 symbols
 - tests/test_asset_forge.py: 17 symbols
-- raster_pack.py: 11 symbols
+- raster_pack.py: 12 symbols
+- tests/test_raster_pack.py: 11 symbols
 - tests/test_godot_export.py: 9 symbols
-- tests/test_raster_pack.py: 8 symbols
+- tests/test_svg_tools.py: 6 symbols
 - godot_export.py: 5 symbols
+- svg_tools.py: 5 symbols
 - tests/test_animation_infer.py: 5 symbols
 - tests/test_starlist_bridge.py: 5 symbols
 - starlist_bridge.py: 2 symbols
@@ -32,10 +34,10 @@
 ## ast-grep enrichment
 - ast-grep outline: available
 - AST index mode: full
-- AST files reparsed this run: 10
-- outline files retained: 10
-- top-level items retained: 99
-- direct members retained: 35
-- symbol shards: 20
+- AST files reparsed this run: 12
+- outline files retained: 12
+- top-level items retained: 119
+- direct members retained: 43
+- symbol shards: 21
 - route named symbols via ast-routing.json, then fetch one ast-symbols/<initial>.json shard
 

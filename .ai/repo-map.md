@@ -50,6 +50,7 @@ examples/
 pipelines/
   model-3d.json
   sprite-2d.json
+  vector-svg.json
 schemas/
   asset-manifest.schema.json
 tests/
@@ -58,6 +59,7 @@ tests/
   test_godot_export.py
   test_raster_pack.py
   test_starlist_bridge.py
+  test_svg_tools.py
 AGENTS.md
 animation_infer.py
 asset_forge.py
@@ -65,6 +67,7 @@ godot_export.py
 raster_pack.py
 README.md
 starlist_bridge.py
+svg_tools.py
 ````
 
 # Files
@@ -115,7 +118,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -316,6 +319,31 @@ jobs:
     "masterFormat": "png",
     "interpolation": "nearest",
     "powerOfTwoAtlas": false
+  }
+}
+````
+
+## File: pipelines/vector-svg.json
+````json
+{
+  "id": "vector-svg",
+  "assetTypes": ["vector", "svg", "icon", "ui-vector", "logo"],
+  "stages": [
+    "read-project-art-direction",
+    "resolve-source-or-create",
+    "validate-svg-xml",
+    "reject-executable-content",
+    "reject-external-references",
+    "validate-viewbox-and-dimensions",
+    "sanitize-svg",
+    "optimize-vector-structure",
+    "record-provenance-and-license",
+    "validate-target-import"
+  ],
+  "defaults": {
+    "masterFormat": "svg",
+    "requireViewBox": true,
+    "allowExternalReferences": false
   }
 }
 ````
@@ -527,6 +555,23 @@ after = decode_rgba(optimized)
 output_exists = optimized.exists()
 ⋮----
 def test_recompress_png_reports_sizes(self)
+⋮----
+def test_grayscale_png_decodes_to_rgba(self)
+⋮----
+image = Path(tmp) / "gray.png"
+ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 0, 0, 0, 0)
+⋮----
+def test_grayscale_alpha_png_decodes_to_rgba(self)
+⋮----
+image = Path(tmp) / "gray-alpha.png"
+ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 4, 0, 0, 0)
+⋮----
+def test_indexed_png_with_transparency_decodes_to_rgba(self)
+⋮----
+image = Path(tmp) / "indexed.png"
+ihdr = struct.pack(">IIBBBBB", 2, 1, 8, 3, 0, 0, 0)
+palette = bytes([255, 0, 0, 0, 255, 0])
+transparency = bytes([255, 64])
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -550,6 +595,32 @@ def test_full_report_runs_visual_queries(self)
 report = build_visual_discovery_report(root)
 ⋮----
 def test_missing_recommender_is_rejected(self)
+````
+
+## File: tests/test_svg_tools.py
+````python
+class SvgToolsTests(unittest.TestCase)
+⋮----
+def test_valid_svg_passes(self)
+⋮----
+path = Path(tmp) / "icon.svg"
+⋮----
+def test_missing_viewbox_warns(self)
+⋮----
+def test_script_and_events_are_rejected(self)
+⋮----
+path = Path(tmp) / "bad.svg"
+⋮----
+def test_external_href_is_rejected(self)
+⋮----
+def test_sanitize_removes_dangerous_content(self)
+⋮----
+source = Path(tmp) / "source.svg"
+output = Path(tmp) / "clean.svg"
+⋮----
+report = sanitize_svg(source, output)
+⋮----
+rendered = output.read_text(encoding="utf-8")
 ````
 
 ## File: AGENTS.md
@@ -792,6 +863,10 @@ discover = sub.add_parser("discover-tools", help="query dbrckk/star-list for vis
 ⋮----
 infer = sub.add_parser("infer-animations", help="infer animation groups from atlas frame filenames")
 ⋮----
+svg_validate = sub.add_parser("validate-svg", help="validate an SVG for safe project use")
+⋮----
+svg_sanitize = sub.add_parser("sanitize-svg", help="remove unsafe SVG content")
+⋮----
 def main() -> int
 ⋮----
 args = parser().parse_args()
@@ -816,6 +891,10 @@ result = run_starlist_recommender(
 rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
 ⋮----
 result = infer_animations(
+⋮----
+result = {"file": str(args.input), "info": info, "errors": errors, "warnings": warnings}
+⋮----
+result = sanitize_svg(args.input, args.output)
 ````
 
 ## File: godot_export.py
@@ -901,13 +980,9 @@ pa = abs(prediction - a)
 pb = abs(prediction - b)
 pc = abs(prediction - c)
 ⋮----
-def decode_rgba(path: Path) -> tuple[int, int, bytes]
+def _unfilter_scanlines(raw: bytes, width: int, height: int, bpp: int) -> list[bytearray]
 ⋮----
-chunks = _chunks(path.read_bytes())
-⋮----
-bytes_per_pixel = 4 if color_type == 6 else 3
-stride = width * bytes_per_pixel
-raw = zlib.decompress(b"".join(payload for kind, payload in chunks if kind == b"IDAT"))
+stride = width * bpp
 ⋮----
 rows: list[bytearray] = []
 previous = bytearray(stride)
@@ -919,9 +994,9 @@ scanline = bytearray(raw[position : position + stride])
 ⋮----
 reconstructed = bytearray(stride)
 ⋮----
-left = reconstructed[index - bytes_per_pixel] if index >= bytes_per_pixel else 0
+left = reconstructed[index - bpp] if index >= bpp else 0
 above = previous[index]
-upper_left = previous[index - bytes_per_pixel] if index >= bytes_per_pixel else 0
+upper_left = previous[index - bpp] if index >= bpp else 0
 ⋮----
 reconstructed_value = value
 ⋮----
@@ -935,8 +1010,36 @@ reconstructed_value = (value + _paeth(left, above, upper_left)) & 255
 ⋮----
 previous = reconstructed
 ⋮----
+def decode_rgba(path: Path) -> tuple[int, int, bytes]
+⋮----
+chunks = _chunks(path.read_bytes())
+⋮----
+bpp_by_type = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}
+bpp = bpp_by_type[color_type]
+raw = zlib.decompress(b"".join(payload for kind, payload in chunks if kind == b"IDAT"))
+rows = _unfilter_scanlines(raw, width, height, bpp)
+⋮----
+palette: list[tuple[int, int, int]] = []
+transparency = b""
+⋮----
+palette = [
+⋮----
+transparency = payload
+⋮----
 rgba = bytearray(width * height * 4)
 destination = 0
+⋮----
+gray = row[index]
+red = green = blue = gray
+alpha = 255
+⋮----
+transparent_gray = struct.unpack(">H", transparency[:2])[0] & 0xFF
+⋮----
+alpha = 0
+⋮----
+palette_index = row[index]
+⋮----
+alpha = transparency[palette_index] if palette_index < len(transparency) else 255
 ⋮----
 def _chunk(kind: bytes, payload: bytes) -> bytes
 ⋮----
@@ -945,8 +1048,6 @@ def _filter_row(row: bytes, previous: bytes, bpp: int, filter_type: int) -> byte
 output = bytearray(len(row))
 ⋮----
 left = row[index - bpp] if index >= bpp else 0
-⋮----
-upper_left = previous[index - bpp] if index >= bpp else 0
 ⋮----
 predictor = 0
 ⋮----
@@ -968,7 +1069,7 @@ previous = bytes(width * 4)
 start = y * width * 4
 row = pixels[start : start + width * 4]
 ⋮----
-candidates = [(_filter_row(row, previous, 4, filter_type), filter_type) for filter_type in range(5)]
+candidates = [
 ⋮----
 filter_type = 0
 filtered = row
@@ -979,7 +1080,6 @@ ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
 ⋮----
 def recompress_png(input_path: Path, output_path: Path) -> dict
 ⋮----
-"""Losslessly recompress supported PNG image pixels as optimized RGBA."""
 before = input_path.stat().st_size
 ⋮----
 after = output_path.stat().st_size
@@ -1153,6 +1253,22 @@ The bridge invokes star-list's own recommender and consumes its JSON result inst
 
 Discovery is advisory: a newly discovered repository is never trusted automatically.
 
+## SVG/vector workflow
+
+Validate an SVG before it enters a project:
+
+```bash
+python asset_forge.py validate-svg path/to/icon.svg
+```
+
+Create a sanitized copy that removes executable/unsafe SVG content and external references:
+
+```bash
+python asset_forge.py sanitize-svg path/to/icon.svg build/icon.safe.svg
+```
+
+The current vector validator checks XML validity, SVG root type, viewBox shape, dimensions, scripts/foreignObject, event-handler attributes, and external href/src references.
+
 ## Initial interoperability
 
 - glTF/GLB for portable 3D delivery
@@ -1185,4 +1301,63 @@ tasks = {
 report = {
 ⋮----
 result = run_starlist_recommender(
+````
+
+## File: svg_tools.py
+````python
+SVG_NS = "http://www.w3.org/2000/svg"
+XLINK_NS = "http://www.w3.org/1999/xlink"
+DANGEROUS_TAGS = {"script", "foreignObject"}
+EVENT_ATTRIBUTE = re.compile(r"^on[a-z]+$", re.IGNORECASE)
+LENGTH = re.compile(r"^\s*([0-9]+(?:\.[0-9]+)?)(px)?\s*$", re.IGNORECASE)
+⋮----
+def _local_name(name: str) -> str
+⋮----
+def _is_external_reference(value: str) -> bool
+⋮----
+value = value.strip()
+⋮----
+parsed = urlparse(value)
+⋮----
+def inspect_svg(path: Path) -> tuple[dict, list[str], list[str]]
+⋮----
+raw = path.read_text(encoding="utf-8")
+errors: list[str] = []
+warnings: list[str] = []
+⋮----
+lowered = raw.lower()
+⋮----
+root = ET.fromstring(raw)
+⋮----
+width = root.attrib.get("width")
+height = root.attrib.get("height")
+view_box = root.attrib.get("viewBox")
+⋮----
+parts = view_box.replace(",", " ").split()
+⋮----
+values = [float(item) for item in parts]
+⋮----
+element_count = 0
+external_refs: list[str] = []
+dangerous_tags: list[str] = []
+event_attributes: list[str] = []
+⋮----
+tag = _local_name(element.tag)
+⋮----
+local_key = _local_name(key)
+⋮----
+info = {
+⋮----
+def sanitize_svg(input_path: Path, output_path: Path) -> dict
+⋮----
+raw = input_path.read_text(encoding="utf-8")
+⋮----
+removed_elements = 0
+removed_attributes = 0
+⋮----
+def clean(parent: ET.Element) -> None
+⋮----
+value = child.attrib[key]
+⋮----
+value = root.attrib[key]
 ````
