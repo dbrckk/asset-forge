@@ -121,6 +121,56 @@ class RasterPackTests(unittest.TestCase):
             report["beforeBytes"] - report["afterBytes"],
         )
 
+    def test_grayscale_png_decodes_to_rgba(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "gray.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 0, 0, 0, 0)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(b"\x00\x7f"))
+                + chunk(b"IEND", b"")
+            )
+            width, height, pixels = decode_rgba(image)
+
+        self.assertEqual((width, height), (1, 1))
+        self.assertEqual(pixels, bytes([127, 127, 127, 255]))
+
+    def test_grayscale_alpha_png_decodes_to_rgba(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "gray-alpha.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 4, 0, 0, 0)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(b"\x00\x44\x80"))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(pixels, bytes([68, 68, 68, 128]))
+
+    def test_indexed_png_with_transparency_decodes_to_rgba(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "indexed.png"
+            ihdr = struct.pack(">IIBBBBB", 2, 1, 8, 3, 0, 0, 0)
+            palette = bytes([255, 0, 0, 0, 255, 0])
+            transparency = bytes([255, 64])
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"PLTE", palette)
+                + chunk(b"tRNS", transparency)
+                + chunk(b"IDAT", zlib.compress(b"\x00\x00\x01"))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(
+            pixels,
+            bytes([255, 0, 0, 255, 0, 255, 0, 64]),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
