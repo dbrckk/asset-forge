@@ -473,3 +473,30 @@ Selection order is now:
 Per-strategy audit metadata now also includes `atlasWidth`, `atlasHeight`, `atlasArea`, `encodedBytes`, `withinBudgets`, and `budgetErrors`.
 
 When `max-height`, `max-pixels`, or `max-bytes` is supplied, `auto` excludes candidates that violate those budgets before selecting the winner. If no heuristic fits, packing fails without replacing the output file. The already-encoded bytes of the winning candidate are reused for the final write, avoiding a second PNG encode.
+
+
+### Optional compact-atlas rotation
+
+Compact MaxRects packing can now rotate sprites 90° clockwise when explicitly enabled:
+
+```bash
+python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
+  --allow-rotation
+```
+
+Rotation is disabled by default. When enabled, MaxRects evaluates both orientations for non-square frames and may select rotation when it improves fit or allows a frame to satisfy the width budget.
+
+Per-frame metadata records:
+
+```text
+rotated
+rotationDegrees
+sourceRegionWidth
+sourceRegionHeight
+width
+height
+```
+
+For rotated frames, `width`/`height` describe the stored atlas region after rotation, while `sourceRegionWidth`/`sourceRegionHeight` describe the trimmed region before rotation. Source canvas dimensions and trim offsets remain in `sourceWidth`, `sourceHeight`, `offsetX`, and `offsetY`.
+
+The current Godot SpriteFrames exporter intentionally rejects rotated frames because Godot `AtlasTexture` regions do not automatically undo packed-image rotation. Use rotation only with consumers that explicitly understand the metadata.
