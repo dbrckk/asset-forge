@@ -321,6 +321,131 @@ class RasterPackTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "exceeds file limit"):
                     inspect_png(image)
 
+    def test_indexed_1bit_png_decodes_to_rgba(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "indexed1.png"
+            ihdr = struct.pack(">IIBBBBB", 8, 1, 1, 3, 0, 0, 0)
+            palette = bytes([0, 0, 0, 255, 255, 255])
+            # samples: 0,1,0,1,1,0,1,0 => 0b01011010
+            raw = b"\x00" + bytes([0b01011010])
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"PLTE", palette)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            width, height, pixels = decode_rgba(image)
+
+        self.assertEqual((width, height), (8, 1))
+        self.assertEqual(
+            pixels,
+            b"".join(
+                bytes([255, 255, 255, 255]) if bit else bytes([0, 0, 0, 255])
+                for bit in [0, 1, 0, 1, 1, 0, 1, 0]
+            ),
+        )
+
+    def test_indexed_2bit_png_decodes_to_rgba(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "indexed2.png"
+            ihdr = struct.pack(">IIBBBBB", 4, 1, 2, 3, 0, 0, 0)
+            palette = bytes([
+                255, 0, 0,
+                0, 255, 0,
+                0, 0, 255,
+                255, 255, 0,
+            ])
+            # samples 0,1,2,3 => 00 01 10 11
+            raw = b"\x00" + bytes([0b00011011])
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"PLTE", palette)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(
+            pixels,
+            bytes([
+                255, 0, 0, 255,
+                0, 255, 0, 255,
+                0, 0, 255, 255,
+                255, 255, 0, 255,
+            ]),
+        )
+
+    def test_indexed_4bit_png_ignores_padding_nibble(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "indexed4.png"
+            ihdr = struct.pack(">IIBBBBB", 3, 1, 4, 3, 0, 0, 0)
+            palette = b"".join(bytes([i, 0, 0]) for i in range(16))
+            # samples 1,2,3; low nibble of second byte is row padding and must be ignored
+            raw = b"\x00" + bytes([0x12, 0x3F])
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"PLTE", palette)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(
+            pixels,
+            bytes([
+                1, 0, 0, 255,
+                2, 0, 0, 255,
+                3, 0, 0, 255,
+            ]),
+        )
+
+    def test_indexed_low_bit_depth_transparency_is_applied(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "indexed-trns.png"
+            ihdr = struct.pack(">IIBBBBB", 2, 1, 1, 3, 0, 0, 0)
+            palette = bytes([10, 20, 30, 40, 50, 60])
+            transparency = bytes([255, 0])
+            raw = b"\x00" + bytes([0b01000000])
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"PLTE", palette)
+                + chunk(b"tRNS", transparency)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(
+            pixels,
+            bytes([
+                10, 20, 30, 255,
+                40, 50, 60, 0,
+            ]),
+        )
+
+    def test_indexed_low_bit_depth_palette_limit_is_enforced(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "bad-indexed.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 1, 3, 0, 0, 0)
+            palette = bytes([
+                0, 0, 0,
+                1, 1, 1,
+                2, 2, 2,
+            ])
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"PLTE", palette)
+                + chunk(b"IDAT", zlib.compress(b"\x00\x00"))
+                + chunk(b"IEND", b"")
+            )
+            with self.assertRaisesRegex(ValueError, "more entries than indexed bit depth allows"):
+                decode_rgba(image)
+
 
 if __name__ == "__main__":
     unittest.main()
