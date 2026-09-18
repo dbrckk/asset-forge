@@ -5,7 +5,7 @@ import struct
 import zlib
 from pathlib import Path
 
-from raster_backend import decode_webp_rgba, detect_pillow_webp
+from raster_backend import decode_webp_rgba, detect_pillow_webp, encode_webp_rgba
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 MAX_PNG_FILE_BYTES = 256 * 1024 * 1024
@@ -719,7 +719,7 @@ def raster_backend_status() -> dict:
         "webp": {
             "inspect": True,
             "decode": detect_pillow_webp(),
-            "encode": False,
+            "encode": detect_pillow_webp(),
         },
     }
 
@@ -865,6 +865,45 @@ def encode_rgba(
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(_png_bytes_rgba(width, height, pixels, adaptive=adaptive))
+
+
+def encode_webp(
+    input_path: Path,
+    output_path: Path,
+    *,
+    lossless: bool = True,
+    quality: int = 90,
+    method: int = 6,
+) -> dict:
+    width, height, pixels = decode_raster_rgba(input_path)
+    before = input_path.stat().st_size
+    encode_webp_rgba(
+        output_path,
+        width,
+        height,
+        pixels,
+        lossless=lossless,
+        quality=quality,
+        method=method,
+        exact=True,
+    )
+    info = inspect_webp(output_path)
+    if (info["width"], info["height"]) != (width, height):
+        raise ValueError("encoded WebP dimensions do not match source")
+    after = output_path.stat().st_size
+    return {
+        "input": str(input_path),
+        "output": str(output_path),
+        "width": width,
+        "height": height,
+        "lossless": lossless,
+        "quality": quality,
+        "method": method,
+        "beforeBytes": before,
+        "afterBytes": after,
+        "deltaBytes": after - before,
+        "backend": detect_pillow_webp(),
+    }
 
 
 def recompress_png(input_path: Path, output_path: Path) -> dict:
