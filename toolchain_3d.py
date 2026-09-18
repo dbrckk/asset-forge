@@ -153,8 +153,10 @@ def build_3d_pipeline(
     )
 
     final_glb = raw_glb
+    optimizer_available = False
     if optimizer == "gltf-transform":
         tool = tools["gltf-transform"]
+        optimizer_available = bool(tool["available"])
         commands.append(
             {
                 "id": "optimize",
@@ -170,9 +172,11 @@ def build_3d_pipeline(
                 "output": str(optimized_glb),
             }
         )
-        final_glb = optimized_glb
+        if optimizer_available:
+            final_glb = optimized_glb
     elif optimizer == "gltfpack":
         tool = tools["gltfpack"]
+        optimizer_available = bool(tool["available"])
         commands.append(
             {
                 "id": "optimize",
@@ -188,7 +192,8 @@ def build_3d_pipeline(
                 "output": str(optimized_glb),
             }
         )
-        final_glb = optimized_glb
+        if optimizer_available:
+            final_glb = optimized_glb
 
     if optimizer != "none":
         commands.append(
@@ -240,9 +245,9 @@ def prepare_3d_pipeline(plan: dict) -> None:
 
 def execute_command(command: str, cwd: Path | None = None) -> dict:
     completed = subprocess.run(
-        command,
+        shlex.split(command),
         cwd=cwd,
-        shell=True,
+        shell=False,
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -253,4 +258,51 @@ def execute_command(command: str, cwd: Path | None = None) -> dict:
         "returnCode": completed.returncode,
         "stdout": completed.stdout,
         "stderr": completed.stderr,
+    }
+
+
+def execute_3d_pipeline(plan: dict, repo_root: Path) -> dict:
+    prepare_3d_pipeline(plan)
+    results = []
+    success = True
+
+    for step in plan["steps"]:
+        if not step["available"]:
+            result = {
+                "id": step["id"],
+                "status": "missing-required" if step["required"] else "skipped-unavailable",
+                "tool": step["tool"],
+                "returnCode": None,
+            }
+            results.append(result)
+            if step["required"]:
+                success = False
+                break
+            continue
+
+        executed = execute_command(step["command"], cwd=repo_root)
+        result = {
+            "id": step["id"],
+            "status": "passed" if executed["returnCode"] == 0 else "failed",
+            "tool": step["tool"],
+            "returnCode": executed["returnCode"],
+            "stdout": executed["stdout"],
+            "stderr": executed["stderr"],
+        }
+
+        if step["id"] == "khronos-validation" and step.get("output") and executed["stdout"]:
+            report_path = Path(step["output"])
+            report_path.parent.mkdir(parents=True, exist_ok=True)
+            report_path.write_text(executed["stdout"], encoding="utf-8")
+
+        results.append(result)
+        if executed["returnCode"] != 0:
+            success = False
+            if step["required"] or step["id"] in {"khronos-validation", "optimize"}:
+                break
+
+    return {
+        "success": success,
+        "finalOutput": plan["finalOutput"],
+        "results": results,
     }
