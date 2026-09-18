@@ -210,6 +210,17 @@ class AssetForgeTests(unittest.TestCase):
 
         self.assertIn("maxColors is only enforceable for indexed PNG assets", errors)
 
+    def test_raster_target_format_mismatch_is_reported(self):
+        manifest = self.load_example()
+        manifest["target"]["format"] = "webp"
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "sprite.png"
+            write_png(image, 32, 32)
+            info, errors = asset_forge.validate_raster_file(image, manifest)
+
+        self.assertEqual(info["format"], "png")
+        self.assertIn("asset format png does not match target.format webp", errors)
+
     def test_invalid_png_crc_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             image = Path(tmp) / "bad.png"
