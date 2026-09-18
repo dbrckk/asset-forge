@@ -234,7 +234,26 @@ python asset_forge.py run-3d source.blend build/model \
   --optimizer gltf-transform
 ```
 
-The generated chain is Blender export → internal structural validation → quality/budget report → optional Khronos validation → optional optimization → post-optimization structural validation → final quality report. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
+For a Godot 4 handoff, add the engine target:
+
+```bash
+python asset_forge.py run-3d source.blend build/model \
+  --profile character \
+  --optimizer gltf-transform \
+  --engine godot4
+```
+
+You can also validate an already exported asset directly:
+
+```bash
+python asset_forge.py validate-godot-3d character.glb \
+  --profile character \
+  --output build/godot4-delivery.json
+```
+
+The Godot delivery report checks glTF 2.0 suitability, stable/duplicate names, Godot import suffix hints, animation naming, PBR materials, double-sided materials, normal-map tangents, remote/external images, and the existing 3D quality profile.
+
+The generated chain is Blender export → internal structural validation → quality/budget report → optional Khronos validation → optional optimization → post-optimization structural validation → final quality report. With `--engine godot4`, a final Godot delivery gate is appended. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
 
 A completed run also writes `production-report.json`, which records step status and compares raw vs final vertices, triangles, and file bytes when both quality reports are available.
 
