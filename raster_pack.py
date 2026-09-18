@@ -58,6 +58,8 @@ def _webp_chunks(data: bytes) -> list[tuple[bytes, bytes]]:
 def _webp_vp8x_info(payload: bytes) -> dict:
     if len(payload) != 10:
         raise ValueError("WebP VP8X chunk must be 10 bytes")
+    if payload[0] & 0xC1:
+        raise ValueError("WebP VP8X reserved feature bits must be zero")
     if payload[1:4] != b"\x00\x00\x00":
         raise ValueError("WebP VP8X reserved bytes must be zero")
     width = 1 + int.from_bytes(payload[4:7], "little")
@@ -133,6 +135,13 @@ def inspect_webp_bytes(data: bytes) -> dict:
         info = _webp_vp8_info(by_kind[b"VP8 "][0])
     else:
         raise ValueError("WebP contains no VP8X, VP8L, or VP8 image header")
+
+    if b"VP8X" in by_kind:
+        if info["animated"]:
+            if b"ANIM" not in by_kind or b"ANMF" not in by_kind:
+                raise ValueError("animated WebP requires ANIM and ANMF chunks")
+        elif b"VP8 " not in by_kind and b"VP8L" not in by_kind:
+            raise ValueError("extended WebP requires VP8 or VP8L image data")
 
     if info["width"] * info["height"] > MAX_PNG_PIXELS:
         raise ValueError(f"WebP exceeds pixel limit {MAX_PNG_PIXELS}")
