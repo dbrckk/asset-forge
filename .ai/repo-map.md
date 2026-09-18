@@ -55,11 +55,13 @@ tests/
   test_asset_forge.py
   test_godot_export.py
   test_raster_pack.py
+  test_starlist_bridge.py
 AGENTS.md
 asset_forge.py
 godot_export.py
 raster_pack.py
 README.md
+starlist_bridge.py
 ````
 
 # Files
@@ -110,13 +112,20 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
         run: python asset_forge.py validate examples/asset-manifest.json
       - name: Build example plan
         run: python asset_forge.py plan examples/asset-manifest.json
+      - name: Checkout star-list
+        uses: actions/checkout@v4
+        with:
+          repository: dbrckk/star-list
+          path: star-list
+      - name: Smoke-test star-list bridge
+        run: python asset_forge.py discover-tools star-list "pixel art sprites atlas" --top 3
 ````
 
 ## File: config/tooling.json
@@ -459,6 +468,29 @@ output_exists = optimized.exists()
 def test_recompress_png_reports_sizes(self)
 ````
 
+## File: tests/test_starlist_bridge.py
+````python
+FAKE_RECOMMENDER = r'''#!/usr/bin/env python3
+⋮----
+class StarListBridgeTests(unittest.TestCase)
+⋮----
+def make_fake_star_list(self, root: Path) -> None
+⋮----
+scripts = root / "scripts"
+⋮----
+def test_run_recommender_parses_json(self)
+⋮----
+root = Path(tmp)
+⋮----
+result = run_starlist_recommender(root, "pixel art sprites", top=3)
+⋮----
+def test_full_report_runs_visual_queries(self)
+⋮----
+report = build_visual_discovery_report(root)
+⋮----
+def test_missing_recommender_is_rejected(self)
+````
+
 ## File: AGENTS.md
 ````markdown
 # asset-forge agent instructions
@@ -664,6 +696,8 @@ optimize = sub.add_parser("optimize-png", help="losslessly recompress a supporte
 ⋮----
 godot = sub.add_parser("export-godot", help="export Godot 4 SpriteFrames .tres from atlas metadata")
 ⋮----
+discover = sub.add_parser("discover-tools", help="query dbrckk/star-list for visual tooling")
+⋮----
 def main() -> int
 ⋮----
 args = parser().parse_args()
@@ -676,6 +710,12 @@ rendered = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
 result = recompress_png(args.input, args.output)
 ⋮----
 metadata = load_json(args.metadata)
+⋮----
+result = build_visual_discovery_report(args.star_list_root)
+⋮----
+result = run_starlist_recommender(
+⋮----
+rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
 ````
 
 ## File: godot_export.py
@@ -953,6 +993,20 @@ tests/
 6. Create/source the asset.
 7. Validate, optimize, record provenance, and export it for the target project.
 
+Run a targeted star-list query against a local checkout:
+
+```bash
+python asset_forge.py discover-tools ../star-list "pixel art sprites atlas" --top 8
+```
+
+Generate the standard visual tooling discovery report:
+
+```bash
+python asset_forge.py discover-tools ../star-list --full-report --output build/visual-tools.json
+```
+
+The bridge invokes star-list's own recommender and consumes its JSON result instead of maintaining a second ranking implementation.
+
 Discovery is advisory: a newly discovered repository is never trusted automatically.
 
 ## Initial interoperability
@@ -963,4 +1017,28 @@ Discovery is advisory: a newly discovered repository is never trusted automatica
 - sprite sheets/atlases for 2D animation
 
 The repository starts deliberately small. Tooling is added only after validation.
+````
+
+## File: starlist_bridge.py
+````python
+"""Run dbrckk/star-list's recommender without duplicating its ranking logic."""
+script = star_list_root / "scripts" / "recommend.py"
+⋮----
+command = [
+⋮----
+completed = subprocess.run(
+⋮----
+detail = completed.stderr.strip() or completed.stdout.strip() or "unknown error"
+⋮----
+result = json.loads(completed.stdout)
+⋮----
+recommendations = result.get("recommendations")
+⋮----
+def build_visual_discovery_report(star_list_root: Path) -> dict
+⋮----
+tasks = {
+⋮----
+report = {
+⋮----
+result = run_starlist_recommender(
 ````

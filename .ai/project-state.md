@@ -42,20 +42,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T16:24:02Z
+Generated: 2026-09-18T16:25:18Z
 
 ### Git
 - Branch: `main`
-- Head: `11ee3e66fe20`
-- Commit date: 2026-09-18T18:23:45+02:00
-- Commit: docs: add optimization and Godot export workflow
-- Tracked files: 58
+- Head: `d804f1065875`
+- Commit date: 2026-09-18T18:25:08+02:00
+- Commit: docs: record Godot optimization and discovery milestone
+- Tracked files: 61
 
 ### Recently changed files
 - `README.md`
 - `.github/workflows/validate.yml`
-- `tests/test_raster_pack.py`
-- `tests/test_godot_export.py`
+- `tests/test_starlist_bridge.py`
+- `asset_forge.py`
+- `starlist_bridge.py`
 
 ### Project signals
 - No common build descriptor detected
