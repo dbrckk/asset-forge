@@ -439,6 +439,7 @@ def parser() -> argparse.ArgumentParser:
     godot.add_argument("--animation", default="default")
     godot.add_argument("--fps", type=float, default=12.0)
     godot.add_argument("--no-loop", action="store_true")
+    godot.add_argument("--animations", type=Path, help="JSON file defining multiple animations")
 
     discover = sub.add_parser("discover-tools", help="query dbrckk/star-list for visual tooling")
     discover.add_argument("star_list_root", type=Path)
@@ -494,6 +495,10 @@ def main() -> int:
     if args.command == "export-godot":
         try:
             metadata = load_json(args.metadata)
+            animations = None
+            if args.animations:
+                animation_config = load_json(args.animations)
+                animations = animation_config.get("animations")
             write_spriteframes(
                 output=args.output,
                 atlas_path=args.atlas_path,
@@ -501,6 +506,7 @@ def main() -> int:
                 animation_name=args.animation,
                 fps=args.fps,
                 loop=not args.no_loop,
+                animations=animations,
             )
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
