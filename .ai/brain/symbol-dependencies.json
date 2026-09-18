@@ -338,7 +338,7 @@
       "source": {
         "file": "asset_forge.py",
         "start": 363,
-        "end": 522
+        "end": 527
       },
       "symbol_dependencies": [],
       "dependency_count": 0
@@ -346,8 +346,8 @@
     "main": {
       "source": {
         "file": "asset_forge.py",
-        "start": 525,
-        "end": 866
+        "start": 530,
+        "end": 872
       },
       "symbol_dependencies": [
         {
@@ -559,7 +559,7 @@
           "definitions": [
             {
               "file": "raster_pack.py",
-              "line": 1294,
+              "line": 1374,
               "kind": "function",
               "language": "python"
             }
@@ -571,7 +571,7 @@
           "definitions": [
             {
               "file": "raster_pack.py",
-              "line": 1433,
+              "line": 1527,
               "kind": "function",
               "language": "python"
             }
@@ -1812,13 +1812,34 @@
       ],
       "dependency_count": 1
     },
-    "_pack_maxrects": {
+    "_maxrects_score": {
       "source": {
         "file": "raster_pack.py",
         "start": 1197,
-        "end": 1291
+        "end": 1210
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_pack_maxrects": {
+      "source": {
+        "file": "raster_pack.py",
+        "start": 1213,
+        "end": 1309
       },
       "symbol_dependencies": [
+        {
+          "symbol": "_maxrects_score",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1197,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
         {
           "symbol": "_prune_free_rects",
           "definitions": [
@@ -1844,13 +1865,35 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 2
+      "dependency_count": 3
+    },
+    "_choose_maxrects_layout": {
+      "source": {
+        "file": "raster_pack.py",
+        "start": 1319,
+        "end": 1371
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_pack_maxrects",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1213,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
     },
     "pack_compact_atlas": {
       "source": {
         "file": "raster_pack.py",
-        "start": 1294,
-        "end": 1430
+        "start": 1374,
+        "end": 1524
       },
       "symbol_dependencies": [
         {
@@ -1859,6 +1902,18 @@
             {
               "file": "raster_pack.py",
               "line": 974,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_choose_maxrects_layout",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1319,
               "kind": "function",
               "language": "python"
             }
@@ -1883,18 +1938,6 @@
             {
               "file": "raster_pack.py",
               "line": 1111,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_pack_maxrects",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 1197,
               "kind": "function",
               "language": "python"
             }
@@ -1943,8 +1986,8 @@
     "pack_uniform_atlas": {
       "source": {
         "file": "raster_pack.py",
-        "start": 1433,
-        "end": 1554
+        "start": 1527,
+        "end": 1648
       },
       "symbol_dependencies": [
         {
@@ -2127,7 +2170,7 @@
       "source": {
         "file": "tests/test_raster_pack.py",
         "start": 95,
-        "end": 1268
+        "end": 1334
       },
       "symbol_dependencies": [
         {
@@ -2243,7 +2286,7 @@
           "definitions": [
             {
               "file": "raster_pack.py",
-              "line": 1294,
+              "line": 1374,
               "kind": "function",
               "language": "python"
             }
@@ -2267,7 +2310,7 @@
           "definitions": [
             {
               "file": "raster_pack.py",
-              "line": 1433,
+              "line": 1527,
               "kind": "function",
               "language": "python"
             }
@@ -2371,6 +2414,30 @@
           "relation": "same_file"
         },
         {
+          "symbol": "test_compact_atlas_auto_selects_best_evaluated_heuristic",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 1270,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_compact_atlas_forced_heuristic_is_respected",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 1302,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
           "symbol": "test_compact_atlas_height_budget_is_enforced",
           "definitions": [
             {
@@ -2436,6 +2503,18 @@
             {
               "file": "tests/test_raster_pack.py",
               "line": 1256,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_compact_atlas_rejects_unknown_heuristic",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 1322,
               "kind": "function",
               "language": "python"
             }
@@ -2573,42 +2652,6 @@
             }
           ],
           "relation": "same_file"
-        },
-        {
-          "symbol": "test_grayscale_trns_out_of_range_is_rejected",
-          "definitions": [
-            {
-              "file": "tests/test_raster_pack.py",
-              "line": 600,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_hardened_inspector_reports_palette_and_transparency",
-          "definitions": [
-            {
-              "file": "tests/test_raster_pack.py",
-              "line": 358,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_indexed_1bit_png_decodes_to_rgba",
-          "definitions": [
-            {
-              "file": "tests/test_raster_pack.py",
-              "line": 384,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
         }
       ],
       "dependency_count": 40
@@ -2637,7 +2680,7 @@
           "definitions": [
             {
               "file": "raster_pack.py",
-              "line": 1433,
+              "line": 1527,
               "kind": "function",
               "language": "python"
             }
@@ -2671,7 +2714,7 @@
           "definitions": [
             {
               "file": "raster_pack.py",
-              "line": 1433,
+              "line": 1527,
               "kind": "function",
               "language": "python"
             }
@@ -2880,74 +2923,6 @@
         "file": "tests/test_raster_pack.py",
         "start": 214,
         "end": 233
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "chunk",
-          "definitions": [
-            {
-              "file": "tests/test_raster_pack.py",
-              "line": 24,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "decode_rgba",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 727,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "test_rejects_invalid_ihdr_length": {
-      "source": {
-        "file": "tests/test_raster_pack.py",
-        "start": 235,
-        "end": 245
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "chunk",
-          "definitions": [
-            {
-              "file": "tests/test_raster_pack.py",
-              "line": 24,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "decode_rgba",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 727,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "test_rejects_zero_dimensions": {
-      "source": {
-        "file": "tests/test_raster_pack.py",
-        "start": 247,
-        "end": 258
       },
       "symbol_dependencies": [
         {

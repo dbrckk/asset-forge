@@ -1853,6 +1853,18 @@ def test_compact_atlas_reports_wasted_pixels(self)
 def test_compact_atlas_minimum_occupancy_can_fail_build(self)
 ⋮----
 def test_compact_atlas_rejects_invalid_occupancy_threshold(self)
+⋮----
+def test_compact_atlas_auto_selects_best_evaluated_heuristic(self)
+⋮----
+sizes = [(7, 2), (5, 4), (4, 3), (3, 6), (2, 5), (2, 2)]
+⋮----
+evaluated = metadata["evaluatedHeuristics"]
+⋮----
+best = min(
+⋮----
+def test_compact_atlas_forced_heuristic_is_respected(self)
+⋮----
+def test_compact_atlas_rejects_unknown_heuristic(self)
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -3606,6 +3618,14 @@ def _prune_free_rects(rects: list[dict]) -> list[dict]
 ⋮----
 pruned = []
 ⋮----
+def _maxrects_score(free: dict, reserve_width: int, reserve_height: int, heuristic: str) -> tuple
+⋮----
+leftover_w = free["width"] - reserve_width
+leftover_h = free["height"] - reserve_height
+short_side = min(leftover_w, leftover_h)
+long_side = max(leftover_w, leftover_h)
+area_fit = free["width"] * free["height"] - reserve_width * reserve_height
+⋮----
 ordered = sorted(
 ⋮----
 total_height = sum(frame["height"] + extrude * 2 + padding for _, frame in ordered)
@@ -3619,9 +3639,6 @@ reserve_width = packed_width + padding
 reserve_height = packed_height + padding
 candidates = []
 ⋮----
-leftover_w = free["width"] - reserve_width
-leftover_h = free["height"] - reserve_height
-⋮----
 free = free_rects[free_index]
 used = {
 ⋮----
@@ -3631,6 +3648,13 @@ free_rects = _prune_free_rects(new_free)
 ⋮----
 content_width = max(
 content_height = max(
+⋮----
+MAXRECTS_HEURISTICS = (
+⋮----
+heuristics = MAXRECTS_HEURISTICS if heuristic == "auto" else (heuristic,)
+⋮----
+winner = min(
+evaluated = [
 ⋮----
 frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]
 ⋮----
@@ -4100,6 +4124,29 @@ python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
 ```
 
 If final atlas occupancy falls below the requested percentage, packing fails before the output PNG is written.
+
+
+### Automatic MaxRects heuristic selection
+
+`pack-atlas-compact` now supports:
+
+```text
+auto
+best-short-side-fit
+best-long-side-fit
+best-area-fit
+```
+
+The default `auto` mode evaluates all three deterministic MaxRects heuristics against the same prepared frames and selects the layout with the smallest content area, then smallest height, then smallest width. This optimizes atlas geometry, not compressed PNG byte size.
+
+Force a specific strategy when reproducibility against a known layout matters:
+
+```bash
+python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
+  --heuristic best-area-fit
+```
+
+Metadata records `requestedHeuristic`, `selectedHeuristic`, and an `evaluatedHeuristics` summary containing width, height, and content area for each evaluated strategy.
 ````
 
 ## File: starlist_bridge.py
