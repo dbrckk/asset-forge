@@ -6,7 +6,8 @@ Status: active
 - Repository is a central visual-asset production pipeline spanning raster 2D, SVG/vector, and 3D.
 - PNG validation/decoding/atlas/optimization and Godot animation export are implemented for common non-interlaced and Adam7-interlaced workflows.
 - Atlas packing supports optional transparent trim, original source offsets/dimensions, edge extrusion, deterministic MaxRects packing for variable-size PNG/WebP inputs, and explicit width/height/pixel/encoded-byte budgets.
-- Compact packing supports best-short-side-fit, best-long-side-fit, and best-area-fit; default auto mode evaluates all three and chooses the smallest content area with deterministic height/width/name tie-breakers.
+- Compact packing supports best-short-side-fit, best-long-side-fit, and best-area-fit; default auto mode renders/encodes all eligible candidates in memory and chooses the smallest encoded PNG, then atlas/content geometry with deterministic tie-breakers.
+- Auto heuristic selection is budget-aware for maxHeight/maxPixels/maxBytes and reuses the winning candidate's already-encoded PNG bytes for the final write.
 - Compact atlas metadata reports sprite/packed/content/atlas area, wasted pixels, and occupancy percentages; an optional minimum occupancy threshold can fail inefficient builds before output.
 - Godot SpriteFrames export now maps trim metadata to AtlasTexture.margin and validates atlas bounds/source-offset consistency before emitting resources.
 - PNG recompression is no-growth: the original bytes are retained whenever the adaptive candidate is not smaller, including in-place output.
@@ -65,7 +66,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Consider optional rotation only behind consumer capability flags, additional atlas consumers, and comparing geometric winner against actual compressed output cost while keeping trim/orientation metadata stable.
+- Consider optional rotation only behind consumer capability flags and additional atlas consumers while keeping trim/orientation metadata stable; compressed-size-aware heuristic selection is implemented.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -86,7 +87,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after adding automatic deterministic selection across three MaxRects heuristics with per-strategy audit metadata.
+- 2026-09-18: latest GitHub source inspected after making MaxRects auto selection encoded-PNG-size-aware, budget-aware, in-memory, and single-encode for the winner.
 
 <!-- AUTO:START -->
 ## Automatic repository state
