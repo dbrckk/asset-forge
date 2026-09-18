@@ -55,7 +55,7 @@ class SvgToolsTests(unittest.TestCase):
             )
             _, errors, _ = inspect_svg(path)
 
-        self.assertTrue(any("external references" in error for error in errors))
+        self.assertTrue(any("non-fragment references" in error for error in errors))
 
     def test_sanitize_removes_dangerous_content(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -152,6 +152,129 @@ class SvgToolsTests(unittest.TestCase):
 
         self.assertEqual(report["removedElements"], 1)
         self.assertNotIn("metadata", rendered)
+
+    def test_data_uri_reference_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bad.svg"
+            path.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
+                '<image href="data:image/png;base64,AAAA"/></svg>',
+                encoding="utf-8",
+            )
+            _, errors, _ = inspect_svg(path)
+
+        self.assertTrue(any("non-fragment references" in error for error in errors))
+
+    def test_relative_reference_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bad.svg"
+            path.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
+                '<image href="texture.png"/></svg>',
+                encoding="utf-8",
+            )
+            _, errors, _ = inspect_svg(path)
+
+        self.assertTrue(any("texture.png" in error for error in errors))
+
+    def test_internal_fragment_reference_is_allowed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "ok.svg"
+            path.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
+                '<defs><linearGradient id="g"/></defs>'
+                '<rect width="10" height="10" fill="url(#g)"/></svg>',
+                encoding="utf-8",
+            )
+            _, errors, _ = inspect_svg(path)
+
+        self.assertEqual(errors, [])
+
+    def test_css_external_url_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bad.svg"
+            path.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
+                '<rect style="fill:url(https://example.com/a.svg#x)" width="10" height="10"/>'
+                '</svg>',
+                encoding="utf-8",
+            )
+            _, errors, _ = inspect_svg(path)
+
+        self.assertTrue(any("unsafe CSS references" in error for error in errors))
+
+    def test_css_import_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bad.svg"
+            path.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
+                '<style>@import url("https://example.com/x.css");</style></svg>',
+                encoding="utf-8",
+            )
+            _, errors, _ = inspect_svg(path)
+
+        self.assertTrue(any("@import" in error for error in errors))
+
+    def test_sanitize_removes_unsafe_css(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "source.svg"
+            output = Path(tmp) / "clean.svg"
+            source.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
+                '<style>@import url("https://example.com/x.css");</style>'
+                '<rect style="fill:url(texture.svg#x)" width="10" height="10"/>'
+                '</svg>',
+                encoding="utf-8",
+            )
+            report = sanitize_svg(source, output)
+            _, errors, _ = inspect_svg(output)
+
+        self.assertEqual(errors, [])
+        self.assertGreaterEqual(report["removedElements"], 1)
+        self.assertGreaterEqual(report["removedAttributes"], 1)
+
+    def test_profile_depth_limit_is_blocking(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "deep.svg"
+            inner = '<rect width="1" height="1"/>'
+            for _ in range(40):
+                inner = f"<g>{inner}</g>"
+            path.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">'
+                + inner
+                + '</svg>',
+                encoding="utf-8",
+            )
+            info, errors, _ = validate_svg_profile(path, "icon")
+
+        self.assertGreater(info["maxDepth"], 32)
+        self.assertTrue(any("XML depth" in error for error in errors))
+
+    def test_profile_file_size_limit_is_blocking(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "large.svg"
+            payload = "x" * 270000
+            path.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">'
+                f"<desc>{payload}</desc></svg>",
+                encoding="utf-8",
+            )
+            info, errors, _ = validate_svg_profile(path, "icon")
+
+        self.assertGreater(info["bytes"], 262144)
+        self.assertTrue(any("file size" in error for error in errors))
+
+    def test_existing_malformed_viewbox_is_not_overwritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "source.svg"
+            output = Path(tmp) / "normalized.svg"
+            source.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="32" '
+                'viewBox="broken"></svg>',
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "existing viewBox is malformed"):
+                normalize_viewbox(source, output)
 
 
 if __name__ == "__main__":
