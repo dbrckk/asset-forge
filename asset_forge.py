@@ -11,6 +11,7 @@ import zlib
 from pathlib import Path
 
 from animation_infer import infer_animations
+from asset_profile_validation import validate_all_asset_profiles
 from engine_profile_validation import validate_all_godot_profiles
 from blender_adapter import build_blender_export_job, render_blender_command, write_blender_export_script, write_job_manifest
 from gltf_diagnostics import deep_gltf_diagnostics
@@ -519,6 +520,7 @@ def parser() -> argparse.ArgumentParser:
     godot_import.add_argument("--godot")
 
     engine_profiles = sub.add_parser("validate-engine-profiles", help="validate versioned engine handoff profiles")
+    asset_profiles = sub.add_parser("validate-asset-profiles", help="validate versioned 3D and vector asset profiles")
 
     blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
     blender_job.add_argument("source_blend", type=Path)
@@ -764,6 +766,10 @@ def main() -> int:
         return 0
     if args.command == "validate-engine-profiles":
         result = validate_all_godot_profiles(root)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["valid"] else 1
+    if args.command == "validate-asset-profiles":
+        result = validate_all_asset_profiles(root)
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0 if result["valid"] else 1
     if args.command == "quality-gltf":
