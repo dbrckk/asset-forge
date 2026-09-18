@@ -1820,6 +1820,39 @@ def test_atlas_byte_budget_preserves_existing_output(self)
 output = root / "atlas.png"
 ⋮----
 preserved = output.read_bytes()
+⋮----
+def test_compact_atlas_reports_occupancy_metrics(self)
+⋮----
+def test_compact_atlas_regions_do_not_overlap(self)
+⋮----
+paths = []
+⋮----
+path = root / f"{index}.png"
+⋮----
+frames = metadata["frames"]
+⋮----
+first_left = first["x"] - first["extrude"]
+first_top = first["y"] - first["extrude"]
+first_right = first["x"] + first["width"] + first["extrude"]
+first_bottom = first["y"] + first["height"] + first["extrude"]
+⋮----
+second_left = second["x"] - second["extrude"]
+second_top = second["y"] - second["extrude"]
+second_right = second["x"] + second["width"] + second["extrude"]
+second_bottom = second["y"] + second["height"] + second["extrude"]
+separated = (
+⋮----
+def test_maxrects_compacts_better_than_simple_shelf_case(self)
+⋮----
+sizes = [(6, 2), (4, 4), (2, 4), (2, 2)]
+⋮----
+simple_shelf_area = 8 * 8
+⋮----
+def test_compact_atlas_reports_wasted_pixels(self)
+⋮----
+def test_compact_atlas_minimum_occupancy_can_fail_build(self)
+⋮----
+def test_compact_atlas_rejects_invalid_occupancy_threshold(self)
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -3557,22 +3590,47 @@ pixels = width * height
 ⋮----
 def _next_power_of_two(value: int) -> int
 ⋮----
-def _pack_shelves(frames: list[dict], max_width: int, padding: int, extrude: int) -> tuple[list[dict], int, int]
+def _rects_intersect(a: dict, b: dict) -> bool
+⋮----
+def _rect_contains(outer: dict, inner: dict) -> bool
+⋮----
+def _split_free_rect(free: dict, used: dict) -> list[dict]
+⋮----
+result = []
+free_right = free["x"] + free["width"]
+free_bottom = free["y"] + free["height"]
+used_right = used["x"] + used["width"]
+used_bottom = used["y"] + used["height"]
+⋮----
+def _prune_free_rects(rects: list[dict]) -> list[dict]
+⋮----
+pruned = []
 ⋮----
 ordered = sorted(
+⋮----
+total_height = sum(frame["height"] + extrude * 2 + padding for _, frame in ordered)
+free_rects = [
 placements: list[dict] = []
-x = 0
-y = 0
-shelf_height = 0
-used_width = 0
 ⋮----
 packed_width = frame["width"] + extrude * 2
 packed_height = frame["height"] + extrude * 2
 ⋮----
-shelf_height = max(shelf_height, packed_height)
-used_width = max(used_width, x - padding)
+reserve_width = packed_width + padding
+reserve_height = packed_height + padding
+candidates = []
 ⋮----
-used_height = y + shelf_height
+leftover_w = free["width"] - reserve_width
+leftover_h = free["height"] - reserve_height
+⋮----
+free = free_rects[free_index]
+used = {
+⋮----
+new_free = []
+⋮----
+free_rects = _prune_free_rects(new_free)
+⋮----
+content_width = max(
+content_height = max(
 ⋮----
 frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]
 ⋮----
@@ -3581,6 +3639,10 @@ atlas_height = _next_power_of_two(content_height) if power_of_two else content_h
 ⋮----
 canvas = bytearray(atlas_width * atlas_height * 4)
 frames = []
+⋮----
+packed_area = sum(
+atlas_area = atlas_width * atlas_height
+occupancy = packed_area / atlas_area * 100.0
 ⋮----
 output_bytes = _write_atlas_png(
 ⋮----
@@ -4011,6 +4073,33 @@ python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
 ```
 
 Dimension/pixel limits are enforced before canvas allocation. The compressed byte budget is checked against the encoded PNG candidate before replacing the output file, so a failed budget check preserves any existing atlas.
+
+
+### MaxRects compact packing and occupancy
+
+`pack-atlas-compact` now uses deterministic MaxRects placement with a best-short-side-fit heuristic instead of shelf packing. Rotation remains disabled, so existing atlas consumers keep stable orientation semantics.
+
+Compact atlas metadata reports:
+
+```text
+spriteArea
+packedArea
+contentArea
+atlasArea
+wastedPixels
+contentOccupancyPercent
+atlasOccupancyPercent
+```
+
+A minimum occupancy can be enforced in CI:
+
+```bash
+python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
+  --max-width 2048 \
+  --min-occupancy 70
+```
+
+If final atlas occupancy falls below the requested percentage, packing fails before the output PNG is written.
 ````
 
 ## File: starlist_bridge.py

@@ -90,20 +90,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T20:41:33Z
+Generated: 2026-09-18T20:44:06Z
 
 ### Git
 - Branch: `main`
-- Head: `6a7a7995df6b`
-- Commit date: 2026-09-18T22:41:18+02:00
-- Commit: docs: record Godot trim export and atlas budget milestone
+- Head: `637c2793dba4`
+- Commit date: 2026-09-18T22:43:50+02:00
+- Commit: docs: record MaxRects atlas packing milestone
 - Tracked files: 187
 
 ### Recently changed files
 - `README.md`
 - `tests/test_raster_pack.py`
-- `raster_pack.py`
 - `asset_forge.py`
+- `raster_pack.py`
 
 ### Project signals
 - No common build descriptor detected
