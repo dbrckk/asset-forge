@@ -43,6 +43,14 @@ Generate uniform-grid atlas metadata:
 python asset_forge.py atlas-manifest examples/asset-manifest.json path/to/sprite.png --output build/sprite.atlas.json
 ```
 
+Pack separate equal-size PNG frames into a real atlas image plus metadata:
+
+```bash
+python asset_forge.py pack-atlas build/atlas.png frames/*.png --metadata build/atlas.json --padding 1 --power-of-two
+```
+
+The built-in packer currently supports non-interlaced 8-bit RGB/RGBA PNG inputs and implements all five standard PNG scanline filters. It writes an RGBA PNG atlas without external image libraries.
+
 Run the offline test suite:
 
 ```bash
