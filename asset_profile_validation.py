@@ -29,6 +29,8 @@ VECTOR_RULE_TYPES = {
     "maxElements": int,
     "allowExternalReferences": bool,
     "removeMetadata": bool,
+    "maxBytes": int,
+    "maxDepth": int,
 }
 
 
@@ -135,9 +137,10 @@ def validate_vector_profile_data(data: dict, expected_profile: str | None = None
     rules = data.get("rules")
     errors.extend(_validate_rule_types(rules, VECTOR_RULE_TYPES, "rules"))
     if isinstance(rules, dict):
-        max_elements = rules.get("maxElements")
-        if type(max_elements) is int and max_elements <= 0:
-            errors.append("rules.maxElements: must be > 0")
+        for key in ("maxElements", "maxBytes", "maxDepth"):
+            value = rules.get(key)
+            if type(value) is int and value <= 0:
+                errors.append(f"rules.{key}: must be > 0")
     return errors
 
 
