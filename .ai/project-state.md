@@ -6,6 +6,9 @@ Status: active
 - Repository is a central visual-asset production pipeline spanning raster 2D, SVG/vector, and 3D.
 - PNG validation/decoding/atlas/optimization and Godot animation export are implemented for common 8-bit non-interlaced workflows.
 - SVG/vector pipeline validates, sanitizes, normalizes viewBox, removes metadata, and applies icon/ui/logo profiles.
+- SVG reference policy now accepts internal fragments only; remote, relative, data URI, CSS @import, and non-fragment CSS url(...) references are rejected or removed by sanitization.
+- Vector profiles enforce blocking maxElements/maxBytes/maxDepth budgets, with additional absolute byte/element/depth safety ceilings before recursive processing.
+- normalize-svg now rejects malformed existing viewBox values instead of overwriting them.
 - glTF/GLB structural inspection validates container/version/core arrays and core index references.
 - glTF quality reporting measures accessor-derived vertices/triangles, primitive coverage for normals/UVs/tangents/skinning, PBR texture usage, image embedding/externality, materials, and textures.
 - Binary-aware 3D metrics read locally available PNG/JPEG/WebP image dimensions, estimate decoded RGBA8 texture memory with mipmaps, and do not fetch remote URLs.
@@ -36,6 +39,7 @@ Status: active
 - PNG decoding still does not support 16-bit or interlaced PNGs.
 - WebP raster output is not implemented yet.
 - SVG geometric path simplification and raster preview generation are not implemented yet.
+- SVG CSS parsing is intentionally lightweight rather than a full CSS parser; current safety logic targets @import and url(...) references.
 - Internal glTF validation is still intentionally narrower than Khronos glTF Validator's full specification validation.
 - Blender execution itself requires a Blender runtime and cannot be exercised in this ChatGPT environment.
 - External glTF optimization requires glTF Transform or gltfpack on the execution host.
@@ -45,7 +49,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Continue profile hardening by applying the same schema/runtime single-source approach to remaining configuration files, then return to feature gaps such as SVG resource caps and PNG/WebP support.
+- Return to raster gaps: strengthen PNG parser bounds/decompression safety, then add broader PNG/WebP support.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -66,7 +70,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after making 3D quality and vector profile JSON files runtime sources of truth with schema-style validation and CI enforcement.
+- 2026-09-18: latest GitHub source inspected after SVG reference hardening, resource caps, sanitizer CSS handling, and malformed-viewBox protection.
 
 <!-- AUTO:START -->
 ## Automatic repository state
