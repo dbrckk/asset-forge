@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from gltf_binary_metrics import inspect_images, inspect_rig_and_animation
 from gltf_tools import load_gltf_json
 
 
@@ -213,6 +214,20 @@ def build_quality_report(path: Path) -> dict:
             else:
                 external_images += 1
 
+    image_metrics = inspect_images(path)
+    rig_animation = inspect_rig_and_animation(path)
+    known_image_dimensions = [item for item in image_metrics if item.get("width") and item.get("height")]
+    estimated_texture_bytes = sum(
+        int(item.get("estimatedRgba8Bytes") or 0)
+        for item in known_image_dimensions
+    )
+    estimated_texture_mip_bytes = sum(
+        int(item.get("estimatedRgba8MipBytes") or 0)
+        for item in known_image_dimensions
+    )
+    max_texture_width = max((int(item["width"]) for item in known_image_dimensions), default=0)
+    max_texture_height = max((int(item["height"]) for item in known_image_dimensions), default=0)
+
     return {
         "file": str(path),
         "container": container,
@@ -253,7 +268,14 @@ def build_quality_report(path: Path) -> dict:
             "embeddedImages": embedded_images,
             "dataUriImages": data_uri_images,
             "externalImages": external_images,
+            "knownDimensions": len(known_image_dimensions),
+            "maxWidth": max_texture_width,
+            "maxHeight": max_texture_height,
+            "estimatedRgba8Bytes": estimated_texture_bytes,
+            "estimatedRgba8MipBytes": estimated_texture_mip_bytes,
+            "items": image_metrics,
         },
+        "rigAnimation": rig_animation,
     }
 
 
