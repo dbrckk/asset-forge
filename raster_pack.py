@@ -134,23 +134,91 @@ def _chunk(kind: bytes, payload: bytes) -> bytes:
     )
 
 
-def encode_rgba(path: Path, width: int, height: int, pixels: bytes) -> None:
+def _filter_row(row: bytes, previous: bytes, bpp: int, filter_type: int) -> bytes:
+    output = bytearray(len(row))
+    for index, value in enumerate(row):
+        left = row[index - bpp] if index >= bpp else 0
+        above = previous[index]
+        upper_left = previous[index - bpp] if index >= bpp else 0
+
+        if filter_type == 0:
+            predictor = 0
+        elif filter_type == 1:
+            predictor = left
+        elif filter_type == 2:
+            predictor = above
+        elif filter_type == 3:
+            predictor = (left + above) // 2
+        elif filter_type == 4:
+            predictor = _paeth(left, above, upper_left)
+        else:
+            raise ValueError(f"unsupported PNG filter {filter_type}")
+
+        output[index] = (value - predictor) & 255
+    return bytes(output)
+
+
+def _filter_score(filtered: bytes) -> int:
+    return sum(abs(value if value < 128 else value - 256) for value in filtered)
+
+
+def _png_bytes_rgba(width: int, height: int, pixels: bytes, adaptive: bool = True) -> bytes:
     if len(pixels) != width * height * 4:
         raise ValueError("RGBA buffer size mismatch")
 
-    rows = []
+    rows: list[bytes] = []
+    previous = bytes(width * 4)
+
     for y in range(height):
         start = y * width * 4
-        rows.append(b"\x00" + pixels[start : start + width * 4])
+        row = pixels[start : start + width * 4]
+
+        if adaptive:
+            candidates = [(_filter_row(row, previous, 4, filter_type), filter_type) for filter_type in range(5)]
+            filtered, filter_type = min(candidates, key=lambda item: _filter_score(item[0]))
+        else:
+            filter_type = 0
+            filtered = row
+
+        rows.append(bytes([filter_type]) + filtered)
+        previous = row
 
     ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(
+    return (
         PNG_SIGNATURE
         + _chunk(b"IHDR", ihdr)
         + _chunk(b"IDAT", zlib.compress(b"".join(rows), 9))
         + _chunk(b"IEND", b"")
     )
+
+
+def encode_rgba(
+    path: Path,
+    width: int,
+    height: int,
+    pixels: bytes,
+    adaptive: bool = True,
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(_png_bytes_rgba(width, height, pixels, adaptive=adaptive))
+
+
+def recompress_png(input_path: Path, output_path: Path) -> dict:
+    """Losslessly recompress supported PNG image pixels as optimized RGBA."""
+    before = input_path.stat().st_size
+    width, height, pixels = decode_rgba(input_path)
+    encode_rgba(output_path, width, height, pixels, adaptive=True)
+    after = output_path.stat().st_size
+    return {
+        "input": str(input_path),
+        "output": str(output_path),
+        "width": width,
+        "height": height,
+        "beforeBytes": before,
+        "afterBytes": after,
+        "savedBytes": before - after,
+        "savedPercent": round(((before - after) / before * 100.0), 2) if before else 0.0,
+    }
 
 
 def _next_power_of_two(value: int) -> int:
@@ -216,7 +284,7 @@ def pack_uniform_atlas(
             }
         )
 
-    encode_rgba(output, atlas_width, atlas_height, bytes(canvas))
+    encode_rgba(output, atlas_width, atlas_height, bytes(canvas), adaptive=True)
 
     return {
         "image": output.name,
