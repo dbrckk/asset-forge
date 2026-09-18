@@ -20,7 +20,7 @@ from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_3d_delivery import godot_3d_delivery_report
 from godot_handoff import prepare_godot_handoff, validate_godot_handoff
 from godot_export import write_spriteframes
-from raster_pack import pack_uniform_atlas, recompress_png
+from raster_pack import inspect_png, pack_uniform_atlas, recompress_png
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
 from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline
 from svg_tools import inspect_svg, normalize_viewbox, sanitize_svg, validate_svg_profile
@@ -130,77 +130,6 @@ def validate_manifest(manifest: dict) -> list[str]:
 
 def is_power_of_two(value: int) -> bool:
     return value > 0 and (value & (value - 1)) == 0
-
-
-def parse_png_chunks(data: bytes) -> list[tuple[bytes, bytes]]:
-    if len(data) < 33 or data[:8] != PNG_SIGNATURE:
-        raise ValueError("file is not a valid PNG")
-
-    chunks: list[tuple[bytes, bytes]] = []
-    offset = 8
-    saw_iend = False
-
-    while offset < len(data):
-        if offset + 12 > len(data):
-            raise ValueError("PNG contains a truncated chunk header")
-        length = struct.unpack(">I", data[offset : offset + 4])[0]
-        kind = data[offset + 4 : offset + 8]
-        end = offset + 12 + length
-        if end > len(data):
-            raise ValueError(f"PNG chunk {kind.decode('latin1')} is truncated")
-        payload = data[offset + 8 : offset + 8 + length]
-        expected_crc = struct.unpack(">I", data[offset + 8 + length : end])[0]
-        actual_crc = zlib.crc32(kind + payload) & 0xFFFFFFFF
-        if expected_crc != actual_crc:
-            raise ValueError(f"PNG chunk {kind.decode('latin1')} has invalid CRC")
-        chunks.append((kind, payload))
-        offset = end
-        if kind == b"IEND":
-            saw_iend = True
-            break
-
-    if not saw_iend:
-        raise ValueError("PNG is missing IEND")
-    return chunks
-
-
-def inspect_png(path: Path) -> dict:
-    data = path.read_bytes()
-    chunks = parse_png_chunks(data)
-    if not chunks or chunks[0][0] != b"IHDR" or len(chunks[0][1]) != 13:
-        raise ValueError("PNG is missing a valid IHDR chunk")
-
-    width, height, bit_depth, color_type, compression, filtering, interlace = struct.unpack(
-        ">IIBBBBB", chunks[0][1]
-    )
-    palette_entries = None
-    has_trns = False
-    idat_bytes = 0
-
-    for kind, payload in chunks[1:]:
-        if kind == b"PLTE":
-            if len(payload) % 3 != 0:
-                raise ValueError("PNG PLTE chunk length must be divisible by 3")
-            palette_entries = len(payload) // 3
-        elif kind == b"tRNS":
-            has_trns = True
-        elif kind == b"IDAT":
-            idat_bytes += len(payload)
-
-    has_alpha = color_type in {4, 6} or has_trns
-    return {
-        "width": width,
-        "height": height,
-        "bitDepth": bit_depth,
-        "colorType": color_type,
-        "hasAlpha": has_alpha,
-        "paletteEntries": palette_entries,
-        "compressedImageBytes": idat_bytes,
-        "compression": compression,
-        "filter": filtering,
-        "interlace": interlace,
-        "bytes": len(data),
-    }
 
 
 def sprite_grid(info: dict, constraints: dict) -> dict:
