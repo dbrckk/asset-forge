@@ -912,7 +912,7 @@ def recompress_png(input_path: Path, output_path: Path) -> dict:
     width, height, pixels = decode_rgba(input_path)
     candidate = _png_bytes_rgba(width, height, pixels, adaptive=True)
 
-    kept_optimized = len(candidate) < before or input_path.resolve() == output_path.resolve()
+    kept_optimized = len(candidate) < before
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_bytes(candidate if kept_optimized else source_bytes)
 
