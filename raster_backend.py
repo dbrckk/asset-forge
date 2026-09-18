@@ -66,3 +66,45 @@ def decode_webp_rgba(path: Path, *, expected_width: int, expected_height: int) -
     if len(pixels) != expected_bytes:
         raise ValueError("decoded WebP RGBA buffer size mismatch")
     return expected_width, expected_height, pixels
+
+
+def encode_webp_rgba(
+    path: Path,
+    width: int,
+    height: int,
+    pixels: bytes,
+    *,
+    lossless: bool = True,
+    quality: int = 90,
+    method: int = 6,
+    exact: bool = True,
+) -> None:
+    status = detect_pillow_webp()
+    if not status["available"]:
+        raise ValueError(
+            "WebP pixel encoding requires optional Pillow with libwebp support"
+        )
+    if width <= 0 or height <= 0:
+        raise ValueError("WebP width and height must be > 0")
+    if len(pixels) != width * height * 4:
+        raise ValueError("RGBA buffer size mismatch")
+    if not isinstance(quality, int) or not 0 <= quality <= 100:
+        raise ValueError("WebP quality must be between 0 and 100")
+    if not isinstance(method, int) or not 0 <= method <= 6:
+        raise ValueError("WebP method must be between 0 and 6")
+
+    from PIL import Image
+
+    image = Image.frombytes("RGBA", (width, height), pixels)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        image.save(
+            path,
+            "WEBP",
+            lossless=lossless,
+            quality=quality,
+            method=method,
+            exact=exact,
+        )
+    except Exception as exc:
+        raise ValueError(f"WebP encode failed: {exc}") from exc
