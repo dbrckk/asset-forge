@@ -251,9 +251,25 @@ python asset_forge.py validate-godot-3d character.glb \
   --output build/godot4-delivery.json
 ```
 
+Prepare a self-contained Godot handoff project:
+
+```bash
+python asset_forge.py prepare-godot-handoff character.glb build/handoff \
+  --profile character \
+  --delivery-report build/godot4-delivery.json
+```
+
+If a Godot editor executable is installed, validate the generated project with Godot's headless importer:
+
+```bash
+python asset_forge.py validate-godot-handoff build/handoff/godot-handoff
+```
+
+The generated handoff contains a minimal `project.godot`, a copied GLB under `assets/`, `handoff.json` with import recommendations, and a short README. When Godot is available, validation runs the documented headless `--import` workflow.
+
 The Godot delivery report checks glTF 2.0 suitability, stable/duplicate names, Godot import suffix hints, animation naming, PBR materials, double-sided materials, normal-map tangents, remote/external images, and the existing 3D quality profile.
 
-The generated chain is Blender export → internal structural validation → quality/budget report → optional Khronos validation → optional optimization → post-optimization structural validation → final quality report. With `--engine godot4`, a final Godot delivery gate is appended. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
+The generated chain is Blender export → internal structural validation → quality/budget report → optional Khronos validation → optional optimization → post-optimization structural validation → final quality report. With `--engine godot4`, a final Godot delivery gate is appended; after a successful run, Asset Forge also creates a self-contained Godot handoff project and attempts a headless Godot import check when the editor executable is available. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
 
 A completed run also writes `production-report.json`, which records step status and compares raw vs final vertices, triangles, and file bytes when both quality reports are available.
 
