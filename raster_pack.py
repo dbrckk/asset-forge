@@ -386,9 +386,9 @@ def _chunk(kind: bytes, payload: bytes) -> bytes:
 def _filter_row(row: bytes, previous: bytes, bpp: int, filter_type: int) -> bytes:
     output = bytearray(len(row))
     for index, value in enumerate(row):
-        left = row[index - filter_bpp] if index >= filter_bpp else 0
+        left = row[index - bpp] if index >= bpp else 0
         above = previous[index]
-        upper_left = previous[index - filter_bpp] if index >= filter_bpp else 0
+        upper_left = previous[index - bpp] if index >= bpp else 0
 
         if filter_type == 0:
             predictor = 0
