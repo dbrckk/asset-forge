@@ -10,7 +10,8 @@ import sys
 import zlib
 from pathlib import Path
 
-from raster_pack import pack_uniform_atlas
+from godot_export import write_spriteframes
+from raster_pack import pack_uniform_atlas, recompress_png
 
 PIPELINES = {
     "sprite": "pipelines/sprite-2d.json",
@@ -425,6 +426,18 @@ def parser() -> argparse.ArgumentParser:
     pack.add_argument("--columns", type=int)
     pack.add_argument("--padding", type=int, default=0)
     pack.add_argument("--power-of-two", action="store_true")
+
+    optimize = sub.add_parser("optimize-png", help="losslessly recompress a supported PNG")
+    optimize.add_argument("input", type=Path)
+    optimize.add_argument("output", type=Path)
+
+    godot = sub.add_parser("export-godot", help="export Godot 4 SpriteFrames .tres from atlas metadata")
+    godot.add_argument("metadata", type=Path)
+    godot.add_argument("output", type=Path)
+    godot.add_argument("--atlas-path", required=True)
+    godot.add_argument("--animation", default="default")
+    godot.add_argument("--fps", type=float, default=12.0)
+    godot.add_argument("--no-loop", action="store_true")
     return result
 
 
@@ -459,6 +472,30 @@ def main() -> int:
             print(str(args.metadata))
         else:
             print(rendered, end="")
+        return 0
+    if args.command == "optimize-png":
+        try:
+            result = recompress_png(args.input, args.output)
+        except (OSError, ValueError, zlib.error) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+    if args.command == "export-godot":
+        try:
+            metadata = load_json(args.metadata)
+            write_spriteframes(
+                output=args.output,
+                atlas_path=args.atlas_path,
+                atlas_metadata=metadata,
+                animation_name=args.animation,
+                fps=args.fps,
+                loop=not args.no_loop,
+            )
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        print(str(args.output))
         return 0
     return 2
 
