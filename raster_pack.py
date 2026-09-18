@@ -923,6 +923,135 @@ def recompress_png(input_path: Path, output_path: Path) -> dict:
     }
 
 
+def _alpha_bounds(width: int, height: int, pixels: bytes) -> tuple[int, int, int, int] | None:
+    min_x = width
+    min_y = height
+    max_x = -1
+    max_y = -1
+    for y in range(height):
+        for x in range(width):
+            alpha = pixels[(y * width + x) * 4 + 3]
+            if alpha:
+                min_x = min(min_x, x)
+                min_y = min(min_y, y)
+                max_x = max(max_x, x)
+                max_y = max(max_y, y)
+    if max_x < min_x or max_y < min_y:
+        return None
+    return min_x, min_y, max_x + 1, max_y + 1
+
+
+def _crop_rgba(
+    width: int,
+    height: int,
+    pixels: bytes,
+    bounds: tuple[int, int, int, int] | None,
+) -> tuple[int, int, bytes, int, int]:
+    if bounds is None:
+        return 1, 1, bytes([0, 0, 0, 0]), 0, 0
+    left, top, right, bottom = bounds
+    cropped_width = right - left
+    cropped_height = bottom - top
+    cropped = bytearray(cropped_width * cropped_height * 4)
+    for y in range(cropped_height):
+        source_start = ((top + y) * width + left) * 4
+        source_end = source_start + cropped_width * 4
+        destination_start = y * cropped_width * 4
+        cropped[destination_start : destination_start + cropped_width * 4] = pixels[
+            source_start:source_end
+        ]
+    return cropped_width, cropped_height, bytes(cropped), left, top
+
+
+def _blit_rgba(
+    canvas: bytearray,
+    atlas_width: int,
+    x: int,
+    y: int,
+    width: int,
+    height: int,
+    pixels: bytes,
+) -> None:
+    for source_y in range(height):
+        source_start = source_y * width * 4
+        destination_start = ((y + source_y) * atlas_width + x) * 4
+        canvas[destination_start : destination_start + width * 4] = pixels[
+            source_start : source_start + width * 4
+        ]
+
+
+def _extrude_rgba(
+    canvas: bytearray,
+    atlas_width: int,
+    atlas_height: int,
+    x: int,
+    y: int,
+    width: int,
+    height: int,
+    amount: int,
+) -> None:
+    if amount <= 0:
+        return
+
+    for offset in range(1, amount + 1):
+        left_x = x - offset
+        right_x = x + width - 1 + offset
+        if left_x >= 0:
+            for row in range(height):
+                src = ((y + row) * atlas_width + x) * 4
+                dst = ((y + row) * atlas_width + left_x) * 4
+                canvas[dst : dst + 4] = canvas[src : src + 4]
+        if right_x < atlas_width:
+            for row in range(height):
+                src = ((y + row) * atlas_width + x + width - 1) * 4
+                dst = ((y + row) * atlas_width + right_x) * 4
+                canvas[dst : dst + 4] = canvas[src : src + 4]
+
+        top_y = y - offset
+        bottom_y = y + height - 1 + offset
+        if top_y >= 0:
+            for column in range(-amount, width + amount):
+                tx = x + column
+                if 0 <= tx < atlas_width:
+                    src_x = min(max(tx, x), x + width - 1)
+                    src = (y * atlas_width + src_x) * 4
+                    dst = (top_y * atlas_width + tx) * 4
+                    canvas[dst : dst + 4] = canvas[src : src + 4]
+        if bottom_y < atlas_height:
+            for column in range(-amount, width + amount):
+                tx = x + column
+                if 0 <= tx < atlas_width:
+                    src_x = min(max(tx, x), x + width - 1)
+                    src = ((y + height - 1) * atlas_width + src_x) * 4
+                    dst = (bottom_y * atlas_width + tx) * 4
+                    canvas[dst : dst + 4] = canvas[src : src + 4]
+
+
+def _prepare_frame(path: Path, trim: bool) -> dict:
+    source_width, source_height, pixels = decode_raster_rgba(path)
+    if trim:
+        bounds = _alpha_bounds(source_width, source_height, pixels)
+        width, height, pixels, offset_x, offset_y = _crop_rgba(
+            source_width,
+            source_height,
+            pixels,
+            bounds,
+        )
+    else:
+        width, height = source_width, source_height
+        offset_x = offset_y = 0
+    return {
+        "path": path,
+        "sourceWidth": source_width,
+        "sourceHeight": source_height,
+        "width": width,
+        "height": height,
+        "offsetX": offset_x,
+        "offsetY": offset_y,
+        "pixels": pixels,
+    }
+
+
 def _next_power_of_two(value: int) -> int:
     if value <= 1:
         return 1
@@ -935,26 +1064,37 @@ def pack_uniform_atlas(
     columns: int | None = None,
     padding: int = 0,
     power_of_two: bool = False,
+    *,
+    trim: bool = False,
+    extrude: int = 0,
 ) -> dict:
     if not inputs:
         raise ValueError("at least one input PNG is required")
     if padding < 0:
         raise ValueError("padding must be >= 0")
+    if extrude < 0:
+        raise ValueError("extrude must be >= 0")
 
-    decoded = [decode_raster_rgba(Path(path)) for path in inputs]
-    frame_width, frame_height = decoded[0][0], decoded[0][1]
+    frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]
+    frame_width, frame_height = frames_data[0]["width"], frames_data[0]["height"]
 
-    if any((width, height) != (frame_width, frame_height) for width, height, _ in decoded):
-        raise ValueError("all frames must have identical dimensions")
+    if any(
+        (frame["width"], frame["height"]) != (frame_width, frame_height)
+        for frame in frames_data
+    ):
+        raise ValueError("all prepared frames must have identical dimensions")
 
-    frame_count = len(decoded)
+    frame_count = len(frames_data)
     column_count = columns or math.ceil(math.sqrt(frame_count))
     if column_count <= 0:
         raise ValueError("columns must be > 0")
 
     row_count = math.ceil(frame_count / column_count)
-    content_width = column_count * frame_width + max(0, column_count - 1) * padding
-    content_height = row_count * frame_height + max(0, row_count - 1) * padding
+    cell_width = frame_width + extrude * 2
+    cell_height = frame_height + extrude * 2
+    gap = padding
+    content_width = column_count * cell_width + max(0, column_count - 1) * gap
+    content_height = row_count * cell_height + max(0, row_count - 1) * gap
 
     atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
     atlas_height = _next_power_of_two(content_height) if power_of_two else content_height
@@ -962,18 +1102,33 @@ def pack_uniform_atlas(
     canvas = bytearray(atlas_width * atlas_height * 4)
     frames = []
 
-    for index, (_, _, pixels) in enumerate(decoded):
+    for index, frame in enumerate(frames_data):
         column = index % column_count
         row = index // column_count
-        x = column * (frame_width + padding)
-        y = row * (frame_height + padding)
+        cell_x = column * (cell_width + gap)
+        cell_y = row * (cell_height + gap)
+        x = cell_x + extrude
+        y = cell_y + extrude
 
-        for source_y in range(frame_height):
-            source_start = source_y * frame_width * 4
-            destination_start = ((y + source_y) * atlas_width + x) * 4
-            canvas[destination_start : destination_start + frame_width * 4] = pixels[
-                source_start : source_start + frame_width * 4
-            ]
+        _blit_rgba(
+            canvas,
+            atlas_width,
+            x,
+            y,
+            frame_width,
+            frame_height,
+            frame["pixels"],
+        )
+        _extrude_rgba(
+            canvas,
+            atlas_width,
+            atlas_height,
+            x,
+            y,
+            frame_width,
+            frame_height,
+            extrude,
+        )
 
         frames.append(
             {
@@ -983,6 +1138,12 @@ def pack_uniform_atlas(
                 "y": y,
                 "width": frame_width,
                 "height": frame_height,
+                "sourceWidth": frame["sourceWidth"],
+                "sourceHeight": frame["sourceHeight"],
+                "offsetX": frame["offsetX"],
+                "offsetY": frame["offsetY"],
+                "trimmed": trim,
+                "extrude": extrude,
             }
         )
 
@@ -998,5 +1159,7 @@ def pack_uniform_atlas(
         "rows": row_count,
         "frameCount": frame_count,
         "padding": padding,
+        "trim": trim,
+        "extrude": extrude,
         "frames": frames,
     }
