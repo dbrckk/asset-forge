@@ -382,3 +382,24 @@ python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
 The compact packer sorts by height/width for placement but restores original input order in metadata. Rotation is intentionally not implemented yet. Consumers that need original untrimmed positioning must use the source dimension/offset metadata; the existing simple Godot SpriteFrames export still consumes atlas regions only.
 
 PNG optimization is now no-growth: `optimize-png` keeps the original bytes whenever the recompressed candidate is not smaller, including in-place optimization.
+
+
+### Godot export for trimmed atlases
+
+Trimmed atlas metadata is now mapped to Godot 4 `AtlasTexture.margin`. The atlas `region` remains the trimmed rectangle, while `margin = Rect2(offsetX, offsetY, sourceWidth - width, sourceHeight - height)` restores the original logical sprite size. Atlas bounds and trim/source consistency are validated before rendering the `.tres`.
+
+### Atlas budgets
+
+Both atlas packers accept explicit production budgets:
+
+```bash
+python asset_forge.py pack-atlas build/atlas.png frames/*.png \
+  --max-width 2048 --max-height 2048 \
+  --max-pixels 4194304 --max-bytes 8388608
+
+python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
+  --max-width 2048 --max-height 2048 \
+  --max-pixels 4194304 --max-bytes 8388608
+```
+
+Dimension/pixel limits are enforced before canvas allocation. The compressed byte budget is checked against the encoded PNG candidate before replacing the output file, so a failed budget check preserves any existing atlas.
