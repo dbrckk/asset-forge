@@ -10,6 +10,7 @@ import sys
 import zlib
 from pathlib import Path
 
+from animation_infer import infer_animations
 from godot_export import write_spriteframes
 from raster_pack import pack_uniform_atlas, recompress_png
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
@@ -449,6 +450,12 @@ def parser() -> argparse.ArgumentParser:
     discover.add_argument("--max-complexity", choices=["low", "medium", "high"], default="medium")
     discover.add_argument("--full-report", action="store_true")
     discover.add_argument("--output", type=Path)
+
+    infer = sub.add_parser("infer-animations", help="infer animation groups from atlas frame filenames")
+    infer.add_argument("metadata", type=Path)
+    infer.add_argument("--fps", type=float, default=12.0)
+    infer.add_argument("--no-loop", action="store_true")
+    infer.add_argument("--output", type=Path)
     return result
 
 
@@ -528,6 +535,25 @@ def main() -> int:
                     max_complexity=args.max_complexity,
                 )
         except (OSError, ValueError, RuntimeError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
+        if args.output:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(rendered, encoding="utf-8")
+            print(str(args.output))
+        else:
+            print(rendered, end="")
+        return 0
+    if args.command == "infer-animations":
+        try:
+            metadata = load_json(args.metadata)
+            result = infer_animations(
+                metadata,
+                default_fps=args.fps,
+                default_loop=not args.no_loop,
+            )
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
         rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
