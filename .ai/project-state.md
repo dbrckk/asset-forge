@@ -4,26 +4,35 @@ Status: active
 
 ## Working
 - Repository initialized as a central 2D/3D visual asset production pipeline.
-- Dependency-free Python CLI validates asset manifests.
-- CLI builds deterministic production plans and routes supported asset types to 2D/3D pipelines.
-- Initial tool registry, manifest schema, example manifest, unit tests, CI, and repo-standards adoption are present.
+- Dependency-free Python CLI validates manifests and builds deterministic production plans.
+- PNG validation covers integrity/CRC, transparency, palette metadata, budgets, sprite grids, frame counts, and optional power-of-two atlas rules.
+- CLI emits uniform-grid atlas metadata.
+- Dependency-free atlas packer decodes non-interlaced 8-bit RGB/RGBA PNGs, supports PNG filters 0-4, assembles equal-size frames, adds optional padding/power-of-two expansion, writes an RGBA PNG atlas, and returns frame metadata.
+- Atlas packer core was executed successfully in this runtime on synthetic RGBA frames.
+- Initial tool registry, manifest schema, unit tests, CI, and repo-standards adoption are present.
 
 ## Broken / blockers
 - star-list currently has no indexed matches for the first visual-production keywords checked.
-- Real backend adapters for Blender/vector/raster/atlas operations are not implemented yet.
-- Current GitHub status endpoint has not yet surfaced a CI status for the latest workflow commit.
+- PNG atlas packing does not yet support indexed-color, grayscale, 16-bit, or interlaced inputs.
+- PNG/WebP optimization backend is not implemented yet.
+- Real Blender/vector backends are not implemented yet.
+- Direct git clone from this ChatGPT runtime is blocked by DNS.
+- GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository test suite is not yet independently confirmed here.
 
 ## Current priority
-- Implement real raster/sprite inspection and atlas validation, then add discovery integration with star-list.
+- Harden atlas packing/import formats and add optimization, then integrate tool discovery with star-list.
 
 ## Validation
-- `python -m compileall -q asset_forge.py tests`
+- `python -m compileall -q asset_forge.py raster_pack.py tests`
 - `python -m unittest discover -s tests -v`
 - `python asset_forge.py validate examples/asset-manifest.json`
 - `python asset_forge.py plan examples/asset-manifest.json`
+- `python asset_forge.py validate-raster <manifest.json> <sprite.png>`
+- `python asset_forge.py atlas-manifest <manifest.json> <sprite.png> --output <atlas.json>`
+- `python asset_forge.py pack-atlas <atlas.png> <frames...> --metadata <atlas.json> [--padding N] [--power-of-two]`
 
 ## Last verified
-- 2026-09-18: executable bootstrap committed on main.
+- 2026-09-18: atlas packer core executed locally on synthetic RGBA frames; GitHub source re-read after integration.
 
 <!-- AUTO:START -->
 ## Automatic repository state
