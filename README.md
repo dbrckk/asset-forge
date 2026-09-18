@@ -193,6 +193,8 @@ python asset_forge.py quality-gltf prop.glb --profile prop --output build/prop-q
 
 The quality report derives vertex and triangle counts from accessor metadata, measures primitive coverage for normals/UVs/tangents/skinning, summarizes PBR texture usage, identifies external images, and evaluates the versioned profile budgets under `profiles/3d/`.
 
+When image bytes are locally available, the report also reads PNG/JPEG/WebP dimensions and estimates decoded RGBA8 texture memory with mipmaps. Remote URLs are not fetched. Rig/animation metrics include joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, and keyframe accessor counts.
+
 Create a reproducible Blender export job and script:
 
 ```bash
