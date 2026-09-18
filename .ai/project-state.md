@@ -13,6 +13,9 @@ Status: active
 - Deep glTF diagnostics validate accessor layouts/ranges, byteStride/component alignment, JOINTS_0/WEIGHTS_0 consistency, animation sampler/channel references, interpolation modes, target paths, output counts, and strictly increasing key times.
 - Godot 4 3D delivery validation checks glTF suitability, stable names, import suffix hints, animation naming, PBR/double-sided materials, tangent needs, remote images, and existing quality-profile results.
 - Godot handoff generation creates a minimal importable project with project.godot, copied GLB, manifest/import recommendations, and README.
+- Handoff generation is strict by default: a Godot delivery report with ready=true is required unless an explicit debug override is used.
+- Optional Asset Forge manifests are validated and embedded as provenance/license metadata in handoff.json.
+- Versioned Godot 4 handoff profiles exist for prop, environment, and character assets under profiles/godot4/.
 - When a Godot editor binary is available, handoff validation uses headless --import to exercise the real importer; missing Godot remains non-blocking.
 - 3D profiles for prop/environment/character include versioned geometry/material/texture budgets plus max texture dimension, estimated texture-memory budget, and character joint budgets.
 - Blender adapter generates reproducible export jobs, Blender Python scripts, and background CLI commands for GLB export.
@@ -36,7 +39,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Harden the generated Godot handoff/import recommendations, then add equivalent engine delivery adapters only when needed by a consuming project.
+- Reduce duplicated engine-profile rules by loading the versioned Godot profile JSON directly, then add equivalent engine adapters only when required by a consuming project.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -47,7 +50,7 @@ Status: active
 - `python asset_forge.py validate-gltf <input.gltf|input.glb> [--profile prop|environment|character]`
 - `python asset_forge.py diagnose-gltf <input.gltf|input.glb> [--output report.json]`
 - `python asset_forge.py validate-godot-3d <input.gltf|input.glb> [--profile prop|environment|character] [--output report.json]`
-- `python asset_forge.py prepare-godot-handoff <input.glb> <output_dir> [--profile ...] [--delivery-report report.json]`
+- `python asset_forge.py prepare-godot-handoff <input.glb> <output_dir> [--profile ...] --delivery-report report.json [--asset-manifest manifest.json] [--allow-unvalidated]`
 - `python asset_forge.py validate-godot-handoff <project_dir> [--godot executable]`
 - `python asset_forge.py quality-gltf <input.gltf|input.glb> [--profile prop|environment|character] [--output report.json]`
 - `python asset_forge.py 3d-toolchain-status`
@@ -55,7 +58,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after Godot handoff generation and optional headless importer validation.
+- 2026-09-18: latest GitHub source inspected after strict Godot handoff gating, provenance/license packaging, and versioned engine handoff profiles.
 
 <!-- AUTO:START -->
 ## Automatic repository state
