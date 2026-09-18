@@ -3,43 +3,46 @@
 Status: active
 
 ## Working
-- Repository initialized as a central 2D/3D visual asset production pipeline.
-- Dependency-free Python CLI validates manifests and builds deterministic production plans.
-- PNG validation/decoding/atlas/optimization and Godot animation export are implemented for common 8-bit non-interlaced PNG workflows.
+- Repository initialized as a central visual-asset production pipeline spanning raster 2D, SVG/vector, and 3D.
+- PNG validation/decoding/atlas/optimization and Godot animation export are implemented for common 8-bit non-interlaced workflows.
 - SVG/vector pipeline validates, sanitizes, normalizes viewBox, removes metadata, and applies icon/ui/logo profiles.
-- glTF/GLB structural inspection validates container/version/core arrays and reports meshes, primitives, materials, textures, skins, animations, and extensions.
+- glTF/GLB structural inspection validates container/version/core arrays, core index references, and reports meshes, primitives, materials, textures, skins, animations, and extensions.
 - 3D profiles for prop/environment/character add reusable mesh/primitive/material/animation/skin expectations.
 - Blender adapter generates reproducible export jobs, Blender Python scripts, and background CLI commands for GLB export.
+- 3D toolchain detects Blender, Khronos glTF Validator, glTF Transform, and gltfpack when installed.
+- prepare-3d generates a reproducible Blender → validation → optimization pipeline and persists pipeline.json.
+- run-3d executes available stages, stops on blocking failures, writes Khronos reports when available, and falls back to validated raw.glb when an optional optimizer is absent.
 - star-list integration calls dbrckk/star-list's recommender through its JSON CLI.
-- CI compiles all current modules, runs unit tests, checks manifest/plan paths, and smoke-tests the star-list bridge.
+- CI compiles all current modules, runs unit tests, checks manifest/plan paths, inspects the 3D toolchain, and smoke-tests the star-list bridge.
 
 ## Broken / blockers
 - PNG decoding still does not support 16-bit or interlaced PNGs.
-- WebP output is not implemented yet.
+- WebP raster output is not implemented yet.
 - SVG geometric path simplification and raster preview generation are not implemented yet.
-- glTF validation is structural only; deep Khronos schema/spec validation is not embedded yet.
-- Blender execution itself requires a Blender runtime and is not executed in this ChatGPT environment.
-- Mesh optimization/glTF Transform/meshoptimizer integration is not implemented yet.
+- Internal glTF validation is still intentionally narrower than Khronos glTF Validator's full specification validation.
+- Blender execution itself requires a Blender runtime and cannot be exercised in this ChatGPT environment.
+- External glTF optimization requires glTF Transform or gltfpack on the execution host.
+- Triangle/vertex budgets based on accessor contents, UV quality, normals/tangents quality, PBR texture validation, and rig quality are not implemented yet.
 - Direct git clone from this ChatGPT runtime is blocked by DNS.
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Add deeper glTF validation and optimization adapters, then automate Blender-to-GLB-to-validation as one production command.
+- Add measurable 3D quality budgets (vertices/triangles/textures), PBR/UV/normal checks, then add stronger post-export production reports.
 
 ## Validation
-- `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py blender_adapter.py tests`
+- `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py blender_adapter.py toolchain_3d.py tests`
 - `python -m unittest discover -s tests -v`
 - `python asset_forge.py validate examples/asset-manifest.json`
 - `python asset_forge.py plan examples/asset-manifest.json`
-- `python asset_forge.py validate-raster <manifest.json> <sprite.png>`
 - `python asset_forge.py validate-svg <input.svg> [--profile icon|ui|logo]`
-- `python asset_forge.py normalize-svg <input.svg> <output.svg>`
 - `python asset_forge.py validate-gltf <input.gltf|input.glb> [--profile prop|environment|character]`
-- `python asset_forge.py blender-export-job <source.blend> <output.glb> --script <export.py> [--job-manifest <job.json>]`
+- `python asset_forge.py 3d-toolchain-status`
+- `python asset_forge.py prepare-3d <source.blend> <workdir> [--profile ...] [--optimizer ...]`
+- `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...]`
 - `python asset_forge.py discover-tools <star-list-root> "3d modeling rigging animation textures game assets" --top 8`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after glTF/GLB validation, 3D profiles, and Blender export adapter integration.
+- 2026-09-18: latest GitHub source inspected after executable 3D pipeline, tool detection, optimizer fallback, and core glTF reference validation.
 
 <!-- AUTO:START -->
 ## Automatic repository state
