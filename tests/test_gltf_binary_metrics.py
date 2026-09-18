@@ -62,6 +62,27 @@ class GltfBinaryMetricsTests(unittest.TestCase):
         self.assertEqual(items[0]["width"], 8)
         self.assertEqual(items[0]["source"], "external-local")
 
+    def test_data_uri_webp_dimensions_use_shared_inspector(self):
+        width, height = 13, 7
+        bits = (width - 1) | ((height - 1) << 14)
+        vp8l = b"\x2f" + bits.to_bytes(4, "little")
+        chunk_bytes = b"VP8L" + struct.pack("<I", len(vp8l)) + vp8l + b"\x00"
+        body = b"WEBP" + chunk_bytes
+        payload = b"RIFF" + struct.pack("<I", len(body)) + body
+        uri = "data:image/webp;base64," + base64.b64encode(payload).decode("ascii")
+        data = {
+            "asset": {"version": "2.0"},
+            "images": [{"uri": uri}],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "asset.gltf"
+            path.write_text(json.dumps(data), encoding="utf-8")
+            items = inspect_images(path)
+
+        self.assertEqual(items[0]["width"], width)
+        self.assertEqual(items[0]["height"], height)
+        self.assertEqual(items[0]["format"], "webp")
+
     def test_animation_and_rig_metrics(self):
         data = {
             "asset": {"version": "2.0"},
