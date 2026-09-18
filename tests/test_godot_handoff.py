@@ -41,6 +41,44 @@ class GodotHandoffTests(unittest.TestCase):
         )
         self.assertEqual(recommendations["animation"]["fps"], 60)
 
+    def test_profile_loader_uses_file_contents_as_source_of_truth(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            profile_dir = root / "profiles" / "godot4"
+            profile_dir.mkdir(parents=True)
+            (profile_dir / "prop.json").write_text(
+                json.dumps(
+                    {
+                        "id": "custom-prop",
+                        "engine": "Godot 4",
+                        "assetProfile": "prop",
+                        "sceneImport": {
+                            "useNameSuffixes": False,
+                            "useNodeTypeSuffixes": True,
+                            "generateTangentsIfMissing": False,
+                            "preferStaticScene": True,
+                        },
+                        "animation": {
+                            "import": True,
+                            "fps": 24,
+                            "trimming": False,
+                            "removeImmutableTracks": False,
+                        },
+                        "textures": {
+                            "preferEmbeddedOrProjectLocal": True,
+                            "remoteUrisAllowed": False,
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            loaded = load_godot_profile("prop", root=root)
+
+        self.assertEqual(loaded["animation"]["fps"], 24)
+        self.assertTrue(loaded["animation"]["import"])
+        self.assertFalse(loaded["sceneImport"]["generateTangentsIfMissing"])
+
     def test_prepare_handoff_copies_glb_and_writes_project(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
