@@ -19,6 +19,7 @@ Status: active
 - glTF/GLB structural inspection validates container/version/core arrays and core index references.
 - glTF quality reporting measures accessor-derived vertices/triangles, primitive coverage for normals/UVs/tangents/skinning, PBR texture usage, image embedding/externality, materials, and textures.
 - Binary-aware 3D metrics read locally available PNG/JPEG/WebP image dimensions, estimate decoded RGBA8 texture memory with mipmaps, and do not fetch remote URLs.
+- WebP raster inspection is dependency-free and shared between raster validation and glTF metrics; VP8X/VP8L/VP8 dimensions, alpha/animation flags, RIFF/chunk structure, reserved fields, and extended canvas consistency are validated.
 - Rig/animation metrics report joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, keyframe accessor counts, and readable animation durations.
 - Deep glTF diagnostics validate accessor layouts/ranges, byteStride/component alignment, JOINTS_0/WEIGHTS_0 consistency, animation sampler/channel references, interpolation modes, target paths, output counts, and strictly increasing key times.
 - Godot 4 3D delivery validation checks glTF suitability, stable names, import suffix hints, animation naming, PBR/double-sided materials, tangent needs, remote images, and existing quality-profile results.
@@ -43,8 +44,8 @@ Status: active
 - CI compiles all current modules, runs unit tests, checks manifest/plan paths, inspects the 3D toolchain, and smoke-tests the star-list bridge.
 
 ## Broken / blockers
-- PNG decoding now covers Adam7; remaining raster format gap is primarily WebP output/processing and broader optimization behavior.
-- WebP raster output is not implemented yet.
+- PNG decoding now covers Adam7; remaining raster format gap is primarily WebP pixel decoding/output and broader optimization behavior.
+- WebP metadata/container validation is implemented, but WebP pixel decode, atlas input decode, recompression, and encoding are not implemented yet.
 - SVG geometric path simplification and raster preview generation are not implemented yet.
 - SVG CSS parsing is intentionally lightweight rather than a full CSS parser; current safety logic targets @import and url(...) references.
 - Internal glTF validation is still intentionally narrower than Khronos glTF Validator's full specification validation.
@@ -56,7 +57,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Add WebP raster handling and improve optimization/atlas features while preserving bounded-memory guarantees.
+- Add an optional reliable WebP pixel backend or native decoding path, then improve atlas packing/trim/extrusion and optimization behavior while preserving bounded-memory guarantees.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -77,7 +78,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after adding Adam7 reconstruction across supported PNG color types/depths with exact pass-size budgeting and bounded decompression.
+- 2026-09-18: latest GitHub source inspected after adding shared dependency-free WebP VP8X/VP8L/VP8 inspection, raster manifest validation, and glTF metric reuse.
 
 <!-- AUTO:START -->
 ## Automatic repository state
