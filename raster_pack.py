@@ -55,27 +55,8 @@ def _paeth(a: int, b: int, c: int) -> int:
     return c
 
 
-def decode_rgba(path: Path) -> tuple[int, int, bytes]:
-    chunks = _chunks(path.read_bytes())
-    if not chunks or chunks[0][0] != b"IHDR":
-        raise ValueError("PNG is missing IHDR")
-
-    width, height, depth, color_type, compression, filtering, interlace = struct.unpack(
-        ">IIBBBBB", chunks[0][1]
-    )
-    if (
-        depth != 8
-        or color_type not in {2, 6}
-        or compression != 0
-        or filtering != 0
-        or interlace != 0
-    ):
-        raise ValueError("packing supports non-interlaced 8-bit RGB/RGBA PNG only")
-
-    bytes_per_pixel = 4 if color_type == 6 else 3
-    stride = width * bytes_per_pixel
-    raw = zlib.decompress(b"".join(payload for kind, payload in chunks if kind == b"IDAT"))
-
+def _unfilter_scanlines(raw: bytes, width: int, height: int, bpp: int) -> list[bytearray]:
+    stride = width * bpp
     if len(raw) != (stride + 1) * height:
         raise ValueError("unexpected PNG scanline length")
 
@@ -91,9 +72,9 @@ def decode_rgba(path: Path) -> tuple[int, int, bytes]:
         reconstructed = bytearray(stride)
 
         for index, value in enumerate(scanline):
-            left = reconstructed[index - bytes_per_pixel] if index >= bytes_per_pixel else 0
+            left = reconstructed[index - bpp] if index >= bpp else 0
             above = previous[index]
-            upper_left = previous[index - bytes_per_pixel] if index >= bytes_per_pixel else 0
+            upper_left = previous[index - bpp] if index >= bpp else 0
 
             if filter_type == 0:
                 reconstructed_value = value
@@ -113,13 +94,72 @@ def decode_rgba(path: Path) -> tuple[int, int, bytes]:
         rows.append(reconstructed)
         previous = reconstructed
 
+    return rows
+
+
+def decode_rgba(path: Path) -> tuple[int, int, bytes]:
+    chunks = _chunks(path.read_bytes())
+    if not chunks or chunks[0][0] != b"IHDR":
+        raise ValueError("PNG is missing IHDR")
+
+    width, height, depth, color_type, compression, filtering, interlace = struct.unpack(
+        ">IIBBBBB", chunks[0][1]
+    )
+    if depth != 8 or compression != 0 or filtering != 0 or interlace != 0:
+        raise ValueError("packing supports non-interlaced 8-bit PNG only")
+    if color_type not in {0, 2, 3, 4, 6}:
+        raise ValueError(f"unsupported PNG color type {color_type}")
+
+    bpp_by_type = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}
+    bpp = bpp_by_type[color_type]
+    raw = zlib.decompress(b"".join(payload for kind, payload in chunks if kind == b"IDAT"))
+    rows = _unfilter_scanlines(raw, width, height, bpp)
+
+    palette: list[tuple[int, int, int]] = []
+    transparency = b""
+    for kind, payload in chunks:
+        if kind == b"PLTE":
+            if len(payload) % 3:
+                raise ValueError("invalid PLTE length")
+            palette = [
+                (payload[i], payload[i + 1], payload[i + 2])
+                for i in range(0, len(payload), 3)
+            ]
+        elif kind == b"tRNS":
+            transparency = payload
+
+    if color_type == 3 and not palette:
+        raise ValueError("indexed PNG is missing PLTE")
+
     rgba = bytearray(width * height * 4)
     destination = 0
 
     for row in rows:
-        for index in range(0, len(row), bytes_per_pixel):
-            rgba[destination : destination + 3] = row[index : index + 3]
-            rgba[destination + 3] = row[index + 3] if bytes_per_pixel == 4 else 255
+        for index in range(0, len(row), bpp):
+            if color_type == 0:
+                gray = row[index]
+                red = green = blue = gray
+                alpha = 255
+                if len(transparency) >= 2:
+                    transparent_gray = struct.unpack(">H", transparency[:2])[0] & 0xFF
+                    if gray == transparent_gray:
+                        alpha = 0
+            elif color_type == 2:
+                red, green, blue = row[index : index + 3]
+                alpha = 255
+            elif color_type == 3:
+                palette_index = row[index]
+                if palette_index >= len(palette):
+                    raise ValueError("palette index out of range")
+                red, green, blue = palette[palette_index]
+                alpha = transparency[palette_index] if palette_index < len(transparency) else 255
+            elif color_type == 4:
+                gray, alpha = row[index : index + 2]
+                red = green = blue = gray
+            else:
+                red, green, blue, alpha = row[index : index + 4]
+
+            rgba[destination : destination + 4] = bytes((red, green, blue, alpha))
             destination += 4
 
     return width, height, bytes(rgba)
@@ -174,7 +214,10 @@ def _png_bytes_rgba(width: int, height: int, pixels: bytes, adaptive: bool = Tru
         row = pixels[start : start + width * 4]
 
         if adaptive:
-            candidates = [(_filter_row(row, previous, 4, filter_type), filter_type) for filter_type in range(5)]
+            candidates = [
+                (_filter_row(row, previous, 4, filter_type), filter_type)
+                for filter_type in range(5)
+            ]
             filtered, filter_type = min(candidates, key=lambda item: _filter_score(item[0]))
         else:
             filter_type = 0
@@ -204,7 +247,6 @@ def encode_rgba(
 
 
 def recompress_png(input_path: Path, output_path: Path) -> dict:
-    """Losslessly recompress supported PNG image pixels as optimized RGBA."""
     before = input_path.stat().st_size
     width, height, pixels = decode_rgba(input_path)
     encode_rgba(output_path, width, height, pixels, adaptive=True)
