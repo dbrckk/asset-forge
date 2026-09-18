@@ -20,6 +20,30 @@ def build_import_recommendations(profile: str, delivery_report: dict | None = No
         raise ValueError("profile must be prop, environment, or character")
 
     animation_import = profile == "character"
+    profile_rules = {
+        "prop": {
+            "animationFps": 30,
+            "trimming": True,
+            "removeImmutableTracks": True,
+            "preferStaticScene": True,
+            "navigationCandidate": False,
+        },
+        "environment": {
+            "animationFps": 30,
+            "trimming": True,
+            "removeImmutableTracks": True,
+            "preferStaticScene": True,
+            "navigationCandidate": True,
+        },
+        "character": {
+            "animationFps": 60,
+            "trimming": False,
+            "removeImmutableTracks": False,
+            "preferStaticScene": False,
+            "navigationCandidate": False,
+        },
+    }[profile]
+
     recommendations = {
         "sceneImport": {
             "format": "glTF 2.0 / GLB",
@@ -29,9 +53,13 @@ def build_import_recommendations(profile: str, delivery_report: dict | None = No
         },
         "animation": {
             "import": animation_import,
-            "fps": 30,
-            "trimming": True,
-            "removeImmutableTracks": True,
+            "fps": profile_rules["animationFps"],
+            "trimming": profile_rules["trimming"],
+            "removeImmutableTracks": profile_rules["removeImmutableTracks"],
+        },
+        "profile": {
+            "preferStaticScene": profile_rules["preferStaticScene"],
+            "navigationCandidate": profile_rules["navigationCandidate"],
         },
         "textures": {
             "preferEmbeddedOrProjectLocal": True,
@@ -55,6 +83,8 @@ def prepare_godot_handoff(
     *,
     profile: str,
     delivery_report: dict | None = None,
+    asset_manifest: dict | None = None,
+    allow_unvalidated: bool = False,
 ) -> dict:
     source_glb = Path(source_glb)
     output_dir = Path(output_dir)
@@ -62,6 +92,11 @@ def prepare_godot_handoff(
         raise ValueError(f"source GLB does not exist: {source_glb}")
     if source_glb.suffix.lower() != ".glb":
         raise ValueError("Godot handoff expects a .glb file")
+    if not allow_unvalidated:
+        if delivery_report is None:
+            raise ValueError("validated Godot delivery report is required")
+        if delivery_report.get("ready") is not True:
+            raise ValueError("Godot delivery report is not ready")
 
     project_dir = output_dir / "godot-handoff"
     asset_dir = project_dir / "assets"
@@ -82,6 +117,29 @@ def prepare_godot_handoff(
     )
 
     recommendations = build_import_recommendations(profile, delivery_report)
+
+    provenance = None
+    if asset_manifest is not None:
+        source = asset_manifest.get("source", {})
+        license_data = asset_manifest.get("license", {})
+        provenance = {
+            "assetId": asset_manifest.get("id"),
+            "project": asset_manifest.get("project"),
+            "assetType": asset_manifest.get("type"),
+            "importance": asset_manifest.get("importance"),
+            "source": {
+                "mode": source.get("mode") if isinstance(source, dict) else None,
+                "uri": source.get("uri") if isinstance(source, dict) else None,
+                "author": source.get("author") if isinstance(source, dict) else None,
+            },
+            "license": {
+                "id": license_data.get("id") if isinstance(license_data, dict) else None,
+                "commercialUse": license_data.get("commercialUse") if isinstance(license_data, dict) else None,
+                "derivatives": license_data.get("derivatives") if isinstance(license_data, dict) else None,
+                "attributionRequired": license_data.get("attributionRequired") if isinstance(license_data, dict) else None,
+            },
+        }
+
     manifest = {
         "engine": "Godot 4",
         "profile": profile,
@@ -89,6 +147,7 @@ def prepare_godot_handoff(
         "asset": "res://assets/" + destination.name,
         "deliveryReady": bool(delivery_report.get("ready")) if delivery_report else None,
         "importRecommendations": recommendations,
+        "provenance": provenance,
         "files": {
             "project": str(project_file),
             "asset": str(destination),
@@ -108,7 +167,8 @@ def prepare_godot_handoff(
         f"- Asset: `res://assets/{destination.name}`\n"
         f"- Profile: `{profile}`\n"
         "- Open this folder as a Godot project or run headless import validation.\n"
-        "- Review `handoff.json` before integrating the asset into the consuming game project.\n",
+        "- Review `handoff.json` before integrating the asset into the consuming game project.\n"
+        "- Preserve provenance/license metadata when moving this asset to another repository.\n",
         encoding="utf-8",
     )
 
