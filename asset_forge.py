@@ -12,6 +12,7 @@ from pathlib import Path
 
 from animation_infer import infer_animations
 from blender_adapter import build_blender_export_job, render_blender_command, write_blender_export_script, write_job_manifest
+from gltf_quality import quality_report
 from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_export import write_spriteframes
 from raster_pack import pack_uniform_atlas, recompress_png
@@ -487,6 +488,11 @@ def parser() -> argparse.ArgumentParser:
     gltf_validate.add_argument("input", type=Path)
     gltf_validate.add_argument("--profile", choices=["prop", "environment", "character"])
 
+    gltf_quality = sub.add_parser("quality-gltf", help="measure glTF/GLB production quality")
+    gltf_quality.add_argument("input", type=Path)
+    gltf_quality.add_argument("--profile", choices=["prop", "environment", "character"])
+    gltf_quality.add_argument("--output", type=Path)
+
     blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
     blender_job.add_argument("source_blend", type=Path)
     blender_job.add_argument("output_glb", type=Path)
@@ -664,6 +670,21 @@ def main() -> int:
         result = {"file": str(args.input), "info": info, "errors": errors, "warnings": warnings}
         print(json.dumps(result, indent=2, sort_keys=True))
         return 1 if errors else 0
+    if args.command == "quality-gltf":
+        try:
+            result = quality_report(args.input, args.profile)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
+        if args.output:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(rendered, encoding="utf-8")
+            print(str(args.output))
+        else:
+            print(rendered, end="")
+        evaluation = result.get("evaluation")
+        return 1 if evaluation and not evaluation.get("passed", False) else 0
     if args.command == "blender-export-job":
         try:
             job = build_blender_export_job(
