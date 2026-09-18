@@ -5,7 +5,7 @@
   "semantic": false,
   "note": "Occurrences are lexical word matches; verify source/LSP/compiler data before relying on them.",
   "symbols": {
-    "write_png": {
+    "chunk": {
       "definition": {
         "file": "tests/test_asset_forge.py",
         "line": 13,
@@ -14,43 +14,144 @@
       },
       "occurrences": [
         {
+          "file": "asset_forge.py",
+          "line": 120,
+          "preview": "raise ValueError(\"PNG contains a truncated chunk header\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 125,
+          "preview": "raise ValueError(f\"PNG chunk {kind.decode('latin1')} is truncated\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 130,
+          "preview": "raise ValueError(f\"PNG chunk {kind.decode('latin1')} has invalid CRC\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 146,
+          "preview": "raise ValueError(\"PNG is missing a valid IHDR chunk\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 158,
+          "preview": "raise ValueError(\"PNG PLTE chunk length must be divisible by 3\")",
+          "definition_candidate": false
+        },
+        {
           "file": "tests/test_asset_forge.py",
           "line": 13,
-          "preview": "def write_png(path: Path, width: int, height: int, color_type: int = 6) -> None:",
+          "preview": "def chunk(kind: bytes, payload: bytes) -> bytes:",
           "definition_candidate": true
         },
         {
           "file": "tests/test_asset_forge.py",
-          "line": 71,
+          "line": 32,
+          "preview": "parts = [signature, chunk(b\"IHDR\", ihdr_data)]",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 39,
+          "preview": "parts.append(chunk(b\"PLTE\", bytes(palette)))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 41,
+          "preview": "parts.append(chunk(b\"tRNS\", bytes([255] * max(1, palette_entries - 1) + [0])))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 45,
+          "preview": "parts.append(chunk(b\"IDAT\", zlib.compress(row * height)))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 46,
+          "preview": "parts.append(chunk(b\"IEND\", b\"\"))",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 11
+    },
+    "write_png": {
+      "definition": {
+        "file": "tests/test_asset_forge.py",
+        "line": 22,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 22,
+          "preview": "def write_png(",
+          "definition_candidate": true
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 102,
           "preview": "write_png(image, 64, 32)",
           "definition_candidate": false
         },
         {
           "file": "tests/test_asset_forge.py",
-          "line": 82,
+          "line": 112,
           "preview": "write_png(image, 50, 32)",
           "definition_candidate": false
         },
         {
           "file": "tests/test_asset_forge.py",
-          "line": 91,
+          "line": 121,
           "preview": "write_png(image, 32, 32, color_type=2)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 131,
+          "preview": "write_png(image, 32, 32, color_type=3, palette_entries=8, transparency=True)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 144,
+          "preview": "write_png(image, 60, 32)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 152,
+          "preview": "write_png(image, 64, 64)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 165,
+          "preview": "write_png(image, 32, 32)",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 4
+      "occurrence_count": 8
     },
     "AssetForgeTests": {
       "definition": {
         "file": "tests/test_asset_forge.py",
-        "line": 28,
+        "line": 50,
         "kind": "class",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_asset_forge.py",
-          "line": 28,
+          "line": 50,
           "preview": "class AssetForgeTests(unittest.TestCase):",
           "definition_candidate": true
         }
@@ -60,80 +161,121 @@
     "load_example": {
       "definition": {
         "file": "tests/test_asset_forge.py",
-        "line": 29,
+        "line": 51,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_asset_forge.py",
-          "line": 29,
+          "line": 51,
           "preview": "def load_example(self):",
           "definition_candidate": true
         },
         {
           "file": "tests/test_asset_forge.py",
-          "line": 33,
+          "line": 55,
           "preview": "self.assertEqual(asset_forge.validate_manifest(self.load_example()), [])",
           "definition_candidate": false
         },
         {
           "file": "tests/test_asset_forge.py",
-          "line": 36,
+          "line": 58,
           "preview": "manifest = self.load_example()",
           "definition_candidate": false
         },
         {
           "file": "tests/test_asset_forge.py",
-          "line": 42,
+          "line": 66,
           "preview": "manifest = self.load_example()",
           "definition_candidate": false
         },
         {
           "file": "tests/test_asset_forge.py",
-          "line": 51,
+          "line": 72,
           "preview": "manifest = self.load_example()",
           "definition_candidate": false
         },
         {
           "file": "tests/test_asset_forge.py",
-          "line": 59,
+          "line": 81,
           "preview": "manifest = self.load_example()",
           "definition_candidate": false
         },
         {
           "file": "tests/test_asset_forge.py",
-          "line": 68,
+          "line": 89,
           "preview": "manifest = self.load_example()",
           "definition_candidate": false
         },
         {
           "file": "tests/test_asset_forge.py",
-          "line": 79,
+          "line": 98,
           "preview": "manifest = self.load_example()",
           "definition_candidate": false
         },
         {
           "file": "tests/test_asset_forge.py",
-          "line": 87,
+          "line": 109,
+          "preview": "manifest = self.load_example()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 117,
+          "preview": "manifest = self.load_example()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 126,
+          "preview": "manifest = self.load_example()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 138,
+          "preview": "manifest = self.load_example()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 149,
           "preview": "manifest = self.load_example()",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 9
+      "occurrence_count": 13
     },
     "test_example_manifest_is_valid": {
       "definition": {
         "file": "tests/test_asset_forge.py",
-        "line": 32,
+        "line": 54,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_asset_forge.py",
-          "line": 32,
+          "line": 54,
           "preview": "def test_example_manifest_is_valid(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_pixel_art_rejects_non_nearest_interpolation": {
+      "definition": {
+        "file": "tests/test_asset_forge.py",
+        "line": 57,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 57,
+          "preview": "def test_pixel_art_rejects_non_nearest_interpolation(self):",
           "definition_candidate": true
         }
       ],
@@ -142,14 +284,14 @@
     "test_external_asset_requires_uri": {
       "definition": {
         "file": "tests/test_asset_forge.py",
-        "line": 35,
+        "line": 65,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_asset_forge.py",
-          "line": 35,
+          "line": 65,
           "preview": "def test_external_asset_requires_uri(self):",
           "definition_candidate": true
         }
@@ -159,14 +301,14 @@
     "test_incompatible_commercial_license_is_rejected": {
       "definition": {
         "file": "tests/test_asset_forge.py",
-        "line": 41,
+        "line": 71,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_asset_forge.py",
-          "line": 41,
+          "line": 71,
           "preview": "def test_incompatible_commercial_license_is_rejected(self):",
           "definition_candidate": true
         }
@@ -176,14 +318,14 @@
     "test_plan_routes_sprite_to_2d_pipeline": {
       "definition": {
         "file": "tests/test_asset_forge.py",
-        "line": 50,
+        "line": 80,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_asset_forge.py",
-          "line": 50,
+          "line": 80,
           "preview": "def test_plan_routes_sprite_to_2d_pipeline(self):",
           "definition_candidate": true
         }
@@ -193,14 +335,14 @@
     "test_secondary_custom_asset_prompts_reuse_search": {
       "definition": {
         "file": "tests/test_asset_forge.py",
-        "line": 58,
+        "line": 88,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_asset_forge.py",
-          "line": 58,
+          "line": 88,
           "preview": "def test_secondary_custom_asset_prompts_reuse_search(self):",
           "definition_candidate": true
         }
@@ -210,14 +352,14 @@
     "test_png_sprite_grid_validation_passes": {
       "definition": {
         "file": "tests/test_asset_forge.py",
-        "line": 67,
+        "line": 97,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_asset_forge.py",
-          "line": 67,
+          "line": 97,
           "preview": "def test_png_sprite_grid_validation_passes(self):",
           "definition_candidate": true
         }
@@ -227,14 +369,14 @@
     "test_png_sprite_grid_validation_rejects_bad_width": {
       "definition": {
         "file": "tests/test_asset_forge.py",
-        "line": 78,
+        "line": 108,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_asset_forge.py",
-          "line": 78,
+          "line": 108,
           "preview": "def test_png_sprite_grid_validation_rejects_bad_width(self):",
           "definition_candidate": true
         }
@@ -244,15 +386,83 @@
     "test_png_alpha_requirement": {
       "definition": {
         "file": "tests/test_asset_forge.py",
-        "line": 86,
+        "line": 116,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_asset_forge.py",
-          "line": 86,
+          "line": 116,
           "preview": "def test_png_alpha_requirement(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_palette_transparency_and_max_colors": {
+      "definition": {
+        "file": "tests/test_asset_forge.py",
+        "line": 125,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 125,
+          "preview": "def test_palette_transparency_and_max_colors(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_power_of_two_atlas": {
+      "definition": {
+        "file": "tests/test_asset_forge.py",
+        "line": 137,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 137,
+          "preview": "def test_power_of_two_atlas(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_atlas_manifest_contains_frame_rectangles": {
+      "definition": {
+        "file": "tests/test_asset_forge.py",
+        "line": 148,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 148,
+          "preview": "def test_atlas_manifest_contains_frame_rectangles(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_invalid_png_crc_is_rejected": {
+      "definition": {
+        "file": "tests/test_asset_forge.py",
+        "line": 162,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 162,
+          "preview": "def test_invalid_png_crc_is_rejected(self):",
           "definition_candidate": true
         }
       ],

@@ -28,20 +28,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T16:14:29Z
+Generated: 2026-09-18T16:16:45Z
 
 ### Git
 - Branch: `main`
-- Head: `c811dcfa92ed`
-- Commit date: 2026-09-18T18:14:13+02:00
-- Commit: test: cover png sprite validation
-- Tracked files: 12
+- Head: `5f66a0c38b14`
+- Commit date: 2026-09-18T18:16:30+02:00
+- Commit: test: cover atlas metadata palette and png integrity
+- Tracked files: 51
 
 ### Recently changed files
 - `tests/test_asset_forge.py`
 - `asset_forge.py`
 - `README.md`
-- `.github/workflows/validate.yml`
 
 ### Project signals
 - No common build descriptor detected

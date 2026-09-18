@@ -324,19 +324,18 @@ jobs:
 ````python
 ROOT = Path(__file__).resolve().parents[1]
 ⋮----
-def write_png(path: Path, width: int, height: int, color_type: int = 6) -> None
+def chunk(kind: bytes, payload: bytes) -> bytes
 ⋮----
 signature = b"\x89PNG\r\n\x1a\n"
 ihdr_data = struct.pack(">IIBBBBB", width, height, 8, color_type, 0, 0, 0)
-ihdr = struct.pack(">I", len(ihdr_data)) + b"IHDR" + ihdr_data
+parts = [signature, chunk(b"IHDR", ihdr_data)]
 ⋮----
-channels = 4 if color_type == 6 else 3
+palette = bytearray()
+⋮----
+value = index % 256
+⋮----
+channels = {2: 3, 6: 4}.get(color_type, 1)
 row = b"\x00" + (b"\x00" * width * channels)
-raw = row * height
-idat_data = zlib.compress(raw)
-idat = struct.pack(">I", len(idat_data)) + b"IDAT" + idat_data
-⋮----
-iend = struct.pack(">I", 0) + b"IEND" + struct.pack(">I", zlib.crc32(b"IEND") & 0xFFFFFFFF)
 ⋮----
 class AssetForgeTests(unittest.TestCase)
 ⋮----
@@ -344,9 +343,11 @@ def load_example(self)
 ⋮----
 def test_example_manifest_is_valid(self)
 ⋮----
-def test_external_asset_requires_uri(self)
+def test_pixel_art_rejects_non_nearest_interpolation(self)
 ⋮----
 manifest = self.load_example()
+⋮----
+def test_external_asset_requires_uri(self)
 ⋮----
 errors = asset_forge.validate_manifest(manifest)
 ⋮----
@@ -367,6 +368,20 @@ image = Path(tmp) / "sprite.png"
 def test_png_sprite_grid_validation_rejects_bad_width(self)
 ⋮----
 def test_png_alpha_requirement(self)
+⋮----
+def test_palette_transparency_and_max_colors(self)
+⋮----
+def test_power_of_two_atlas(self)
+⋮----
+def test_atlas_manifest_contains_frame_rectangles(self)
+⋮----
+atlas = asset_forge.build_atlas_manifest(image, manifest)
+⋮----
+def test_invalid_png_crc_is_rejected(self)
+⋮----
+image = Path(tmp) / "bad.png"
+⋮----
+data = bytearray(image.read_bytes())
 ````
 
 ## File: AGENTS.md
@@ -413,7 +428,7 @@ A workflow is complete only when provenance is known, licensing is compatible, t
 ## File: asset_forge.py
 ````python
 #!/usr/bin/env python3
-"""Dependency-free asset-forge manifest validator, planner, and PNG inspector."""
+"""Dependency-free asset-forge manifest validator, planner, PNG inspector, and atlas metadata builder."""
 ⋮----
 PIPELINES = {
 ⋮----
@@ -449,20 +464,66 @@ max_bytes = target.get("maxBytes")
 ⋮----
 constraints = manifest.get("constraints", {})
 ⋮----
+value = constraints.get(field)
+⋮----
+def is_power_of_two(value: int) -> bool
+⋮----
+def parse_png_chunks(data: bytes) -> list[tuple[bytes, bytes]]
+⋮----
+chunks: list[tuple[bytes, bytes]] = []
+offset = 8
+saw_iend = False
+⋮----
+length = struct.unpack(">I", data[offset : offset + 4])[0]
+kind = data[offset + 4 : offset + 8]
+end = offset + 12 + length
+⋮----
+payload = data[offset + 8 : offset + 8 + length]
+expected_crc = struct.unpack(">I", data[offset + 8 + length : end])[0]
+actual_crc = zlib.crc32(kind + payload) & 0xFFFFFFFF
+⋮----
+offset = end
+⋮----
+saw_iend = True
+⋮----
 def inspect_png(path: Path) -> dict
 ⋮----
 data = path.read_bytes()
+chunks = parse_png_chunks(data)
 ⋮----
-length = struct.unpack(">I", data[8:12])[0]
+palette_entries = None
+has_trns = False
+idat_bytes = 0
+⋮----
+palette_entries = len(payload) // 3
+⋮----
+has_trns = True
+⋮----
+has_alpha = color_type in {4, 6} or has_trns
+⋮----
+def sprite_grid(info: dict, constraints: dict) -> dict
+⋮----
+frame_width = constraints.get("frameWidth")
+frame_height = constraints.get("frameHeight")
+⋮----
+columns = info["width"] // frame_width
+rows = info["height"] // frame_height
+⋮----
+def build_atlas_manifest(path: Path, manifest: dict) -> dict
+⋮----
+info = inspect_png(path)
+constraints = manifest.get("constraints", {}) or {}
+grid = sprite_grid(info, constraints)
+frames = []
+index = 0
 ⋮----
 def validate_raster_file(path: Path, manifest: dict) -> tuple[dict, list[str]]
 ⋮----
 target = manifest.get("target", {})
 ⋮----
-info = inspect_png(path)
-constraints = manifest.get("constraints", {}) or {}
-frame_width = constraints.get("frameWidth")
-frame_height = constraints.get("frameHeight")
+max_colors = constraints.get("maxColors")
+⋮----
+expected_frames = constraints.get("expectedFrames")
 ⋮----
 def select_tools(asset_type: str, registry: dict) -> list[dict]
 ⋮----
@@ -503,6 +564,12 @@ def cmd_validate_raster(manifest_path: Path, asset_path: Path) -> int
 ⋮----
 result = {"file": str(asset_path), "info": info, "errors": errors}
 ⋮----
+def cmd_atlas_manifest(manifest_path: Path, asset_path: Path, output: Path | None) -> int
+⋮----
+atlas = build_atlas_manifest(asset_path, manifest)
+⋮----
+rendered = json.dumps(atlas, indent=2, sort_keys=True) + "\n"
+⋮----
 def parser() -> argparse.ArgumentParser
 ⋮----
 result = argparse.ArgumentParser(prog="asset-forge")
@@ -513,6 +580,8 @@ validate = sub.add_parser("validate", help="validate an asset manifest")
 plan = sub.add_parser("plan", help="build a deterministic asset production plan")
 ⋮----
 raster = sub.add_parser("validate-raster", help="validate a PNG against an asset manifest")
+⋮----
+atlas = sub.add_parser("atlas-manifest", help="build uniform-grid atlas metadata from a PNG")
 ⋮----
 def main() -> int
 ⋮----

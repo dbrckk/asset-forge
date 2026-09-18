@@ -5,180 +5,24 @@
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
   "symbols": {
-    "write_png": {
+    "chunk": {
       "source": {
         "file": "tests/test_asset_forge.py",
         "start": 13,
-        "end": 25
+        "end": 19
       },
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "AssetForgeTests": {
+    "write_png": {
       "source": {
         "file": "tests/test_asset_forge.py",
-        "start": 28,
-        "end": 93
+        "start": 22,
+        "end": 47
       },
       "symbol_dependencies": [
         {
-          "symbol": "build_plan",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 157,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "load_example",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 29,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "load_json",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 39,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "test_example_manifest_is_valid",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 32,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_external_asset_requires_uri",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 35,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_incompatible_commercial_license_is_rejected",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 41,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_plan_routes_sprite_to_2d_pipeline",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 50,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_png_alpha_requirement",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 86,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_png_sprite_grid_validation_passes",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 67,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_png_sprite_grid_validation_rejects_bad_width",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 78,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_secondary_custom_asset_prompts_reuse_search",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 58,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "validate_manifest",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 47,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "validate_raster_file",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 119,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "write_png",
+          "symbol": "chunk",
           "definitions": [
             {
               "file": "tests/test_asset_forge.py",
@@ -190,13 +34,275 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 14
+      "dependency_count": 1
+    },
+    "AssetForgeTests": {
+      "source": {
+        "file": "tests/test_asset_forge.py",
+        "start": 50,
+        "end": 170
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_atlas_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 202,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "build_plan",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 301,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_png",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 142,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "load_example",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 51,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "load_json",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 40,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_atlas_manifest_contains_frame_rectangles",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 148,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_example_manifest_is_valid",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 54,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_external_asset_requires_uri",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 65,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_incompatible_commercial_license_is_rejected",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 71,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_invalid_png_crc_is_rejected",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 162,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_palette_transparency_and_max_colors",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 125,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_pixel_art_rejects_non_nearest_interpolation",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 57,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_plan_routes_sprite_to_2d_pipeline",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 80,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_png_alpha_requirement",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 116,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_png_sprite_grid_validation_passes",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 97,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_png_sprite_grid_validation_rejects_bad_width",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 108,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_power_of_two_atlas",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 137,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_secondary_custom_asset_prompts_reuse_search",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 88,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 48,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_raster_file",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 233,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write_png",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 21
     },
     "load_example": {
       "source": {
         "file": "tests/test_asset_forge.py",
-        "start": 29,
-        "end": 30
+        "start": 51,
+        "end": 52
       },
       "symbol_dependencies": [
         {
@@ -204,7 +310,7 @@
           "definitions": [
             {
               "file": "asset_forge.py",
-              "line": 39,
+              "line": 40,
               "kind": "function",
               "language": "python"
             }
@@ -217,8 +323,8 @@
     "test_example_manifest_is_valid": {
       "source": {
         "file": "tests/test_asset_forge.py",
-        "start": 32,
-        "end": 33
+        "start": 54,
+        "end": 55
       },
       "symbol_dependencies": [
         {
@@ -226,7 +332,7 @@
           "definitions": [
             {
               "file": "tests/test_asset_forge.py",
-              "line": 29,
+              "line": 51,
               "kind": "function",
               "language": "python"
             }
@@ -238,7 +344,41 @@
           "definitions": [
             {
               "file": "asset_forge.py",
-              "line": 47,
+              "line": 48,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_pixel_art_rejects_non_nearest_interpolation": {
+      "source": {
+        "file": "tests/test_asset_forge.py",
+        "start": 57,
+        "end": 63
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_example",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 51,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 48,
               "kind": "function",
               "language": "python"
             }
@@ -251,8 +391,8 @@
     "test_external_asset_requires_uri": {
       "source": {
         "file": "tests/test_asset_forge.py",
-        "start": 35,
-        "end": 39
+        "start": 65,
+        "end": 69
       },
       "symbol_dependencies": [
         {
@@ -260,7 +400,7 @@
           "definitions": [
             {
               "file": "tests/test_asset_forge.py",
-              "line": 29,
+              "line": 51,
               "kind": "function",
               "language": "python"
             }
@@ -272,7 +412,7 @@
           "definitions": [
             {
               "file": "asset_forge.py",
-              "line": 47,
+              "line": 48,
               "kind": "function",
               "language": "python"
             }
@@ -285,8 +425,8 @@
     "test_incompatible_commercial_license_is_rejected": {
       "source": {
         "file": "tests/test_asset_forge.py",
-        "start": 41,
-        "end": 48
+        "start": 71,
+        "end": 78
       },
       "symbol_dependencies": [
         {
@@ -294,7 +434,7 @@
           "definitions": [
             {
               "file": "tests/test_asset_forge.py",
-              "line": 29,
+              "line": 51,
               "kind": "function",
               "language": "python"
             }
@@ -306,7 +446,7 @@
           "definitions": [
             {
               "file": "asset_forge.py",
-              "line": 47,
+              "line": 48,
               "kind": "function",
               "language": "python"
             }
@@ -319,8 +459,8 @@
     "test_plan_routes_sprite_to_2d_pipeline": {
       "source": {
         "file": "tests/test_asset_forge.py",
-        "start": 50,
-        "end": 56
+        "start": 80,
+        "end": 86
       },
       "symbol_dependencies": [
         {
@@ -328,7 +468,7 @@
           "definitions": [
             {
               "file": "asset_forge.py",
-              "line": 157,
+              "line": 301,
               "kind": "function",
               "language": "python"
             }
@@ -340,7 +480,7 @@
           "definitions": [
             {
               "file": "tests/test_asset_forge.py",
-              "line": 29,
+              "line": 51,
               "kind": "function",
               "language": "python"
             }
@@ -353,8 +493,8 @@
     "test_secondary_custom_asset_prompts_reuse_search": {
       "source": {
         "file": "tests/test_asset_forge.py",
-        "start": 58,
-        "end": 65
+        "start": 88,
+        "end": 95
       },
       "symbol_dependencies": [
         {
@@ -362,7 +502,7 @@
           "definitions": [
             {
               "file": "asset_forge.py",
-              "line": 157,
+              "line": 301,
               "kind": "function",
               "language": "python"
             }
@@ -374,7 +514,7 @@
           "definitions": [
             {
               "file": "tests/test_asset_forge.py",
-              "line": 29,
+              "line": 51,
               "kind": "function",
               "language": "python"
             }
@@ -387,8 +527,8 @@
     "test_png_sprite_grid_validation_passes": {
       "source": {
         "file": "tests/test_asset_forge.py",
-        "start": 67,
-        "end": 76
+        "start": 97,
+        "end": 106
       },
       "symbol_dependencies": [
         {
@@ -396,7 +536,7 @@
           "definitions": [
             {
               "file": "tests/test_asset_forge.py",
-              "line": 29,
+              "line": 51,
               "kind": "function",
               "language": "python"
             }
@@ -408,7 +548,7 @@
           "definitions": [
             {
               "file": "asset_forge.py",
-              "line": 119,
+              "line": 233,
               "kind": "function",
               "language": "python"
             }
@@ -420,7 +560,7 @@
           "definitions": [
             {
               "file": "tests/test_asset_forge.py",
-              "line": 13,
+              "line": 22,
               "kind": "function",
               "language": "python"
             }
@@ -433,8 +573,8 @@
     "test_png_sprite_grid_validation_rejects_bad_width": {
       "source": {
         "file": "tests/test_asset_forge.py",
-        "start": 78,
-        "end": 84
+        "start": 108,
+        "end": 114
       },
       "symbol_dependencies": [
         {
@@ -442,7 +582,7 @@
           "definitions": [
             {
               "file": "tests/test_asset_forge.py",
-              "line": 29,
+              "line": 51,
               "kind": "function",
               "language": "python"
             }
@@ -454,7 +594,7 @@
           "definitions": [
             {
               "file": "asset_forge.py",
-              "line": 119,
+              "line": 233,
               "kind": "function",
               "language": "python"
             }
@@ -466,7 +606,7 @@
           "definitions": [
             {
               "file": "tests/test_asset_forge.py",
-              "line": 13,
+              "line": 22,
               "kind": "function",
               "language": "python"
             }
@@ -479,8 +619,8 @@
     "test_png_alpha_requirement": {
       "source": {
         "file": "tests/test_asset_forge.py",
-        "start": 86,
-        "end": 93
+        "start": 116,
+        "end": 123
       },
       "symbol_dependencies": [
         {
@@ -488,7 +628,7 @@
           "definitions": [
             {
               "file": "tests/test_asset_forge.py",
-              "line": 29,
+              "line": 51,
               "kind": "function",
               "language": "python"
             }
@@ -500,7 +640,7 @@
           "definitions": [
             {
               "file": "asset_forge.py",
-              "line": 119,
+              "line": 233,
               "kind": "function",
               "language": "python"
             }
@@ -512,7 +652,7 @@
           "definitions": [
             {
               "file": "tests/test_asset_forge.py",
-              "line": 13,
+              "line": 22,
               "kind": "function",
               "language": "python"
             }
@@ -521,6 +661,178 @@
         }
       ],
       "dependency_count": 3
+    },
+    "test_palette_transparency_and_max_colors": {
+      "source": {
+        "file": "tests/test_asset_forge.py",
+        "start": 125,
+        "end": 135
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_example",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 51,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_raster_file",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 233,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write_png",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_power_of_two_atlas": {
+      "source": {
+        "file": "tests/test_asset_forge.py",
+        "start": 137,
+        "end": 146
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_example",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 51,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_raster_file",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 233,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write_png",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_atlas_manifest_contains_frame_rectangles": {
+      "source": {
+        "file": "tests/test_asset_forge.py",
+        "start": 148,
+        "end": 160
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_atlas_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 202,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "load_example",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 51,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "write_png",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_invalid_png_crc_is_rejected": {
+      "source": {
+        "file": "tests/test_asset_forge.py",
+        "start": 162,
+        "end": 170
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "inspect_png",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 142,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write_png",
+          "definitions": [
+            {
+              "file": "tests/test_asset_forge.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
     }
   }
 }

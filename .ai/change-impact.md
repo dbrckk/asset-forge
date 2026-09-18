@@ -1,7 +1,7 @@
 # Change impact
 
-Base: 424bc4be9133bf3f50cfc767e9bc10ca0b2427f4
-Head: c811dcfa92ed1d25391b6bd4f9ba84ab64d873ae
+Base: a34570eec98aa4d44c9d5d559d9a3e7ca14aea5f
+Head: 5f66a0c38b14ba0af2422933b5d3e330526a465a
 
 ## Changed files
 - M tests/test_asset_forge.py
