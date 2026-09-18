@@ -4,19 +4,26 @@ Status: active
 
 ## Working
 - Repository initialized as a central 2D/3D visual asset production pipeline.
+- Dependency-free Python CLI validates asset manifests.
+- CLI builds deterministic production plans and routes supported asset types to 2D/3D pipelines.
+- Initial tool registry, manifest schema, example manifest, unit tests, CI, and repo-standards adoption are present.
 
 ## Broken / blockers
 - star-list currently has no indexed matches for the first visual-production keywords checked.
-- Real backend adapters are not implemented yet.
+- Real backend adapters for Blender/vector/raster/atlas operations are not implemented yet.
+- Current GitHub status endpoint has not yet surfaced a CI status for the latest workflow commit.
 
 ## Current priority
-- Stabilize manifest contracts and implement the first real 2D sprite pipeline.
+- Implement real raster/sprite inspection and atlas validation, then add discovery integration with star-list.
 
 ## Validation
-- Validation commands will be added with the first executable CLI.
+- `python -m compileall -q asset_forge.py tests`
+- `python -m unittest discover -s tests -v`
+- `python asset_forge.py validate examples/asset-manifest.json`
+- `python asset_forge.py plan examples/asset-manifest.json`
 
 ## Last verified
-- Initial repository bootstrap.
+- 2026-09-18: executable bootstrap committed on main.
 
 <!-- AUTO:START -->
 ## Automatic repository state
