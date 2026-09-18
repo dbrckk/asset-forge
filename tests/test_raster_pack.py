@@ -843,7 +843,12 @@ class RasterPackTests(unittest.TestCase):
 
     def test_webp_vp8x_dimensions_alpha_and_animation(self):
         payload = bytes([0x12, 0, 0, 0]) + (319).to_bytes(3, "little") + (199).to_bytes(3, "little")
-        data = webp_file(webp_chunk(b"VP8X", payload))
+        anmf = b"\x00" * 16
+        data = webp_file(
+            webp_chunk(b"VP8X", payload),
+            webp_chunk(b"ANIM", b"\x00" * 6),
+            webp_chunk(b"ANMF", anmf),
+        )
         info = inspect_webp_bytes(data)
 
         self.assertEqual((info["width"], info["height"]), (320, 200))
@@ -897,6 +902,19 @@ class RasterPackTests(unittest.TestCase):
 
         self.assertTrue(info["hasAlpha"])
         self.assertIn("ALPH", info["chunks"])
+
+    def test_webp_incomplete_vp8x_is_rejected(self):
+        payload = bytes([0, 0, 0, 0]) + (9).to_bytes(3, "little") + (9).to_bytes(3, "little")
+        data = webp_file(webp_chunk(b"VP8X", payload))
+        with self.assertRaisesRegex(ValueError, "requires VP8 or VP8L"):
+            inspect_webp_bytes(data)
+
+    def test_webp_reserved_vp8x_bits_are_rejected(self):
+        payload = bytes([0x01, 0, 0, 0]) + (9).to_bytes(3, "little") + (9).to_bytes(3, "little")
+        vp8 = (0).to_bytes(3, "little") + b"\x9d\x01\x2a" + (10).to_bytes(2, "little") + (10).to_bytes(2, "little")
+        data = webp_file(webp_chunk(b"VP8X", payload), webp_chunk(b"VP8 ", vp8))
+        with self.assertRaisesRegex(ValueError, "reserved feature bits"):
+            inspect_webp_bytes(data)
 
     def test_webp_bad_riff_size_is_rejected(self):
         data = bytearray(webp_file(webp_chunk(b"VP8L", b"\x2f\x00\x00\x00\x00")))
