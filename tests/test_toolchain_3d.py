@@ -68,13 +68,15 @@ class Toolchain3DTests(unittest.TestCase):
             [
                 "blender-export",
                 "structural-validation",
+                "quality-report",
                 "khronos-validation",
                 "optimize",
                 "post-optimization-validation",
+                "post-optimization-quality",
             ],
         )
         self.assertEqual(plan["finalOutput"], "build/asset/optimized.glb")
-        self.assertIn("--texture-compress webp", plan["steps"][3]["command"])
+        self.assertIn("--texture-compress webp", plan["steps"][4]["command"])
 
     @patch("toolchain_3d.detect_3d_tools")
     def test_none_optimizer_keeps_raw_output(self, detect):
