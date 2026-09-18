@@ -107,6 +107,20 @@ tests/
 6. Create/source the asset.
 7. Validate, optimize, record provenance, and export it for the target project.
 
+Run a targeted star-list query against a local checkout:
+
+```bash
+python asset_forge.py discover-tools ../star-list "pixel art sprites atlas" --top 8
+```
+
+Generate the standard visual tooling discovery report:
+
+```bash
+python asset_forge.py discover-tools ../star-list --full-report --output build/visual-tools.json
+```
+
+The bridge invokes star-list's own recommender and consumes its JSON result instead of maintaining a second ranking implementation.
+
 Discovery is advisory: a newly discovered repository is never trusted automatically.
 
 ## Initial interoperability
