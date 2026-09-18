@@ -16,6 +16,7 @@ from gltf_diagnostics import deep_gltf_diagnostics
 from gltf_quality import quality_report
 from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_3d_delivery import godot_3d_delivery_report
+from godot_handoff import prepare_godot_handoff, validate_godot_handoff
 from godot_export import write_spriteframes
 from raster_pack import pack_uniform_atlas, recompress_png
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
@@ -504,6 +505,16 @@ def parser() -> argparse.ArgumentParser:
     godot3d.add_argument("--profile", choices=["prop", "environment", "character"], default="prop")
     godot3d.add_argument("--output", type=Path)
 
+    godot_handoff = sub.add_parser("prepare-godot-handoff", help="prepare a self-contained Godot 4 handoff project")
+    godot_handoff.add_argument("input", type=Path)
+    godot_handoff.add_argument("output_dir", type=Path)
+    godot_handoff.add_argument("--profile", choices=["prop", "environment", "character"], default="prop")
+    godot_handoff.add_argument("--delivery-report", type=Path)
+
+    godot_import = sub.add_parser("validate-godot-handoff", help="run Godot headless import validation on a handoff")
+    godot_import.add_argument("project_dir", type=Path)
+    godot_import.add_argument("--godot")
+
     blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
     blender_job.add_argument("source_blend", type=Path)
     blender_job.add_argument("output_glb", type=Path)
@@ -715,6 +726,30 @@ def main() -> int:
         else:
             print(rendered, end="")
         return 0 if result.get("ready") else 1
+    if args.command == "prepare-godot-handoff":
+        try:
+            delivery = load_json(args.delivery_report) if args.delivery_report else None
+            result = prepare_godot_handoff(
+                args.input,
+                args.output_dir,
+                profile=args.profile,
+                delivery_report=delivery,
+            )
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+    if args.command == "validate-godot-handoff":
+        try:
+            result = validate_godot_handoff(args.project_dir, executable=args.godot)
+        except (OSError, ValueError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(result, indent=2, sort_keys=True))
+        if result["passed"] is False:
+            return 1
+        return 0
     if args.command == "quality-gltf":
         try:
             result = quality_report(args.input, args.profile)
