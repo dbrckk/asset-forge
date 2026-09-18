@@ -6,22 +6,36 @@ import zlib
 from pathlib import Path
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+MAX_PNG_FILE_BYTES = 256 * 1024 * 1024
+MAX_PNG_CHUNK_BYTES = 64 * 1024 * 1024
+MAX_PNG_CHUNKS = 10000
+MAX_PNG_PIXELS = 100_000_000
+MAX_DECOMPRESSED_BYTES = 512 * 1024 * 1024
 
 
 def _chunks(data: bytes) -> list[tuple[bytes, bytes]]:
-    if data[:8] != PNG_SIGNATURE:
+    if len(data) > MAX_PNG_FILE_BYTES:
+        raise ValueError(f"PNG exceeds file limit {MAX_PNG_FILE_BYTES}")
+    if len(data) < 8 or data[:8] != PNG_SIGNATURE:
         raise ValueError("file is not a valid PNG")
 
     chunks: list[tuple[bytes, bytes]] = []
     offset = 8
     saw_iend = False
+    saw_ihdr = False
+    saw_idat = False
+    idat_closed = False
 
     while offset < len(data):
+        if len(chunks) >= MAX_PNG_CHUNKS:
+            raise ValueError(f"PNG exceeds chunk count limit {MAX_PNG_CHUNKS}")
         if offset + 12 > len(data):
             raise ValueError("truncated PNG chunk")
 
         length = struct.unpack(">I", data[offset : offset + 4])[0]
         kind = data[offset + 4 : offset + 8]
+        if length > MAX_PNG_CHUNK_BYTES:
+            raise ValueError(f"PNG chunk exceeds size limit {MAX_PNG_CHUNK_BYTES}")
         end = offset + 12 + length
         if end > len(data):
             raise ValueError("truncated PNG chunk")
@@ -32,15 +46,140 @@ def _chunks(data: bytes) -> list[tuple[bytes, bytes]]:
         if actual_crc != expected_crc:
             raise ValueError("invalid PNG CRC")
 
+        if not saw_ihdr:
+            if kind != b"IHDR" or length != 13:
+                raise ValueError("PNG must start with a 13-byte IHDR")
+            saw_ihdr = True
+        elif kind == b"IHDR":
+            raise ValueError("PNG contains duplicate IHDR")
+
+        if kind == b"IDAT":
+            if idat_closed:
+                raise ValueError("PNG IDAT chunks must be consecutive")
+            saw_idat = True
+        elif saw_idat and kind != b"IEND":
+            idat_closed = True
+
+        if kind == b"IEND":
+            if length != 0:
+                raise ValueError("PNG IEND must be empty")
+            saw_iend = True
+            offset = end
+            if offset != len(data):
+                raise ValueError("PNG contains trailing data after IEND")
+            chunks.append((kind, payload))
+            break
+
         chunks.append((kind, payload))
         offset = end
-        if kind == b"IEND":
-            saw_iend = True
-            break
 
     if not saw_iend:
         raise ValueError("PNG is missing IEND")
+    if not saw_idat:
+        raise ValueError("PNG is missing IDAT")
     return chunks
+
+
+def _validate_ihdr(payload: bytes) -> tuple[int, int, int, int, int, int, int]:
+    if len(payload) != 13:
+        raise ValueError("PNG IHDR must be 13 bytes")
+    width, height, depth, color_type, compression, filtering, interlace = struct.unpack(
+        ">IIBBBBB", payload
+    )
+    if width <= 0 or height <= 0:
+        raise ValueError("PNG width and height must be > 0")
+    if width * height > MAX_PNG_PIXELS:
+        raise ValueError(f"PNG exceeds pixel limit {MAX_PNG_PIXELS}")
+    if compression != 0 or filtering != 0 or interlace not in {0, 1}:
+        raise ValueError("unsupported PNG compression/filter/interlace method")
+    valid_depths = {
+        0: {1, 2, 4, 8, 16},
+        2: {8, 16},
+        3: {1, 2, 4, 8},
+        4: {8, 16},
+        6: {8, 16},
+    }
+    if color_type not in valid_depths or depth not in valid_depths[color_type]:
+        raise ValueError(f"invalid PNG bit depth {depth} for color type {color_type}")
+    return width, height, depth, color_type, compression, filtering, interlace
+
+
+def _validate_palette_transparency(
+    chunks: list[tuple[bytes, bytes]],
+    *,
+    depth: int,
+    color_type: int,
+) -> tuple[list[tuple[int, int, int]], bytes]:
+    palette: list[tuple[int, int, int]] = []
+    transparency = b""
+    saw_plte = False
+    saw_trns = False
+    saw_idat = False
+
+    for kind, payload in chunks:
+        if kind == b"IDAT":
+            saw_idat = True
+        elif kind == b"PLTE":
+            if saw_plte:
+                raise ValueError("PNG contains duplicate PLTE")
+            if saw_idat:
+                raise ValueError("PNG PLTE must appear before IDAT")
+            if color_type in {0, 4}:
+                raise ValueError("PNG PLTE is not allowed for grayscale color types")
+            if not payload or len(payload) % 3 or len(payload) > 768:
+                raise ValueError("invalid PLTE length")
+            entries = len(payload) // 3
+            if color_type == 3 and entries > (1 << depth):
+                raise ValueError("PNG palette has more entries than indexed bit depth allows")
+            palette = [
+                (payload[i], payload[i + 1], payload[i + 2])
+                for i in range(0, len(payload), 3)
+            ]
+            saw_plte = True
+        elif kind == b"tRNS":
+            if saw_trns:
+                raise ValueError("PNG contains duplicate tRNS")
+            if saw_idat:
+                raise ValueError("PNG tRNS must appear before IDAT")
+            if color_type == 3:
+                if not saw_plte:
+                    raise ValueError("indexed PNG tRNS requires preceding PLTE")
+                if len(payload) > len(palette):
+                    raise ValueError("indexed PNG tRNS exceeds palette length")
+            elif color_type == 0:
+                if len(payload) != 2:
+                    raise ValueError("grayscale PNG tRNS must be 2 bytes")
+            elif color_type == 2:
+                if len(payload) != 6:
+                    raise ValueError("truecolor PNG tRNS must be 6 bytes")
+            else:
+                raise ValueError("PNG tRNS is not allowed for alpha color types")
+            transparency = payload
+            saw_trns = True
+
+    if color_type == 3 and not saw_plte:
+        raise ValueError("indexed PNG is missing PLTE")
+    return palette, transparency
+
+
+def _decompress_idat(data: bytes, expected_size: int) -> bytes:
+    if expected_size < 0 or expected_size > MAX_DECOMPRESSED_BYTES:
+        raise ValueError(f"PNG decompressed data exceeds limit {MAX_DECOMPRESSED_BYTES}")
+    inflater = zlib.decompressobj()
+    try:
+        raw = inflater.decompress(data, expected_size + 1)
+        if len(raw) > expected_size:
+            raise ValueError("PNG decompressed data exceeds expected scanline size")
+        raw += inflater.flush()
+    except zlib.error as exc:
+        raise ValueError(f"invalid PNG zlib stream: {exc}") from exc
+    if len(raw) != expected_size:
+        raise ValueError("unexpected PNG scanline length")
+    if not inflater.eof:
+        raise ValueError("truncated PNG zlib stream")
+    if inflater.unused_data:
+        raise ValueError("PNG IDAT contains trailing compressed data")
+    return raw
 
 
 def _paeth(a: int, b: int, c: int) -> int:
@@ -99,37 +238,24 @@ def _unfilter_scanlines(raw: bytes, width: int, height: int, bpp: int) -> list[b
 
 def decode_rgba(path: Path) -> tuple[int, int, bytes]:
     chunks = _chunks(path.read_bytes())
-    if not chunks or chunks[0][0] != b"IHDR":
-        raise ValueError("PNG is missing IHDR")
-
-    width, height, depth, color_type, compression, filtering, interlace = struct.unpack(
-        ">IIBBBBB", chunks[0][1]
+    width, height, depth, color_type, compression, filtering, interlace = _validate_ihdr(
+        chunks[0][1]
     )
     if depth != 8 or compression != 0 or filtering != 0 or interlace != 0:
         raise ValueError("packing supports non-interlaced 8-bit PNG only")
-    if color_type not in {0, 2, 3, 4, 6}:
-        raise ValueError(f"unsupported PNG color type {color_type}")
 
     bpp_by_type = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}
     bpp = bpp_by_type[color_type]
-    raw = zlib.decompress(b"".join(payload for kind, payload in chunks if kind == b"IDAT"))
+    expected_size = (width * bpp + 1) * height
+    compressed = b"".join(payload for kind, payload in chunks if kind == b"IDAT")
+    raw = _decompress_idat(compressed, expected_size)
     rows = _unfilter_scanlines(raw, width, height, bpp)
 
-    palette: list[tuple[int, int, int]] = []
-    transparency = b""
-    for kind, payload in chunks:
-        if kind == b"PLTE":
-            if len(payload) % 3:
-                raise ValueError("invalid PLTE length")
-            palette = [
-                (payload[i], payload[i + 1], payload[i + 2])
-                for i in range(0, len(payload), 3)
-            ]
-        elif kind == b"tRNS":
-            transparency = payload
-
-    if color_type == 3 and not palette:
-        raise ValueError("indexed PNG is missing PLTE")
+    palette, transparency = _validate_palette_transparency(
+        chunks,
+        depth=depth,
+        color_type=color_type,
+    )
 
     rgba = bytearray(width * height * 4)
     destination = 0
@@ -147,6 +273,10 @@ def decode_rgba(path: Path) -> tuple[int, int, bytes]:
             elif color_type == 2:
                 red, green, blue = row[index : index + 3]
                 alpha = 255
+                if len(transparency) == 6:
+                    tr, tg, tb = struct.unpack(">HHH", transparency)
+                    if (red, green, blue) == (tr & 0xFF, tg & 0xFF, tb & 0xFF):
+                        alpha = 0
             elif color_type == 3:
                 palette_index = row[index]
                 if palette_index >= len(palette):
