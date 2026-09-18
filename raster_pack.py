@@ -1245,7 +1245,16 @@ def _pack_maxrects(
         ),
     )
 
-    total_height = sum(frame["height"] + extrude * 2 + padding for _, frame in ordered)
+    total_height = sum(
+        (
+            max(frame["width"], frame["height"])
+            if allow_rotation
+            else frame["height"]
+        )
+        + extrude * 2
+        + padding
+        for _, frame in ordered
+    )
     free_rects = [
         {
             "x": 0,
