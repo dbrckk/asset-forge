@@ -403,3 +403,30 @@ python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
 ```
 
 Dimension/pixel limits are enforced before canvas allocation. The compressed byte budget is checked against the encoded PNG candidate before replacing the output file, so a failed budget check preserves any existing atlas.
+
+
+### MaxRects compact packing and occupancy
+
+`pack-atlas-compact` now uses deterministic MaxRects placement with a best-short-side-fit heuristic instead of shelf packing. Rotation remains disabled, so existing atlas consumers keep stable orientation semantics.
+
+Compact atlas metadata reports:
+
+```text
+spriteArea
+packedArea
+contentArea
+atlasArea
+wastedPixels
+contentOccupancyPercent
+atlasOccupancyPercent
+```
+
+A minimum occupancy can be enforced in CI:
+
+```bash
+python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
+  --max-width 2048 \
+  --min-occupancy 70
+```
+
+If final atlas occupancy falls below the requested percentage, packing fails before the output PNG is written.
