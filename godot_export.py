@@ -41,6 +41,12 @@ def _validate_frames(atlas_metadata: dict) -> list[dict]:
         if atlas_height is not None and y + height > atlas_height:
             raise ValueError(f"invalid frame {index}: region exceeds atlas height")
 
+        rotated = bool(frame.get("rotated", False))
+        if rotated:
+            raise ValueError(
+                f"invalid frame {index}: rotated atlas frames are not supported by Godot SpriteFrames export"
+            )
+
         source_width = int(frame.get("sourceWidth", width))
         source_height = int(frame.get("sourceHeight", height))
         offset_x = int(frame.get("offsetX", 0))
