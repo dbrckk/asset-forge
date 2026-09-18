@@ -56,6 +56,10 @@ profiles/
     character.json
     environment.json
     prop.json
+  godot4/
+    character.json
+    environment.json
+    prop.json
   vector/
     icon.json
     logo.json
@@ -447,6 +451,82 @@ jobs:
     "maxTextureDimension": 4096,
     "maxEstimatedTextureMipBytes": 134217728,
     "maxJointsPerSkin": 0
+  }
+}
+````
+
+## File: profiles/godot4/character.json
+````json
+{
+  "id": "godot4-character",
+  "engine": "Godot 4",
+  "assetProfile": "character",
+  "sceneImport": {
+    "useNameSuffixes": true,
+    "useNodeTypeSuffixes": true,
+    "generateTangentsIfMissing": true,
+    "preferStaticScene": false
+  },
+  "animation": {
+    "import": true,
+    "fps": 60,
+    "trimming": false,
+    "removeImmutableTracks": false
+  },
+  "textures": {
+    "preferEmbeddedOrProjectLocal": true,
+    "remoteUrisAllowed": false
+  }
+}
+````
+
+## File: profiles/godot4/environment.json
+````json
+{
+  "id": "godot4-environment",
+  "engine": "Godot 4",
+  "assetProfile": "environment",
+  "sceneImport": {
+    "useNameSuffixes": true,
+    "useNodeTypeSuffixes": true,
+    "generateTangentsIfMissing": true,
+    "preferStaticScene": true,
+    "navigationCandidate": true
+  },
+  "animation": {
+    "import": false,
+    "fps": 30,
+    "trimming": true,
+    "removeImmutableTracks": true
+  },
+  "textures": {
+    "preferEmbeddedOrProjectLocal": true,
+    "remoteUrisAllowed": false
+  }
+}
+````
+
+## File: profiles/godot4/prop.json
+````json
+{
+  "id": "godot4-prop",
+  "engine": "Godot 4",
+  "assetProfile": "prop",
+  "sceneImport": {
+    "useNameSuffixes": true,
+    "useNodeTypeSuffixes": true,
+    "generateTangentsIfMissing": true,
+    "preferStaticScene": true
+  },
+  "animation": {
+    "import": false,
+    "fps": 30,
+    "trimming": true,
+    "removeImmutableTracks": true
+  },
+  "textures": {
+    "preferEmbeddedOrProjectLocal": true,
+    "remoteUrisAllowed": false
   }
 }
 ````
@@ -871,18 +951,41 @@ def test_recommendations_disable_animation_for_prop_without_clips(self)
 ⋮----
 recommendations = build_import_recommendations(
 ⋮----
-def test_prepare_handoff_copies_glb_and_writes_project(self)
+def test_profiles_are_loaded_from_versioned_json(self)
+⋮----
+prop = load_godot_profile("prop")
+environment = load_godot_profile("environment")
+character = load_godot_profile("character")
+⋮----
+def test_recommendations_report_profile_source(self)
+⋮----
+recommendations = build_import_recommendations("character")
+⋮----
+def test_profile_loader_uses_file_contents_as_source_of_truth(self)
 ⋮----
 root = Path(tmp)
+profile_dir = root / "profiles" / "godot4"
+⋮----
+loaded = load_godot_profile("prop", root=root)
+⋮----
+def test_prepare_handoff_copies_glb_and_writes_project(self)
+⋮----
 source = root / "model.glb"
 ⋮----
 report = {"ready": True, "scene": {"animations": 0, "godotNameSuffixes": {}}}
 ⋮----
+asset_manifest = {
 result = prepare_godot_handoff(
 ⋮----
 project_dir = Path(result["projectDir"])
 copied = Path(result["asset"])
 manifest = json.loads(Path(result["manifest"]).read_text(encoding="utf-8"))
+⋮----
+def test_missing_delivery_report_is_rejected(self)
+⋮----
+def test_failed_delivery_report_is_rejected(self)
+⋮----
+def test_allow_unvalidated_override(self)
 ⋮----
 def test_non_glb_is_rejected(self)
 ⋮----
@@ -1385,6 +1488,10 @@ has_errors = any(
 result = godot_3d_delivery_report(args.input, args.profile)
 ⋮----
 delivery = load_json(args.delivery_report) if args.delivery_report else None
+asset_manifest = load_json(args.asset_manifest) if args.asset_manifest else None
+⋮----
+manifest_errors = validate_manifest(asset_manifest)
+⋮----
 result = prepare_godot_handoff(
 ⋮----
 result = validate_godot_handoff(args.project_dir, executable=args.godot)
@@ -2053,9 +2160,20 @@ def detect_godot() -> dict
 ⋮----
 path = shutil.which(name)
 ⋮----
+def load_godot_profile(profile: str, root: Path | None = None) -> dict
+⋮----
+base = root or Path(__file__).resolve().parent
+path = base / "profiles" / "godot4" / f"{profile}.json"
+⋮----
+data = json.loads(path.read_text(encoding="utf-8"))
+⋮----
 def build_import_recommendations(profile: str, delivery_report: dict | None = None) -> dict
 ⋮----
-animation_import = profile == "character"
+profile_data = load_godot_profile(profile)
+scene_import = dict(profile_data["sceneImport"])
+animation = dict(profile_data["animation"])
+textures = dict(profile_data["textures"])
+⋮----
 recommendations = {
 ⋮----
 scene = delivery_report.get("scene", {})
@@ -2071,6 +2189,13 @@ destination = asset_dir / source_glb.name
 project_file = project_dir / "project.godot"
 ⋮----
 recommendations = build_import_recommendations(profile, delivery_report)
+⋮----
+provenance = None
+⋮----
+source = asset_manifest.get("source", {})
+license_data = asset_manifest.get("license", {})
+provenance = {
+⋮----
 manifest = {
 ⋮----
 manifest_path = project_dir / "handoff.json"
@@ -2512,13 +2637,26 @@ python asset_forge.py prepare-godot-handoff character.glb build/handoff \
   --delivery-report build/godot4-delivery.json
 ```
 
+The handoff is strict by default: the delivery report must exist and contain `ready: true`. For controlled debugging only, `--allow-unvalidated` bypasses this gate.
+
+Attach Asset Forge provenance/licensing metadata when available:
+
+```bash
+python asset_forge.py prepare-godot-handoff character.glb build/handoff \
+  --profile character \
+  --delivery-report build/godot4-delivery.json \
+  --asset-manifest manifests/character.json
+```
+
+The manifest is validated before use. Source mode/URI/author, asset identity, project, importance, license ID, commercial-use/derivative permissions, and attribution requirements are copied into `handoff.json`.
+
 If a Godot editor executable is installed, validate the generated project with Godot's headless importer:
 
 ```bash
 python asset_forge.py validate-godot-handoff build/handoff/godot-handoff
 ```
 
-The generated handoff contains a minimal `project.godot`, a copied GLB under `assets/`, `handoff.json` with import recommendations, and a short README. When Godot is available, validation runs the documented headless `--import` workflow.
+The generated handoff contains a minimal `project.godot`, a copied GLB under `assets/`, `handoff.json` with import recommendations/provenance, and a short README. Versioned engine handoff profiles live in `profiles/godot4/` for prop, environment, and character assets. These JSON files are the runtime source of truth for handoff recommendations; the Python code loads and validates them instead of duplicating their settings. When Godot is available, validation runs the documented headless `--import` workflow.
 
 The Godot delivery report checks glTF 2.0 suitability, stable/duplicate names, Godot import suffix hints, animation naming, PBR materials, double-sided materials, normal-map tangents, remote/external images, and the existing 3D quality profile.
 

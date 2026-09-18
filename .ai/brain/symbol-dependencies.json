@@ -369,7 +369,7 @@
       "source": {
         "file": "asset_forge.py",
         "start": 423,
-        "end": 549
+        "end": 551
       },
       "symbol_dependencies": [],
       "dependency_count": 0
@@ -377,8 +377,8 @@
     "main": {
       "source": {
         "file": "asset_forge.py",
-        "start": 552,
-        "end": 829
+        "start": 554,
+        "end": 838
       },
       "symbol_dependencies": [
         {
@@ -614,7 +614,7 @@
           "definitions": [
             {
               "file": "godot_handoff.py",
-              "line": 52,
+              "line": 69,
               "kind": "function",
               "language": "python"
             }
@@ -698,12 +698,24 @@
           "definitions": [
             {
               "file": "godot_handoff.py",
-              "line": 135,
+              "line": 184,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 71,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
         },
         {
           "symbol": "validate_svg_profile",
@@ -754,7 +766,7 @@
           "relation": "imported_module"
         }
       ],
-      "dependency_count": 31
+      "dependency_count": 32
     },
     "detect_godot": {
       "source": {
@@ -765,24 +777,24 @@
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "build_import_recommendations": {
+    "load_godot_profile": {
       "source": {
         "file": "godot_handoff.py",
         "start": 18,
-        "end": 49
+        "end": 36
       },
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "prepare_godot_handoff": {
+    "build_import_recommendations": {
       "source": {
         "file": "godot_handoff.py",
-        "start": 52,
-        "end": 122
+        "start": 39,
+        "end": 66
       },
       "symbol_dependencies": [
         {
-          "symbol": "build_import_recommendations",
+          "symbol": "load_godot_profile",
           "definitions": [
             {
               "file": "godot_handoff.py",
@@ -796,11 +808,33 @@
       ],
       "dependency_count": 1
     },
+    "prepare_godot_handoff": {
+      "source": {
+        "file": "godot_handoff.py",
+        "start": 69,
+        "end": 171
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_import_recommendations",
+          "definitions": [
+            {
+              "file": "godot_handoff.py",
+              "line": 39,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
     "godot_import_command": {
       "source": {
         "file": "godot_handoff.py",
-        "start": 125,
-        "end": 132
+        "start": 174,
+        "end": 181
       },
       "symbol_dependencies": [],
       "dependency_count": 0
@@ -808,8 +842,8 @@
     "validate_godot_handoff": {
       "source": {
         "file": "godot_handoff.py",
-        "start": 135,
-        "end": 167
+        "start": 184,
+        "end": 216
       },
       "symbol_dependencies": [
         {
@@ -829,7 +863,7 @@
           "definitions": [
             {
               "file": "godot_handoff.py",
-              "line": 125,
+              "line": 174,
               "kind": "function",
               "language": "python"
             }
@@ -842,8 +876,8 @@
     "GodotHandoffTests": {
       "source": {
         "file": "tests/test_godot_handoff.py",
-        "start": 15,
-        "end": 90
+        "start": 16,
+        "end": 208
       },
       "symbol_dependencies": [
         {
@@ -851,7 +885,7 @@
           "definitions": [
             {
               "file": "godot_handoff.py",
-              "line": 18,
+              "line": 39,
               "kind": "function",
               "language": "python"
             }
@@ -875,7 +909,19 @@
           "definitions": [
             {
               "file": "godot_handoff.py",
-              "line": 125,
+              "line": 174,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "load_godot_profile",
+          "definitions": [
+            {
+              "file": "godot_handoff.py",
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -887,7 +933,7 @@
           "definitions": [
             {
               "file": "godot_handoff.py",
-              "line": 52,
+              "line": 69,
               "kind": "function",
               "language": "python"
             }
@@ -895,11 +941,35 @@
           "relation": "imported_module"
         },
         {
+          "symbol": "test_allow_unvalidated_override",
+          "definitions": [
+            {
+              "file": "tests/test_godot_handoff.py",
+              "line": 152,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
           "symbol": "test_available_godot_import_passes",
           "definitions": [
             {
               "file": "tests/test_godot_handoff.py",
-              "line": 77,
+              "line": 195,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_failed_delivery_report_is_rejected",
+          "definitions": [
+            {
+              "file": "tests/test_godot_handoff.py",
+              "line": 139,
               "kind": "function",
               "language": "python"
             }
@@ -911,7 +981,19 @@
           "definitions": [
             {
               "file": "tests/test_godot_handoff.py",
-              "line": 56,
+              "line": 174,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_missing_delivery_report_is_rejected",
+          "definitions": [
+            {
+              "file": "tests/test_godot_handoff.py",
+              "line": 127,
               "kind": "function",
               "language": "python"
             }
@@ -923,7 +1005,7 @@
           "definitions": [
             {
               "file": "tests/test_godot_handoff.py",
-              "line": 65,
+              "line": 183,
               "kind": "function",
               "language": "python"
             }
@@ -935,7 +1017,7 @@
           "definitions": [
             {
               "file": "tests/test_godot_handoff.py",
-              "line": 48,
+              "line": 166,
               "kind": "function",
               "language": "python"
             }
@@ -947,7 +1029,31 @@
           "definitions": [
             {
               "file": "tests/test_godot_handoff.py",
-              "line": 25,
+              "line": 82,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_profile_loader_uses_file_contents_as_source_of_truth",
+          "definitions": [
+            {
+              "file": "tests/test_godot_handoff.py",
+              "line": 44,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_profiles_are_loaded_from_versioned_json",
+          "definitions": [
+            {
+              "file": "tests/test_godot_handoff.py",
+              "line": 26,
               "kind": "function",
               "language": "python"
             }
@@ -959,7 +1065,19 @@
           "definitions": [
             {
               "file": "tests/test_godot_handoff.py",
-              "line": 16,
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_recommendations_report_profile_source",
+          "definitions": [
+            {
+              "file": "tests/test_godot_handoff.py",
+              "line": 36,
               "kind": "function",
               "language": "python"
             }
@@ -971,7 +1089,7 @@
           "definitions": [
             {
               "file": "godot_handoff.py",
-              "line": 135,
+              "line": 184,
               "kind": "function",
               "language": "python"
             }
@@ -979,17 +1097,83 @@
           "relation": "imported_module"
         }
       ],
-      "dependency_count": 11
+      "dependency_count": 18
     },
     "test_recommendations_disable_animation_for_prop_without_clips": {
       "source": {
         "file": "tests/test_godot_handoff.py",
-        "start": 16,
-        "end": 23
+        "start": 17,
+        "end": 24
       },
       "symbol_dependencies": [
         {
           "symbol": "build_import_recommendations",
+          "definitions": [
+            {
+              "file": "godot_handoff.py",
+              "line": 39,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_profiles_are_loaded_from_versioned_json": {
+      "source": {
+        "file": "tests/test_godot_handoff.py",
+        "start": 26,
+        "end": 34
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_godot_profile",
+          "definitions": [
+            {
+              "file": "godot_handoff.py",
+              "line": 18,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_recommendations_report_profile_source": {
+      "source": {
+        "file": "tests/test_godot_handoff.py",
+        "start": 36,
+        "end": 42
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_import_recommendations",
+          "definitions": [
+            {
+              "file": "godot_handoff.py",
+              "line": 39,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_profile_loader_uses_file_contents_as_source_of_truth": {
+      "source": {
+        "file": "tests/test_godot_handoff.py",
+        "start": 44,
+        "end": 80
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_godot_profile",
           "definitions": [
             {
               "file": "godot_handoff.py",
@@ -1006,8 +1190,8 @@
     "test_prepare_handoff_copies_glb_and_writes_project": {
       "source": {
         "file": "tests/test_godot_handoff.py",
-        "start": 25,
-        "end": 46
+        "start": 82,
+        "end": 125
       },
       "symbol_dependencies": [
         {
@@ -1015,7 +1199,73 @@
           "definitions": [
             {
               "file": "godot_handoff.py",
-              "line": 52,
+              "line": 69,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_missing_delivery_report_is_rejected": {
+      "source": {
+        "file": "tests/test_godot_handoff.py",
+        "start": 127,
+        "end": 137
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "prepare_godot_handoff",
+          "definitions": [
+            {
+              "file": "godot_handoff.py",
+              "line": 69,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_failed_delivery_report_is_rejected": {
+      "source": {
+        "file": "tests/test_godot_handoff.py",
+        "start": 139,
+        "end": 150
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "prepare_godot_handoff",
+          "definitions": [
+            {
+              "file": "godot_handoff.py",
+              "line": 69,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_allow_unvalidated_override": {
+      "source": {
+        "file": "tests/test_godot_handoff.py",
+        "start": 152,
+        "end": 164
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "prepare_godot_handoff",
+          "definitions": [
+            {
+              "file": "godot_handoff.py",
+              "line": 69,
               "kind": "function",
               "language": "python"
             }
@@ -1028,8 +1278,8 @@
     "test_non_glb_is_rejected": {
       "source": {
         "file": "tests/test_godot_handoff.py",
-        "start": 48,
-        "end": 54
+        "start": 166,
+        "end": 172
       },
       "symbol_dependencies": [
         {
@@ -1037,7 +1287,7 @@
           "definitions": [
             {
               "file": "godot_handoff.py",
-              "line": 52,
+              "line": 69,
               "kind": "function",
               "language": "python"
             }
@@ -1050,8 +1300,8 @@
     "test_import_command_uses_headless_import": {
       "source": {
         "file": "tests/test_godot_handoff.py",
-        "start": 56,
-        "end": 62
+        "start": 174,
+        "end": 180
       },
       "symbol_dependencies": [
         {
@@ -1059,7 +1309,7 @@
           "definitions": [
             {
               "file": "godot_handoff.py",
-              "line": 125,
+              "line": 174,
               "kind": "function",
               "language": "python"
             }
@@ -1072,8 +1322,8 @@
     "test_missing_godot_is_non_blocking": {
       "source": {
         "file": "tests/test_godot_handoff.py",
-        "start": 65,
-        "end": 73
+        "start": 183,
+        "end": 191
       },
       "symbol_dependencies": [
         {
@@ -1081,7 +1331,7 @@
           "definitions": [
             {
               "file": "godot_handoff.py",
-              "line": 135,
+              "line": 184,
               "kind": "function",
               "language": "python"
             }
@@ -1094,8 +1344,8 @@
     "test_available_godot_import_passes": {
       "source": {
         "file": "tests/test_godot_handoff.py",
-        "start": 77,
-        "end": 90
+        "start": 195,
+        "end": 208
       },
       "symbol_dependencies": [
         {
@@ -1103,7 +1353,7 @@
           "definitions": [
             {
               "file": "godot_handoff.py",
-              "line": 135,
+              "line": 184,
               "kind": "function",
               "language": "python"
             }
@@ -1112,328 +1362,6 @@
         }
       ],
       "dependency_count": 1
-    },
-    "detect_3d_tools": {
-      "source": {
-        "file": "toolchain_3d.py",
-        "start": 18,
-        "end": 37
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_quote": {
-      "source": {
-        "file": "toolchain_3d.py",
-        "start": 40,
-        "end": 41
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "validator_command": {
-      "source": {
-        "file": "toolchain_3d.py",
-        "start": 44,
-        "end": 45
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_quote",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 40,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "gltf_transform_command": {
-      "source": {
-        "file": "toolchain_3d.py",
-        "start": 48,
-        "end": 58
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_quote",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 40,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "gltfpack_command": {
-      "source": {
-        "file": "toolchain_3d.py",
-        "start": 61,
-        "end": 77
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_quote",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 40,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "build_3d_pipeline": {
-      "source": {
-        "file": "toolchain_3d.py",
-        "start": 80,
-        "end": 302
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_quote",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 40,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "build_blender_export_job",
-          "definitions": [
-            {
-              "file": "blender_adapter.py",
-              "line": 20,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "detect_3d_tools",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 18,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "gltf_transform_command",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 48,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "gltfpack_command",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 61,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "render_blender_command",
-          "definitions": [
-            {
-              "file": "blender_adapter.py",
-              "line": 71,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "validator_command",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 44,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 7
-    },
-    "prepare_3d_pipeline": {
-      "source": {
-        "file": "toolchain_3d.py",
-        "start": 305,
-        "end": 315
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "write_blender_export_script",
-          "definitions": [
-            {
-              "file": "blender_adapter.py",
-              "line": 66,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "execute_command": {
-      "source": {
-        "file": "toolchain_3d.py",
-        "start": 318,
-        "end": 333
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_read_json_if_exists": {
-      "source": {
-        "file": "toolchain_3d.py",
-        "start": 336,
-        "end": 343
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_build_production_summary": {
-      "source": {
-        "file": "toolchain_3d.py",
-        "start": 346,
-        "end": 385
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_read_json_if_exists",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 336,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "execute_3d_pipeline": {
-      "source": {
-        "file": "toolchain_3d.py",
-        "start": 388,
-        "end": 469
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_build_production_summary",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 346,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_read_json_if_exists",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 336,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "execute_command",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 318,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "prepare_3d_pipeline",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 305,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "prepare_godot_handoff",
-          "definitions": [
-            {
-              "file": "godot_handoff.py",
-              "line": 52,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "validate_godot_handoff",
-          "definitions": [
-            {
-              "file": "godot_handoff.py",
-              "line": 135,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 6
     }
   }
 }

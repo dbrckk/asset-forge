@@ -1,14 +1,10 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "1e966cd6000efd03a86e9ad629a3146b144a1ad3",
-  "head": "e53aa55e8be7aed0f0ba619eb456c0c5ed840a54",
+  "base": "e53aa55e8be7aed0f0ba619eb456c0c5ed840a54",
+  "head": "9a55e51aaa0c4823d01090e6a9a073fbcf87e413",
   "index_mode": "incremental",
   "changed_files": [
-    {
-      "path": ".github/workflows/validate.yml",
-      "status": "M"
-    },
     {
       "path": "README.md",
       "status": "M"
@@ -19,29 +15,35 @@
     },
     {
       "path": "godot_handoff.py",
+      "status": "M"
+    },
+    {
+      "path": "profiles/godot4/character.json",
+      "status": "A"
+    },
+    {
+      "path": "profiles/godot4/environment.json",
+      "status": "A"
+    },
+    {
+      "path": "profiles/godot4/prop.json",
       "status": "A"
     },
     {
       "path": "tests/test_godot_handoff.py",
-      "status": "A"
-    },
-    {
-      "path": "toolchain_3d.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
     "asset_forge.py",
     "godot_handoff.py",
-    "tests/test_godot_handoff.py",
-    "toolchain_3d.py"
+    "tests/test_godot_handoff.py"
   ],
   "impacted_files": [
     "asset_forge.py",
     "godot_handoff.py",
     "tests/test_asset_forge.py",
     "tests/test_godot_handoff.py",
-    "tests/test_toolchain_3d.py",
     "toolchain_3d.py"
   ],
   "impacted_symbols": [
@@ -145,7 +147,7 @@
       "name": "main",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 552
+      "line": 554
     },
     {
       "name": "detect_godot",
@@ -154,28 +156,34 @@
       "line": 10
     },
     {
-      "name": "build_import_recommendations",
+      "name": "load_godot_profile",
       "kind": "function",
       "file": "godot_handoff.py",
       "line": 18
     },
     {
+      "name": "build_import_recommendations",
+      "kind": "function",
+      "file": "godot_handoff.py",
+      "line": 39
+    },
+    {
       "name": "prepare_godot_handoff",
       "kind": "function",
       "file": "godot_handoff.py",
-      "line": 52
+      "line": 69
     },
     {
       "name": "godot_import_command",
       "kind": "function",
       "file": "godot_handoff.py",
-      "line": 125
+      "line": 174
     },
     {
       "name": "validate_godot_handoff",
       "kind": "function",
       "file": "godot_handoff.py",
-      "line": 135
+      "line": 184
     },
     {
       "name": "chunk",
@@ -283,109 +291,79 @@
       "name": "GodotHandoffTests",
       "kind": "class",
       "file": "tests/test_godot_handoff.py",
-      "line": 15
+      "line": 16
     },
     {
       "name": "test_recommendations_disable_animation_for_prop_without_clips",
       "kind": "function",
       "file": "tests/test_godot_handoff.py",
-      "line": 16
+      "line": 17
+    },
+    {
+      "name": "test_profiles_are_loaded_from_versioned_json",
+      "kind": "function",
+      "file": "tests/test_godot_handoff.py",
+      "line": 26
+    },
+    {
+      "name": "test_recommendations_report_profile_source",
+      "kind": "function",
+      "file": "tests/test_godot_handoff.py",
+      "line": 36
+    },
+    {
+      "name": "test_profile_loader_uses_file_contents_as_source_of_truth",
+      "kind": "function",
+      "file": "tests/test_godot_handoff.py",
+      "line": 44
     },
     {
       "name": "test_prepare_handoff_copies_glb_and_writes_project",
       "kind": "function",
       "file": "tests/test_godot_handoff.py",
-      "line": 25
+      "line": 82
+    },
+    {
+      "name": "test_missing_delivery_report_is_rejected",
+      "kind": "function",
+      "file": "tests/test_godot_handoff.py",
+      "line": 127
+    },
+    {
+      "name": "test_failed_delivery_report_is_rejected",
+      "kind": "function",
+      "file": "tests/test_godot_handoff.py",
+      "line": 139
+    },
+    {
+      "name": "test_allow_unvalidated_override",
+      "kind": "function",
+      "file": "tests/test_godot_handoff.py",
+      "line": 152
     },
     {
       "name": "test_non_glb_is_rejected",
       "kind": "function",
       "file": "tests/test_godot_handoff.py",
-      "line": 48
+      "line": 166
     },
     {
       "name": "test_import_command_uses_headless_import",
       "kind": "function",
       "file": "tests/test_godot_handoff.py",
-      "line": 56
+      "line": 174
     },
     {
       "name": "test_missing_godot_is_non_blocking",
       "kind": "function",
       "file": "tests/test_godot_handoff.py",
-      "line": 65
+      "line": 183
     },
     {
       "name": "test_available_godot_import_passes",
       "kind": "function",
       "file": "tests/test_godot_handoff.py",
-      "line": 77
-    },
-    {
-      "name": "Toolchain3DTests",
-      "kind": "class",
-      "file": "tests/test_toolchain_3d.py",
-      "line": 15
-    },
-    {
-      "name": "test_command_builders",
-      "kind": "function",
-      "file": "tests/test_toolchain_3d.py",
-      "line": 16
-    },
-    {
-      "name": "test_detect_tools",
-      "kind": "function",
-      "file": "tests/test_toolchain_3d.py",
-      "line": 41
-    },
-    {
-      "name": "test_pipeline_contains_export_validate_optimize_validate",
-      "kind": "function",
-      "file": "tests/test_toolchain_3d.py",
-      "line": 50
-    },
-    {
-      "name": "test_none_optimizer_keeps_raw_output",
-      "kind": "function",
-      "file": "tests/test_toolchain_3d.py",
-      "line": 82
-    },
-    {
-      "name": "test_invalid_optimizer_is_rejected",
-      "kind": "function",
-      "file": "tests/test_toolchain_3d.py",
-      "line": 99
-    },
-    {
-      "name": "test_missing_optimizer_falls_back_to_raw_output",
-      "kind": "function",
-      "file": "tests/test_toolchain_3d.py",
-      "line": 108
-    },
-    {
-      "name": "test_execute_pipeline_skips_unavailable_optional_tools",
-      "kind": "function",
-      "file": "tests/test_toolchain_3d.py",
-      "line": 132
-    },
-    {
-      "name": "test_execute_pipeline_stops_on_required_failure",
-      "kind": "function",
-      "file": "tests/test_toolchain_3d.py",
-      "line": 165
-    },
-    {
-      "name": "test_godot4_target_adds_delivery_stage",
-      "kind": "function",
-      "file": "tests/test_toolchain_3d.py",
-      "line": 188
-    },
-    {
-      "name": "test_invalid_target_engine_is_rejected",
-      "kind": "function",
-      "file": "tests/test_toolchain_3d.py",
-      "line": 208
+      "line": 195
     },
     {
       "name": "detect_3d_tools",
@@ -456,7 +434,6 @@
   ],
   "selected_tests": [
     "tests/test_asset_forge.py",
-    "tests/test_godot_handoff.py",
-    "tests/test_toolchain_3d.py"
+    "tests/test_godot_handoff.py"
   ]
 }

@@ -39,26 +39,32 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 594,
+          "line": 596,
           "preview": "metadata = load_json(args.metadata)",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 597,
+          "line": 599,
           "preview": "animation_config = load_json(args.animations)",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 640,
+          "line": 642,
           "preview": "metadata = load_json(args.metadata)",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 731,
+          "line": 733,
           "preview": "delivery = load_json(args.delivery_report) if args.delivery_report else None",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 734,
+          "preview": "asset_manifest = load_json(args.asset_manifest) if args.asset_manifest else None",
           "definition_candidate": false
         },
         {
@@ -68,7 +74,7 @@
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 9
+      "occurrence_count": 10
     },
     "validate_manifest": {
       "definition": {
@@ -88,6 +94,12 @@
           "file": "asset_forge.py",
           "line": 360,
           "preview": "errors = validate_manifest(manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 736,
+          "preview": "manifest_errors = validate_manifest(asset_manifest)",
           "definition_candidate": false
         },
         {
@@ -115,7 +127,7 @@
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 6
+      "occurrence_count": 7
     },
     "is_power_of_two": {
       "definition": {
@@ -430,7 +442,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 557,
+          "line": 559,
           "preview": "return cmd_validate(args.manifest)",
           "definition_candidate": false
         }
@@ -453,7 +465,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 559,
+          "line": 561,
           "preview": "return cmd_plan(args.manifest, root)",
           "definition_candidate": false
         }
@@ -476,7 +488,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 561,
+          "line": 563,
           "preview": "return cmd_validate_raster(args.manifest, args.asset)",
           "definition_candidate": false
         }
@@ -499,7 +511,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 563,
+          "line": 565,
           "preview": "return cmd_atlas_manifest(args.manifest, args.asset, args.output)",
           "definition_candidate": false
         }
@@ -522,7 +534,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 553,
+          "line": 555,
           "preview": "args = parser().parse_args()",
           "definition_candidate": false
         },
@@ -544,20 +556,20 @@
     "main": {
       "definition": {
         "file": "asset_forge.py",
-        "line": 552,
+        "line": 554,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "asset_forge.py",
-          "line": 552,
+          "line": 554,
           "preview": "def main() -> int:",
           "definition_candidate": true
         },
         {
           "file": "asset_forge.py",
-          "line": 833,
+          "line": 842,
           "preview": "raise SystemExit(main())",
           "definition_candidate": false
         },
@@ -617,7 +629,7 @@
         },
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 94,
+          "line": 212,
           "preview": "unittest.main()",
           "definition_candidate": false
         },
@@ -664,26 +676,26 @@
         },
         {
           "file": "godot_handoff.py",
-          "line": 140,
+          "line": 189,
           "preview": "detected = detect_godot()",
           "definition_candidate": false
         },
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 64,
+          "line": 182,
           "preview": "@patch(\"godot_handoff.detect_godot\")",
           "definition_candidate": false
         },
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 76,
+          "line": 194,
           "preview": "@patch(\"godot_handoff.detect_godot\")",
           "definition_candidate": false
         }
       ],
       "occurrence_count": 4
     },
-    "build_import_recommendations": {
+    "load_godot_profile": {
       "definition": {
         "file": "godot_handoff.py",
         "line": 18,
@@ -694,12 +706,65 @@
         {
           "file": "godot_handoff.py",
           "line": 18,
+          "preview": "def load_godot_profile(profile: str, root: Path | None = None) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "godot_handoff.py",
+          "line": 40,
+          "preview": "profile_data = load_godot_profile(profile)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 9,
+          "preview": "load_godot_profile,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 27,
+          "preview": "prop = load_godot_profile(\"prop\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 28,
+          "preview": "environment = load_godot_profile(\"environment\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 29,
+          "preview": "character = load_godot_profile(\"character\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 76,
+          "preview": "loaded = load_godot_profile(\"prop\", root=root)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 7
+    },
+    "build_import_recommendations": {
+      "definition": {
+        "file": "godot_handoff.py",
+        "line": 39,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "godot_handoff.py",
+          "line": 39,
           "preview": "def build_import_recommendations(profile: str, delivery_report: dict | None = None) -> dict:",
           "definition_candidate": true
         },
         {
           "file": "godot_handoff.py",
-          "line": 84,
+          "line": 108,
           "preview": "recommendations = build_import_recommendations(profile, delivery_report)",
           "definition_candidate": false
         },
@@ -711,17 +776,23 @@
         },
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 17,
+          "line": 18,
           "preview": "recommendations = build_import_recommendations(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 37,
+          "preview": "recommendations = build_import_recommendations(\"character\")",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 4
+      "occurrence_count": 5
     },
     "prepare_godot_handoff": {
       "definition": {
         "file": "godot_handoff.py",
-        "line": 52,
+        "line": 69,
         "kind": "function",
         "language": "python"
       },
@@ -734,31 +805,49 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 732,
+          "line": 739,
           "preview": "result = prepare_godot_handoff(",
           "definition_candidate": false
         },
         {
           "file": "godot_handoff.py",
-          "line": 52,
+          "line": 69,
           "preview": "def prepare_godot_handoff(",
           "definition_candidate": true
         },
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 10,
+          "line": 11,
           "preview": "prepare_godot_handoff,",
           "definition_candidate": false
         },
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 32,
+          "line": 107,
           "preview": "result = prepare_godot_handoff(",
           "definition_candidate": false
         },
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 54,
+          "line": 133,
+          "preview": "prepare_godot_handoff(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 145,
+          "preview": "prepare_godot_handoff(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 157,
+          "preview": "result = prepare_godot_handoff(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 172,
           "preview": "prepare_godot_handoff(source, root / \"build\", profile=\"prop\")",
           "definition_candidate": false
         },
@@ -775,37 +864,37 @@
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 8
+      "occurrence_count": 11
     },
     "godot_import_command": {
       "definition": {
         "file": "godot_handoff.py",
-        "line": 125,
+        "line": 174,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "godot_handoff.py",
-          "line": 125,
+          "line": 174,
           "preview": "def godot_import_command(executable: str, project_dir: Path) -> list[str]:",
           "definition_candidate": true
         },
         {
           "file": "godot_handoff.py",
-          "line": 152,
+          "line": 201,
           "preview": "command = godot_import_command(chosen, project_dir)",
           "definition_candidate": false
         },
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 9,
+          "line": 10,
           "preview": "godot_import_command,",
           "definition_candidate": false
         },
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 57,
+          "line": 175,
           "preview": "command = godot_import_command(\"godot\", Path(\"project\"))",
           "definition_candidate": false
         }
@@ -815,7 +904,7 @@
     "validate_godot_handoff": {
       "definition": {
         "file": "godot_handoff.py",
-        "line": 135,
+        "line": 184,
         "kind": "function",
         "language": "python"
       },
@@ -828,31 +917,31 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 745,
+          "line": 754,
           "preview": "result = validate_godot_handoff(args.project_dir, executable=args.godot)",
           "definition_candidate": false
         },
         {
           "file": "godot_handoff.py",
-          "line": 135,
+          "line": 184,
           "preview": "def validate_godot_handoff(project_dir: Path, executable: str | None = None) -> dict:",
           "definition_candidate": true
         },
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 11,
+          "line": 12,
           "preview": "validate_godot_handoff,",
           "definition_candidate": false
         },
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 70,
+          "line": 188,
           "preview": "result = validate_godot_handoff(project)",
           "definition_candidate": false
         },
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 86,
+          "line": 204,
           "preview": "result = validate_godot_handoff(project)",
           "definition_candidate": false
         },
@@ -874,14 +963,14 @@
     "GodotHandoffTests": {
       "definition": {
         "file": "tests/test_godot_handoff.py",
-        "line": 15,
+        "line": 16,
         "kind": "class",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 15,
+          "line": 16,
           "preview": "class GodotHandoffTests(unittest.TestCase):",
           "definition_candidate": true
         }
@@ -891,15 +980,66 @@
     "test_recommendations_disable_animation_for_prop_without_clips": {
       "definition": {
         "file": "tests/test_godot_handoff.py",
-        "line": 16,
+        "line": 17,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 16,
+          "line": 17,
           "preview": "def test_recommendations_disable_animation_for_prop_without_clips(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_profiles_are_loaded_from_versioned_json": {
+      "definition": {
+        "file": "tests/test_godot_handoff.py",
+        "line": 26,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 26,
+          "preview": "def test_profiles_are_loaded_from_versioned_json(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_recommendations_report_profile_source": {
+      "definition": {
+        "file": "tests/test_godot_handoff.py",
+        "line": 36,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 36,
+          "preview": "def test_recommendations_report_profile_source(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_profile_loader_uses_file_contents_as_source_of_truth": {
+      "definition": {
+        "file": "tests/test_godot_handoff.py",
+        "line": 44,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 44,
+          "preview": "def test_profile_loader_uses_file_contents_as_source_of_truth(self):",
           "definition_candidate": true
         }
       ],
@@ -908,15 +1048,66 @@
     "test_prepare_handoff_copies_glb_and_writes_project": {
       "definition": {
         "file": "tests/test_godot_handoff.py",
-        "line": 25,
+        "line": 82,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 25,
+          "line": 82,
           "preview": "def test_prepare_handoff_copies_glb_and_writes_project(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_missing_delivery_report_is_rejected": {
+      "definition": {
+        "file": "tests/test_godot_handoff.py",
+        "line": 127,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 127,
+          "preview": "def test_missing_delivery_report_is_rejected(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_failed_delivery_report_is_rejected": {
+      "definition": {
+        "file": "tests/test_godot_handoff.py",
+        "line": 139,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 139,
+          "preview": "def test_failed_delivery_report_is_rejected(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_allow_unvalidated_override": {
+      "definition": {
+        "file": "tests/test_godot_handoff.py",
+        "line": 152,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 152,
+          "preview": "def test_allow_unvalidated_override(self):",
           "definition_candidate": true
         }
       ],
@@ -925,14 +1116,14 @@
     "test_non_glb_is_rejected": {
       "definition": {
         "file": "tests/test_godot_handoff.py",
-        "line": 48,
+        "line": 166,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 48,
+          "line": 166,
           "preview": "def test_non_glb_is_rejected(self):",
           "definition_candidate": true
         }
@@ -942,14 +1133,14 @@
     "test_import_command_uses_headless_import": {
       "definition": {
         "file": "tests/test_godot_handoff.py",
-        "line": 56,
+        "line": 174,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 56,
+          "line": 174,
           "preview": "def test_import_command_uses_headless_import(self):",
           "definition_candidate": true
         }
@@ -959,14 +1150,14 @@
     "test_missing_godot_is_non_blocking": {
       "definition": {
         "file": "tests/test_godot_handoff.py",
-        "line": 65,
+        "line": 183,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 65,
+          "line": 183,
           "preview": "def test_missing_godot_is_non_blocking(self, detect):",
           "definition_candidate": true
         }
@@ -976,524 +1167,19 @@
     "test_available_godot_import_passes": {
       "definition": {
         "file": "tests/test_godot_handoff.py",
-        "line": 77,
+        "line": 195,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_godot_handoff.py",
-          "line": 77,
+          "line": 195,
           "preview": "def test_available_godot_import_passes(self, detect, run):",
           "definition_candidate": true
         }
       ],
       "occurrence_count": 1
-    },
-    "detect_3d_tools": {
-      "definition": {
-        "file": "toolchain_3d.py",
-        "line": 18,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 23,
-          "preview": "from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 791,
-          "preview": "print(json.dumps(detect_3d_tools(), indent=2, sort_keys=True))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 7,
-          "preview": "detect_3d_tools,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 43,
-          "preview": "tools = detect_3d_tools()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 49,
-          "preview": "@patch(\"toolchain_3d.detect_3d_tools\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 81,
-          "preview": "@patch(\"toolchain_3d.detect_3d_tools\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 107,
-          "preview": "@patch(\"toolchain_3d.detect_3d_tools\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 187,
-          "preview": "@patch(\"toolchain_3d.detect_3d_tools\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 18,
-          "preview": "def detect_3d_tools() -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 109,
-          "preview": "tools = detect_3d_tools()",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 10
-    },
-    "_quote": {
-      "definition": {
-        "file": "toolchain_3d.py",
-        "line": 40,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "toolchain_3d.py",
-          "line": 40,
-          "preview": "def _quote(parts: list[str]) -> str:",
-          "definition_candidate": true
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 45,
-          "preview": "return _quote([executable, \"--stdout\", str(input_path)])",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 58,
-          "preview": "return _quote(parts)",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 77,
-          "preview": "return _quote(parts)",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 131,
-          "preview": "\"command\": _quote(",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 151,
-          "preview": "\"command\": _quote(",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 232,
-          "preview": "\"command\": _quote(",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 251,
-          "preview": "\"command\": _quote(",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 274,
-          "preview": "\"command\": _quote(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 9
-    },
-    "validator_command": {
-      "definition": {
-        "file": "toolchain_3d.py",
-        "line": 44,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 11,
-          "preview": "validator_command,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 19,
-          "preview": "validator_command(\"gltf_validator\", Path(\"model.glb\")),",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 44,
-          "preview": "def validator_command(executable: str, input_path: Path) -> str:",
-          "definition_candidate": true
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 174,
-          "preview": "\"command\": validator_command(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 4
-    },
-    "gltf_transform_command": {
-      "definition": {
-        "file": "toolchain_3d.py",
-        "line": 48,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 9,
-          "preview": "gltf_transform_command,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 23,
-          "preview": "gltf_transform_command(",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 48,
-          "preview": "def gltf_transform_command(",
-          "definition_candidate": true
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 193,
-          "preview": "\"command\": gltf_transform_command(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 4
-    },
-    "gltfpack_command": {
-      "definition": {
-        "file": "toolchain_3d.py",
-        "line": 61,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 10,
-          "preview": "gltfpack_command,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 29,
-          "preview": "command = gltfpack_command(",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 61,
-          "preview": "def gltfpack_command(",
-          "definition_candidate": true
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 213,
-          "preview": "\"command\": gltfpack_command(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 4
-    },
-    "build_3d_pipeline": {
-      "definition": {
-        "file": "toolchain_3d.py",
-        "line": 80,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 23,
-          "preview": "from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 795,
-          "preview": "plan = build_3d_pipeline(",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 813,
-          "preview": "plan = build_3d_pipeline(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 6,
-          "preview": "build_3d_pipeline,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 58,
-          "preview": "plan = build_3d_pipeline(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 90,
-          "preview": "plan = build_3d_pipeline(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 101,
-          "preview": "build_3d_pipeline(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 116,
-          "preview": "plan = build_3d_pipeline(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 196,
-          "preview": "plan = build_3d_pipeline(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 210,
-          "preview": "build_3d_pipeline(",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 80,
-          "preview": "def build_3d_pipeline(",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 11
-    },
-    "prepare_3d_pipeline": {
-      "definition": {
-        "file": "toolchain_3d.py",
-        "line": 305,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 23,
-          "preview": "from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 805,
-          "preview": "prepare_3d_pipeline(plan)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 131,
-          "preview": "@patch(\"toolchain_3d.prepare_3d_pipeline\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 164,
-          "preview": "@patch(\"toolchain_3d.prepare_3d_pipeline\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 305,
-          "preview": "def prepare_3d_pipeline(plan: dict) -> None:",
-          "definition_candidate": true
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 389,
-          "preview": "prepare_3d_pipeline(plan)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 6
-    },
-    "execute_command": {
-      "definition": {
-        "file": "toolchain_3d.py",
-        "line": 318,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 130,
-          "preview": "@patch(\"toolchain_3d.execute_command\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 163,
-          "preview": "@patch(\"toolchain_3d.execute_command\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 318,
-          "preview": "def execute_command(command: str, cwd: Path | None = None) -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 407,
-          "preview": "executed = execute_command(step[\"command\"], cwd=repo_root)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 4
-    },
-    "_read_json_if_exists": {
-      "definition": {
-        "file": "toolchain_3d.py",
-        "line": 336,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "toolchain_3d.py",
-          "line": 336,
-          "preview": "def _read_json_if_exists(path: Path) -> dict | None:",
-          "definition_candidate": true
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 348,
-          "preview": "raw_report = _read_json_if_exists(workdir / \"quality-raw.json\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 349,
-          "preview": "final_report = _read_json_if_exists(workdir / \"quality-final.json\") or raw_report",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 432,
-          "preview": "delivery_report = _read_json_if_exists(workdir / \"godot4-delivery.json\")",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 4
-    },
-    "_build_production_summary": {
-      "definition": {
-        "file": "toolchain_3d.py",
-        "line": 346,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "toolchain_3d.py",
-          "line": 346,
-          "preview": "def _build_production_summary(plan: dict, success: bool, results: list[dict]) -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 449,
-          "preview": "summary = _build_production_summary(plan, success, results)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "execute_3d_pipeline": {
-      "definition": {
-        "file": "toolchain_3d.py",
-        "line": 388,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 23,
-          "preview": "from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 823,
-          "preview": "result = execute_3d_pipeline(plan, root)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 8,
-          "preview": "execute_3d_pipeline,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 157,
-          "preview": "result = execute_3d_pipeline(plan, Path(\".\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 182,
-          "preview": "result = execute_3d_pipeline(plan, Path(\".\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "toolchain_3d.py",
-          "line": 388,
-          "preview": "def execute_3d_pipeline(plan: dict, repo_root: Path) -> dict:",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 6
     }
   }
 }

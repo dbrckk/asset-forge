@@ -64,20 +64,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T18:28:10Z
+Generated: 2026-09-18T18:36:35Z
 
 ### Git
 - Branch: `main`
-- Head: `e53aa55e8be7`
-- Commit date: 2026-09-18T20:28:01+02:00
-- Commit: docs: record Godot handoff milestone
-- Tracked files: 93
+- Head: `9a55e51aaa0c`
+- Commit date: 2026-09-18T20:35:50+02:00
+- Commit: docs: record Godot profile single-source milestone
+- Tracked files: 96
 
 ### Recently changed files
 - `README.md`
-- `.github/workflows/validate.yml`
 - `tests/test_godot_handoff.py`
-- `toolchain_3d.py`
+- `godot_handoff.py`
 
 ### Project signals
 - No common build descriptor detected
