@@ -1194,11 +1194,29 @@ def _prune_free_rects(rects: list[dict]) -> list[dict]:
     return pruned
 
 
+def _maxrects_score(free: dict, reserve_width: int, reserve_height: int, heuristic: str) -> tuple:
+    leftover_w = free["width"] - reserve_width
+    leftover_h = free["height"] - reserve_height
+    short_side = min(leftover_w, leftover_h)
+    long_side = max(leftover_w, leftover_h)
+    area_fit = free["width"] * free["height"] - reserve_width * reserve_height
+
+    if heuristic == "best-short-side-fit":
+        return short_side, long_side, area_fit, free["y"], free["x"]
+    if heuristic == "best-long-side-fit":
+        return long_side, short_side, area_fit, free["y"], free["x"]
+    if heuristic == "best-area-fit":
+        return area_fit, short_side, long_side, free["y"], free["x"]
+    raise ValueError(f"unsupported MaxRects heuristic {heuristic}")
+
+
 def _pack_maxrects(
     frames: list[dict],
     max_width: int,
     padding: int,
     extrude: int,
+    *,
+    heuristic: str = "best-short-side-fit",
 ) -> tuple[list[dict], int, int]:
     if max_width <= 0:
         raise ValueError("max_width must be > 0")
@@ -1236,14 +1254,14 @@ def _pack_maxrects(
         candidates = []
         for free_index, free in enumerate(free_rects):
             if reserve_width <= free["width"] and reserve_height <= free["height"]:
-                leftover_w = free["width"] - reserve_width
-                leftover_h = free["height"] - reserve_height
                 candidates.append(
                     (
-                        min(leftover_w, leftover_h),
-                        max(leftover_w, leftover_h),
-                        free["y"],
-                        free["x"],
+                        *_maxrects_score(
+                            free,
+                            reserve_width,
+                            reserve_height,
+                            heuristic,
+                        ),
                         free_index,
                     )
                 )
@@ -1251,7 +1269,7 @@ def _pack_maxrects(
         if not candidates:
             raise ValueError(f"could not pack frame {frame['path'].name}")
 
-        _, _, _, _, free_index = min(candidates)
+        *_, free_index = min(candidates)
         free = free_rects[free_index]
         used = {
             "x": free["x"],
@@ -1291,6 +1309,68 @@ def _pack_maxrects(
     return placements, content_width, content_height
 
 
+MAXRECTS_HEURISTICS = (
+    "best-short-side-fit",
+    "best-long-side-fit",
+    "best-area-fit",
+)
+
+
+def _choose_maxrects_layout(
+    frames: list[dict],
+    max_width: int,
+    padding: int,
+    extrude: int,
+    heuristic: str,
+) -> tuple[list[dict], int, int, str, list[dict]]:
+    candidates = []
+    heuristics = MAXRECTS_HEURISTICS if heuristic == "auto" else (heuristic,)
+
+    for name in heuristics:
+        placements, width, height = _pack_maxrects(
+            frames,
+            max_width=max_width,
+            padding=padding,
+            extrude=extrude,
+            heuristic=name,
+        )
+        candidates.append(
+            {
+                "heuristic": name,
+                "placements": placements,
+                "contentWidth": width,
+                "contentHeight": height,
+                "contentArea": width * height,
+            }
+        )
+
+    winner = min(
+        candidates,
+        key=lambda item: (
+            item["contentArea"],
+            item["contentHeight"],
+            item["contentWidth"],
+            item["heuristic"],
+        ),
+    )
+    evaluated = [
+        {
+            "heuristic": item["heuristic"],
+            "contentWidth": item["contentWidth"],
+            "contentHeight": item["contentHeight"],
+            "contentArea": item["contentArea"],
+        }
+        for item in candidates
+    ]
+    return (
+        winner["placements"],
+        winner["contentWidth"],
+        winner["contentHeight"],
+        winner["heuristic"],
+        evaluated,
+    )
+
+
 def pack_compact_atlas(
     inputs: list[Path],
     output: Path,
@@ -1300,6 +1380,7 @@ def pack_compact_atlas(
     max_pixels: int | None = None,
     max_bytes: int | None = None,
     min_occupancy: float | None = None,
+    heuristic: str = "auto",
     padding: int = 0,
     power_of_two: bool = False,
     trim: bool = True,
@@ -1312,12 +1393,22 @@ def pack_compact_atlas(
     if extrude < 0:
         raise ValueError("extrude must be >= 0")
 
+    if heuristic not in {"auto", *MAXRECTS_HEURISTICS}:
+        raise ValueError(f"unsupported compact atlas heuristic {heuristic}")
+
     frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]
-    placements, content_width, content_height = _pack_maxrects(
+    (
+        placements,
+        content_width,
+        content_height,
+        selected_heuristic,
+        evaluated_heuristics,
+    ) = _choose_maxrects_layout(
         frames_data,
         max_width=max_width,
         padding=padding,
         extrude=extrude,
+        heuristic=heuristic,
     )
 
     atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
@@ -1406,7 +1497,10 @@ def pack_compact_atlas(
         "maxPixels": max_pixels,
         "maxBytes": max_bytes,
         "outputBytes": output_bytes,
-        "packing": "maxrects-best-short-side-fit",
+        "packing": f"maxrects-{selected_heuristic}",
+        "requestedHeuristic": heuristic,
+        "selectedHeuristic": selected_heuristic,
+        "evaluatedHeuristics": evaluated_heuristics,
         "spriteArea": sum(frame["width"] * frame["height"] for frame in frames_data),
         "packedArea": packed_area,
         "contentArea": content_width * content_height,
