@@ -1494,6 +1494,50 @@ def test_grayscale_trns_out_of_range_is_rejected(self)
 ⋮----
 image = Path(tmp) / "gray2-bad-trns.png"
 ihdr = struct.pack(">IIBBBBB", 1, 1, 2, 0, 0, 0, 0)
+⋮----
+def test_grayscale_16bit_png_decodes_to_rgba8(self)
+⋮----
+image = Path(tmp) / "gray16.png"
+ihdr = struct.pack(">IIBBBBB", 3, 1, 16, 0, 0, 0, 0)
+raw = b"\x00" + struct.pack(">HHH", 0, 32768, 65535)
+⋮----
+def test_truecolor_16bit_png_decodes_to_rgba8(self)
+⋮----
+image = Path(tmp) / "rgb16.png"
+ihdr = struct.pack(">IIBBBBB", 1, 1, 16, 2, 0, 0, 0)
+raw = b"\x00" + struct.pack(">HHH", 65535, 32768, 0)
+⋮----
+def test_grayscale_alpha_16bit_png_decodes_to_rgba8(self)
+⋮----
+image = Path(tmp) / "gray-alpha16.png"
+ihdr = struct.pack(">IIBBBBB", 1, 1, 16, 4, 0, 0, 0)
+raw = b"\x00" + struct.pack(">HH", 32768, 16384)
+⋮----
+def test_rgba_16bit_png_decodes_to_rgba8(self)
+⋮----
+image = Path(tmp) / "rgba16.png"
+ihdr = struct.pack(">IIBBBBB", 1, 1, 16, 6, 0, 0, 0)
+raw = b"\x00" + struct.pack(">HHHH", 65535, 32768, 0, 16384)
+⋮----
+def test_grayscale_16bit_trns_compares_original_sample(self)
+⋮----
+image = Path(tmp) / "gray16-trns.png"
+ihdr = struct.pack(">IIBBBBB", 1, 1, 16, 0, 0, 0, 0)
+sample = 40000
+⋮----
+expected_gray = (sample * 255 + 32767) // 65535
+⋮----
+def test_truecolor_16bit_trns_compares_original_samples(self)
+⋮----
+image = Path(tmp) / "rgb16-trns.png"
+⋮----
+samples = (1000, 2000, 3000)
+⋮----
+expected = [
+⋮----
+def test_truecolor_8bit_trns_out_of_range_is_rejected(self)
+⋮----
+image = Path(tmp) / "rgb8-bad-trns.png"
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -2854,6 +2898,9 @@ saw_plte = True
 ⋮----
 transparent_gray = struct.unpack(">H", payload)[0]
 ⋮----
+transparent_rgb = struct.unpack(">HHH", payload)
+max_sample = (1 << depth) - 1
+⋮----
 transparency = payload
 saw_trns = True
 ⋮----
@@ -2920,6 +2967,8 @@ values: list[int] = []
 ⋮----
 shift = 8 - depth
 ⋮----
+def _sample16_to_u8(value: int) -> int
+⋮----
 def decode_rgba(path: Path) -> tuple[int, int, bytes]
 ⋮----
 chunks = _chunks(_read_png_bytes(path))
@@ -2937,17 +2986,37 @@ indexed_samples = _unpack_packed_samples(row, width, depth)
 alpha = transparency[palette_index] if palette_index < len(transparency) else 255
 ⋮----
 samples = _unpack_packed_samples(row, width, depth)
-max_sample = (1 << depth) - 1
+⋮----
 transparent_gray = (
 ⋮----
 gray = (sample * 255 + max_sample // 2) // max_sample
 alpha = 0 if transparent_gray == sample else 255
 ⋮----
+channels_by_type = {0: 1, 2: 3, 4: 2, 6: 4}
+channels = channels_by_type[color_type]
+bpp = channels * 2
+⋮----
+transparent_rgb = (
+⋮----
+samples = [
+⋮----
+gray16 = samples[0]
+gray = _sample16_to_u8(gray16)
+alpha = 0 if transparent_gray == gray16 else 255
+red = green = blue = gray
+⋮----
+red = _sample16_to_u8(red16)
+green = _sample16_to_u8(green16)
+blue = _sample16_to_u8(blue16)
+alpha = 0 if transparent_rgb == (red16, green16, blue16) else 255
+⋮----
+alpha = _sample16_to_u8(alpha16)
+⋮----
 bpp_by_type = {0: 1, 2: 3, 4: 2, 6: 4}
 bpp = bpp_by_type[color_type]
 ⋮----
 gray = row[index]
-red = green = blue = gray
+⋮----
 alpha = 255
 ⋮----
 transparent_gray = struct.unpack(">H", transparency[:2])[0]
@@ -3354,6 +3423,9 @@ Indexed PNG decoding now calculates packed scanline byte widths correctly, appli
 
 
 Low-bit grayscale decoding shares the packed-sample scanline path used by indexed PNGs. Samples are unpacked most-significant bits first, row padding is ignored, values are scaled to 8-bit luminance, and grayscale `tRNS` is matched against the original unscaled sample. Out-of-range `tRNS` samples are rejected.
+
+
+16-bit PNG decoding is supported for grayscale, RGB, grayscale+alpha, and RGBA. Samples are read big-endian after PNG unfiltering and converted to RGBA8 with deterministic rounding. For grayscale/RGB `tRNS`, transparency matching is performed on the original 16-bit samples before down-conversion, preserving exact transparent-color semantics.
 ````
 
 ## File: starlist_bridge.py

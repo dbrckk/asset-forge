@@ -1,21 +1,479 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "7fb38655e674927eba941252cafb5e76451c893d",
-  "head": "c2153519906af81c1860239941d262b01a353440",
+  "base": "c2153519906af81c1860239941d262b01a353440",
+  "head": "0932b5c3c7ab7953b178c8bdd94028b2d4b81b6d",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": ".github/workflows/semantic-refresh.yml",
-      "status": "A"
+      "path": "README.md",
+      "status": "M"
     },
     {
-      "path": ".repo-standards.yml",
+      "path": "raster_pack.py",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_raster_pack.py",
       "status": "M"
     }
   ],
-  "changed_source_files": [],
-  "impacted_files": [],
-  "impacted_symbols": [],
-  "selected_tests": []
+  "changed_source_files": [
+    "raster_pack.py",
+    "tests/test_raster_pack.py"
+  ],
+  "impacted_files": [
+    "asset_forge.py",
+    "raster_pack.py",
+    "tests/test_raster_pack.py"
+  ],
+  "impacted_symbols": [
+    {
+      "name": "load_json",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 65
+    },
+    {
+      "name": "validate_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 73
+    },
+    {
+      "name": "is_power_of_two",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 131
+    },
+    {
+      "name": "sprite_grid",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 135
+    },
+    {
+      "name": "build_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 156
+    },
+    {
+      "name": "validate_raster_file",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 187
+    },
+    {
+      "name": "select_tools",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 237
+    },
+    {
+      "name": "build_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 255
+    },
+    {
+      "name": "load_valid_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 284
+    },
+    {
+      "name": "cmd_validate",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 300
+    },
+    {
+      "name": "cmd_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 308
+    },
+    {
+      "name": "cmd_validate_raster",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 316
+    },
+    {
+      "name": "cmd_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 330
+    },
+    {
+      "name": "parser",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 354
+    },
+    {
+      "name": "main",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 488
+    },
+    {
+      "name": "_read_png_bytes",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 16
+    },
+    {
+      "name": "_chunks",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 23
+    },
+    {
+      "name": "_validate_ihdr",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 90
+    },
+    {
+      "name": "_validate_palette_transparency",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 114
+    },
+    {
+      "name": "_decompress_idat",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 179
+    },
+    {
+      "name": "inspect_png",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 208
+    },
+    {
+      "name": "_paeth",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 236
+    },
+    {
+      "name": "_unfilter_scanlines",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 248
+    },
+    {
+      "name": "_scanline_layout",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 289
+    },
+    {
+      "name": "_unpack_packed_samples",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 297
+    },
+    {
+      "name": "_sample16_to_u8",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 317
+    },
+    {
+      "name": "decode_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 321
+    },
+    {
+      "name": "_chunk",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 447
+    },
+    {
+      "name": "_filter_row",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 456
+    },
+    {
+      "name": "_filter_score",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 480
+    },
+    {
+      "name": "_png_bytes_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 484
+    },
+    {
+      "name": "encode_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 517
+    },
+    {
+      "name": "recompress_png",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 528
+    },
+    {
+      "name": "_next_power_of_two",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 545
+    },
+    {
+      "name": "pack_uniform_atlas",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 551
+    },
+    {
+      "name": "chunk",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 14
+    },
+    {
+      "name": "write_rgba_png",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 23
+    },
+    {
+      "name": "RasterPackTests",
+      "kind": "class",
+      "file": "tests/test_raster_pack.py",
+      "line": 35
+    },
+    {
+      "name": "test_pack_uniform_atlas_writes_png_and_metadata",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 36
+    },
+    {
+      "name": "test_pack_rejects_mixed_frame_sizes",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 63
+    },
+    {
+      "name": "test_rgb_png_is_promoted_to_opaque_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 74
+    },
+    {
+      "name": "test_recompress_png_preserves_pixels",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 92
+    },
+    {
+      "name": "test_recompress_png_reports_sizes",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 109
+    },
+    {
+      "name": "test_grayscale_png_decodes_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 125
+    },
+    {
+      "name": "test_grayscale_alpha_png_decodes_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 140
+    },
+    {
+      "name": "test_indexed_png_with_transparency_decodes_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 154
+    },
+    {
+      "name": "test_rejects_invalid_ihdr_length",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 175
+    },
+    {
+      "name": "test_rejects_zero_dimensions",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 187
+    },
+    {
+      "name": "test_rejects_duplicate_ihdr",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 200
+    },
+    {
+      "name": "test_rejects_non_consecutive_idat",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 214
+    },
+    {
+      "name": "test_rejects_trailing_data_after_iend",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 231
+    },
+    {
+      "name": "test_rejects_indexed_trns_longer_than_palette",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 239
+    },
+    {
+      "name": "test_rejects_trns_for_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 254
+    },
+    {
+      "name": "test_truecolor_trns_is_applied",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 268
+    },
+    {
+      "name": "test_rejects_decompressed_data_larger_than_expected",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 284
+    },
+    {
+      "name": "test_hardened_inspector_reports_palette_and_transparency",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 298
+    },
+    {
+      "name": "test_oversized_file_is_rejected_before_read",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 316
+    },
+    {
+      "name": "test_indexed_1bit_png_decodes_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 324
+    },
+    {
+      "name": "test_indexed_2bit_png_decodes_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 349
+    },
+    {
+      "name": "test_indexed_4bit_png_ignores_padding_nibble",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 380
+    },
+    {
+      "name": "test_indexed_low_bit_depth_transparency_is_applied",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 405
+    },
+    {
+      "name": "test_indexed_low_bit_depth_palette_limit_is_enforced",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 430
+    },
+    {
+      "name": "test_grayscale_1bit_png_decodes_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 449
+    },
+    {
+      "name": "test_grayscale_2bit_png_scales_samples",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 470
+    },
+    {
+      "name": "test_grayscale_4bit_png_ignores_padding_nibble",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 493
+    },
+    {
+      "name": "test_grayscale_low_bit_depth_trns_is_applied_before_scaling",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 515
+    },
+    {
+      "name": "test_grayscale_trns_out_of_range_is_rejected",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 540
+    },
+    {
+      "name": "test_grayscale_16bit_png_decodes_to_rgba8",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 554
+    },
+    {
+      "name": "test_truecolor_16bit_png_decodes_to_rgba8",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 576
+    },
+    {
+      "name": "test_grayscale_alpha_16bit_png_decodes_to_rgba8",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 591
+    },
+    {
+      "name": "test_rgba_16bit_png_decodes_to_rgba8",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 606
+    },
+    {
+      "name": "test_grayscale_16bit_trns_compares_original_sample",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 621
+    },
+    {
+      "name": "test_truecolor_16bit_trns_compares_original_samples",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 638
+    },
+    {
+      "name": "test_truecolor_8bit_trns_out_of_range_is_rejected",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 658
+    }
+  ],
+  "selected_tests": [
+    "tests/test_raster_pack.py"
+  ]
 }

@@ -2,19 +2,19 @@
 
 - Index mode: incremental
 - Files indexed: 32
-- Files reparsed this run: 0
-- Symbols: 298
+- Files reparsed this run: 2
+- Symbols: 306
 - Internal import edges: 44
-- Impacted files: 0
-- Selected tests: 0
+- Impacted files: 3
+- Selected tests: 1
 
 ## Languages
 - python: 32 files
 
 ## Highest-density symbol files
-- tests/test_raster_pack.py: 32 symbols
+- tests/test_raster_pack.py: 39 symbols
 - tests/test_svg_tools.py: 22 symbols
-- raster_pack.py: 19 symbols
+- raster_pack.py: 20 symbols
 - tests/test_asset_forge.py: 17 symbols
 - asset_forge.py: 15 symbols
 - tests/test_godot_handoff.py: 13 symbols
@@ -42,10 +42,10 @@
 ## ast-grep enrichment
 - ast-grep outline: available
 - AST index mode: incremental
-- AST files reparsed this run: 0
+- AST files reparsed this run: 2
 - outline files retained: 32
-- top-level items retained: 336
-- direct members retained: 158
+- top-level items retained: 337
+- direct members retained: 165
 - symbol shards: 24
 - route named symbols via ast-routing.json, then fetch one ast-symbols/<initial>.json shard
 

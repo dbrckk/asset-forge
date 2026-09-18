@@ -81,21 +81,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T20:00:21Z
+Generated: 2026-09-18T20:07:41Z
 
 ### Git
 - Branch: `main`
-- Head: `c2153519906a`
-- Commit date: 2026-09-18T21:57:01+02:00
-- Commit: chore(ai): add precise semantic refresh
+- Head: `0932b5c3c7ab`
+- Commit date: 2026-09-18T22:07:23+02:00
+- Commit: docs: record 16-bit PNG decoding milestone
 - Tracked files: 151
 
 ### Recently changed files
-- `.github/workflows/semantic-refresh.yml`
-- `.repo-standards.yml`
 - `README.md`
 - `tests/test_raster_pack.py`
 - `raster_pack.py`
+- `.github/workflows/semantic-refresh.yml`
+- `.repo-standards.yml`
 
 ### Project signals
 - No common build descriptor detected
