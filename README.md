@@ -61,6 +61,16 @@ Export atlas metadata as a Godot 4 SpriteFrames resource:
 python asset_forge.py export-godot build/atlas.json build/player.tres --atlas-path res://art/atlas.png --animation run --fps 12
 ```
 
+Export several animations from the same atlas:
+
+```bash
+python asset_forge.py export-godot build/atlas.json build/player.tres \
+  --atlas-path res://art/atlas.png \
+  --animations examples/godot-animations.json
+```
+
+The animation config can define per-animation FPS, loop behavior, frame order, and optional per-frame duration multipliers.
+
 The built-in packer currently supports non-interlaced 8-bit RGB/RGBA PNG inputs and implements all five standard PNG scanline filters. It writes an RGBA PNG atlas without external image libraries. The optimizer uses adaptive per-row PNG filtering and zlib level 9 while preserving decoded pixels.
 
 Run the offline test suite:
