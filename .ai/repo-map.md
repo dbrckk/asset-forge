@@ -1465,6 +1465,11 @@ def test_grayscale_low_bit_depth_trns_is_applied_before_scaling(self)
 image = Path(tmp) / "gray2-trns.png"
 ⋮----
 transparency = struct.pack(">H", 2)
+⋮----
+def test_grayscale_trns_out_of_range_is_rejected(self)
+⋮----
+image = Path(tmp) / "gray2-bad-trns.png"
+ihdr = struct.pack(">IIBBBBB", 1, 1, 2, 0, 0, 0, 0)
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -3319,6 +3324,9 @@ PNG parsing now applies repository safety caps to total file bytes, chunk bytes/
 
 
 Indexed PNG decoding now calculates packed scanline byte widths correctly, applies PNG filters with the proper byte-distance rule, unpacks 1/2/4-bit palette indices most-significant bits first, ignores row padding bits beyond the declared width, and preserves palette transparency through RGBA conversion.
+
+
+Low-bit grayscale decoding shares the packed-sample scanline path used by indexed PNGs. Samples are unpacked most-significant bits first, row padding is ignored, values are scaled to 8-bit luminance, and grayscale `tRNS` is matched against the original unscaled sample. Out-of-range `tRNS` samples are rejected.
 ````
 
 ## File: starlist_bridge.py

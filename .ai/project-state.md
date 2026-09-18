@@ -80,19 +80,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T19:54:02Z
+Generated: 2026-09-18T19:55:23Z
 
 ### Git
 - Branch: `main`
-- Head: `c01ba8797bab`
-- Commit date: 2026-09-18T21:53:36+02:00
-- Commit: fix: validate grayscale tRNS sample against bit depth
+- Head: `7fb38655e674`
+- Commit date: 2026-09-18T21:54:54+02:00
+- Commit: docs: record low-bit grayscale PNG milestone
 - Tracked files: 150
 
 ### Recently changed files
-- `raster_pack.py`
-- `tests/test_raster_pack.py`
 - `README.md`
+- `tests/test_raster_pack.py`
+- `raster_pack.py`
 
 ### Project signals
 - No common build descriptor detected
