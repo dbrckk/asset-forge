@@ -16,6 +16,7 @@ Status: active
 - Handoff generation is strict by default: a Godot delivery report with ready=true is required unless an explicit debug override is used.
 - Optional Asset Forge manifests are validated and embedded as provenance/license metadata in handoff.json.
 - Versioned Godot 4 handoff profiles exist for prop, environment, and character assets under profiles/godot4/.
+- godot_handoff.py now loads those JSON profiles directly at runtime; duplicated hardcoded profile rules were removed and tests prove file contents drive behavior.
 - When a Godot editor binary is available, handoff validation uses headless --import to exercise the real importer; missing Godot remains non-blocking.
 - 3D profiles for prop/environment/character include versioned geometry/material/texture budgets plus max texture dimension, estimated texture-memory budget, and character joint budgets.
 - Blender adapter generates reproducible export jobs, Blender Python scripts, and background CLI commands for GLB export.
@@ -39,7 +40,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Reduce duplicated engine-profile rules by loading the versioned Godot profile JSON directly, then add equivalent engine adapters only when required by a consuming project.
+- Add explicit schema validation for engine handoff profiles and only add another engine adapter when a consuming project requires it.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -58,7 +59,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after strict Godot handoff gating, provenance/license packaging, and versioned engine handoff profiles.
+- 2026-09-18: latest GitHub source inspected after making versioned Godot JSON profiles the runtime source of truth and fixing the missing-delivery-report test.
 
 <!-- AUTO:START -->
 ## Automatic repository state
