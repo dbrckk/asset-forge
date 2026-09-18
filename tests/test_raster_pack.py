@@ -551,6 +551,124 @@ class RasterPackTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "tRNS sample exceeds bit depth"):
                 decode_rgba(image)
 
+    def test_grayscale_16bit_png_decodes_to_rgba8(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "gray16.png"
+            ihdr = struct.pack(">IIBBBBB", 3, 1, 16, 0, 0, 0, 0)
+            raw = b"\x00" + struct.pack(">HHH", 0, 32768, 65535)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(
+            pixels,
+            bytes([
+                0, 0, 0, 255,
+                128, 128, 128, 255,
+                255, 255, 255, 255,
+            ]),
+        )
+
+    def test_truecolor_16bit_png_decodes_to_rgba8(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "rgb16.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 16, 2, 0, 0, 0)
+            raw = b"\x00" + struct.pack(">HHH", 65535, 32768, 0)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(pixels, bytes([255, 128, 0, 255]))
+
+    def test_grayscale_alpha_16bit_png_decodes_to_rgba8(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "gray-alpha16.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 16, 4, 0, 0, 0)
+            raw = b"\x00" + struct.pack(">HH", 32768, 16384)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(pixels, bytes([128, 128, 128, 64]))
+
+    def test_rgba_16bit_png_decodes_to_rgba8(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "rgba16.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 16, 6, 0, 0, 0)
+            raw = b"\x00" + struct.pack(">HHHH", 65535, 32768, 0, 16384)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(pixels, bytes([255, 128, 0, 64]))
+
+    def test_grayscale_16bit_trns_compares_original_sample(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "gray16-trns.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 16, 0, 0, 0, 0)
+            sample = 40000
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"tRNS", struct.pack(">H", sample))
+                + chunk(b"IDAT", zlib.compress(b"\x00" + struct.pack(">H", sample)))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        expected_gray = (sample * 255 + 32767) // 65535
+        self.assertEqual(pixels, bytes([expected_gray, expected_gray, expected_gray, 0]))
+
+    def test_truecolor_16bit_trns_compares_original_samples(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "rgb16-trns.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 16, 2, 0, 0, 0)
+            samples = (1000, 2000, 3000)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"tRNS", struct.pack(">HHH", *samples))
+                + chunk(b"IDAT", zlib.compress(b"\x00" + struct.pack(">HHH", *samples)))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        expected = [
+            (value * 255 + 32767) // 65535
+            for value in samples
+        ]
+        self.assertEqual(pixels, bytes(expected + [0]))
+
+    def test_truecolor_8bit_trns_out_of_range_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "rgb8-bad-trns.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"tRNS", struct.pack(">HHH", 256, 0, 0))
+                + chunk(b"IDAT", zlib.compress(b"\x00\x00\x00\x00"))
+                + chunk(b"IEND", b"")
+            )
+            with self.assertRaisesRegex(ValueError, "tRNS sample exceeds bit depth"):
+                decode_rgba(image)
+
 
 if __name__ == "__main__":
     unittest.main()
