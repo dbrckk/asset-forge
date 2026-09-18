@@ -318,130 +318,249 @@ def _sample16_to_u8(value: int) -> int:
     return (value * 255 + 32767) // 65535
 
 
+ADAM7_PASSES = (
+    (0, 0, 8, 8),
+    (4, 0, 8, 8),
+    (0, 4, 4, 8),
+    (2, 0, 4, 4),
+    (0, 2, 2, 4),
+    (1, 0, 2, 2),
+    (0, 1, 1, 2),
+)
+
+
+def _adam7_extent(size: int, start: int, step: int) -> int:
+    if size <= start:
+        return 0
+    return (size - start + step - 1) // step
+
+
+def _decode_row_to_rgba(
+    row: bytes,
+    width: int,
+    depth: int,
+    color_type: int,
+    palette: list[tuple[int, int, int]],
+    transparency: bytes,
+) -> bytes:
+    rgba = bytearray(width * 4)
+    destination = 0
+
+    if color_type == 3:
+        indexed_samples = _unpack_packed_samples(row, width, depth)
+        for palette_index in indexed_samples:
+            if palette_index >= len(palette):
+                raise ValueError("palette index out of range")
+            red, green, blue = palette[palette_index]
+            alpha = transparency[palette_index] if palette_index < len(transparency) else 255
+            rgba[destination : destination + 4] = bytes((red, green, blue, alpha))
+            destination += 4
+        return bytes(rgba)
+
+    if color_type == 0 and depth in {1, 2, 4}:
+        samples = _unpack_packed_samples(row, width, depth)
+        max_sample = (1 << depth) - 1
+        transparent_gray = (
+            struct.unpack(">H", transparency)[0] if len(transparency) == 2 else None
+        )
+        for sample in samples:
+            gray = (sample * 255 + max_sample // 2) // max_sample
+            alpha = 0 if transparent_gray == sample else 255
+            rgba[destination : destination + 4] = bytes((gray, gray, gray, alpha))
+            destination += 4
+        return bytes(rgba)
+
+    if depth == 16:
+        channels_by_type = {0: 1, 2: 3, 4: 2, 6: 4}
+        channels = channels_by_type[color_type]
+        bpp = channels * 2
+        transparent_gray = (
+            struct.unpack(">H", transparency)[0]
+            if color_type == 0 and len(transparency) == 2
+            else None
+        )
+        transparent_rgb = (
+            struct.unpack(">HHH", transparency)
+            if color_type == 2 and len(transparency) == 6
+            else None
+        )
+        for index in range(0, len(row), bpp):
+            samples = [
+                struct.unpack(">H", row[index + offset : index + offset + 2])[0]
+                for offset in range(0, bpp, 2)
+            ]
+            if color_type == 0:
+                gray16 = samples[0]
+                gray = _sample16_to_u8(gray16)
+                alpha = 0 if transparent_gray == gray16 else 255
+                red = green = blue = gray
+            elif color_type == 2:
+                red16, green16, blue16 = samples
+                red = _sample16_to_u8(red16)
+                green = _sample16_to_u8(green16)
+                blue = _sample16_to_u8(blue16)
+                alpha = 0 if transparent_rgb == (red16, green16, blue16) else 255
+            elif color_type == 4:
+                gray16, alpha16 = samples
+                gray = _sample16_to_u8(gray16)
+                red = green = blue = gray
+                alpha = _sample16_to_u8(alpha16)
+            else:
+                red16, green16, blue16, alpha16 = samples
+                red = _sample16_to_u8(red16)
+                green = _sample16_to_u8(green16)
+                blue = _sample16_to_u8(blue16)
+                alpha = _sample16_to_u8(alpha16)
+
+            rgba[destination : destination + 4] = bytes((red, green, blue, alpha))
+            destination += 4
+        return bytes(rgba)
+
+    bpp_by_type = {0: 1, 2: 3, 4: 2, 6: 4}
+    bpp = bpp_by_type[color_type]
+    for index in range(0, len(row), bpp):
+        if color_type == 0:
+            gray = row[index]
+            red = green = blue = gray
+            alpha = 255
+            if len(transparency) >= 2:
+                transparent_gray = struct.unpack(">H", transparency[:2])[0]
+                if gray == transparent_gray:
+                    alpha = 0
+        elif color_type == 2:
+            red, green, blue = row[index : index + 3]
+            alpha = 255
+            if len(transparency) == 6:
+                tr, tg, tb = struct.unpack(">HHH", transparency)
+                if (red, green, blue) == (tr, tg, tb):
+                    alpha = 0
+        elif color_type == 4:
+            gray, alpha = row[index : index + 2]
+            red = green = blue = gray
+        else:
+            red, green, blue, alpha = row[index : index + 4]
+
+        rgba[destination : destination + 4] = bytes((red, green, blue, alpha))
+        destination += 4
+
+    return bytes(rgba)
+
+
+def _decode_adam7(
+    raw: bytes,
+    width: int,
+    height: int,
+    depth: int,
+    color_type: int,
+    palette: list[tuple[int, int, int]],
+    transparency: bytes,
+) -> bytes:
+    rgba = bytearray(width * height * 4)
+    position = 0
+
+    for x_start, y_start, x_step, y_step in ADAM7_PASSES:
+        pass_width = _adam7_extent(width, x_start, x_step)
+        pass_height = _adam7_extent(height, y_start, y_step)
+        if pass_width == 0 or pass_height == 0:
+            continue
+
+        stride, filter_bpp = _scanline_layout(pass_width, depth, color_type)
+        pass_size = (stride + 1) * pass_height
+        end = position + pass_size
+        if end > len(raw):
+            raise ValueError("truncated Adam7 pass data")
+
+        rows = _unfilter_scanlines(
+            raw[position:end],
+            stride,
+            pass_height,
+            filter_bpp,
+        )
+        position = end
+
+        for pass_y, row in enumerate(rows):
+            row_rgba = _decode_row_to_rgba(
+                row,
+                pass_width,
+                depth,
+                color_type,
+                palette,
+                transparency,
+            )
+            target_y = y_start + pass_y * y_step
+            for pass_x in range(pass_width):
+                target_x = x_start + pass_x * x_step
+                source_start = pass_x * 4
+                target_start = (target_y * width + target_x) * 4
+                rgba[target_start : target_start + 4] = row_rgba[
+                    source_start : source_start + 4
+                ]
+
+    if position != len(raw):
+        raise ValueError("unexpected trailing Adam7 pass data")
+    return bytes(rgba)
+
+
 def decode_rgba(path: Path) -> tuple[int, int, bytes]:
     chunks = _chunks(_read_png_bytes(path))
     width, height, depth, color_type, compression, filtering, interlace = _validate_ihdr(
         chunks[0][1]
     )
-    if compression != 0 or filtering != 0 or interlace != 0:
-        raise ValueError("packing supports non-interlaced PNG only")
+    if compression != 0 or filtering != 0:
+        raise ValueError("unsupported PNG compression/filtering method")
     if depth not in {1, 2, 4, 8, 16}:
         raise ValueError(f"unsupported PNG bit depth {depth}")
-
-    stride, filter_bpp = _scanline_layout(width, depth, color_type)
-    expected_size = (stride + 1) * height
-    compressed = b"".join(payload for kind, payload in chunks if kind == b"IDAT")
-    raw = _decompress_idat(compressed, expected_size)
-    rows = _unfilter_scanlines(raw, stride, height, filter_bpp)
 
     palette, transparency = _validate_palette_transparency(
         chunks,
         depth=depth,
         color_type=color_type,
     )
+    compressed = b"".join(payload for kind, payload in chunks if kind == b"IDAT")
 
-    rgba = bytearray(width * height * 4)
-    destination = 0
-
-    for row in rows:
-        if color_type == 3:
-            indexed_samples = _unpack_packed_samples(row, width, depth)
-            for palette_index in indexed_samples:
-                if palette_index >= len(palette):
-                    raise ValueError("palette index out of range")
-                red, green, blue = palette[palette_index]
-                alpha = transparency[palette_index] if palette_index < len(transparency) else 255
-                rgba[destination : destination + 4] = bytes((red, green, blue, alpha))
-                destination += 4
-            continue
-
-        if color_type == 0 and depth in {1, 2, 4}:
-            samples = _unpack_packed_samples(row, width, depth)
-            max_sample = (1 << depth) - 1
-            transparent_gray = (
-                struct.unpack(">H", transparency)[0] if len(transparency) == 2 else None
+    if interlace == 0:
+        stride, filter_bpp = _scanline_layout(width, depth, color_type)
+        expected_size = (stride + 1) * height
+        raw = _decompress_idat(compressed, expected_size)
+        rows = _unfilter_scanlines(raw, stride, height, filter_bpp)
+        rgba = bytearray(width * height * 4)
+        destination = 0
+        for row in rows:
+            row_rgba = _decode_row_to_rgba(
+                row,
+                width,
+                depth,
+                color_type,
+                palette,
+                transparency,
             )
-            for sample in samples:
-                gray = (sample * 255 + max_sample // 2) // max_sample
-                alpha = 0 if transparent_gray == sample else 255
-                rgba[destination : destination + 4] = bytes((gray, gray, gray, alpha))
-                destination += 4
+            rgba[destination : destination + len(row_rgba)] = row_rgba
+            destination += len(row_rgba)
+        return width, height, bytes(rgba)
+
+    if interlace != 1:
+        raise ValueError(f"unsupported PNG interlace method {interlace}")
+
+    expected_size = 0
+    for x_start, y_start, x_step, y_step in ADAM7_PASSES:
+        pass_width = _adam7_extent(width, x_start, x_step)
+        pass_height = _adam7_extent(height, y_start, y_step)
+        if pass_width == 0 or pass_height == 0:
             continue
+        stride, _ = _scanline_layout(pass_width, depth, color_type)
+        expected_size += (stride + 1) * pass_height
 
-        if depth == 16:
-            channels_by_type = {0: 1, 2: 3, 4: 2, 6: 4}
-            channels = channels_by_type[color_type]
-            bpp = channels * 2
-            transparent_gray = (
-                struct.unpack(">H", transparency)[0]
-                if color_type == 0 and len(transparency) == 2
-                else None
-            )
-            transparent_rgb = (
-                struct.unpack(">HHH", transparency)
-                if color_type == 2 and len(transparency) == 6
-                else None
-            )
-            for index in range(0, len(row), bpp):
-                samples = [
-                    struct.unpack(">H", row[index + offset : index + offset + 2])[0]
-                    for offset in range(0, bpp, 2)
-                ]
-                if color_type == 0:
-                    gray16 = samples[0]
-                    gray = _sample16_to_u8(gray16)
-                    alpha = 0 if transparent_gray == gray16 else 255
-                    red = green = blue = gray
-                elif color_type == 2:
-                    red16, green16, blue16 = samples
-                    red = _sample16_to_u8(red16)
-                    green = _sample16_to_u8(green16)
-                    blue = _sample16_to_u8(blue16)
-                    alpha = 0 if transparent_rgb == (red16, green16, blue16) else 255
-                elif color_type == 4:
-                    gray16, alpha16 = samples
-                    gray = _sample16_to_u8(gray16)
-                    red = green = blue = gray
-                    alpha = _sample16_to_u8(alpha16)
-                else:
-                    red16, green16, blue16, alpha16 = samples
-                    red = _sample16_to_u8(red16)
-                    green = _sample16_to_u8(green16)
-                    blue = _sample16_to_u8(blue16)
-                    alpha = _sample16_to_u8(alpha16)
-
-                rgba[destination : destination + 4] = bytes((red, green, blue, alpha))
-                destination += 4
-            continue
-
-        bpp_by_type = {0: 1, 2: 3, 4: 2, 6: 4}
-        bpp = bpp_by_type[color_type]
-        for index in range(0, len(row), bpp):
-            if color_type == 0:
-                gray = row[index]
-                red = green = blue = gray
-                alpha = 255
-                if len(transparency) >= 2:
-                    transparent_gray = struct.unpack(">H", transparency[:2])[0]
-                    if gray == transparent_gray:
-                        alpha = 0
-            elif color_type == 2:
-                red, green, blue = row[index : index + 3]
-                alpha = 255
-                if len(transparency) == 6:
-                    tr, tg, tb = struct.unpack(">HHH", transparency)
-                    if (red, green, blue) == (tr, tg, tb):
-                        alpha = 0
-            elif color_type == 4:
-                gray, alpha = row[index : index + 2]
-                red = green = blue = gray
-            else:
-                red, green, blue, alpha = row[index : index + 4]
-
-            rgba[destination : destination + 4] = bytes((red, green, blue, alpha))
-            destination += 4
-
-    return width, height, bytes(rgba)
+    raw = _decompress_idat(compressed, expected_size)
+    pixels = _decode_adam7(
+        raw,
+        width,
+        height,
+        depth,
+        color_type,
+        palette,
+        transparency,
+    )
+    return width, height, pixels
 
 
 def _chunk(kind: bytes, payload: bytes) -> bytes:
