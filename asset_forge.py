@@ -20,7 +20,7 @@ from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_3d_delivery import godot_3d_delivery_report
 from godot_handoff import prepare_godot_handoff, validate_godot_handoff
 from godot_export import write_spriteframes
-from raster_pack import encode_webp, inspect_png, inspect_raster, pack_uniform_atlas, raster_backend_status, recompress_png
+from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
 from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline
 from svg_tools import inspect_svg, normalize_viewbox, sanitize_svg, validate_svg_profile
@@ -386,6 +386,18 @@ def parser() -> argparse.ArgumentParser:
     pack.add_argument("--columns", type=int)
     pack.add_argument("--padding", type=int, default=0)
     pack.add_argument("--power-of-two", action="store_true")
+    pack.add_argument("--trim", action="store_true")
+    pack.add_argument("--extrude", type=int, default=0)
+
+    compact = sub.add_parser("pack-atlas-compact", help="pack variable-size PNG/WebP frames into a compact PNG atlas")
+    compact.add_argument("output", type=Path)
+    compact.add_argument("inputs", type=Path, nargs="+")
+    compact.add_argument("--metadata", type=Path)
+    compact.add_argument("--max-width", type=int, default=2048)
+    compact.add_argument("--padding", type=int, default=0)
+    compact.add_argument("--power-of-two", action="store_true")
+    compact.add_argument("--no-trim", action="store_true")
+    compact.add_argument("--extrude", type=int, default=0)
 
     optimize = sub.add_parser("optimize-png", help="losslessly recompress a supported PNG")
     optimize.add_argument("input", type=Path)
@@ -525,6 +537,30 @@ def main() -> int:
                 columns=args.columns,
                 padding=args.padding,
                 power_of_two=args.power_of_two,
+                trim=args.trim,
+                extrude=args.extrude,
+            )
+        except (OSError, ValueError, zlib.error) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        rendered = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
+        if args.metadata:
+            args.metadata.parent.mkdir(parents=True, exist_ok=True)
+            args.metadata.write_text(rendered, encoding="utf-8")
+            print(str(args.metadata))
+        else:
+            print(rendered, end="")
+        return 0
+    if args.command == "pack-atlas-compact":
+        try:
+            metadata = pack_compact_atlas(
+                args.inputs,
+                args.output,
+                max_width=args.max_width,
+                padding=args.padding,
+                power_of_two=args.power_of_two,
+                trim=not args.no_trim,
+                extrude=args.extrude,
             )
         except (OSError, ValueError, zlib.error) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
