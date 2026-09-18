@@ -12,6 +12,7 @@ from pathlib import Path
 
 from animation_infer import infer_animations
 from blender_adapter import build_blender_export_job, render_blender_command, write_blender_export_script, write_job_manifest
+from gltf_diagnostics import deep_gltf_diagnostics
 from gltf_quality import quality_report
 from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_export import write_spriteframes
@@ -493,6 +494,10 @@ def parser() -> argparse.ArgumentParser:
     gltf_quality.add_argument("--profile", choices=["prop", "environment", "character"])
     gltf_quality.add_argument("--output", type=Path)
 
+    gltf_diagnose = sub.add_parser("diagnose-gltf", help="run deep accessor, skinning, and animation diagnostics")
+    gltf_diagnose.add_argument("input", type=Path)
+    gltf_diagnose.add_argument("--output", type=Path)
+
     blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
     blender_job.add_argument("source_blend", type=Path)
     blender_job.add_argument("output_glb", type=Path)
@@ -670,6 +675,24 @@ def main() -> int:
         result = {"file": str(args.input), "info": info, "errors": errors, "warnings": warnings}
         print(json.dumps(result, indent=2, sort_keys=True))
         return 1 if errors else 0
+    if args.command == "diagnose-gltf":
+        try:
+            result = deep_gltf_diagnostics(args.input)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
+        if args.output:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(rendered, encoding="utf-8")
+            print(str(args.output))
+        else:
+            print(rendered, end="")
+        has_errors = any(
+            result.get(section, {}).get("errors")
+            for section in ("accessors", "skinning", "animations")
+        )
+        return 1 if has_errors else 0
     if args.command == "quality-gltf":
         try:
             result = quality_report(args.input, args.profile)
