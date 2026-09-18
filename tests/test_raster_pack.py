@@ -446,6 +446,97 @@ class RasterPackTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "more entries than indexed bit depth allows"):
                 decode_rgba(image)
 
+    def test_grayscale_1bit_png_decodes_to_rgba(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "gray1.png"
+            ihdr = struct.pack(">IIBBBBB", 8, 1, 1, 0, 0, 0, 0)
+            raw = b"\x00" + bytes([0b01011010])
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(
+            pixels,
+            b"".join(
+                bytes([255, 255, 255, 255]) if bit else bytes([0, 0, 0, 255])
+                for bit in [0, 1, 0, 1, 1, 0, 1, 0]
+            ),
+        )
+
+    def test_grayscale_2bit_png_scales_samples(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "gray2.png"
+            ihdr = struct.pack(">IIBBBBB", 4, 1, 2, 0, 0, 0, 0)
+            raw = b"\x00" + bytes([0b00011011])
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(
+            pixels,
+            bytes([
+                0, 0, 0, 255,
+                85, 85, 85, 255,
+                170, 170, 170, 255,
+                255, 255, 255, 255,
+            ]),
+        )
+
+    def test_grayscale_4bit_png_ignores_padding_nibble(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "gray4.png"
+            ihdr = struct.pack(">IIBBBBB", 3, 1, 4, 0, 0, 0, 0)
+            raw = b"\x00" + bytes([0x05, 0xAF])
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(
+            pixels,
+            bytes([
+                0, 0, 0, 255,
+                85, 85, 85, 255,
+                170, 170, 170, 255,
+            ]),
+        )
+
+    def test_grayscale_low_bit_depth_trns_is_applied_before_scaling(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "gray2-trns.png"
+            ihdr = struct.pack(">IIBBBBB", 4, 1, 2, 0, 0, 0, 0)
+            transparency = struct.pack(">H", 2)
+            raw = b"\x00" + bytes([0b00011011])
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"tRNS", transparency)
+                + chunk(b"IDAT", zlib.compress(raw))
+                + chunk(b"IEND", b"")
+            )
+            _, _, pixels = decode_rgba(image)
+
+        self.assertEqual(
+            pixels,
+            bytes([
+                0, 0, 0, 255,
+                85, 85, 85, 255,
+                170, 170, 170, 0,
+                255, 255, 255, 255,
+            ]),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
