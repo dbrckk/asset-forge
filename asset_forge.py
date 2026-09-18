@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency-free asset-forge manifest validator, planner, PNG inspector, and atlas metadata builder."""
+"""Dependency-free asset-forge manifest validator, planner, raster inspector, and atlas metadata builder."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_3d_delivery import godot_3d_delivery_report
 from godot_handoff import prepare_godot_handoff, validate_godot_handoff
 from godot_export import write_spriteframes
-from raster_pack import inspect_png, pack_uniform_atlas, recompress_png
+from raster_pack import inspect_png, inspect_webp, pack_uniform_atlas, recompress_png
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
 from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline
 from svg_tools import inspect_svg, normalize_viewbox, sanitize_svg, validate_svg_profile
@@ -187,10 +187,15 @@ def build_atlas_manifest(path: Path, manifest: dict) -> dict:
 def validate_raster_file(path: Path, manifest: dict) -> tuple[dict, list[str]]:
     errors: list[str] = []
     target = manifest.get("target", {})
-    if str(target.get("format", "")).lower() != "png":
-        return {}, ["raster validation currently supports target.format=png only"]
+    target_format = str(target.get("format", "")).lower()
+    if target_format == "png":
+        info = inspect_png(path)
+        info["format"] = "png"
+    elif target_format == "webp":
+        info = inspect_webp(path)
+    else:
+        return {}, ["raster validation supports target.format=png or webp"]
 
-    info = inspect_png(path)
     constraints = manifest.get("constraints", {}) or {}
     frame_width = constraints.get("frameWidth")
     frame_height = constraints.get("frameHeight")
@@ -205,11 +210,14 @@ def validate_raster_file(path: Path, manifest: dict) -> tuple[dict, list[str]]:
         errors.append(f"file size {info['bytes']} exceeds maxBytes {max_bytes}")
 
     if constraints.get("requiresAlpha") is True and not info["hasAlpha"]:
-        errors.append("PNG does not contain transparency")
+        errors.append(f"{target_format.upper()} does not contain transparency")
 
     max_colors = constraints.get("maxColors")
-    if isinstance(max_colors, int) and info["paletteEntries"] is not None and info["paletteEntries"] > max_colors:
-        errors.append(f"palette has {info['paletteEntries']} entries, exceeds maxColors {max_colors}")
+    if target_format == "png":
+        if isinstance(max_colors, int) and info["paletteEntries"] is not None and info["paletteEntries"] > max_colors:
+            errors.append(f"palette has {info['paletteEntries']} entries, exceeds maxColors {max_colors}")
+    elif isinstance(max_colors, int):
+        errors.append("maxColors is only enforceable for indexed PNG assets")
 
     if constraints.get("powerOfTwoAtlas") is True:
         if not is_power_of_two(info["width"]) or not is_power_of_two(info["height"]):
