@@ -16,6 +16,7 @@ from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_export import write_spriteframes
 from raster_pack import pack_uniform_atlas, recompress_png
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
+from toolchain_3d import build_3d_pipeline, detect_3d_tools, prepare_3d_pipeline
 from svg_tools import inspect_svg, normalize_viewbox, sanitize_svg, validate_svg_profile
 
 PIPELINES = {
@@ -495,6 +496,17 @@ def parser() -> argparse.ArgumentParser:
     blender_job.add_argument("--selection-only", action="store_true")
     blender_job.add_argument("--no-animations", action="store_true")
     blender_job.add_argument("--no-apply-modifiers", action="store_true")
+
+    toolchain_status = sub.add_parser("3d-toolchain-status", help="detect available external 3D tools")
+
+    pipeline3d = sub.add_parser("prepare-3d", help="prepare Blender to GLB validation/optimization pipeline")
+    pipeline3d.add_argument("source_blend", type=Path)
+    pipeline3d.add_argument("workdir", type=Path)
+    pipeline3d.add_argument("--profile", choices=["prop", "environment", "character"], default="prop")
+    pipeline3d.add_argument("--optimizer", choices=["none", "gltf-transform", "gltfpack"], default="gltf-transform")
+    pipeline3d.add_argument("--texture-compress", choices=["webp", "ktx2"])
+    pipeline3d.add_argument("--mesh-compression", action="store_true")
+    pipeline3d.add_argument("--no-animations", action="store_true")
     return result
 
 
@@ -664,6 +676,26 @@ def main() -> int:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
         print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+    if args.command == "3d-toolchain-status":
+        print(json.dumps(detect_3d_tools(), indent=2, sort_keys=True))
+        return 0
+    if args.command == "prepare-3d":
+        try:
+            plan = build_3d_pipeline(
+                args.source_blend,
+                args.workdir,
+                profile=args.profile,
+                optimizer=args.optimizer,
+                texture_compress=args.texture_compress,
+                mesh_compression=args.mesh_compression,
+                animations=not args.no_animations,
+            )
+            prepare_3d_pipeline(plan)
+        except (OSError, ValueError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(plan, indent=2, sort_keys=True))
         return 0
     return 2
 
