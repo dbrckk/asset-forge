@@ -184,6 +184,35 @@ class Toolchain3DTests(unittest.TestCase):
         self.assertFalse(result["success"])
         self.assertEqual(result["results"][0]["status"], "failed")
 
+    @patch("toolchain_3d.detect_3d_tools")
+    def test_godot4_target_adds_delivery_stage(self, detect):
+        detect.return_value = {
+            "blender": {"available": True, "path": "/bin/blender"},
+            "gltf-validator": {"available": False, "path": None},
+            "gltf-transform": {"available": False, "path": None},
+            "gltfpack": {"available": False, "path": None},
+        }
+
+        plan = build_3d_pipeline(
+            Path("source.blend"),
+            Path("build/asset"),
+            optimizer="none",
+            target_engine="godot4",
+        )
+
+        self.assertEqual(plan["targetEngine"], "godot4")
+        self.assertEqual(plan["steps"][-1]["id"], "godot4-delivery")
+        self.assertIn("validate-godot-3d", plan["steps"][-1]["command"])
+        self.assertIn("raw.glb", plan["steps"][-1]["command"])
+
+    def test_invalid_target_engine_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "target_engine must be"):
+            build_3d_pipeline(
+                Path("source.blend"),
+                Path("build/asset"),
+                target_engine="unknown",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
