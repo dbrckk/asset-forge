@@ -9,8 +9,10 @@ Status: active
 - Dependency-free atlas packer decodes non-interlaced 8-bit RGB/RGBA PNGs, supports PNG filters 0-4, assembles equal-size frames, adds optional padding/power-of-two expansion, writes an RGBA PNG atlas, and returns frame metadata.
 - PNG recompression uses adaptive per-row filters plus zlib level 9 while preserving decoded pixels for supported inputs.
 - Godot 4 export generates SpriteFrames .tres resources backed by AtlasTexture frame regions.
+- Godot export now supports multiple animations from a single atlas with per-animation FPS, looping, frame order, and per-frame duration multipliers.
+- Animation groups can be inferred automatically from numbered frame filenames such as idle_01.png and run_02.png.
 - star-list integration calls dbrckk/star-list's existing recommender through its JSON CLI and can produce targeted or standard visual-tool discovery reports.
-- CI now compiles all modules, runs unit tests, checks the manifest/plan path, and smoke-tests the star-list bridge against a real checkout.
+- CI compiles all current modules, runs unit tests, checks manifest/plan paths, and smoke-tests the star-list bridge against a real checkout.
 - Atlas packer core was executed successfully in this runtime on synthetic RGBA frames.
 
 ## Broken / blockers
@@ -21,10 +23,10 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Finish 2D engine integration/format hardening, then expand to vector/SVG and 3D backends.
+- Finish 2D format hardening, then begin the vector/SVG pipeline before expanding to 3D.
 
 ## Validation
-- `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py tests`
+- `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py tests`
 - `python -m unittest discover -s tests -v`
 - `python asset_forge.py validate examples/asset-manifest.json`
 - `python asset_forge.py plan examples/asset-manifest.json`
@@ -32,12 +34,13 @@ Status: active
 - `python asset_forge.py atlas-manifest <manifest.json> <sprite.png> --output <atlas.json>`
 - `python asset_forge.py pack-atlas <atlas.png> <frames...> --metadata <atlas.json> [--padding N] [--power-of-two]`
 - `python asset_forge.py optimize-png <input.png> <output.png>`
-- `python asset_forge.py export-godot <atlas.json> <sprite_frames.tres> --atlas-path res://path/to/atlas.png`
+- `python asset_forge.py infer-animations <atlas.json> --output <animations.json>`
+- `python asset_forge.py export-godot <atlas.json> <sprite_frames.tres> --atlas-path res://path/to/atlas.png [--animations <animations.json>]`
 - `python asset_forge.py discover-tools <star-list-root> "pixel art sprites atlas" --top 8`
 - `python asset_forge.py discover-tools <star-list-root> --full-report --output <report.json>`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after Godot export, PNG recompression, and star-list integration changes.
+- 2026-09-18: latest GitHub source inspected after multi-animation Godot export and filename-based animation inference.
 
 <!-- AUTO:START -->
 ## Automatic repository state
