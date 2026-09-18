@@ -5,16 +5,11 @@ Status: active
 ## Working
 - Repository initialized as a central 2D/3D visual asset production pipeline.
 - Dependency-free Python CLI validates manifests and builds deterministic production plans.
-- PNG validation covers integrity/CRC, transparency, palette metadata, budgets, sprite grids, frame counts, and optional power-of-two atlas rules.
-- PNG decoding supports non-interlaced 8-bit grayscale, grayscale+alpha, indexed-color with PLTE/tRNS, RGB, and RGBA inputs.
-- Dependency-free atlas packer assembles equal-size frames, adds optional padding/power-of-two expansion, writes an RGBA PNG atlas, and returns frame metadata.
-- PNG recompression uses adaptive per-row filters plus zlib level 9 while preserving decoded pixels for supported inputs.
-- Godot 4 export generates SpriteFrames .tres resources backed by AtlasTexture frame regions and supports multiple animations.
-- Animation groups can be inferred automatically from numbered frame filenames.
-- SVG/vector pipeline validates XML/SVG structure, dimensions/aspect ratio, executable tags, event attributes, external references, and editor metadata.
-- SVG sanitization removes unsafe content, external references, event handlers, and metadata.
-- SVG normalization can infer a missing viewBox from positive numeric width/height.
-- Vector profiles for icon/ui/logo add reusable viewBox, shape, and complexity rules.
+- PNG validation/decoding/atlas/optimization and Godot animation export are implemented for common 8-bit non-interlaced PNG workflows.
+- SVG/vector pipeline validates, sanitizes, normalizes viewBox, removes metadata, and applies icon/ui/logo profiles.
+- glTF/GLB structural inspection validates container/version/core arrays and reports meshes, primitives, materials, textures, skins, animations, and extensions.
+- 3D profiles for prop/environment/character add reusable mesh/primitive/material/animation/skin expectations.
+- Blender adapter generates reproducible export jobs, Blender Python scripts, and background CLI commands for GLB export.
 - star-list integration calls dbrckk/star-list's recommender through its JSON CLI.
 - CI compiles all current modules, runs unit tests, checks manifest/plan paths, and smoke-tests the star-list bridge.
 
@@ -22,50 +17,48 @@ Status: active
 - PNG decoding still does not support 16-bit or interlaced PNGs.
 - WebP output is not implemented yet.
 - SVG geometric path simplification and raster preview generation are not implemented yet.
-- Real Blender/3D production backends are not implemented yet.
+- glTF validation is structural only; deep Khronos schema/spec validation is not embedded yet.
+- Blender execution itself requires a Blender runtime and is not executed in this ChatGPT environment.
+- Mesh optimization/glTF Transform/meshoptimizer integration is not implemented yet.
 - Direct git clone from this ChatGPT runtime is blocked by DNS.
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Start the 3D/Blender backend while keeping vector optimization conservative and safe.
+- Add deeper glTF validation and optimization adapters, then automate Blender-to-GLB-to-validation as one production command.
 
 ## Validation
-- `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py tests`
+- `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py blender_adapter.py tests`
 - `python -m unittest discover -s tests -v`
 - `python asset_forge.py validate examples/asset-manifest.json`
 - `python asset_forge.py plan examples/asset-manifest.json`
 - `python asset_forge.py validate-raster <manifest.json> <sprite.png>`
-- `python asset_forge.py atlas-manifest <manifest.json> <sprite.png> --output <atlas.json>`
-- `python asset_forge.py pack-atlas <atlas.png> <frames...> --metadata <atlas.json>`
-- `python asset_forge.py optimize-png <input.png> <output.png>`
-- `python asset_forge.py infer-animations <atlas.json> --output <animations.json>`
-- `python asset_forge.py export-godot <atlas.json> <sprite_frames.tres> --atlas-path res://path/to/atlas.png [--animations <animations.json>]`
 - `python asset_forge.py validate-svg <input.svg> [--profile icon|ui|logo]`
-- `python asset_forge.py sanitize-svg <input.svg> <output.svg>`
 - `python asset_forge.py normalize-svg <input.svg> <output.svg>`
-- `python asset_forge.py discover-tools <star-list-root> "pixel art sprites atlas" --top 8`
+- `python asset_forge.py validate-gltf <input.gltf|input.glb> [--profile prop|environment|character]`
+- `python asset_forge.py blender-export-job <source.blend> <output.glb> --script <export.py> [--job-manifest <job.json>]`
+- `python asset_forge.py discover-tools <star-list-root> "3d modeling rigging animation textures game assets" --top 8`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after vector profiles, metadata cleanup, and viewBox normalization.
+- 2026-09-18: latest GitHub source inspected after glTF/GLB validation, 3D profiles, and Blender export adapter integration.
 
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T17:56:51Z
+Generated: 2026-09-18T17:03:05Z
 
 ### Git
 - Branch: `main`
-- Head: `33e9907871b9`
-- Commit date: 2026-09-18T19:56:28+02:00
-- Commit: docs: record vector profile milestone
-- Tracked files: 72
+- Head: `9c1c7ff00863`
+- Commit date: 2026-09-18T19:03:00+02:00
+- Commit: docs: record expanded png and svg pipeline milestone
+- Tracked files: 68
 
 ### Recently changed files
 - `README.md`
-- `profiles/vector/logo.json`
-- `profiles/vector/ui.json`
-- `profiles/vector/icon.json`
+- `.github/workflows/validate.yml`
+- `asset_forge.py`
 - `tests/test_svg_tools.py`
+- `pipelines/vector-svg.json`
 
 ### Project signals
 - No common build descriptor detected
