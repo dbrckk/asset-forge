@@ -86,6 +86,25 @@ class GodotExportTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "exceeds atlas width"):
             render_spriteframes("res://atlas.png", metadata)
 
+    def test_rejects_rotated_atlas_frame(self):
+        metadata = {
+            "frames": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "width": 8,
+                    "height": 16,
+                    "sourceRegionWidth": 16,
+                    "sourceRegionHeight": 8,
+                    "sourceWidth": 16,
+                    "sourceHeight": 8,
+                    "rotated": True,
+                }
+            ]
+        }
+        with self.assertRaisesRegex(ValueError, "rotated atlas frames are not supported"):
+            render_spriteframes("res://atlas.png", metadata)
+
     def test_multiple_animations(self):
         rendered = render_spriteframes(
             "res://art/player.png",
