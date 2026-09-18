@@ -287,11 +287,11 @@ def _scanline_layout(width: int, depth: int, color_type: int) -> tuple[int, int]
     return stride, filter_bpp
 
 
-def _unpack_indexed_row(row: bytes, width: int, depth: int) -> list[int]:
+def _unpack_packed_samples(row: bytes, width: int, depth: int) -> list[int]:
     if depth == 8:
         return list(row[:width])
     if depth not in {1, 2, 4}:
-        raise ValueError(f"unsupported indexed PNG bit depth {depth}")
+        raise ValueError(f"unsupported packed PNG bit depth {depth}")
 
     mask = (1 << depth) - 1
     values: list[int] = []
@@ -303,7 +303,7 @@ def _unpack_indexed_row(row: bytes, width: int, depth: int) -> list[int]:
         if len(values) >= width:
             break
     if len(values) != width:
-        raise ValueError("indexed PNG row does not contain enough samples")
+        raise ValueError("packed PNG row does not contain enough samples")
     return values
 
 
@@ -314,8 +314,8 @@ def decode_rgba(path: Path) -> tuple[int, int, bytes]:
     )
     if compression != 0 or filtering != 0 or interlace != 0:
         raise ValueError("packing supports non-interlaced PNG only")
-    if color_type != 3 and depth != 8:
-        raise ValueError("packing currently supports 8-bit non-indexed PNG only")
+    if color_type not in {0, 3} and depth != 8:
+        raise ValueError("packing currently supports 8-bit truecolor/alpha PNG only")
 
     stride, filter_bpp = _scanline_layout(width, depth, color_type)
     expected_size = (stride + 1) * height
@@ -334,13 +334,26 @@ def decode_rgba(path: Path) -> tuple[int, int, bytes]:
 
     for row in rows:
         if color_type == 3:
-            indexed_samples = _unpack_indexed_row(row, width, depth)
+            indexed_samples = _unpack_packed_samples(row, width, depth)
             for palette_index in indexed_samples:
                 if palette_index >= len(palette):
                     raise ValueError("palette index out of range")
                 red, green, blue = palette[palette_index]
                 alpha = transparency[palette_index] if palette_index < len(transparency) else 255
                 rgba[destination : destination + 4] = bytes((red, green, blue, alpha))
+                destination += 4
+            continue
+
+        if color_type == 0 and depth in {1, 2, 4}:
+            samples = _unpack_packed_samples(row, width, depth)
+            max_sample = (1 << depth) - 1
+            transparent_gray = (
+                struct.unpack(">H", transparency)[0] if len(transparency) == 2 else None
+            )
+            for sample in samples:
+                gray = (sample * 255 + max_sample // 2) // max_sample
+                alpha = 0 if transparent_gray == sample else 255
+                rgba[destination : destination + 4] = bytes((gray, gray, gray, alpha))
                 destination += 4
             continue
 
