@@ -156,6 +156,9 @@ def _validate_palette_transparency(
             elif color_type == 0:
                 if len(payload) != 2:
                     raise ValueError("grayscale PNG tRNS must be 2 bytes")
+                transparent_gray = struct.unpack(">H", payload)[0]
+                if transparent_gray >= (1 << depth):
+                    raise ValueError("grayscale PNG tRNS sample exceeds bit depth")
             elif color_type == 2:
                 if len(payload) != 6:
                     raise ValueError("truecolor PNG tRNS must be 6 bytes")
