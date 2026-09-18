@@ -21,6 +21,9 @@ Status: active
 - CI runs `python asset_forge.py validate-engine-profiles` so malformed engine profiles fail before handoff generation.
 - When a Godot editor binary is available, handoff validation uses headless --import to exercise the real importer; missing Godot remains non-blocking.
 - 3D profiles for prop/environment/character include versioned geometry/material/texture budgets plus max texture dimension, estimated texture-memory budget, and character joint budgets.
+- gltf_quality.py now loads profiles/3d/*.json directly; duplicated hardcoded 3D quality budgets were removed.
+- svg_tools.py now loads profiles/vector/*.json directly; duplicated hardcoded SVG profile rules were removed.
+- 3D/vector profile contracts have formal schemas plus dependency-free validation, and CI runs validate-asset-profiles.
 - Blender adapter generates reproducible export jobs, Blender Python scripts, and background CLI commands for GLB export.
 - 3D toolchain detects Blender, Khronos glTF Validator, glTF Transform, and gltfpack when installed.
 - prepare-3d generates Blender → structural validation → quality report → optional Khronos validation → optimization → final validation/quality stages, with optional Godot 4 delivery gating.
@@ -42,7 +45,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Consolidate the same single-source/profile-schema pattern for 3D quality and SVG profiles, then add another engine adapter only when a consuming project requires it.
+- Continue profile hardening by applying the same schema/runtime single-source approach to remaining configuration files, then return to feature gaps such as SVG resource caps and PNG/WebP support.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -56,13 +59,14 @@ Status: active
 - `python asset_forge.py prepare-godot-handoff <input.glb> <output_dir> [--profile ...] --delivery-report report.json [--asset-manifest manifest.json] [--allow-unvalidated]`
 - `python asset_forge.py validate-godot-handoff <project_dir> [--godot executable]`
 - `python asset_forge.py validate-engine-profiles`
+- `python asset_forge.py validate-asset-profiles`
 - `python asset_forge.py quality-gltf <input.gltf|input.glb> [--profile prop|environment|character] [--output report.json]`
 - `python asset_forge.py 3d-toolchain-status`
 - `python asset_forge.py prepare-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after formal engine profile schema/runtime validation and CI enforcement.
+- 2026-09-18: latest GitHub source inspected after making 3D quality and vector profile JSON files runtime sources of truth with schema-style validation and CI enforcement.
 
 <!-- AUTO:START -->
 ## Automatic repository state
