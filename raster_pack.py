@@ -1299,6 +1299,7 @@ def pack_compact_atlas(
     max_height: int | None = None,
     max_pixels: int | None = None,
     max_bytes: int | None = None,
+    min_occupancy: float | None = None,
     padding: int = 0,
     power_of_two: bool = False,
     trim: bool = True,
@@ -1369,6 +1370,20 @@ def pack_compact_atlas(
         )
 
     frames.sort(key=lambda item: item["index"])
+    packed_area = sum(
+        (frame["width"] + extrude * 2) * (frame["height"] + extrude * 2)
+        for frame in frames_data
+    )
+    atlas_area = atlas_width * atlas_height
+    occupancy = packed_area / atlas_area * 100.0
+    if min_occupancy is not None:
+        if not 0 < min_occupancy <= 100:
+            raise ValueError("min occupancy must be > 0 and <= 100")
+        if occupancy < min_occupancy:
+            raise ValueError(
+                f"atlas occupancy {occupancy:.2f}% is below minimum {min_occupancy:.2f}%"
+            )
+
     output_bytes = _write_atlas_png(
         output,
         atlas_width,
@@ -1393,12 +1408,11 @@ def pack_compact_atlas(
         "outputBytes": output_bytes,
         "packing": "maxrects-best-short-side-fit",
         "spriteArea": sum(frame["width"] * frame["height"] for frame in frames_data),
-        "packedArea": sum(
-            (frame["width"] + extrude * 2) * (frame["height"] + extrude * 2)
-            for frame in frames_data
-        ),
+        "packedArea": packed_area,
         "contentArea": content_width * content_height,
-        "atlasArea": atlas_width * atlas_height,
+        "atlasArea": atlas_area,
+        "wastedPixels": atlas_area - packed_area,
+        "minOccupancyPercent": min_occupancy,
         "contentOccupancyPercent": round(
             (
                 sum(
@@ -1411,18 +1425,7 @@ def pack_compact_atlas(
             ),
             2,
         ),
-        "atlasOccupancyPercent": round(
-            (
-                sum(
-                    (frame["width"] + extrude * 2)
-                    * (frame["height"] + extrude * 2)
-                    for frame in frames_data
-                )
-                / (atlas_width * atlas_height)
-                * 100.0
-            ),
-            2,
-        ),
+        "atlasOccupancyPercent": round(occupancy, 2),
         "frames": frames,
     }
 
