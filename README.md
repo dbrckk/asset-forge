@@ -177,13 +177,21 @@ Validate glTF/GLB structure:
 python asset_forge.py validate-gltf model.glb
 ```
 
-Apply a 3D profile:
+Apply a 3D structural profile:
 
 ```bash
 python asset_forge.py validate-gltf prop.glb --profile prop
 python asset_forge.py validate-gltf level.glb --profile environment
 python asset_forge.py validate-gltf character.glb --profile character
 ```
+
+Measure production quality and budgets:
+
+```bash
+python asset_forge.py quality-gltf prop.glb --profile prop --output build/prop-quality.json
+```
+
+The quality report derives vertex and triangle counts from accessor metadata, measures primitive coverage for normals/UVs/tangents/skinning, summarizes PBR texture usage, identifies external images, and evaluates the versioned profile budgets under `profiles/3d/`.
 
 Create a reproducible Blender export job and script:
 
@@ -216,7 +224,7 @@ python asset_forge.py run-3d source.blend build/model \
   --optimizer gltf-transform
 ```
 
-The generated chain is Blender export → internal structural/profile validation → optional Khronos validation → optional optimization → post-optimization validation. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
+The generated chain is Blender export → internal structural validation → quality/budget report → optional Khronos validation → optional optimization → post-optimization structural validation → final quality report. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
 
 ## Initial interoperability
 
