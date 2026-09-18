@@ -51,4 +51,4 @@ jobs:
       - name: Inspect raster backend
         run: python asset_forge.py raster-backend-status
       - name: WebP backend tests
-        run: python -m unittest tests.test_raster_backend -v
+        run: python -m unittest discover -s tests -p "test_raster_backend.py" -v
