@@ -10,6 +10,7 @@ Status: active
 - Auto heuristic selection is budget-aware for maxHeight/maxPixels/maxBytes and reuses the winning candidate's already-encoded PNG bytes for the final write.
 - Compact atlas metadata reports sprite/packed/content/atlas area, wasted pixels, and occupancy percentages; an optional minimum occupancy threshold can fail inefficient builds before output.
 - Godot SpriteFrames export now maps trim metadata to AtlasTexture.margin and validates atlas bounds/source-offset consistency before emitting resources.
+- A versioned engine-neutral runtime atlas exporter preserves atlas region, normalized UVs, pre-rotation source region, source canvas size, trim offsets, and explicit clockwise rotation metadata; its JSON contract is defined by schemas/runtime-atlas.schema.json.
 - PNG recompression is no-growth: the original bytes are retained whenever the adaptive candidate is not smaller, including in-place output.
 - Indexed PNG decoding supports 1/2/4/8-bit palette indices with packed scanline layout, PNG filtering, row-padding handling, and tRNS palette alpha.
 - Grayscale PNG decoding supports 1/2/4/8/16-bit non-interlaced samples, scales low-bit/16-bit luminance to RGBA8, ignores packed padding bits, and applies validated grayscale tRNS transparency.
@@ -54,7 +55,7 @@ Status: active
 ## Broken / blockers
 - PNG decoding now covers Adam7; remaining raster format gap is primarily WebP pixel decoding/output and broader optimization behavior.
 - WebP metadata/container validation is dependency-free. Pixel decode/atlas input/encoding are implemented through optional Pillow+libwebp; native dependency-free WebP pixel decoding is not implemented.
-- Compact atlas rotation is opt-in and records rotated/rotationDegrees/sourceRegionWidth/sourceRegionHeight metadata. Godot SpriteFrames export intentionally rejects rotated frames because AtlasTexture does not undo packed-image rotation.
+- Compact atlas rotation is opt-in and records rotated/rotationDegrees/sourceRegionWidth/sourceRegionHeight metadata. Godot SpriteFrames export intentionally rejects rotated frames because AtlasTexture does not undo packed-image rotation; export-runtime-atlas is rotation-aware.
 - SVG geometric path simplification and raster preview generation are not implemented yet.
 - SVG CSS parsing is intentionally lightweight rather than a full CSS parser; current safety logic targets @import and url(...) references.
 - Internal glTF validation is still intentionally narrower than Khronos glTF Validator's full specification validation.
@@ -66,7 +67,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Add rotation-aware consumer adapters where useful, while keeping Godot rejection explicit and trim/orientation metadata stable.
+- Extend runtime-atlas consumers/examples and consider additional engine adapters while keeping Godot rejection explicit and trim/orientation metadata stable.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -87,7 +88,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-18: latest GitHub source inspected after adding explicit opt-in 90-degree compact-atlas rotation, rotated pixel rendering/metadata, and Godot consumer rejection.
+- 2026-09-18: latest GitHub source inspected after adding a versioned rotation-aware runtime atlas export with normalized UVs, trim/source reconstruction metadata, capability flags, schema, CLI, and tests.
 
 <!-- AUTO:START -->
 ## Automatic repository state
