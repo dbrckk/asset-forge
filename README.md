@@ -453,3 +453,23 @@ python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
 ```
 
 Metadata records `requestedHeuristic`, `selectedHeuristic`, and an `evaluatedHeuristics` summary containing width, height, and content area for each evaluated strategy.
+
+
+### Encoded-size-aware atlas auto selection
+
+Automatic compact-atlas selection now renders each MaxRects candidate in memory and encodes its PNG bytes before choosing a winner. No temporary atlas files are written during comparison.
+
+Selection order is now:
+
+```text
+1. smallest encoded PNG byte size
+2. smallest final atlas area
+3. smallest content area
+4. smallest content height
+5. smallest content width
+6. heuristic name as deterministic tie-break
+```
+
+Per-strategy audit metadata now also includes `atlasWidth`, `atlasHeight`, `atlasArea`, `encodedBytes`, `withinBudgets`, and `budgetErrors`.
+
+When `max-height`, `max-pixels`, or `max-bytes` is supplied, `auto` excludes candidates that violate those budgets before selecting the winner. If no heuristic fits, packing fails without replacing the output file. The already-encoded bytes of the winning candidate are reused for the final write, avoiding a second PNG encode.
