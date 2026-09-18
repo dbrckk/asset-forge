@@ -185,6 +185,12 @@ python asset_forge.py validate-gltf level.glb --profile environment
 python asset_forge.py validate-gltf character.glb --profile character
 ```
 
+Run deep accessor/skinning/animation diagnostics:
+
+```bash
+python asset_forge.py diagnose-gltf model.glb --output build/model-diagnostics.json
+```
+
 Measure production quality and budgets:
 
 ```bash
@@ -193,7 +199,9 @@ python asset_forge.py quality-gltf prop.glb --profile prop --output build/prop-q
 
 The quality report derives vertex and triangle counts from accessor metadata, measures primitive coverage for normals/UVs/tangents/skinning, summarizes PBR texture usage, identifies external images, and evaluates the versioned profile budgets under `profiles/3d/`.
 
-When image bytes are locally available, the report also reads PNG/JPEG/WebP dimensions and estimates decoded RGBA8 texture memory with mipmaps. Remote URLs are not fetched. Rig/animation metrics include joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, and keyframe accessor counts.
+When image bytes are locally available, the report also reads PNG/JPEG/WebP dimensions and estimates decoded RGBA8 texture memory with mipmaps. Remote URLs are not fetched. Rig/animation metrics include joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, keyframe accessor counts, and duration when animation time accessors are locally readable.
+
+Deep diagnostics additionally check accessor layout/ranges, byteStride alignment, JOINTS_0/WEIGHTS_0 type and count consistency, animation sampler input/output counts, interpolation modes, sampler/channel references, target nodes/paths, unused samplers, and strictly increasing key times.
 
 Create a reproducible Blender export job and script:
 
