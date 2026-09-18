@@ -500,3 +500,27 @@ height
 For rotated frames, `width`/`height` describe the stored atlas region after rotation, while `sourceRegionWidth`/`sourceRegionHeight` describe the trimmed region before rotation. Source canvas dimensions and trim offsets remain in `sourceWidth`, `sourceHeight`, `offsetX`, and `offsetY`.
 
 The current Godot SpriteFrames exporter intentionally rejects rotated frames because Godot `AtlasTexture` regions do not automatically undo packed-image rotation. Use rotation only with consumers that explicitly understand the metadata.
+
+
+### Rotation-aware runtime atlas export
+
+A generic engine/runtime consumer can now be generated from Asset Forge atlas metadata:
+
+```bash
+python asset_forge.py export-runtime-atlas build/atlas.json build/runtime-atlas.json
+```
+
+The versioned `asset-forge-runtime-atlas` format is engine-neutral and preserves:
+
+```text
+atlasRegion
+uv
+sourceRegion
+sourceSize
+trimOffset
+rotation
+```
+
+For a rotated frame, `atlasRegion` describes the stored 90°-rotated rectangle, `sourceRegion` describes the pre-rotation trimmed sprite, and `rotation.degreesClockwise=90` tells the consumer how to restore orientation. Normalized `u0/v0/u1/v1` coordinates are included for direct texture sampling.
+
+The top-level `capabilities` object declares support for trim offsets and clockwise 90° rotation. The contract is documented in `schemas/runtime-atlas.schema.json`. This export is the rotation-aware alternative to the Godot SpriteFrames exporter, which intentionally rejects rotated regions.
