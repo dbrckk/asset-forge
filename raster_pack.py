@@ -908,8 +908,14 @@ def encode_webp(
 
 def recompress_png(input_path: Path, output_path: Path) -> dict:
     before = input_path.stat().st_size
+    source_bytes = input_path.read_bytes()
     width, height, pixels = decode_rgba(input_path)
-    encode_rgba(output_path, width, height, pixels, adaptive=True)
+    candidate = _png_bytes_rgba(width, height, pixels, adaptive=True)
+
+    kept_optimized = len(candidate) < before or input_path.resolve() == output_path.resolve()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_bytes(candidate if kept_optimized else source_bytes)
+
     after = output_path.stat().st_size
     return {
         "input": str(input_path),
@@ -917,7 +923,9 @@ def recompress_png(input_path: Path, output_path: Path) -> dict:
         "width": width,
         "height": height,
         "beforeBytes": before,
+        "candidateBytes": len(candidate),
         "afterBytes": after,
+        "keptOptimized": kept_optimized,
         "savedBytes": before - after,
         "savedPercent": round(((before - after) / before * 100.0), 2) if before else 0.0,
     }
@@ -1056,6 +1064,138 @@ def _next_power_of_two(value: int) -> int:
     if value <= 1:
         return 1
     return 1 << (value - 1).bit_length()
+
+
+def _pack_shelves(frames: list[dict], max_width: int, padding: int, extrude: int) -> tuple[list[dict], int, int]:
+    if max_width <= 0:
+        raise ValueError("max_width must be > 0")
+
+    ordered = sorted(
+        enumerate(frames),
+        key=lambda item: (-item[1]["height"], -item[1]["width"], item[0]),
+    )
+    placements: list[dict] = []
+    x = 0
+    y = 0
+    shelf_height = 0
+    used_width = 0
+
+    for original_index, frame in ordered:
+        packed_width = frame["width"] + extrude * 2
+        packed_height = frame["height"] + extrude * 2
+        if packed_width > max_width:
+            raise ValueError(
+                f"frame {frame['path'].name} width {packed_width} exceeds max atlas width {max_width}"
+            )
+
+        if x and x + packed_width > max_width:
+            y += shelf_height + padding
+            x = 0
+            shelf_height = 0
+
+        placements.append(
+            {
+                "index": original_index,
+                "cellX": x,
+                "cellY": y,
+                "x": x + extrude,
+                "y": y + extrude,
+                "width": frame["width"],
+                "height": frame["height"],
+            }
+        )
+        x += packed_width + padding
+        shelf_height = max(shelf_height, packed_height)
+        used_width = max(used_width, x - padding)
+
+    used_height = y + shelf_height
+    placements.sort(key=lambda item: item["index"])
+    return placements, used_width, used_height
+
+
+def pack_compact_atlas(
+    inputs: list[Path],
+    output: Path,
+    *,
+    max_width: int = 2048,
+    padding: int = 0,
+    power_of_two: bool = False,
+    trim: bool = True,
+    extrude: int = 0,
+) -> dict:
+    if not inputs:
+        raise ValueError("at least one raster input is required")
+    if padding < 0:
+        raise ValueError("padding must be >= 0")
+    if extrude < 0:
+        raise ValueError("extrude must be >= 0")
+
+    frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]
+    placements, content_width, content_height = _pack_shelves(
+        frames_data,
+        max_width=max_width,
+        padding=padding,
+        extrude=extrude,
+    )
+
+    atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
+    atlas_height = _next_power_of_two(content_height) if power_of_two else content_height
+    canvas = bytearray(atlas_width * atlas_height * 4)
+    frames = []
+
+    for placement, frame in zip(placements, frames_data):
+        _blit_rgba(
+            canvas,
+            atlas_width,
+            placement["x"],
+            placement["y"],
+            frame["width"],
+            frame["height"],
+            frame["pixels"],
+        )
+        _extrude_rgba(
+            canvas,
+            atlas_width,
+            atlas_height,
+            placement["x"],
+            placement["y"],
+            frame["width"],
+            frame["height"],
+            extrude,
+        )
+        frames.append(
+            {
+                "index": placement["index"],
+                "name": frame["path"].name,
+                "x": placement["x"],
+                "y": placement["y"],
+                "width": frame["width"],
+                "height": frame["height"],
+                "sourceWidth": frame["sourceWidth"],
+                "sourceHeight": frame["sourceHeight"],
+                "offsetX": frame["offsetX"],
+                "offsetY": frame["offsetY"],
+                "trimmed": trim,
+                "extrude": extrude,
+            }
+        )
+
+    frames.sort(key=lambda item: item["index"])
+    encode_rgba(output, atlas_width, atlas_height, bytes(canvas), adaptive=True)
+    return {
+        "image": output.name,
+        "imageWidth": atlas_width,
+        "imageHeight": atlas_height,
+        "contentWidth": content_width,
+        "contentHeight": content_height,
+        "frameCount": len(frames),
+        "padding": padding,
+        "trim": trim,
+        "extrude": extrude,
+        "maxWidth": max_width,
+        "packing": "shelf-height-desc",
+        "frames": frames,
+    }
 
 
 def pack_uniform_atlas(
