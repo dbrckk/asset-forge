@@ -3,8 +3,9 @@ import tempfile
 import unittest
 import zlib
 from pathlib import Path
+from unittest.mock import patch
 
-from raster_pack import decode_rgba, pack_uniform_atlas, recompress_png
+from raster_pack import decode_rgba, inspect_png, pack_uniform_atlas, recompress_png
 
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -293,6 +294,32 @@ class RasterPackTests(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "exceeds expected scanline size"):
                 decode_rgba(image)
+
+    def test_hardened_inspector_reports_palette_and_transparency(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "indexed.png"
+            ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 3, 0, 0, 0)
+            image.write_bytes(
+                PNG_SIGNATURE
+                + chunk(b"IHDR", ihdr)
+                + chunk(b"PLTE", bytes([255, 0, 0]))
+                + chunk(b"tRNS", bytes([128]))
+                + chunk(b"IDAT", zlib.compress(b"\x00\x00"))
+                + chunk(b"IEND", b"")
+            )
+            info = inspect_png(image)
+
+        self.assertEqual(info["paletteEntries"], 1)
+        self.assertTrue(info["hasAlpha"])
+        self.assertGreater(info["compressedImageBytes"], 0)
+
+    def test_oversized_file_is_rejected_before_read(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "small.png"
+            write_rgba_png(image, 1, 1, bytes([1, 2, 3, 255]))
+            with patch("raster_pack.MAX_PNG_FILE_BYTES", 1):
+                with self.assertRaisesRegex(ValueError, "exceeds file limit"):
+                    inspect_png(image)
 
 
 if __name__ == "__main__":
