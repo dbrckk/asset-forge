@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import re
 import xml.etree.ElementTree as ET
+
+from asset_profile_validation import load_vector_profile
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -11,28 +13,6 @@ DANGEROUS_TAGS = {"script", "foreignObject"}
 METADATA_TAGS = {"metadata"}
 EVENT_ATTRIBUTE = re.compile(r"^on[a-z]+$", re.IGNORECASE)
 LENGTH = re.compile(r"^\s*([0-9]+(?:\.[0-9]+)?)(px)?\s*$", re.IGNORECASE)
-
-PROFILES = {
-    "icon": {
-        "requireViewBox": True,
-        "requireSquareViewBox": True,
-        "maxElements": 256,
-        "allowExternalReferences": False,
-    },
-    "ui": {
-        "requireViewBox": True,
-        "requireSquareViewBox": False,
-        "maxElements": 1200,
-        "allowExternalReferences": False,
-    },
-    "logo": {
-        "requireViewBox": True,
-        "requireSquareViewBox": False,
-        "maxElements": 800,
-        "allowExternalReferences": False,
-    },
-}
-
 
 def _local_name(name: str) -> str:
     return name.rsplit("}", 1)[-1]
@@ -160,14 +140,13 @@ def inspect_svg(path: Path) -> tuple[dict, list[str], list[str]]:
 
 
 def validate_svg_profile(path: Path, profile: str) -> tuple[dict, list[str], list[str]]:
-    if profile not in PROFILES:
-        raise ValueError(f"unknown SVG profile: {profile}")
+    profile_data = load_vector_profile(profile)
 
     info, errors, warnings = inspect_svg(path)
     if not info:
         return info, errors, warnings
 
-    rules = PROFILES[profile]
+    rules = profile_data["rules"]
     view_box_values = info.get("viewBoxValues")
 
     if rules["requireViewBox"] and not view_box_values:
