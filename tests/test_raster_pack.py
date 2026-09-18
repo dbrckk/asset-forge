@@ -98,11 +98,12 @@ class RasterPackTests(unittest.TestCase):
             before = decode_rgba(source)
             report = recompress_png(source, optimized)
             after = decode_rgba(optimized)
+            output_exists = optimized.exists()
 
         self.assertEqual(before, after)
         self.assertEqual(report["width"], 4)
         self.assertEqual(report["height"], 4)
-        self.assertTrue(optimized.exists())
+        self.assertTrue(output_exists)
 
     def test_recompress_png_reports_sizes(self):
         with tempfile.TemporaryDirectory() as tmp:
