@@ -4,7 +4,7 @@ import unittest
 import zlib
 from pathlib import Path
 
-from raster_pack import decode_rgba, pack_uniform_atlas
+from raster_pack import decode_rgba, pack_uniform_atlas, recompress_png
 
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -87,6 +87,38 @@ class RasterPackTests(unittest.TestCase):
 
         self.assertEqual((width, height), (1, 1))
         self.assertEqual(pixels, bytes([7, 8, 9, 255]))
+
+    def test_recompress_png_preserves_pixels(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source.png"
+            optimized = root / "optimized.png"
+
+            write_rgba_png(source, 4, 4, bytes([10, 20, 30, 255]))
+            before = decode_rgba(source)
+            report = recompress_png(source, optimized)
+            after = decode_rgba(optimized)
+
+        self.assertEqual(before, after)
+        self.assertEqual(report["width"], 4)
+        self.assertEqual(report["height"], 4)
+        self.assertTrue(optimized.exists())
+
+    def test_recompress_png_reports_sizes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source.png"
+            optimized = root / "optimized.png"
+
+            write_rgba_png(source, 8, 8, bytes([0, 0, 0, 0]))
+            report = recompress_png(source, optimized)
+
+        self.assertGreater(report["beforeBytes"], 0)
+        self.assertGreater(report["afterBytes"], 0)
+        self.assertEqual(
+            report["savedBytes"],
+            report["beforeBytes"] - report["afterBytes"],
+        )
 
 
 if __name__ == "__main__":
