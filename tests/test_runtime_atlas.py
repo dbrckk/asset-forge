@@ -34,7 +34,20 @@ class RuntimeAtlasTests(unittest.TestCase):
 
         self.assertEqual(result["format"], "asset-forge-runtime-atlas")
         self.assertEqual(result["version"], 1)
+        self.assertEqual(
+            result["capabilities"],
+            {"trimOffsets": True, "clockwise90Rotation": True},
+        )
         self.assertEqual(frame["atlasRegion"], {"x": 10, "y": 20, "width": 6, "height": 8})
+        self.assertEqual(
+            frame["uv"],
+            {
+                "u0": 10 / 64,
+                "v0": 20 / 64,
+                "u1": 16 / 64,
+                "v1": 28 / 64,
+            },
+        )
         self.assertEqual(frame["sourceRegion"], {"width": 8, "height": 6})
         self.assertEqual(frame["sourceSize"], {"width": 12, "height": 10})
         self.assertEqual(frame["trimOffset"], {"x": 2, "y": 1})
