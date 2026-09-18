@@ -66,6 +66,7 @@ tests/
   test_animation_infer.py
   test_asset_forge.py
   test_blender_adapter.py
+  test_gltf_quality.py
   test_gltf_tools.py
   test_godot_export.py
   test_raster_pack.py
@@ -76,6 +77,7 @@ AGENTS.md
 animation_infer.py
 asset_forge.py
 blender_adapter.py
+gltf_quality.py
 gltf_tools.py
 godot_export.py
 raster_pack.py
@@ -133,7 +135,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -374,8 +376,13 @@ jobs:
     "maxMeshes": 16,
     "maxPrimitives": 64,
     "maxMaterials": 16,
+    "maxVertices": 150000,
+    "maxTriangles": 200000,
+    "maxTextures": 32,
     "allowAnimations": true,
-    "requireSkin": true
+    "requireSkin": true,
+    "requireNormals": true,
+    "requireUvWhenTextured": true
   }
 }
 ````
@@ -389,8 +396,13 @@ jobs:
     "maxMeshes": 256,
     "maxPrimitives": 1024,
     "maxMaterials": 128,
+    "maxVertices": 2000000,
+    "maxTriangles": 2000000,
+    "maxTextures": 256,
     "allowAnimations": false,
-    "requireSkin": false
+    "requireSkin": false,
+    "requireNormals": true,
+    "requireUvWhenTextured": true
   }
 }
 ````
@@ -404,8 +416,13 @@ jobs:
     "maxMeshes": 8,
     "maxPrimitives": 16,
     "maxMaterials": 8,
+    "maxVertices": 100000,
+    "maxTriangles": 100000,
+    "maxTextures": 16,
     "allowAnimations": false,
-    "requireSkin": false
+    "requireSkin": false,
+    "requireNormals": true,
+    "requireUvWhenTextured": true
   }
 }
 ````
@@ -607,6 +624,43 @@ script = render_blender_python(job)
 def test_render_command_uses_background_mode(self)
 ⋮----
 command = render_blender_command("blender", Path("build/export.py"))
+````
+
+## File: tests/test_gltf_quality.py
+````python
+class GltfQualityTests(unittest.TestCase)
+⋮----
+def write(self, root: Path, data: dict) -> Path
+⋮----
+path = root / "asset.gltf"
+⋮----
+def base(self)
+⋮----
+def test_counts_vertices_and_triangles(self)
+⋮----
+report = build_quality_report(self.write(Path(tmp), self.base()))
+⋮----
+def test_triangle_strip_count(self)
+⋮----
+data = self.base()
+⋮----
+report = build_quality_report(self.write(Path(tmp), data))
+⋮----
+def test_character_quality_requires_skin_attributes(self)
+⋮----
+evaluation = evaluate_quality(report, "character")
+⋮----
+def test_textured_primitive_requires_uv(self)
+⋮----
+report = quality_report(self.write(Path(tmp), data), "prop")
+⋮----
+def test_normal_map_without_tangent_warns(self)
+⋮----
+def test_external_image_is_reported(self)
+⋮----
+report = quality_report(self.write(Path(tmp), self.base()), "prop")
+⋮----
+def test_untextured_primitive_does_not_require_uv(self)
 ````
 
 ## File: tests/test_gltf_tools.py
@@ -1098,6 +1152,8 @@ svg_normalize = sub.add_parser("normalize-svg", help="ensure SVG has a usable vi
 ⋮----
 gltf_validate = sub.add_parser("validate-gltf", help="validate glTF/GLB structure")
 ⋮----
+gltf_quality = sub.add_parser("quality-gltf", help="measure glTF/GLB production quality")
+⋮----
 blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
 ⋮----
 toolchain_status = sub.add_parser("3d-toolchain-status", help="detect available external 3D tools")
@@ -1137,6 +1193,10 @@ result = sanitize_svg(args.input, args.output)
 ⋮----
 result = normalize_viewbox(args.input, args.output)
 ⋮----
+result = quality_report(args.input, args.profile)
+⋮----
+evaluation = result.get("evaluation")
+⋮----
 job = build_blender_export_job(
 ⋮----
 result = {
@@ -1163,6 +1223,119 @@ def write_blender_export_script(job: dict, output_script: Path) -> None
 def render_blender_command(blender_executable: str, script_path: Path) -> str
 ⋮----
 def write_job_manifest(job: dict, path: Path) -> None
+````
+
+## File: gltf_quality.py
+````python
+QUALITY_PROFILES = {
+⋮----
+def _accessor_count(accessors: list, index) -> int | None
+⋮----
+accessor = accessors[index]
+⋮----
+count = accessor.get("count")
+⋮----
+def _triangle_count(mode: int, element_count: int) -> int
+⋮----
+if mode == 4:  # TRIANGLES
+⋮----
+if mode in {5, 6}:  # TRIANGLE_STRIP / TRIANGLE_FAN
+⋮----
+def build_quality_report(path: Path) -> dict
+⋮----
+accessors = data.get("accessors", [])
+meshes = data.get("meshes", [])
+materials = data.get("materials", [])
+textures = data.get("textures", [])
+images = data.get("images", [])
+⋮----
+accessors = []
+⋮----
+meshes = []
+⋮----
+materials = []
+⋮----
+textures = []
+⋮----
+images = []
+⋮----
+material_usage = []
+⋮----
+pbr = material.get("pbrMetallicRoughness")
+textured = False
+⋮----
+textured = any(
+normal_mapped = isinstance(material.get("normalTexture"), dict)
+textured = textured or normal_mapped or isinstance(material.get("occlusionTexture"), dict) or isinstance(material.get("emissiveTexture"), dict)
+⋮----
+primitives = 0
+vertices = 0
+triangles = 0
+primitive_vertices_known = 0
+primitive_triangles_known = 0
+normals = 0
+tangents = 0
+uv0 = 0
+uv1 = 0
+colors = 0
+skinned = 0
+material_bound = 0
+textured_primitives = 0
+textured_primitives_with_uv0 = 0
+normal_mapped_primitives = 0
+normal_mapped_primitives_with_tangent = 0
+non_triangle_primitives = 0
+⋮----
+mesh_primitives = mesh.get("primitives", [])
+⋮----
+attributes = primitive.get("attributes", {})
+⋮----
+attributes = {}
+⋮----
+position_count = _accessor_count(accessors, attributes.get("POSITION"))
+⋮----
+mode = primitive.get("mode", 4)
+⋮----
+mode = 4
+⋮----
+element_count = None
+⋮----
+element_count = _accessor_count(accessors, primitive.get("indices"))
+⋮----
+element_count = position_count
+⋮----
+material_index = primitive.get("material")
+⋮----
+usage = material_usage[material_index]
+⋮----
+pbr_materials = 0
+base_color_textures = 0
+metallic_roughness_textures = 0
+normal_textures = 0
+occlusion_textures = 0
+emissive_textures = 0
+⋮----
+external_images = 0
+embedded_images = 0
+data_uri_images = 0
+⋮----
+uri = image.get("uri")
+⋮----
+def evaluate_quality(report: dict, profile: str) -> dict
+⋮----
+rules = QUALITY_PROFILES[profile]
+geometry = report["geometry"]
+attributes = report["attributes"]
+materials = report["materials"]
+textures = report["textures"]
+⋮----
+errors: list[str] = []
+warnings: list[str] = []
+primitive_count = geometry["primitives"]
+⋮----
+def quality_report(path: Path, profile: str | None = None) -> dict
+⋮----
+report = build_quality_report(path)
 ````
 
 ## File: gltf_tools.py
@@ -1646,13 +1819,21 @@ Validate glTF/GLB structure:
 python asset_forge.py validate-gltf model.glb
 ```
 
-Apply a 3D profile:
+Apply a 3D structural profile:
 
 ```bash
 python asset_forge.py validate-gltf prop.glb --profile prop
 python asset_forge.py validate-gltf level.glb --profile environment
 python asset_forge.py validate-gltf character.glb --profile character
 ```
+
+Measure production quality and budgets:
+
+```bash
+python asset_forge.py quality-gltf prop.glb --profile prop --output build/prop-quality.json
+```
+
+The quality report derives vertex and triangle counts from accessor metadata, measures primitive coverage for normals/UVs/tangents/skinning, summarizes PBR texture usage, identifies external images, and evaluates the versioned profile budgets under `profiles/3d/`.
 
 Create a reproducible Blender export job and script:
 
@@ -1685,7 +1866,9 @@ python asset_forge.py run-3d source.blend build/model \
   --optimizer gltf-transform
 ```
 
-The generated chain is Blender export → internal structural/profile validation → optional Khronos validation → optional optimization → post-optimization validation. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
+The generated chain is Blender export → internal structural validation → quality/budget report → optional Khronos validation → optional optimization → post-optimization structural validation → final quality report. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
+
+A completed run also writes `production-report.json`, which records step status and compares raw vs final vertices, triangles, and file bytes when both quality reports are available.
 
 ## Initial interoperability
 
@@ -1865,6 +2048,22 @@ def execute_command(command: str, cwd: Path | None = None) -> dict
 ⋮----
 completed = subprocess.run(
 ⋮----
+def _read_json_if_exists(path: Path) -> dict | None
+⋮----
+data = json.loads(path.read_text(encoding="utf-8"))
+⋮----
+def _build_production_summary(plan: dict, success: bool, results: list[dict]) -> dict
+⋮----
+raw_report = _read_json_if_exists(workdir / "quality-raw.json")
+final_report = _read_json_if_exists(workdir / "quality-final.json") or raw_report
+⋮----
+summary = {
+⋮----
+raw_geometry = raw_report.get("geometry", {})
+final_geometry = final_report.get("geometry", {})
+raw_container = raw_report.get("container", {})
+final_container = final_report.get("container", {})
+⋮----
 def execute_3d_pipeline(plan: dict, repo_root: Path) -> dict
 ⋮----
 results = []
@@ -1877,4 +2076,7 @@ success = False
 executed = execute_command(step["command"], cwd=repo_root)
 ⋮----
 report_path = Path(step["output"])
+⋮----
+summary = _build_production_summary(plan, success, results)
+report_path = Path(plan["workdir"]) / "production-report.json"
 ````
