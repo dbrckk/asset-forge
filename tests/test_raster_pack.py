@@ -1070,6 +1070,68 @@ class RasterPackTests(unittest.TestCase):
         self.assertEqual(report["afterBytes"], report["beforeBytes"])
         self.assertGreater(report["candidateBytes"], report["beforeBytes"])
 
+    def test_uniform_atlas_width_budget_is_enforced(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            a = root / "a.png"
+            b = root / "b.png"
+            write_rgba_png(a, 4, 4, bytes([1, 2, 3, 255]))
+            write_rgba_png(b, 4, 4, bytes([4, 5, 6, 255]))
+            with self.assertRaisesRegex(ValueError, "atlas width"):
+                pack_uniform_atlas(
+                    [a, b],
+                    root / "atlas.png",
+                    columns=2,
+                    max_width=7,
+                )
+
+    def test_uniform_atlas_pixel_budget_is_enforced(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            a = root / "a.png"
+            write_rgba_png(a, 4, 4, bytes([1, 2, 3, 255]))
+            with self.assertRaisesRegex(ValueError, "pixel count"):
+                pack_uniform_atlas(
+                    [a],
+                    root / "atlas.png",
+                    max_pixels=15,
+                )
+
+    def test_compact_atlas_height_budget_is_enforced(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            a = root / "a.png"
+            b = root / "b.png"
+            write_rgba_png(a, 4, 4, bytes([1, 2, 3, 255]))
+            write_rgba_png(b, 4, 4, bytes([4, 5, 6, 255]))
+            with self.assertRaisesRegex(ValueError, "atlas height"):
+                pack_compact_atlas(
+                    [a, b],
+                    root / "atlas.png",
+                    max_width=4,
+                    max_height=7,
+                    trim=False,
+                )
+
+    def test_atlas_byte_budget_preserves_existing_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "a.png"
+            output = root / "atlas.png"
+            write_rgba_png(source, 4, 4, bytes([1, 2, 3, 255]))
+            output.write_bytes(b"existing-atlas")
+
+            with self.assertRaisesRegex(ValueError, "file size"):
+                pack_uniform_atlas(
+                    [source],
+                    output,
+                    max_bytes=1,
+                )
+
+            preserved = output.read_bytes()
+
+        self.assertEqual(preserved, b"existing-atlas")
+
 
 if __name__ == "__main__":
     unittest.main()
