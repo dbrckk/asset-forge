@@ -1026,7 +1026,7 @@ class RasterPackTests(unittest.TestCase):
         self.assertEqual(width, metadata["imageWidth"])
         self.assertEqual(height, metadata["imageHeight"])
         self.assertEqual(metadata["frameCount"], 3)
-        self.assertEqual(metadata["packing"], "shelf-height-desc")
+        self.assertEqual(metadata["packing"], "maxrects-best-short-side-fit")
         self.assertLessEqual(metadata["contentWidth"], 5)
         self.assertEqual(
             [frame["name"] for frame in metadata["frames"]],
@@ -1131,6 +1131,89 @@ class RasterPackTests(unittest.TestCase):
             preserved = output.read_bytes()
 
         self.assertEqual(preserved, b"existing-atlas")
+
+    def test_compact_atlas_reports_occupancy_metrics(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            a = root / "a.png"
+            b = root / "b.png"
+            c = root / "c.png"
+            write_rgba_png(a, 4, 4, bytes([255, 0, 0, 255]))
+            write_rgba_png(b, 2, 4, bytes([0, 255, 0, 255]))
+            write_rgba_png(c, 2, 2, bytes([0, 0, 255, 255]))
+
+            metadata = pack_compact_atlas(
+                [a, b, c],
+                root / "atlas.png",
+                max_width=6,
+                trim=False,
+            )
+
+        self.assertEqual(metadata["spriteArea"], 28)
+        self.assertEqual(metadata["packedArea"], 28)
+        self.assertEqual(metadata["contentArea"], metadata["contentWidth"] * metadata["contentHeight"])
+        self.assertEqual(metadata["atlasArea"], metadata["imageWidth"] * metadata["imageHeight"])
+        self.assertGreater(metadata["contentOccupancyPercent"], 0)
+        self.assertLessEqual(metadata["contentOccupancyPercent"], 100)
+        self.assertGreater(metadata["atlasOccupancyPercent"], 0)
+        self.assertLessEqual(metadata["atlasOccupancyPercent"], 100)
+
+    def test_compact_atlas_regions_do_not_overlap(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            paths = []
+            for index, (width, height) in enumerate([(5, 3), (3, 5), (4, 2), (2, 4), (3, 3)]):
+                path = root / f"{index}.png"
+                write_rgba_png(path, width, height, bytes([index + 1, 0, 0, 255]))
+                paths.append(path)
+
+            metadata = pack_compact_atlas(
+                paths,
+                root / "atlas.png",
+                max_width=8,
+                padding=1,
+                extrude=1,
+                trim=False,
+            )
+
+        frames = metadata["frames"]
+        for i, first in enumerate(frames):
+            first_left = first["x"] - first["extrude"]
+            first_top = first["y"] - first["extrude"]
+            first_right = first["x"] + first["width"] + first["extrude"]
+            first_bottom = first["y"] + first["height"] + first["extrude"]
+            for second in frames[i + 1 :]:
+                second_left = second["x"] - second["extrude"]
+                second_top = second["y"] - second["extrude"]
+                second_right = second["x"] + second["width"] + second["extrude"]
+                second_bottom = second["y"] + second["height"] + second["extrude"]
+                separated = (
+                    first_right <= second_left
+                    or second_right <= first_left
+                    or first_bottom <= second_top
+                    or second_bottom <= first_top
+                )
+                self.assertTrue(separated)
+
+    def test_maxrects_compacts_better_than_simple_shelf_case(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sizes = [(6, 2), (4, 4), (2, 4), (2, 2)]
+            paths = []
+            for index, (width, height) in enumerate(sizes):
+                path = root / f"{index}.png"
+                write_rgba_png(path, width, height, bytes([index + 1, 0, 0, 255]))
+                paths.append(path)
+
+            metadata = pack_compact_atlas(
+                paths,
+                root / "atlas.png",
+                max_width=8,
+                trim=False,
+            )
+
+        simple_shelf_area = 8 * 8
+        self.assertLessEqual(metadata["contentArea"], simple_shelf_area)
 
 
 if __name__ == "__main__":
