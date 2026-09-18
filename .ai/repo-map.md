@@ -1443,6 +1443,28 @@ def test_indexed_low_bit_depth_palette_limit_is_enforced(self)
 ⋮----
 image = Path(tmp) / "bad-indexed.png"
 ihdr = struct.pack(">IIBBBBB", 1, 1, 1, 3, 0, 0, 0)
+⋮----
+def test_grayscale_1bit_png_decodes_to_rgba(self)
+⋮----
+image = Path(tmp) / "gray1.png"
+ihdr = struct.pack(">IIBBBBB", 8, 1, 1, 0, 0, 0, 0)
+⋮----
+def test_grayscale_2bit_png_scales_samples(self)
+⋮----
+image = Path(tmp) / "gray2.png"
+ihdr = struct.pack(">IIBBBBB", 4, 1, 2, 0, 0, 0, 0)
+⋮----
+def test_grayscale_4bit_png_ignores_padding_nibble(self)
+⋮----
+image = Path(tmp) / "gray4.png"
+ihdr = struct.pack(">IIBBBBB", 3, 1, 4, 0, 0, 0, 0)
+raw = b"\x00" + bytes([0x05, 0xAF])
+⋮----
+def test_grayscale_low_bit_depth_trns_is_applied_before_scaling(self)
+⋮----
+image = Path(tmp) / "gray2-trns.png"
+⋮----
+transparency = struct.pack(">H", 2)
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -2798,6 +2820,8 @@ entries = len(payload) // 3
 palette = [
 saw_plte = True
 ⋮----
+transparent_gray = struct.unpack(">H", payload)[0]
+⋮----
 transparency = payload
 saw_trns = True
 ⋮----
@@ -2857,7 +2881,7 @@ bits_per_pixel = channels * depth
 stride = (width * bits_per_pixel + 7) // 8
 filter_bpp = max(1, (bits_per_pixel + 7) // 8)
 ⋮----
-def _unpack_indexed_row(row: bytes, width: int, depth: int) -> list[int]
+def _unpack_packed_samples(row: bytes, width: int, depth: int) -> list[int]
 ⋮----
 mask = (1 << depth) - 1
 values: list[int] = []
@@ -2876,9 +2900,16 @@ rows = _unfilter_scanlines(raw, stride, height, filter_bpp)
 rgba = bytearray(width * height * 4)
 destination = 0
 ⋮----
-indexed_samples = _unpack_indexed_row(row, width, depth)
+indexed_samples = _unpack_packed_samples(row, width, depth)
 ⋮----
 alpha = transparency[palette_index] if palette_index < len(transparency) else 255
+⋮----
+samples = _unpack_packed_samples(row, width, depth)
+max_sample = (1 << depth) - 1
+transparent_gray = (
+⋮----
+gray = (sample * 255 + max_sample // 2) // max_sample
+alpha = 0 if transparent_gray == sample else 255
 ⋮----
 bpp_by_type = {0: 1, 2: 3, 4: 2, 6: 4}
 bpp = bpp_by_type[color_type]

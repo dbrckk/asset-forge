@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 2b4c435c9caec482f43ab865a0009afe30da5186
-Head: 384a303a03d813e63adc054fb27afc4d638d9eeb
+Base: ae2ef036563e05a0d338908eac2f50f5f95c6607
+Head: c01ba8797bab18351848d79870ed530573ac8ec7
 
 ## Changed files
-- M README.md
+- M raster_pack.py
 
 ## Affected areas
 - (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_raster_pack.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

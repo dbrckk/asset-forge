@@ -21,13 +21,13 @@
         },
         {
           "file": "raster_pack.py",
-          "line": 202,
+          "line": 205,
           "preview": "data = _read_png_bytes(path)",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 311,
+          "line": 314,
           "preview": "chunks = _chunks(_read_png_bytes(path))",
           "definition_candidate": false
         }
@@ -50,13 +50,13 @@
         },
         {
           "file": "raster_pack.py",
-          "line": 203,
+          "line": 206,
           "preview": "chunks = _chunks(data)",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 311,
+          "line": 314,
           "preview": "chunks = _chunks(_read_png_bytes(path))",
           "definition_candidate": false
         }
@@ -79,13 +79,13 @@
         },
         {
           "file": "raster_pack.py",
-          "line": 204,
+          "line": 207,
           "preview": "width, height, bit_depth, color_type, compression, filtering, interlace = _validate_ihdr(",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 312,
+          "line": 315,
           "preview": "width, height, depth, color_type, compression, filtering, interlace = _validate_ihdr(",
           "definition_candidate": false
         }
@@ -108,13 +108,13 @@
         },
         {
           "file": "raster_pack.py",
-          "line": 207,
+          "line": 210,
           "preview": "palette, transparency = _validate_palette_transparency(",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 326,
+          "line": 329,
           "preview": "palette, transparency = _validate_palette_transparency(",
           "definition_candidate": false
         }
@@ -124,20 +124,20 @@
     "_decompress_idat": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 172,
+        "line": 175,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 172,
+          "line": 175,
           "preview": "def _decompress_idat(data: bytes, expected_size: int) -> bytes:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 323,
+          "line": 326,
           "preview": "raw = _decompress_idat(compressed, expected_size)",
           "definition_candidate": false
         }
@@ -147,7 +147,7 @@
     "inspect_png": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 201,
+        "line": 204,
         "kind": "function",
         "language": "python"
       },
@@ -172,7 +172,7 @@
         },
         {
           "file": "raster_pack.py",
-          "line": 201,
+          "line": 204,
           "preview": "def inspect_png(path: Path) -> dict:",
           "definition_candidate": true
         },
@@ -206,26 +206,26 @@
     "_paeth": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 229,
+        "line": 232,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 229,
+          "line": 232,
           "preview": "def _paeth(a: int, b: int, c: int) -> int:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 270,
+          "line": 273,
           "preview": "reconstructed_value = (value + _paeth(left, above, upper_left)) & 255",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 402,
+          "line": 418,
           "preview": "predictor = _paeth(left, above, upper_left)",
           "definition_candidate": false
         }
@@ -235,20 +235,20 @@
     "_unfilter_scanlines": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 241,
+        "line": 244,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 241,
+          "line": 244,
           "preview": "def _unfilter_scanlines(raw: bytes, stride: int, height: int, filter_bpp: int) -> list[bytearray]:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 324,
+          "line": 327,
           "preview": "rows = _unfilter_scanlines(raw, stride, height, filter_bpp)",
           "definition_candidate": false
         }
@@ -258,72 +258,78 @@
     "_scanline_layout": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 282,
+        "line": 285,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 282,
+          "line": 285,
           "preview": "def _scanline_layout(width: int, depth: int, color_type: int) -> tuple[int, int]:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 320,
+          "line": 323,
           "preview": "stride, filter_bpp = _scanline_layout(width, depth, color_type)",
           "definition_candidate": false
         }
       ],
       "occurrence_count": 2
     },
-    "_unpack_indexed_row": {
+    "_unpack_packed_samples": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 290,
+        "line": 293,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 290,
-          "preview": "def _unpack_indexed_row(row: bytes, width: int, depth: int) -> list[int]:",
+          "line": 293,
+          "preview": "def _unpack_packed_samples(row: bytes, width: int, depth: int) -> list[int]:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 337,
-          "preview": "indexed_samples = _unpack_indexed_row(row, width, depth)",
+          "line": 340,
+          "preview": "indexed_samples = _unpack_packed_samples(row, width, depth)",
+          "definition_candidate": false
+        },
+        {
+          "file": "raster_pack.py",
+          "line": 351,
+          "preview": "samples = _unpack_packed_samples(row, width, depth)",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 2
+      "occurrence_count": 3
     },
     "decode_rgba": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 310,
+        "line": 313,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 310,
+          "line": 313,
           "preview": "def decode_rgba(path: Path) -> tuple[int, int, bytes]:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 460,
+          "line": 476,
           "preview": "width, height, pixels = decode_rgba(input_path)",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 493,
+          "line": 509,
           "preview": "decoded = [decode_rgba(Path(path)) for path in inputs]",
           "definition_candidate": false
         },
@@ -458,39 +464,63 @@
           "line": 447,
           "preview": "decode_rgba(image)",
           "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 460,
+          "preview": "_, _, pixels = decode_rgba(image)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 481,
+          "preview": "_, _, pixels = decode_rgba(image)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 504,
+          "preview": "_, _, pixels = decode_rgba(image)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 528,
+          "preview": "_, _, pixels = decode_rgba(image)",
+          "definition_candidate": false
         }
       ],
-      "occurrence_count": 25
+      "occurrence_count": 29
     },
     "_chunk": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 377,
+        "line": 393,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 377,
+          "line": 393,
           "preview": "def _chunk(kind: bytes, payload: bytes) -> bytes:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 441,
+          "line": 457,
           "preview": "+ _chunk(b\"IHDR\", ihdr)",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 442,
+          "line": 458,
           "preview": "+ _chunk(b\"IDAT\", zlib.compress(b\"\".join(rows), 9))",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 443,
+          "line": 459,
           "preview": "+ _chunk(b\"IEND\", b\"\")",
           "definition_candidate": false
         }
@@ -500,20 +530,20 @@
     "_filter_row": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 386,
+        "line": 402,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 386,
+          "line": 402,
           "preview": "def _filter_row(row: bytes, previous: bytes, bpp: int, filter_type: int) -> bytes:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 427,
+          "line": 443,
           "preview": "(_filter_row(row, previous, 4, filter_type), filter_type)",
           "definition_candidate": false
         }
@@ -523,20 +553,20 @@
     "_filter_score": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 410,
+        "line": 426,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 410,
+          "line": 426,
           "preview": "def _filter_score(filtered: bytes) -> int:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 430,
+          "line": 446,
           "preview": "filtered, filter_type = min(candidates, key=lambda item: _filter_score(item[0]))",
           "definition_candidate": false
         }
@@ -546,20 +576,20 @@
     "_png_bytes_rgba": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 414,
+        "line": 430,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 414,
+          "line": 430,
           "preview": "def _png_bytes_rgba(width: int, height: int, pixels: bytes, adaptive: bool = True) -> bytes:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 455,
+          "line": 471,
           "preview": "path.write_bytes(_png_bytes_rgba(width, height, pixels, adaptive=adaptive))",
           "definition_candidate": false
         }
@@ -569,26 +599,26 @@
     "encode_rgba": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 447,
+        "line": 463,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 447,
+          "line": 463,
           "preview": "def encode_rgba(",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 461,
+          "line": 477,
           "preview": "encode_rgba(output_path, width, height, pixels, adaptive=True)",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 538,
+          "line": 554,
           "preview": "encode_rgba(output, atlas_width, atlas_height, bytes(canvas), adaptive=True)",
           "definition_candidate": false
         }
@@ -598,7 +628,7 @@
     "recompress_png": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 458,
+        "line": 474,
         "kind": "function",
         "language": "python"
       },
@@ -617,7 +647,7 @@
         },
         {
           "file": "raster_pack.py",
-          "line": 458,
+          "line": 474,
           "preview": "def recompress_png(input_path: Path, output_path: Path) -> dict:",
           "definition_candidate": true
         },
@@ -645,26 +675,26 @@
     "_next_power_of_two": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 475,
+        "line": 491,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "raster_pack.py",
-          "line": 475,
+          "line": 491,
           "preview": "def _next_power_of_two(value: int) -> int:",
           "definition_candidate": true
         },
         {
           "file": "raster_pack.py",
-          "line": 508,
+          "line": 524,
           "preview": "atlas_width = _next_power_of_two(content_width) if power_of_two else content_width",
           "definition_candidate": false
         },
         {
           "file": "raster_pack.py",
-          "line": 509,
+          "line": 525,
           "preview": "atlas_height = _next_power_of_two(content_height) if power_of_two else content_height",
           "definition_candidate": false
         }
@@ -674,7 +704,7 @@
     "pack_uniform_atlas": {
       "definition": {
         "file": "raster_pack.py",
-        "line": 481,
+        "line": 497,
         "kind": "function",
         "language": "python"
       },
@@ -693,7 +723,7 @@
         },
         {
           "file": "raster_pack.py",
-          "line": 481,
+          "line": 497,
           "preview": "def pack_uniform_atlas(",
           "definition_candidate": true
         },
@@ -1271,9 +1301,87 @@
           "line": 444,
           "preview": "+ chunk(b\"IEND\", b\"\")",
           "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 456,
+          "preview": "+ chunk(b\"IHDR\", ihdr)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 457,
+          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 458,
+          "preview": "+ chunk(b\"IEND\", b\"\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 477,
+          "preview": "+ chunk(b\"IHDR\", ihdr)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 478,
+          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 479,
+          "preview": "+ chunk(b\"IEND\", b\"\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 500,
+          "preview": "+ chunk(b\"IHDR\", ihdr)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 501,
+          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 502,
+          "preview": "+ chunk(b\"IEND\", b\"\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 523,
+          "preview": "+ chunk(b\"IHDR\", ihdr)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 524,
+          "preview": "+ chunk(b\"tRNS\", transparency)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 525,
+          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 526,
+          "preview": "+ chunk(b\"IEND\", b\"\")",
+          "definition_candidate": false
         }
       ],
-      "occurrence_count": 91
+      "occurrence_count": 104
     },
     "write_rgba_png": {
       "definition": {
@@ -1760,6 +1868,74 @@
           "file": "tests/test_raster_pack.py",
           "line": 430,
           "preview": "def test_indexed_low_bit_depth_palette_limit_is_enforced(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_grayscale_1bit_png_decodes_to_rgba": {
+      "definition": {
+        "file": "tests/test_raster_pack.py",
+        "line": 449,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 449,
+          "preview": "def test_grayscale_1bit_png_decodes_to_rgba(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_grayscale_2bit_png_scales_samples": {
+      "definition": {
+        "file": "tests/test_raster_pack.py",
+        "line": 470,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 470,
+          "preview": "def test_grayscale_2bit_png_scales_samples(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_grayscale_4bit_png_ignores_padding_nibble": {
+      "definition": {
+        "file": "tests/test_raster_pack.py",
+        "line": 493,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 493,
+          "preview": "def test_grayscale_4bit_png_ignores_padding_nibble(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_grayscale_low_bit_depth_trns_is_applied_before_scaling": {
+      "definition": {
+        "file": "tests/test_raster_pack.py",
+        "line": 515,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 515,
+          "preview": "def test_grayscale_low_bit_depth_trns_is_applied_before_scaling(self):",
           "definition_candidate": true
         }
       ],
