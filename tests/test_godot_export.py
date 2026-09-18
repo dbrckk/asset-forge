@@ -32,6 +32,51 @@ class GodotExportTests(unittest.TestCase):
         self.assertIn('"loop": false', rendered)
         self.assertIn('SubResource("AtlasTexture_1")', rendered)
 
+    def test_multiple_animations(self):
+        rendered = render_spriteframes(
+            "res://art/player.png",
+            self.metadata(),
+            animations=[
+                {"name": "idle", "fps": 6, "loop": True, "frames": [0]},
+                {
+                    "name": "attack",
+                    "fps": 12,
+                    "loop": False,
+                    "frames": [
+                        {"index": 1, "duration": 0.5},
+                        {"index": 0, "duration": 1.5},
+                    ],
+                },
+            ],
+        )
+
+        self.assertIn('"name": &"idle"', rendered)
+        self.assertIn('"name": &"attack"', rendered)
+        self.assertIn('"speed": 6.0', rendered)
+        self.assertIn('"speed": 12.0', rendered)
+        self.assertIn('"loop": false', rendered)
+        self.assertIn('"duration": 0.5', rendered)
+        self.assertIn('"duration": 1.5', rendered)
+
+    def test_rejects_duplicate_animation_names(self):
+        with self.assertRaisesRegex(ValueError, "duplicate animation name"):
+            render_spriteframes(
+                "res://a.png",
+                self.metadata(),
+                animations=[
+                    {"name": "idle", "frames": [0]},
+                    {"name": "idle", "frames": [1]},
+                ],
+            )
+
+    def test_rejects_out_of_range_animation_frame(self):
+        with self.assertRaisesRegex(ValueError, "out of range"):
+            render_spriteframes(
+                "res://a.png",
+                self.metadata(),
+                animations=[{"name": "run", "frames": [2]}],
+            )
+
     def test_write_spriteframes_creates_file(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "player.tres"
