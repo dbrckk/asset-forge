@@ -56,21 +56,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T18:17:55Z
+Generated: 2026-09-18T18:21:59Z
 
 ### Git
 - Branch: `main`
-- Head: `2b07bfc1c3b6`
-- Commit date: 2026-09-18T20:17:33+02:00
-- Commit: docs: record deep gltf diagnostics milestone
-- Tracked files: 89
+- Head: `1e966cd6000e`
+- Commit date: 2026-09-18T20:21:30+02:00
+- Commit: docs: record Godot 4 3d delivery milestone
+- Tracked files: 91
 
 ### Recently changed files
 - `README.md`
 - `.github/workflows/validate.yml`
+- `tests/test_toolchain_3d.py`
 - `asset_forge.py`
-- `gltf_diagnostics.py`
-- `tests/test_gltf_quality.py`
+- `toolchain_3d.py`
 
 ### Project signals
 - No common build descriptor detected

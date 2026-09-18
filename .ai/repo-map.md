@@ -70,6 +70,7 @@ tests/
   test_gltf_diagnostics.py
   test_gltf_quality.py
   test_gltf_tools.py
+  test_godot_3d_delivery.py
   test_godot_export.py
   test_raster_pack.py
   test_starlist_bridge.py
@@ -83,6 +84,7 @@ gltf_binary_metrics.py
 gltf_diagnostics.py
 gltf_quality.py
 gltf_tools.py
+godot_3d_delivery.py
 godot_export.py
 raster_pack.py
 README.md
@@ -139,7 +141,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py godot_3d_delivery.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -805,6 +807,33 @@ def test_valid_skin_joint_reference_passes(self)
 path = Path(tmp) / "skin.gltf"
 ````
 
+## File: tests/test_godot_3d_delivery.py
+````python
+class Godot3DDeliveryTests(unittest.TestCase)
+⋮----
+def write(self, root: Path, data: dict, suffix: str = ".glb.json") -> Path
+⋮----
+path = root / ("asset.gltf" if suffix == ".gltf" else "asset.gltf")
+⋮----
+def base(self)
+⋮----
+def test_detects_godot_name_suffixes(self)
+⋮----
+report = godot_3d_delivery_report(
+⋮----
+def test_duplicate_node_names_warn(self)
+⋮----
+data = self.base()
+⋮----
+report = godot_3d_delivery_report(self.write(Path(tmp), data), "prop")
+⋮----
+def test_loop_animation_hint_detected(self)
+⋮----
+def test_remote_image_blocks_delivery(self)
+⋮----
+def test_double_sided_material_warns(self)
+````
+
 ## File: tests/test_godot_export.py
 ````python
 class GodotExportTests(unittest.TestCase)
@@ -1002,6 +1031,11 @@ result = execute_3d_pipeline(plan, Path("."))
 @patch("toolchain_3d.execute_command")
 @patch("toolchain_3d.prepare_3d_pipeline")
     def test_execute_pipeline_stops_on_required_failure(self, prepare, execute)
+⋮----
+@patch("toolchain_3d.detect_3d_tools")
+    def test_godot4_target_adds_delivery_stage(self, detect)
+⋮----
+def test_invalid_target_engine_is_rejected(self)
 ````
 
 ## File: AGENTS.md
@@ -1256,6 +1290,8 @@ gltf_quality = sub.add_parser("quality-gltf", help="measure glTF/GLB production 
 ⋮----
 gltf_diagnose = sub.add_parser("diagnose-gltf", help="run deep accessor, skinning, and animation diagnostics")
 ⋮----
+godot3d = sub.add_parser("validate-godot-3d", help="validate a glTF/GLB delivery for Godot 4")
+⋮----
 blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
 ⋮----
 toolchain_status = sub.add_parser("3d-toolchain-status", help="detect available external 3D tools")
@@ -1298,6 +1334,8 @@ result = normalize_viewbox(args.input, args.output)
 result = deep_gltf_diagnostics(args.input)
 ⋮----
 has_errors = any(
+⋮----
+result = godot_3d_delivery_report(args.input, args.profile)
 ⋮----
 result = quality_report(args.input, args.profile)
 ⋮----
@@ -1840,6 +1878,69 @@ def validate_gltf_profile(path: Path, profile: str) -> tuple[dict, list[str], li
 rules = PROFILES[profile]
 ````
 
+## File: godot_3d_delivery.py
+````python
+GODOT_IMPORT_SUFFIXES = {
+⋮----
+SAFE_NAME = re.compile(r"^[A-Za-z0-9_. $-]+$")
+⋮----
+def _name_suffixes(name: str) -> list[str]
+⋮----
+lowered = name.lower()
+found = []
+⋮----
+def godot_3d_delivery_report(path: Path, profile: str = "prop") -> dict
+⋮----
+quality = quality_report(path, profile)
+⋮----
+errors: list[str] = []
+warnings: list[str] = []
+recommendations: list[str] = []
+⋮----
+asset = data.get("asset", {})
+⋮----
+nodes = data.get("nodes", [])
+meshes = data.get("meshes", [])
+materials = data.get("materials", [])
+animations = data.get("animations", [])
+images = data.get("images", [])
+⋮----
+nodes = nodes if isinstance(nodes, list) else []
+meshes = meshes if isinstance(meshes, list) else []
+materials = materials if isinstance(materials, list) else []
+animations = animations if isinstance(animations, list) else []
+images = images if isinstance(images, list) else []
+⋮----
+unnamed_nodes = 0
+duplicate_names: dict[str, int] = {}
+suffix_usage: dict[str, int] = {}
+suspicious_names = []
+⋮----
+name = node.get("name")
+⋮----
+duplicates = sorted(name for name, count in duplicate_names.items() if count > 1)
+⋮----
+unnamed_animations = 0
+looping_hints = 0
+⋮----
+name = animation.get("name")
+⋮----
+suffixes = _name_suffixes(name)
+⋮----
+pbr_materials = 0
+double_sided = 0
+normal_mapped = 0
+⋮----
+attributes = quality.get("attributes", {})
+⋮----
+remote_images = 0
+external_local_images = 0
+⋮----
+rig = quality.get("rigAnimation", {})
+⋮----
+evaluation = quality.get("evaluation", {})
+````
+
 ## File: godot_export.py
 ````python
 def _godot_string(value: str) -> str
@@ -2291,7 +2392,26 @@ python asset_forge.py run-3d source.blend build/model \
   --optimizer gltf-transform
 ```
 
-The generated chain is Blender export → internal structural validation → quality/budget report → optional Khronos validation → optional optimization → post-optimization structural validation → final quality report. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
+For a Godot 4 handoff, add the engine target:
+
+```bash
+python asset_forge.py run-3d source.blend build/model \
+  --profile character \
+  --optimizer gltf-transform \
+  --engine godot4
+```
+
+You can also validate an already exported asset directly:
+
+```bash
+python asset_forge.py validate-godot-3d character.glb \
+  --profile character \
+  --output build/godot4-delivery.json
+```
+
+The Godot delivery report checks glTF 2.0 suitability, stable/duplicate names, Godot import suffix hints, animation naming, PBR materials, double-sided materials, normal-map tangents, remote/external images, and the existing 3D quality profile.
+
+The generated chain is Blender export → internal structural validation → quality/budget report → optional Khronos validation → optional optimization → post-optimization structural validation → final quality report. With `--engine godot4`, a final Godot delivery gate is appended. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
 
 A completed run also writes `production-report.json`, which records step status and compares raw vs final vertices, triangles, and file bytes when both quality reports are available.
 
