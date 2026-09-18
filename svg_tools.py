@@ -13,17 +13,37 @@ DANGEROUS_TAGS = {"script", "foreignObject"}
 METADATA_TAGS = {"metadata"}
 EVENT_ATTRIBUTE = re.compile(r"^on[a-z]+$", re.IGNORECASE)
 LENGTH = re.compile(r"^\s*([0-9]+(?:\.[0-9]+)?)(px)?\s*$", re.IGNORECASE)
+CSS_URL = re.compile(r"url\(\s*(['\"]?)(.*?)\1\s*\)", re.IGNORECASE)
+CSS_IMPORT = re.compile(r"@import\b", re.IGNORECASE)
 
 def _local_name(name: str) -> str:
     return name.rsplit("}", 1)[-1]
 
 
-def _is_external_reference(value: str) -> bool:
+def _is_unsafe_reference(value: str) -> bool:
     value = value.strip()
-    if not value or value.startswith("#") or value.startswith("data:"):
-        return False
-    parsed = urlparse(value)
-    return bool(parsed.scheme or parsed.netloc)
+    return bool(value) and not value.startswith("#")
+
+
+def _unsafe_css_references(value: str) -> list[str]:
+    unsafe = []
+    if CSS_IMPORT.search(value):
+        unsafe.append("@import")
+    for match in CSS_URL.finditer(value):
+        target = match.group(2).strip()
+        if _is_unsafe_reference(target):
+            unsafe.append(target)
+    return unsafe
+
+
+def _max_depth(root: ET.Element) -> int:
+    maximum = 0
+    stack = [(root, 1)]
+    while stack:
+        element, depth = stack.pop()
+        maximum = max(maximum, depth)
+        stack.extend((child, depth + 1) for child in list(element))
+    return maximum
 
 
 def _parse_length(value: str | None) -> float | None:
@@ -97,6 +117,7 @@ def inspect_svg(path: Path) -> tuple[dict, list[str], list[str]]:
 
     element_count = 0
     external_refs: list[str] = []
+    css_refs: list[str] = []
     dangerous_tags: list[str] = []
     event_attributes: list[str] = []
     metadata_elements = 0
@@ -108,20 +129,26 @@ def inspect_svg(path: Path) -> tuple[dict, list[str], list[str]]:
             dangerous_tags.append(tag)
         if tag in METADATA_TAGS:
             metadata_elements += 1
+        if tag == "style" and element.text:
+            css_refs.extend(_unsafe_css_references(element.text))
 
         for key, value in element.attrib.items():
             local_key = _local_name(key)
             if EVENT_ATTRIBUTE.match(local_key):
                 event_attributes.append(local_key)
-            if local_key in {"href", "src"} and _is_external_reference(value):
+            if local_key in {"href", "src"} and _is_unsafe_reference(value):
                 external_refs.append(value)
+            if local_key == "style":
+                css_refs.extend(_unsafe_css_references(value))
 
     if dangerous_tags:
         errors.append("disallowed executable/embedded tags: " + ", ".join(sorted(set(dangerous_tags))))
     if event_attributes:
         errors.append("event-handler attributes are not allowed: " + ", ".join(sorted(set(event_attributes))))
     if external_refs:
-        errors.append("external references are not allowed: " + ", ".join(sorted(set(external_refs))))
+        errors.append("non-fragment references are not allowed: " + ", ".join(sorted(set(external_refs))))
+    if css_refs:
+        errors.append("unsafe CSS references are not allowed: " + ", ".join(sorted(set(css_refs))))
     if metadata_elements:
         warnings.append(f"{metadata_elements} metadata element(s) can be removed for delivery")
 
@@ -133,6 +160,7 @@ def inspect_svg(path: Path) -> tuple[dict, list[str], list[str]]:
         "viewBox": view_box,
         "viewBoxValues": list(view_box_values) if view_box_values else None,
         "elements": element_count,
+        "maxDepth": _max_depth(root),
         "metadataElements": metadata_elements,
         "bytes": len(raw.encode("utf-8")),
     }
@@ -157,8 +185,16 @@ def validate_svg_profile(path: Path, profile: str) -> tuple[dict, list[str], lis
             errors.append(f"profile {profile}: square viewBox required")
 
     if info["elements"] > rules["maxElements"]:
-        warnings.append(
-            f"profile {profile}: element count {info['elements']} exceeds recommended {rules['maxElements']}"
+        errors.append(
+            f"profile {profile}: element count {info['elements']} exceeds maximum {rules['maxElements']}"
+        )
+    if info["bytes"] > rules["maxBytes"]:
+        errors.append(
+            f"profile {profile}: file size {info['bytes']} exceeds maximum {rules['maxBytes']}"
+        )
+    if info["maxDepth"] > rules["maxDepth"]:
+        errors.append(
+            f"profile {profile}: XML depth {info['maxDepth']} exceeds maximum {rules['maxDepth']}"
         )
 
     return info, errors, warnings
@@ -178,9 +214,12 @@ def normalize_viewbox(input_path: Path, output_path: Path) -> dict:
     if _local_name(root.tag) != "svg":
         raise ValueError("root element must be svg")
 
-    current = _parse_viewbox(root.attrib.get("viewBox"))
+    existing_viewbox = root.attrib.get("viewBox")
+    current = _parse_viewbox(existing_viewbox)
     changed = False
 
+    if existing_viewbox is not None and current is None:
+        raise ValueError("existing viewBox is malformed")
     if current is None:
         width = _parse_length(root.attrib.get("width"))
         height = _parse_length(root.attrib.get("height"))
@@ -240,13 +279,21 @@ def sanitize_svg(
                 removed_elements += 1
                 continue
 
+            if local_tag == "style" and child.text and _unsafe_css_references(child.text):
+                parent.remove(child)
+                removed_elements += 1
+                continue
+
             for key in list(child.attrib):
                 local_key = _local_name(key)
                 value = child.attrib[key]
                 if EVENT_ATTRIBUTE.match(local_key):
                     del child.attrib[key]
                     removed_attributes += 1
-                elif local_key in {"href", "src"} and _is_external_reference(value):
+                elif local_key in {"href", "src"} and _is_unsafe_reference(value):
+                    del child.attrib[key]
+                    removed_attributes += 1
+                elif local_key == "style" and _unsafe_css_references(value):
                     del child.attrib[key]
                     removed_attributes += 1
             clean(child)
@@ -257,7 +304,10 @@ def sanitize_svg(
         if EVENT_ATTRIBUTE.match(local_key):
             del root.attrib[key]
             removed_attributes += 1
-        elif local_key in {"href", "src"} and _is_external_reference(value):
+        elif local_key in {"href", "src"} and _is_unsafe_reference(value):
+            del root.attrib[key]
+            removed_attributes += 1
+        elif local_key == "style" and _unsafe_css_references(value):
             del root.attrib[key]
             removed_attributes += 1
 
