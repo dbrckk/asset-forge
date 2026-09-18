@@ -13,6 +13,13 @@ MAX_PNG_PIXELS = 100_000_000
 MAX_DECOMPRESSED_BYTES = 512 * 1024 * 1024
 
 
+def _read_png_bytes(path: Path) -> bytes:
+    size = path.stat().st_size
+    if size > MAX_PNG_FILE_BYTES:
+        raise ValueError(f"PNG exceeds file limit {MAX_PNG_FILE_BYTES}")
+    return path.read_bytes()
+
+
 def _chunks(data: bytes) -> list[tuple[bytes, bytes]]:
     if len(data) > MAX_PNG_FILE_BYTES:
         raise ValueError(f"PNG exceeds file limit {MAX_PNG_FILE_BYTES}")
@@ -192,7 +199,7 @@ def _decompress_idat(data: bytes, expected_size: int) -> bytes:
 
 
 def inspect_png(path: Path) -> dict:
-    data = path.read_bytes()
+    data = _read_png_bytes(path)
     chunks = _chunks(data)
     width, height, bit_depth, color_type, compression, filtering, interlace = _validate_ihdr(
         chunks[0][1]
@@ -274,7 +281,7 @@ def _unfilter_scanlines(raw: bytes, width: int, height: int, bpp: int) -> list[b
 
 
 def decode_rgba(path: Path) -> tuple[int, int, bytes]:
-    chunks = _chunks(path.read_bytes())
+    chunks = _chunks(_read_png_bytes(path))
     width, height, depth, color_type, compression, filtering, interlace = _validate_ihdr(
         chunks[0][1]
     )
@@ -304,7 +311,7 @@ def decode_rgba(path: Path) -> tuple[int, int, bytes]:
                 red = green = blue = gray
                 alpha = 255
                 if len(transparency) >= 2:
-                    transparent_gray = struct.unpack(">H", transparency[:2])[0] & 0xFF
+                    transparent_gray = struct.unpack(">H", transparency[:2])[0]
                     if gray == transparent_gray:
                         alpha = 0
             elif color_type == 2:
@@ -312,7 +319,7 @@ def decode_rgba(path: Path) -> tuple[int, int, bytes]:
                 alpha = 255
                 if len(transparency) == 6:
                     tr, tg, tb = struct.unpack(">HHH", transparency)
-                    if (red, green, blue) == (tr & 0xFF, tg & 0xFF, tb & 0xFF):
+                    if (red, green, blue) == (tr, tg, tb):
                         alpha = 0
             elif color_type == 3:
                 palette_index = row[index]
