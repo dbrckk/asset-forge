@@ -47,21 +47,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T17:59:21Z
+Generated: 2026-09-18T18:03:46Z
 
 ### Git
 - Branch: `main`
-- Head: `ac37700afa00`
-- Commit date: 2026-09-18T19:59:11+02:00
-- Commit: docs: record initial 3d Blender backend milestone
-- Tracked files: 80
+- Head: `af5f1ce0ba0f`
+- Commit date: 2026-09-18T20:02:57+02:00
+- Commit: docs: record executable 3d pipeline milestone
+- Tracked files: 82
 
 ### Recently changed files
 - `README.md`
 - `.github/workflows/validate.yml`
+- `tests/test_toolchain_3d.py`
 - `asset_forge.py`
-- `tests/test_blender_adapter.py`
-- `blender_adapter.py`
+- `toolchain_3d.py`
 
 ### Project signals
 - No common build descriptor detected

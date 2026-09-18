@@ -71,6 +71,7 @@ tests/
   test_raster_pack.py
   test_starlist_bridge.py
   test_svg_tools.py
+  test_toolchain_3d.py
 AGENTS.md
 animation_infer.py
 asset_forge.py
@@ -81,6 +82,7 @@ raster_pack.py
 README.md
 starlist_bridge.py
 svg_tools.py
+toolchain_3d.py
 ````
 
 # Files
@@ -131,13 +133,15 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py blender_adapter.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
         run: python asset_forge.py validate examples/asset-manifest.json
       - name: Build example plan
         run: python asset_forge.py plan examples/asset-manifest.json
+      - name: Inspect 3D toolchain
+        run: python asset_forge.py 3d-toolchain-status
       - name: Checkout star-list
         uses: actions/checkout@v4
         with:
@@ -635,6 +639,16 @@ def test_character_requires_skin(self)
 path = Path(tmp) / "character.gltf"
 ⋮----
 def test_character_with_skin_passes(self)
+⋮----
+def test_out_of_range_mesh_reference_is_rejected(self)
+⋮----
+path = Path(tmp) / "bad.gltf"
+⋮----
+def test_out_of_range_accessor_reference_is_rejected(self)
+⋮----
+def test_valid_skin_joint_reference_passes(self)
+⋮----
+path = Path(tmp) / "skin.gltf"
 ````
 
 ## File: tests/test_godot_export.py
@@ -793,6 +807,47 @@ output = Path(tmp) / "normalized.svg"
 report = normalize_viewbox(source, output)
 ⋮----
 def test_sanitize_removes_metadata(self)
+````
+
+## File: tests/test_toolchain_3d.py
+````python
+class Toolchain3DTests(unittest.TestCase)
+⋮----
+def test_command_builders(self)
+⋮----
+command = gltfpack_command(
+⋮----
+@patch("toolchain_3d.shutil.which")
+    def test_detect_tools(self, which)
+⋮----
+tools = detect_3d_tools()
+⋮----
+@patch("toolchain_3d.detect_3d_tools")
+    def test_pipeline_contains_export_validate_optimize_validate(self, detect)
+⋮----
+plan = build_3d_pipeline(
+⋮----
+@patch("toolchain_3d.detect_3d_tools")
+    def test_none_optimizer_keeps_raw_output(self, detect)
+⋮----
+def test_invalid_optimizer_is_rejected(self)
+⋮----
+@patch("toolchain_3d.detect_3d_tools")
+    def test_missing_optimizer_falls_back_to_raw_output(self, detect)
+⋮----
+validation_steps = [
+⋮----
+@patch("toolchain_3d.execute_command")
+@patch("toolchain_3d.prepare_3d_pipeline")
+    def test_execute_pipeline_skips_unavailable_optional_tools(self, prepare, execute)
+⋮----
+plan = {
+⋮----
+result = execute_3d_pipeline(plan, Path("."))
+⋮----
+@patch("toolchain_3d.execute_command")
+@patch("toolchain_3d.prepare_3d_pipeline")
+    def test_execute_pipeline_stops_on_required_failure(self, prepare, execute)
 ````
 
 ## File: AGENTS.md
@@ -1045,6 +1100,12 @@ gltf_validate = sub.add_parser("validate-gltf", help="validate glTF/GLB structur
 ⋮----
 blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
 ⋮----
+toolchain_status = sub.add_parser("3d-toolchain-status", help="detect available external 3D tools")
+⋮----
+pipeline3d = sub.add_parser("prepare-3d", help="prepare Blender to GLB validation/optimization pipeline")
+⋮----
+run3d = sub.add_parser("run-3d", help="run Blender to GLB validation/optimization pipeline")
+⋮----
 def main() -> int
 ⋮----
 args = parser().parse_args()
@@ -1079,6 +1140,10 @@ result = normalize_viewbox(args.input, args.output)
 job = build_blender_export_job(
 ⋮----
 result = {
+⋮----
+plan = build_3d_pipeline(
+⋮----
+result = execute_3d_pipeline(plan, root)
 ````
 
 ## File: blender_adapter.py
@@ -1137,9 +1202,30 @@ indexed_primitive_count = 0
 ⋮----
 primitives = mesh.get("primitives", [])
 ⋮----
-def inspect_gltf(path: Path) -> tuple[dict, list[str], list[str]]
+def _validate_index_references(data: dict) -> list[str]
 ⋮----
 errors: list[str] = []
+nodes = data.get("nodes", [])
+⋮----
+materials = data.get("materials", [])
+accessors = data.get("accessors", [])
+buffer_views = data.get("bufferViews", [])
+buffers = data.get("buffers", [])
+textures = data.get("textures", [])
+images = data.get("images", [])
+samplers = data.get("samplers", [])
+skins = data.get("skins", [])
+⋮----
+def check(value, size, label)
+⋮----
+children = node.get("children", [])
+⋮----
+attributes = primitive.get("attributes", {})
+⋮----
+joints = skin.get("joints", [])
+⋮----
+def inspect_gltf(path: Path) -> tuple[dict, list[str], list[str]]
+⋮----
 warnings: list[str] = []
 ⋮----
 asset = data.get("asset")
@@ -1149,16 +1235,8 @@ version = None
 version = asset.get("version")
 ⋮----
 scenes = data.get("scenes", [])
-nodes = data.get("nodes", [])
 ⋮----
-materials = data.get("materials", [])
-textures = data.get("textures", [])
-images = data.get("images", [])
-skins = data.get("skins", [])
 animations = data.get("animations", [])
-accessors = data.get("accessors", [])
-buffer_views = data.get("bufferViews", [])
-buffers = data.get("buffers", [])
 ⋮----
 extensions_used = data.get("extensionsUsed", [])
 extensions_required = data.get("extensionsRequired", [])
@@ -1584,7 +1662,30 @@ python asset_forge.py blender-export-job source.blend build/model.glb \
   --job-manifest build/export_job.json
 ```
 
-The command returns the exact Blender background command to run. Current validation is structural and profile-based; Khronos glTF Validator remains the preferred deeper conformance backend when available.
+Inspect external 3D tool availability:
+
+```bash
+python asset_forge.py 3d-toolchain-status
+```
+
+Prepare a complete production pipeline:
+
+```bash
+python asset_forge.py prepare-3d source.blend build/model \
+  --profile prop \
+  --optimizer gltf-transform \
+  --texture-compress webp
+```
+
+Run it end to end when the required local tools are available:
+
+```bash
+python asset_forge.py run-3d source.blend build/model \
+  --profile prop \
+  --optimizer gltf-transform
+```
+
+The generated chain is Blender export → internal structural/profile validation → optional Khronos validation → optional optimization → post-optimization validation. If an optional optimizer is unavailable, the pipeline keeps the validated raw GLB as the final output instead of pointing to a file that was never generated.
 
 ## Initial interoperability
 
@@ -1711,4 +1812,69 @@ local_tag = _local_name(child.tag)
 value = child.attrib[key]
 ⋮----
 value = root.attrib[key]
+````
+
+## File: toolchain_3d.py
+````python
+def detect_3d_tools() -> dict
+⋮----
+candidates = {
+result = {}
+⋮----
+found = None
+⋮----
+path = shutil.which(name)
+⋮----
+found = path
+⋮----
+def _quote(parts: list[str]) -> str
+⋮----
+def validator_command(executable: str, input_path: Path) -> str
+⋮----
+parts = [executable, "optimize", str(input_path), str(output_path)]
+⋮----
+parts = [executable, "-i", str(input_path), "-o", str(output_path)]
+⋮----
+workdir = Path(workdir)
+raw_glb = workdir / "raw.glb"
+optimized_glb = workdir / "optimized.glb"
+blender_script = workdir / "export_blender.py"
+⋮----
+blender_job = build_blender_export_job(
+⋮----
+tools = detect_3d_tools()
+commands = []
+⋮----
+validator = tools["gltf-validator"]
+⋮----
+final_glb = raw_glb
+optimizer_available = False
+⋮----
+tool = tools["gltf-transform"]
+optimizer_available = bool(tool["available"])
+⋮----
+final_glb = optimized_glb
+⋮----
+tool = tools["gltfpack"]
+⋮----
+def prepare_3d_pipeline(plan: dict) -> None
+⋮----
+workdir = Path(plan["workdir"])
+⋮----
+def execute_command(command: str, cwd: Path | None = None) -> dict
+⋮----
+completed = subprocess.run(
+⋮----
+def execute_3d_pipeline(plan: dict, repo_root: Path) -> dict
+⋮----
+results = []
+success = True
+⋮----
+result = {
+⋮----
+success = False
+⋮----
+executed = execute_command(step["command"], cwd=repo_root)
+⋮----
+report_path = Path(step["output"])
 ````
