@@ -402,6 +402,11 @@ def parser() -> argparse.ArgumentParser:
     compact.add_argument("--max-pixels", type=int)
     compact.add_argument("--max-bytes", type=int)
     compact.add_argument("--min-occupancy", type=float)
+    compact.add_argument(
+        "--heuristic",
+        choices=["auto", "best-short-side-fit", "best-long-side-fit", "best-area-fit"],
+        default="auto",
+    )
     compact.add_argument("--padding", type=int, default=0)
     compact.add_argument("--power-of-two", action="store_true")
     compact.add_argument("--no-trim", action="store_true")
@@ -573,6 +578,7 @@ def main() -> int:
                 max_pixels=args.max_pixels,
                 max_bytes=args.max_bytes,
                 min_occupancy=args.min_occupancy,
+                heuristic=args.heuristic,
                 padding=args.padding,
                 power_of_two=args.power_of_two,
                 trim=not args.no_trim,
