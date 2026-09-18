@@ -14,7 +14,7 @@ from animation_infer import infer_animations
 from godot_export import write_spriteframes
 from raster_pack import pack_uniform_atlas, recompress_png
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
-from svg_tools import inspect_svg, sanitize_svg
+from svg_tools import inspect_svg, normalize_viewbox, sanitize_svg, validate_svg_profile
 
 PIPELINES = {
     "sprite": "pipelines/sprite-2d.json",
@@ -470,10 +470,15 @@ def parser() -> argparse.ArgumentParser:
 
     svg_validate = sub.add_parser("validate-svg", help="validate an SVG for safe project use")
     svg_validate.add_argument("input", type=Path)
+    svg_validate.add_argument("--profile", choices=["icon", "ui", "logo"])
 
     svg_sanitize = sub.add_parser("sanitize-svg", help="remove unsafe SVG content")
     svg_sanitize.add_argument("input", type=Path)
     svg_sanitize.add_argument("output", type=Path)
+
+    svg_normalize = sub.add_parser("normalize-svg", help="ensure SVG has a usable viewBox")
+    svg_normalize.add_argument("input", type=Path)
+    svg_normalize.add_argument("output", type=Path)
     return result
 
 
@@ -584,7 +589,10 @@ def main() -> int:
         return 0
     if args.command == "validate-svg":
         try:
-            info, errors, warnings = inspect_svg(args.input)
+            if args.profile:
+                info, errors, warnings = validate_svg_profile(args.input, args.profile)
+            else:
+                info, errors, warnings = inspect_svg(args.input)
         except OSError as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
@@ -594,6 +602,14 @@ def main() -> int:
     if args.command == "sanitize-svg":
         try:
             result = sanitize_svg(args.input, args.output)
+        except (OSError, ValueError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+    if args.command == "normalize-svg":
+        try:
+            result = normalize_viewbox(args.input, args.output)
         except (OSError, ValueError) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
