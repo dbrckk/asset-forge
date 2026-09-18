@@ -37,21 +37,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T16:20:08Z
+Generated: 2026-09-18T16:24:02Z
 
 ### Git
 - Branch: `main`
-- Head: `406e7843f701`
-- Commit date: 2026-09-18T18:20:01+02:00
-- Commit: docs: record real atlas packing milestone
-- Tracked files: 53
+- Head: `11ee3e66fe20`
+- Commit date: 2026-09-18T18:23:45+02:00
+- Commit: docs: add optimization and Godot export workflow
+- Tracked files: 58
 
 ### Recently changed files
 - `README.md`
 - `.github/workflows/validate.yml`
 - `tests/test_raster_pack.py`
-- `asset_forge.py`
-- `raster_pack.py`
+- `tests/test_godot_export.py`
 
 ### Project signals
 - No common build descriptor detected

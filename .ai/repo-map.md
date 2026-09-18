@@ -53,9 +53,11 @@ schemas/
   asset-manifest.schema.json
 tests/
   test_asset_forge.py
+  test_godot_export.py
   test_raster_pack.py
 AGENTS.md
 asset_forge.py
+godot_export.py
 raster_pack.py
 README.md
 ````
@@ -108,7 +110,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -389,6 +391,27 @@ image = Path(tmp) / "bad.png"
 data = bytearray(image.read_bytes())
 ````
 
+## File: tests/test_godot_export.py
+````python
+class GodotExportTests(unittest.TestCase)
+⋮----
+def metadata(self)
+⋮----
+def test_render_spriteframes_uses_atlas_regions(self)
+⋮----
+rendered = render_spriteframes(
+⋮----
+def test_write_spriteframes_creates_file(self)
+⋮----
+output = Path(tmp) / "player.tres"
+⋮----
+rendered = output.read_text(encoding="utf-8")
+⋮----
+def test_rejects_empty_metadata(self)
+⋮----
+def test_rejects_invalid_fps(self)
+````
+
 ## File: tests/test_raster_pack.py
 ````python
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -422,6 +445,18 @@ def test_rgb_png_is_promoted_to_opaque_rgba(self)
 image = root / "rgb.png"
 ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0)
 raw = b"\x00" + bytes([7, 8, 9])
+⋮----
+def test_recompress_png_preserves_pixels(self)
+⋮----
+source = root / "source.png"
+optimized = root / "optimized.png"
+⋮----
+before = decode_rgba(source)
+report = recompress_png(source, optimized)
+after = decode_rgba(optimized)
+output_exists = optimized.exists()
+⋮----
+def test_recompress_png_reports_sizes(self)
 ````
 
 ## File: AGENTS.md
@@ -625,6 +660,10 @@ atlas = sub.add_parser("atlas-manifest", help="build uniform-grid atlas metadata
 ⋮----
 pack = sub.add_parser("pack-atlas", help="pack equal-size RGB/RGBA PNG frames into an atlas")
 ⋮----
+optimize = sub.add_parser("optimize-png", help="losslessly recompress a supported PNG")
+⋮----
+godot = sub.add_parser("export-godot", help="export Godot 4 SpriteFrames .tres from atlas metadata")
+⋮----
 def main() -> int
 ⋮----
 args = parser().parse_args()
@@ -633,6 +672,36 @@ root = Path(__file__).resolve().parent
 metadata = pack_uniform_atlas(
 ⋮----
 rendered = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
+⋮----
+result = recompress_png(args.input, args.output)
+⋮----
+metadata = load_json(args.metadata)
+````
+
+## File: godot_export.py
+````python
+def _godot_string(value: str) -> str
+⋮----
+"""Render a Godot 4 SpriteFrames .tres using AtlasTexture subresources."""
+⋮----
+frames = atlas_metadata.get("frames")
+⋮----
+lines = [
+⋮----
+resource_ids: list[str] = []
+⋮----
+x = int(frame["x"])
+y = int(frame["y"])
+width = int(frame["width"])
+height = int(frame["height"])
+⋮----
+resource_id = f"AtlasTexture_{index}"
+⋮----
+frame_lines = []
+⋮----
+animation = (
+⋮----
+rendered = render_spriteframes(
 ````
 
 ## File: raster_pack.py
@@ -703,13 +772,49 @@ destination = 0
 ⋮----
 def _chunk(kind: bytes, payload: bytes) -> bytes
 ⋮----
-def encode_rgba(path: Path, width: int, height: int, pixels: bytes) -> None
+def _filter_row(row: bytes, previous: bytes, bpp: int, filter_type: int) -> bytes
 ⋮----
-rows = []
+output = bytearray(len(row))
+⋮----
+left = row[index - bpp] if index >= bpp else 0
+⋮----
+upper_left = previous[index - bpp] if index >= bpp else 0
+⋮----
+predictor = 0
+⋮----
+predictor = left
+⋮----
+predictor = above
+⋮----
+predictor = (left + above) // 2
+⋮----
+predictor = _paeth(left, above, upper_left)
+⋮----
+def _filter_score(filtered: bytes) -> int
+⋮----
+def _png_bytes_rgba(width: int, height: int, pixels: bytes, adaptive: bool = True) -> bytes
+⋮----
+rows: list[bytes] = []
+previous = bytes(width * 4)
 ⋮----
 start = y * width * 4
+row = pixels[start : start + width * 4]
+⋮----
+candidates = [(_filter_row(row, previous, 4, filter_type), filter_type) for filter_type in range(5)]
+⋮----
+filter_type = 0
+filtered = row
+⋮----
+previous = row
 ⋮----
 ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
+⋮----
+def recompress_png(input_path: Path, output_path: Path) -> dict
+⋮----
+"""Losslessly recompress supported PNG image pixels as optimized RGBA."""
+before = input_path.stat().st_size
+⋮----
+after = output_path.stat().st_size
 ⋮----
 def _next_power_of_two(value: int) -> int
 ⋮----
@@ -790,7 +895,19 @@ Pack separate equal-size PNG frames into a real atlas image plus metadata:
 python asset_forge.py pack-atlas build/atlas.png frames/*.png --metadata build/atlas.json --padding 1 --power-of-two
 ```
 
-The built-in packer currently supports non-interlaced 8-bit RGB/RGBA PNG inputs and implements all five standard PNG scanline filters. It writes an RGBA PNG atlas without external image libraries.
+Losslessly recompress a supported PNG:
+
+```bash
+python asset_forge.py optimize-png build/atlas.png build/atlas.optimized.png
+```
+
+Export atlas metadata as a Godot 4 SpriteFrames resource:
+
+```bash
+python asset_forge.py export-godot build/atlas.json build/player.tres --atlas-path res://art/atlas.png --animation run --fps 12
+```
+
+The built-in packer currently supports non-interlaced 8-bit RGB/RGBA PNG inputs and implements all five standard PNG scanline filters. It writes an RGBA PNG atlas without external image libraries. The optimizer uses adaptive per-row PNG filtering and zlib level 9 while preserving decoded pixels.
 
 Run the offline test suite:
 
