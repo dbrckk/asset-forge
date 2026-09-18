@@ -88,20 +88,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T20:24:23Z
+Generated: 2026-09-18T20:33:15Z
 
 ### Git
 - Branch: `main`
-- Head: `a188aa0a6292`
-- Commit date: 2026-09-18T22:24:12+02:00
-- Commit: docs: record optional WebP pixel backend milestone
-- Tracked files: 153
+- Head: `64bd3943af5f`
+- Commit date: 2026-09-18T22:32:53+02:00
+- Commit: docs: record advanced atlas packing milestone
+- Tracked files: 187
 
 ### Recently changed files
 - `README.md`
-- `tests/test_asset_forge.py`
-- `tests/test_raster_backend.py`
-- `.github/workflows/validate.yml`
+- `raster_pack.py`
+- `tests/test_raster_pack.py`
 - `asset_forge.py`
 
 ### Project signals

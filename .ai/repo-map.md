@@ -1757,6 +1757,44 @@ path = Path(tmp) / "image.webp"
 bits = (width - 1) | ((height - 1) << 14)
 ⋮----
 info = inspect_webp(path)
+⋮----
+def test_uniform_atlas_trim_records_source_offsets(self)
+⋮----
+pixels = bytearray(4 * 4 * 4)
+⋮----
+start = (y * 4 + x) * 4
+⋮----
+def test_uniform_atlas_extrudes_edge_pixels(self)
+⋮----
+source = root / "a.png"
+⋮----
+expected = bytes([7, 8, 9, 255])
+⋮----
+start = (y * 3 + x) * 4
+⋮----
+def test_compact_atlas_packs_variable_size_frames(self)
+⋮----
+a = root / "a.png"
+b = root / "b.png"
+c = root / "c.png"
+⋮----
+metadata = pack_compact_atlas(
+⋮----
+start = (frame["y"] * width + frame["x"]) * 4
+⋮----
+def test_compact_atlas_rejects_frame_wider_than_budget(self)
+⋮----
+source = root / "wide.png"
+⋮----
+def test_recompress_png_keeps_original_when_candidate_is_larger(self)
+⋮----
+output = root / "output.png"
+⋮----
+original = source.read_bytes()
+⋮----
+report = recompress_png(source, output)
+⋮----
+result = output.read_bytes()
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -2169,6 +2207,8 @@ atlas = sub.add_parser("atlas-manifest", help="build uniform-grid atlas metadata
 ⋮----
 pack = sub.add_parser("pack-atlas", help="pack equal-size PNG/WebP frames into a PNG atlas")
 ⋮----
+compact = sub.add_parser("pack-atlas-compact", help="pack variable-size PNG/WebP frames into a compact PNG atlas")
+⋮----
 optimize = sub.add_parser("optimize-png", help="losslessly recompress a supported PNG")
 ⋮----
 webp_encode = sub.add_parser("encode-webp", help="encode PNG or WebP input as WebP via optional Pillow/libwebp")
@@ -2217,6 +2257,8 @@ root = Path(__file__).resolve().parent
 metadata = pack_uniform_atlas(
 ⋮----
 rendered = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
+⋮----
+metadata = pack_compact_atlas(
 ⋮----
 result = recompress_png(args.input, args.output)
 ⋮----
@@ -3412,30 +3454,106 @@ after = output_path.stat().st_size
 ⋮----
 def recompress_png(input_path: Path, output_path: Path) -> dict
 ⋮----
+source_bytes = input_path.read_bytes()
+⋮----
+candidate = _png_bytes_rgba(width, height, pixels, adaptive=True)
+⋮----
+kept_optimized = len(candidate) < before
+⋮----
+def _alpha_bounds(width: int, height: int, pixels: bytes) -> tuple[int, int, int, int] | None
+⋮----
+min_x = width
+min_y = height
+max_x = -1
+max_y = -1
+⋮----
+alpha = pixels[(y * width + x) * 4 + 3]
+⋮----
+min_x = min(min_x, x)
+min_y = min(min_y, y)
+max_x = max(max_x, x)
+max_y = max(max_y, y)
+⋮----
+cropped_width = right - left
+cropped_height = bottom - top
+cropped = bytearray(cropped_width * cropped_height * 4)
+⋮----
+source_start = ((top + y) * width + left) * 4
+source_end = source_start + cropped_width * 4
+destination_start = y * cropped_width * 4
+⋮----
+source_start = source_y * width * 4
+destination_start = ((y + source_y) * atlas_width + x) * 4
+⋮----
+left_x = x - offset
+right_x = x + width - 1 + offset
+⋮----
+src = ((y + row) * atlas_width + x) * 4
+dst = ((y + row) * atlas_width + left_x) * 4
+⋮----
+src = ((y + row) * atlas_width + x + width - 1) * 4
+dst = ((y + row) * atlas_width + right_x) * 4
+⋮----
+top_y = y - offset
+bottom_y = y + height - 1 + offset
+⋮----
+tx = x + column
+⋮----
+src_x = min(max(tx, x), x + width - 1)
+src = (y * atlas_width + src_x) * 4
+dst = (top_y * atlas_width + tx) * 4
+⋮----
+src = ((y + height - 1) * atlas_width + src_x) * 4
+dst = (bottom_y * atlas_width + tx) * 4
+⋮----
+def _prepare_frame(path: Path, trim: bool) -> dict
+⋮----
+bounds = _alpha_bounds(source_width, source_height, pixels)
+⋮----
+offset_x = offset_y = 0
+⋮----
 def _next_power_of_two(value: int) -> int
 ⋮----
-decoded = [decode_raster_rgba(Path(path)) for path in inputs]
+def _pack_shelves(frames: list[dict], max_width: int, padding: int, extrude: int) -> tuple[list[dict], int, int]
 ⋮----
-frame_count = len(decoded)
-column_count = columns or math.ceil(math.sqrt(frame_count))
+ordered = sorted(
+placements: list[dict] = []
+x = 0
+y = 0
+shelf_height = 0
+used_width = 0
 ⋮----
-row_count = math.ceil(frame_count / column_count)
-content_width = column_count * frame_width + max(0, column_count - 1) * padding
-content_height = row_count * frame_height + max(0, row_count - 1) * padding
+packed_width = frame["width"] + extrude * 2
+packed_height = frame["height"] + extrude * 2
+⋮----
+shelf_height = max(shelf_height, packed_height)
+used_width = max(used_width, x - padding)
+⋮----
+used_height = y + shelf_height
+⋮----
+frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]
 ⋮----
 atlas_width = _next_power_of_two(content_width) if power_of_two else content_width
 atlas_height = _next_power_of_two(content_height) if power_of_two else content_height
-⋮----
 canvas = bytearray(atlas_width * atlas_height * 4)
 frames = []
 ⋮----
+frame_count = len(frames_data)
+column_count = columns or math.ceil(math.sqrt(frame_count))
+⋮----
+row_count = math.ceil(frame_count / column_count)
+cell_width = frame_width + extrude * 2
+cell_height = frame_height + extrude * 2
+gap = padding
+content_width = column_count * cell_width + max(0, column_count - 1) * gap
+content_height = row_count * cell_height + max(0, row_count - 1) * gap
+⋮----
 column = index % column_count
 row = index // column_count
-x = column * (frame_width + padding)
-y = row * (frame_height + padding)
-⋮----
-source_start = source_y * frame_width * 4
-destination_start = ((y + source_y) * atlas_width + x) * 4
+cell_x = column * (cell_width + gap)
+cell_y = row * (cell_height + gap)
+x = cell_x + extrude
+y = cell_y + extrude
 ````
 
 ## File: README.md
@@ -3801,6 +3919,29 @@ python asset_forge.py encode-webp source.png build/source-lossy.webp --lossy --q
 ```
 
 Lossless is the default. The encoder validates quality `0..100` and method `0..6`, writes through Pillow/libwebp, then re-inspects the WebP container to verify output dimensions. Animated WebP is inspectable but intentionally rejected as a single-frame atlas input.
+
+
+### Advanced atlas packing
+
+Uniform atlas packing now supports transparent trim and edge extrusion:
+
+```bash
+python asset_forge.py pack-atlas build/atlas.png frames/*.png \
+  --trim --extrude 1 --padding 1 --metadata build/atlas.json
+```
+
+Trim metadata records the original source dimensions plus `offsetX`/`offsetY`, while the stored `x`/`y`/`width`/`height` describe the trimmed atlas region. Edge extrusion duplicates border pixels around the packed region to reduce texture bleeding.
+
+Variable-size sprites can use deterministic shelf packing:
+
+```bash
+python asset_forge.py pack-atlas-compact build/atlas.png frames/* \
+  --max-width 2048 --padding 1 --extrude 1 --metadata build/atlas.json
+```
+
+The compact packer sorts by height/width for placement but restores original input order in metadata. Rotation is intentionally not implemented yet. Consumers that need original untrimmed positioning must use the source dimension/offset metadata; the existing simple Godot SpriteFrames export still consumes atlas regions only.
+
+PNG optimization is now no-growth: `optimize-png` keeps the original bytes whenever the recompressed candidate is not smaller, including in-place optimization.
 ````
 
 ## File: starlist_bridge.py

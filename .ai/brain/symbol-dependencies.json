@@ -338,7 +338,7 @@
       "source": {
         "file": "asset_forge.py",
         "start": 363,
-        "end": 502
+        "end": 514
       },
       "symbol_dependencies": [],
       "dependency_count": 0
@@ -346,8 +346,8 @@
     "main": {
       "source": {
         "file": "asset_forge.py",
-        "start": 505,
-        "end": 814
+        "start": 517,
+        "end": 850
       },
       "symbol_dependencies": [
         {
@@ -555,11 +555,23 @@
           "relation": "imported_module"
         },
         {
+          "symbol": "pack_compact_atlas",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1116,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
           "symbol": "pack_uniform_atlas",
           "definitions": [
             {
               "file": "raster_pack.py",
-              "line": 932,
+              "line": 1201,
               "kind": "function",
               "language": "python"
             }
@@ -783,60 +795,7 @@
           "relation": "imported_module"
         }
       ],
-      "dependency_count": 36
-    },
-    "detect_pillow_webp": {
-      "source": {
-        "file": "raster_backend.py",
-        "start": 6,
-        "end": 37
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "decode_webp_rgba": {
-      "source": {
-        "file": "raster_backend.py",
-        "start": 40,
-        "end": 68
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "detect_pillow_webp",
-          "definitions": [
-            {
-              "file": "raster_backend.py",
-              "line": 6,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "encode_webp_rgba": {
-      "source": {
-        "file": "raster_backend.py",
-        "start": 71,
-        "end": 110
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "detect_pillow_webp",
-          "definitions": [
-            {
-              "file": "raster_backend.py",
-              "line": 6,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
+      "dependency_count": 37
     },
     "_read_webp_bytes": {
       "source": {
@@ -1639,7 +1598,884 @@
       "source": {
         "file": "raster_pack.py",
         "start": 909,
-        "end": 923
+        "end": 931
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_png_bytes_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 826,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "decode_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 727,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "_alpha_bounds": {
+      "source": {
+        "file": "raster_pack.py",
+        "start": 934,
+        "end": 949
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_crop_rgba": {
+      "source": {
+        "file": "raster_pack.py",
+        "start": 952,
+        "end": 971
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_blit_rgba": {
+      "source": {
+        "file": "raster_pack.py",
+        "start": 974,
+        "end": 988
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_extrude_rgba": {
+      "source": {
+        "file": "raster_pack.py",
+        "start": 991,
+        "end": 1035
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_prepare_frame": {
+      "source": {
+        "file": "raster_pack.py",
+        "start": 1038,
+        "end": 1060
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_alpha_bounds",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 934,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_crop_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 952,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "decode_raster_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 687,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "_next_power_of_two": {
+      "source": {
+        "file": "raster_pack.py",
+        "start": 1063,
+        "end": 1066
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_pack_shelves": {
+      "source": {
+        "file": "raster_pack.py",
+        "start": 1069,
+        "end": 1113
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "pack_compact_atlas": {
+      "source": {
+        "file": "raster_pack.py",
+        "start": 1116,
+        "end": 1198
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_blit_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 974,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_extrude_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 991,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_next_power_of_two",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1063,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_pack_shelves",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1069,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_prepare_frame",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1038,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "encode_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 859,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 6
+    },
+    "pack_uniform_atlas": {
+      "source": {
+        "file": "raster_pack.py",
+        "start": 1201,
+        "end": 1305
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_blit_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 974,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_extrude_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 991,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_next_power_of_two",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1063,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_prepare_frame",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1038,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "encode_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 859,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 5
+    },
+    "webp_chunk": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 14,
+        "end": 16
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "webp_file": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 19,
+        "end": 21
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "chunk": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 24,
+        "end": 30
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "adam7_extent": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 44,
+        "end": 47
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "pack_indexed_samples": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 50,
+        "end": 60
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "adam7_raw": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 63,
+        "end": 80
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "adam7_extent",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 44,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "write_rgba_png": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 83,
+        "end": 92
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "chunk",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "pixel",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 738,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "RasterPackTests": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 95,
+        "end": 1071
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_png_bytes_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 826,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "adam7_extent",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 44,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "adam7_raw",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 63,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "chunk",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "decode_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 727,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "encode_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 859,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_png",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 391,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_webp",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 184,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_webp_bytes",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 118,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "pack_compact_atlas",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1116,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "pack_indexed_samples",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 50,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "pack_uniform_atlas",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1201,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "pixel",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 738,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "pixel16",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 800,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "recompress_png",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 909,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_adam7_expected_size_is_bounded_and_exact",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 829,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_adam7_indexed_1bit_reconstructs_checkerboard",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 754,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_adam7_rgba16_reconstructs_and_downconverts",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 794,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_adam7_rgba8_reconstructs_full_image",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 732,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_compact_atlas_packs_variable_size_frames",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 1005,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_compact_atlas_rejects_frame_wider_than_budget",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 1039,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_grayscale_16bit_png_decodes_to_rgba8",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 614,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_grayscale_16bit_trns_compares_original_sample",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 681,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_grayscale_1bit_png_decodes_to_rgba",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 509,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_grayscale_2bit_png_scales_samples",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 530,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_grayscale_4bit_png_ignores_padding_nibble",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 553,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_grayscale_alpha_16bit_png_decodes_to_rgba8",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 651,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_grayscale_alpha_png_decodes_to_rgba",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 200,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_grayscale_low_bit_depth_trns_is_applied_before_scaling",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 575,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_grayscale_png_decodes_to_rgba",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 185,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_grayscale_trns_out_of_range_is_rejected",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 600,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_hardened_inspector_reports_palette_and_transparency",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 358,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_indexed_1bit_png_decodes_to_rgba",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 384,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_indexed_2bit_png_decodes_to_rgba",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 409,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_indexed_4bit_png_ignores_padding_nibble",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 440,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_indexed_low_bit_depth_palette_limit_is_enforced",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 490,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_indexed_low_bit_depth_transparency_is_applied",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 465,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_indexed_png_with_transparency_decodes_to_rgba",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 214,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_oversized_file_is_rejected_before_read",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 376,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_pack_rejects_mixed_frame_sizes",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 123,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 40
+    },
+    "test_pack_uniform_atlas_writes_png_and_metadata": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 96,
+        "end": 121
       },
       "symbol_dependencies": [
         {
@@ -1652,69 +2488,26 @@
               "language": "python"
             }
           ],
-          "relation": "same_file"
+          "relation": "imported_module"
         },
         {
-          "symbol": "encode_rgba",
+          "symbol": "pack_uniform_atlas",
           "definitions": [
             {
               "file": "raster_pack.py",
-              "line": 859,
+              "line": 1201,
               "kind": "function",
               "language": "python"
             }
           ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "_next_power_of_two": {
-      "source": {
-        "file": "raster_pack.py",
-        "start": 926,
-        "end": 929
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "pack_uniform_atlas": {
-      "source": {
-        "file": "raster_pack.py",
-        "start": 932,
-        "end": 1002
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_next_power_of_two",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 926,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
+          "relation": "imported_module"
         },
         {
-          "symbol": "decode_raster_rgba",
+          "symbol": "write_rgba_png",
           "definitions": [
             {
-              "file": "raster_pack.py",
-              "line": 687,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "encode_rgba",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 859,
+              "file": "tests/test_raster_pack.py",
+              "line": 83,
               "kind": "function",
               "language": "python"
             }
@@ -1724,74 +2517,53 @@
       ],
       "dependency_count": 3
     },
-    "chunk": {
+    "test_pack_rejects_mixed_frame_sizes": {
       "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 13,
-        "end": 19
+        "file": "tests/test_raster_pack.py",
+        "start": 123,
+        "end": 132
       },
-      "symbol_dependencies": [],
-      "dependency_count": 0
+      "symbol_dependencies": [
+        {
+          "symbol": "pack_uniform_atlas",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1201,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write_rgba_png",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 83,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
     },
-    "write_png": {
+    "test_rgb_png_is_promoted_to_opaque_rgba": {
       "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 22,
-        "end": 47
+        "file": "tests/test_raster_pack.py",
+        "start": 134,
+        "end": 150
       },
       "symbol_dependencies": [
         {
           "symbol": "chunk",
           "definitions": [
             {
-              "file": "tests/test_asset_forge.py",
-              "line": 13,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "AssetForgeTests": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 50,
-        "end": 232
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "build_atlas_manifest",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 156,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "build_plan",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 264,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "load_example",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
               "kind": "function",
               "language": "python"
             }
@@ -1799,295 +2571,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "load_json",
+          "symbol": "decode_rgba",
           "definitions": [
             {
-              "file": "asset_forge.py",
-              "line": 65,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "test_atlas_manifest_contains_frame_rectangles",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 148,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_example_manifest_is_valid",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 54,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_external_asset_requires_uri",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 65,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_incompatible_commercial_license_is_rejected",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 71,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_invalid_png_crc_is_rejected",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 224,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_palette_transparency_and_max_colors",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 125,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_pixel_art_rejects_non_nearest_interpolation",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 57,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_plan_routes_sprite_to_2d_pipeline",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 80,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_png_alpha_requirement",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 116,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_png_sprite_grid_validation_passes",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 97,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_png_sprite_grid_validation_rejects_bad_width",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 108,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_power_of_two_atlas",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 137,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_raster_target_format_mismatch_is_reported",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 213,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_secondary_custom_asset_prompts_reuse_search",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 88,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_webp_max_colors_constraint_is_rejected",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 191,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_webp_raster_validation_supports_dimensions_and_alpha",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 162,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "validate_manifest",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 73,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "validate_raster_file",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 187,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "write_png",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 22,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 23
-    },
-    "load_example": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 51,
-        "end": 52
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "load_json",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 65,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "test_example_manifest_is_valid": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 54,
-        "end": 55
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "load_example",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "validate_manifest",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 73,
+              "file": "raster_pack.py",
+              "line": 727,
               "kind": "function",
               "language": "python"
             }
@@ -2097,121 +2585,19 @@
       ],
       "dependency_count": 2
     },
-    "test_pixel_art_rejects_non_nearest_interpolation": {
+    "test_recompress_png_preserves_pixels": {
       "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 57,
-        "end": 63
+        "file": "tests/test_raster_pack.py",
+        "start": 152,
+        "end": 167
       },
       "symbol_dependencies": [
         {
-          "symbol": "load_example",
+          "symbol": "decode_rgba",
           "definitions": [
             {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "validate_manifest",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 73,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "test_external_asset_requires_uri": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 65,
-        "end": 69
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "load_example",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "validate_manifest",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 73,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "test_incompatible_commercial_license_is_rejected": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 71,
-        "end": 78
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "load_example",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "validate_manifest",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 73,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "test_plan_routes_sprite_to_2d_pipeline": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 80,
-        "end": 86
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "build_plan",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 264,
+              "file": "raster_pack.py",
+              "line": 727,
               "kind": "function",
               "language": "python"
             }
@@ -2219,33 +2605,11 @@
           "relation": "imported_module"
         },
         {
-          "symbol": "load_example",
+          "symbol": "recompress_png",
           "definitions": [
             {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "test_secondary_custom_asset_prompts_reuse_search": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 88,
-        "end": 95
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "build_plan",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 264,
+              "file": "raster_pack.py",
+              "line": 909,
               "kind": "function",
               "language": "python"
             }
@@ -2253,57 +2617,11 @@
           "relation": "imported_module"
         },
         {
-          "symbol": "load_example",
+          "symbol": "write_rgba_png",
           "definitions": [
             {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "test_png_sprite_grid_validation_passes": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 97,
-        "end": 106
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "load_example",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "validate_raster_file",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 187,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "write_png",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 22,
+              "file": "tests/test_raster_pack.py",
+              "line": 83,
               "kind": "function",
               "language": "python"
             }
@@ -2313,31 +2631,19 @@
       ],
       "dependency_count": 3
     },
-    "test_png_sprite_grid_validation_rejects_bad_width": {
+    "test_recompress_png_reports_sizes": {
       "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 108,
-        "end": 114
+        "file": "tests/test_raster_pack.py",
+        "start": 169,
+        "end": 183
       },
       "symbol_dependencies": [
         {
-          "symbol": "load_example",
+          "symbol": "recompress_png",
           "definitions": [
             {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "validate_raster_file",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 187,
+              "file": "raster_pack.py",
+              "line": 909,
               "kind": "function",
               "language": "python"
             }
@@ -2345,11 +2651,11 @@
           "relation": "imported_module"
         },
         {
-          "symbol": "write_png",
+          "symbol": "write_rgba_png",
           "definitions": [
             {
-              "file": "tests/test_asset_forge.py",
-              "line": 22,
+              "file": "tests/test_raster_pack.py",
+              "line": 83,
               "kind": "function",
               "language": "python"
             }
@@ -2357,21 +2663,21 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 3
+      "dependency_count": 2
     },
-    "test_png_alpha_requirement": {
+    "test_grayscale_png_decodes_to_rgba": {
       "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 116,
-        "end": 123
+        "file": "tests/test_raster_pack.py",
+        "start": 185,
+        "end": 198
       },
       "symbol_dependencies": [
         {
-          "symbol": "load_example",
+          "symbol": "chunk",
           "definitions": [
             {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
               "kind": "function",
               "language": "python"
             }
@@ -2379,195 +2685,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "validate_raster_file",
+          "symbol": "decode_rgba",
           "definitions": [
             {
-              "file": "asset_forge.py",
-              "line": 187,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "write_png",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 22,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 3
-    },
-    "test_palette_transparency_and_max_colors": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 125,
-        "end": 135
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "load_example",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "validate_raster_file",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 187,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "write_png",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 22,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 3
-    },
-    "test_power_of_two_atlas": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 137,
-        "end": 146
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "load_example",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "validate_raster_file",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 187,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "write_png",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 22,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 3
-    },
-    "test_atlas_manifest_contains_frame_rectangles": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 148,
-        "end": 160
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "build_atlas_manifest",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 156,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "load_example",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "write_png",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 22,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 3
-    },
-    "test_webp_raster_validation_supports_dimensions_and_alpha": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 162,
-        "end": 189
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "load_example",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "validate_raster_file",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 187,
+              "file": "raster_pack.py",
+              "line": 727,
               "kind": "function",
               "language": "python"
             }
@@ -2577,19 +2699,19 @@
       ],
       "dependency_count": 2
     },
-    "test_webp_max_colors_constraint_is_rejected": {
+    "test_grayscale_alpha_png_decodes_to_rgba": {
       "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 191,
-        "end": 211
+        "file": "tests/test_raster_pack.py",
+        "start": 200,
+        "end": 212
       },
       "symbol_dependencies": [
         {
-          "symbol": "load_example",
+          "symbol": "chunk",
           "definitions": [
             {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
               "kind": "function",
               "language": "python"
             }
@@ -2597,11 +2719,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "validate_raster_file",
+          "symbol": "decode_rgba",
           "definitions": [
             {
-              "file": "asset_forge.py",
-              "line": 187,
+              "file": "raster_pack.py",
+              "line": 727,
               "kind": "function",
               "language": "python"
             }
@@ -2611,19 +2733,19 @@
       ],
       "dependency_count": 2
     },
-    "test_raster_target_format_mismatch_is_reported": {
+    "test_indexed_png_with_transparency_decodes_to_rgba": {
       "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 213,
-        "end": 222
+        "file": "tests/test_raster_pack.py",
+        "start": 214,
+        "end": 233
       },
       "symbol_dependencies": [
         {
-          "symbol": "load_example",
+          "symbol": "chunk",
           "definitions": [
             {
-              "file": "tests/test_asset_forge.py",
-              "line": 51,
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
               "kind": "function",
               "language": "python"
             }
@@ -2631,291 +2753,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "validate_raster_file",
-          "definitions": [
-            {
-              "file": "asset_forge.py",
-              "line": 187,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "write_png",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 22,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 3
-    },
-    "test_invalid_png_crc_is_rejected": {
-      "source": {
-        "file": "tests/test_asset_forge.py",
-        "start": 224,
-        "end": 232
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "write_png",
-          "definitions": [
-            {
-              "file": "tests/test_asset_forge.py",
-              "line": 22,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "RasterBackendTests": {
-      "source": {
-        "file": "tests/test_raster_backend.py",
-        "start": 10,
-        "end": 157
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "decode_raster_rgba",
+          "symbol": "decode_rgba",
           "definitions": [
             {
               "file": "raster_pack.py",
-              "line": 687,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "decode_webp_rgba",
-          "definitions": [
-            {
-              "file": "raster_backend.py",
-              "line": 40,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "detect_pillow_webp",
-          "definitions": [
-            {
-              "file": "raster_backend.py",
-              "line": 6,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "encode_rgba",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 859,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "encode_webp",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 870,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "encode_webp_rgba",
-          "definitions": [
-            {
-              "file": "raster_backend.py",
-              "line": 71,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "inspect_webp",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 184,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "pack_uniform_atlas",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 932,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "test_animated_webp_is_rejected_for_atlas_decode",
-          "definitions": [
-            {
-              "file": "tests/test_raster_backend.py",
-              "line": 85,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_backend_status_shape",
-          "definitions": [
-            {
-              "file": "tests/test_raster_backend.py",
-              "line": 11,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_encode_webp_lossless_roundtrip",
-          "definitions": [
-            {
-              "file": "tests/test_raster_backend.py",
-              "line": 139,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_missing_backend_returns_clear_error",
-          "definitions": [
-            {
-              "file": "tests/test_raster_backend.py",
-              "line": 18,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_pack_atlas_accepts_mixed_png_and_webp",
-          "definitions": [
-            {
-              "file": "tests/test_raster_backend.py",
-              "line": 60,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_real_webp_lossless_decode_to_rgba",
-          "definitions": [
-            {
-              "file": "tests/test_raster_backend.py",
-              "line": 39,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_webp_encoder_validates_quality_and_method_without_backend",
-          "definitions": [
-            {
-              "file": "tests/test_raster_backend.py",
-              "line": 105,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 15
-    },
-    "test_backend_status_shape": {
-      "source": {
-        "file": "tests/test_raster_backend.py",
-        "start": 11,
-        "end": 16
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "detect_pillow_webp",
-          "definitions": [
-            {
-              "file": "raster_backend.py",
-              "line": 6,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "test_missing_backend_returns_clear_error": {
-      "source": {
-        "file": "tests/test_raster_backend.py",
-        "start": 18,
-        "end": 33
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "decode_webp_rgba",
-          "definitions": [
-            {
-              "file": "raster_backend.py",
-              "line": 40,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "detect_pillow_webp",
-          "definitions": [
-            {
-              "file": "raster_backend.py",
-              "line": 6,
+              "line": 727,
               "kind": "function",
               "language": "python"
             }
@@ -2925,121 +2767,31 @@
       ],
       "dependency_count": 2
     },
-    "test_real_webp_lossless_decode_to_rgba": {
+    "test_rejects_invalid_ihdr_length": {
       "source": {
-        "file": "tests/test_raster_backend.py",
-        "start": 39,
-        "end": 54
+        "file": "tests/test_raster_pack.py",
+        "start": 235,
+        "end": 245
       },
       "symbol_dependencies": [
         {
-          "symbol": "decode_raster_rgba",
+          "symbol": "chunk",
           "definitions": [
             {
-              "file": "raster_pack.py",
-              "line": 687,
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
               "kind": "function",
               "language": "python"
             }
           ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "test_pack_atlas_accepts_mixed_png_and_webp": {
-      "source": {
-        "file": "tests/test_raster_backend.py",
-        "start": 60,
-        "end": 79
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "decode_raster_rgba",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 687,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
+          "relation": "same_file"
         },
         {
-          "symbol": "encode_rgba",
+          "symbol": "decode_rgba",
           "definitions": [
             {
               "file": "raster_pack.py",
-              "line": 859,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "pack_uniform_atlas",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 932,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 3
-    },
-    "test_animated_webp_is_rejected_for_atlas_decode": {
-      "source": {
-        "file": "tests/test_raster_backend.py",
-        "start": 85,
-        "end": 103
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "decode_raster_rgba",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 687,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "test_webp_encoder_validates_quality_and_method_without_backend": {
-      "source": {
-        "file": "tests/test_raster_backend.py",
-        "start": 105,
-        "end": 133
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "detect_pillow_webp",
-          "definitions": [
-            {
-              "file": "raster_backend.py",
-              "line": 6,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "encode_webp_rgba",
-          "definitions": [
-            {
-              "file": "raster_backend.py",
-              "line": 71,
+              "line": 727,
               "kind": "function",
               "language": "python"
             }
@@ -3049,55 +2801,31 @@
       ],
       "dependency_count": 2
     },
-    "test_encode_webp_lossless_roundtrip": {
+    "test_rejects_zero_dimensions": {
       "source": {
-        "file": "tests/test_raster_backend.py",
-        "start": 139,
-        "end": 157
+        "file": "tests/test_raster_pack.py",
+        "start": 247,
+        "end": 258
       },
       "symbol_dependencies": [
         {
-          "symbol": "decode_raster_rgba",
+          "symbol": "chunk",
           "definitions": [
             {
-              "file": "raster_pack.py",
-              "line": 687,
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
               "kind": "function",
               "language": "python"
             }
           ],
-          "relation": "imported_module"
+          "relation": "same_file"
         },
         {
-          "symbol": "encode_rgba",
+          "symbol": "decode_rgba",
           "definitions": [
             {
               "file": "raster_pack.py",
-              "line": 859,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "encode_webp",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 870,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "inspect_webp",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 184,
+              "line": 727,
               "kind": "function",
               "language": "python"
             }
@@ -3105,7 +2833,211 @@
           "relation": "imported_module"
         }
       ],
-      "dependency_count": 4
+      "dependency_count": 2
+    },
+    "test_rejects_duplicate_ihdr": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 260,
+        "end": 272
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "chunk",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "decode_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 727,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_rejects_non_consecutive_idat": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 274,
+        "end": 289
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "chunk",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "decode_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 727,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_rejects_trailing_data_after_iend": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 291,
+        "end": 297
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "decode_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 727,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write_rgba_png",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 83,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_rejects_indexed_trns_longer_than_palette": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 299,
+        "end": 312
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "chunk",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "decode_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 727,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_rejects_trns_for_rgba": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 314,
+        "end": 326
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "chunk",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "decode_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 727,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_truecolor_trns_is_applied": {
+      "source": {
+        "file": "tests/test_raster_pack.py",
+        "start": 328,
+        "end": 342
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "chunk",
+          "definitions": [
+            {
+              "file": "tests/test_raster_pack.py",
+              "line": 24,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "decode_rgba",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 727,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
     }
   }
 }

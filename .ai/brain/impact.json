@@ -1,14 +1,10 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "6bf880edb10c39a5f8638866e71fd94fa30512c8",
-  "head": "a188aa0a6292abb3e298d518102719acf41ea044",
+  "base": "a188aa0a6292abb3e298d518102719acf41ea044",
+  "head": "64bd3943af5ff30bfc6d43b44672c21e8a645ea3",
   "index_mode": "incremental",
   "changed_files": [
-    {
-      "path": ".github/workflows/validate.yml",
-      "status": "M"
-    },
     {
       "path": "README.md",
       "status": "M"
@@ -18,33 +14,22 @@
       "status": "M"
     },
     {
-      "path": "raster_backend.py",
-      "status": "A"
-    },
-    {
       "path": "raster_pack.py",
       "status": "M"
     },
     {
-      "path": "tests/test_asset_forge.py",
+      "path": "tests/test_raster_pack.py",
       "status": "M"
-    },
-    {
-      "path": "tests/test_raster_backend.py",
-      "status": "A"
     }
   ],
   "changed_source_files": [
     "asset_forge.py",
-    "raster_backend.py",
     "raster_pack.py",
-    "tests/test_asset_forge.py",
-    "tests/test_raster_backend.py"
+    "tests/test_raster_pack.py"
   ],
   "impacted_files": [
     "asset_forge.py",
     "gltf_binary_metrics.py",
-    "raster_backend.py",
     "raster_pack.py",
     "tests/test_asset_forge.py",
     "tests/test_raster_backend.py",
@@ -139,7 +124,7 @@
       "name": "main",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 505
+      "line": 517
     },
     {
       "name": "_decode_data_uri",
@@ -206,24 +191,6 @@
       "kind": "function",
       "file": "gltf_binary_metrics.py",
       "line": 241
-    },
-    {
-      "name": "detect_pillow_webp",
-      "kind": "function",
-      "file": "raster_backend.py",
-      "line": 6
-    },
-    {
-      "name": "decode_webp_rgba",
-      "kind": "function",
-      "file": "raster_backend.py",
-      "line": 40
-    },
-    {
-      "name": "encode_webp_rgba",
-      "kind": "function",
-      "file": "raster_backend.py",
-      "line": 71
     },
     {
       "name": "_read_webp_bytes",
@@ -418,16 +385,58 @@
       "line": 909
     },
     {
+      "name": "_alpha_bounds",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 934
+    },
+    {
+      "name": "_crop_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 952
+    },
+    {
+      "name": "_blit_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 974
+    },
+    {
+      "name": "_extrude_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 991
+    },
+    {
+      "name": "_prepare_frame",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1038
+    },
+    {
       "name": "_next_power_of_two",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 926
+      "line": 1063
+    },
+    {
+      "name": "_pack_shelves",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1069
+    },
+    {
+      "name": "pack_compact_atlas",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1116
     },
     {
       "name": "pack_uniform_atlas",
       "kind": "function",
       "file": "raster_pack.py",
-      "line": 932
+      "line": 1201
     },
     {
       "name": "chunk",
@@ -956,6 +965,36 @@
       "kind": "function",
       "file": "tests/test_raster_pack.py",
       "line": 940
+    },
+    {
+      "name": "test_uniform_atlas_trim_records_source_offsets",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 951
+    },
+    {
+      "name": "test_uniform_atlas_extrudes_edge_pixels",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 981
+    },
+    {
+      "name": "test_compact_atlas_packs_variable_size_frames",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1005
+    },
+    {
+      "name": "test_compact_atlas_rejects_frame_wider_than_budget",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1039
+    },
+    {
+      "name": "test_recompress_png_keeps_original_when_candidate_is_larger",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1052
     }
   ],
   "selected_tests": [
