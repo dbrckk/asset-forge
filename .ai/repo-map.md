@@ -51,6 +51,11 @@ pipelines/
   model-3d.json
   sprite-2d.json
   vector-svg.json
+profiles/
+  vector/
+    icon.json
+    logo.json
+    ui.json
 schemas/
   asset-manifest.schema.json
 tests/
@@ -348,6 +353,51 @@ jobs:
 }
 ````
 
+## File: profiles/vector/icon.json
+````json
+{
+  "id": "icon",
+  "assetTypes": ["icon"],
+  "rules": {
+    "requireViewBox": true,
+    "requireSquareViewBox": true,
+    "maxElements": 256,
+    "allowExternalReferences": false,
+    "removeMetadata": true
+  }
+}
+````
+
+## File: profiles/vector/logo.json
+````json
+{
+  "id": "logo",
+  "assetTypes": ["logo"],
+  "rules": {
+    "requireViewBox": true,
+    "requireSquareViewBox": false,
+    "maxElements": 800,
+    "allowExternalReferences": false,
+    "removeMetadata": true
+  }
+}
+````
+
+## File: profiles/vector/ui.json
+````json
+{
+  "id": "ui",
+  "assetTypes": ["ui-vector", "vector"],
+  "rules": {
+    "requireViewBox": true,
+    "requireSquareViewBox": false,
+    "maxElements": 1200,
+    "allowExternalReferences": false,
+    "removeMetadata": true
+  }
+}
+````
+
 ## File: schemas/asset-manifest.schema.json
 ````json
 {
@@ -621,6 +671,24 @@ output = Path(tmp) / "clean.svg"
 report = sanitize_svg(source, output)
 ⋮----
 rendered = output.read_text(encoding="utf-8")
+⋮----
+def test_icon_profile_requires_square_viewbox(self)
+⋮----
+def test_ui_profile_accepts_non_square_viewbox(self)
+⋮----
+path = Path(tmp) / "ui.svg"
+⋮----
+def test_aspect_ratio_mismatch_warns(self)
+⋮----
+path = Path(tmp) / "mismatch.svg"
+⋮----
+def test_normalize_viewbox_from_dimensions(self)
+⋮----
+output = Path(tmp) / "normalized.svg"
+⋮----
+report = normalize_viewbox(source, output)
+⋮----
+def test_sanitize_removes_metadata(self)
 ````
 
 ## File: AGENTS.md
@@ -867,6 +935,8 @@ svg_validate = sub.add_parser("validate-svg", help="validate an SVG for safe pro
 ⋮----
 svg_sanitize = sub.add_parser("sanitize-svg", help="remove unsafe SVG content")
 ⋮----
+svg_normalize = sub.add_parser("normalize-svg", help="ensure SVG has a usable viewBox")
+⋮----
 def main() -> int
 ⋮----
 args = parser().parse_args()
@@ -895,6 +965,8 @@ result = infer_animations(
 result = {"file": str(args.input), "info": info, "errors": errors, "warnings": warnings}
 ⋮----
 result = sanitize_svg(args.input, args.output)
+⋮----
+result = normalize_viewbox(args.input, args.output)
 ````
 
 ## File: godot_export.py
@@ -1261,13 +1333,27 @@ Validate an SVG before it enters a project:
 python asset_forge.py validate-svg path/to/icon.svg
 ```
 
-Create a sanitized copy that removes executable/unsafe SVG content and external references:
+Create a sanitized copy that removes executable/unsafe SVG content, editor metadata, and external references:
 
 ```bash
 python asset_forge.py sanitize-svg path/to/icon.svg build/icon.safe.svg
 ```
 
-The current vector validator checks XML validity, SVG root type, viewBox shape, dimensions, scripts/foreignObject, event-handler attributes, and external href/src references.
+Normalize a missing viewBox from positive numeric width/height values:
+
+```bash
+python asset_forge.py normalize-svg source.svg build/source.normalized.svg
+```
+
+Apply a production profile:
+
+```bash
+python asset_forge.py validate-svg icon.svg --profile icon
+python asset_forge.py validate-svg hud.svg --profile ui
+python asset_forge.py validate-svg brand.svg --profile logo
+```
+
+The current vector validator checks XML validity, SVG root type, viewBox shape, width/height consistency, scripts/foreignObject, event-handler attributes, external href/src references, editor metadata, and profile-specific complexity/shape rules. Versioned profile descriptions live under `profiles/vector/`.
 
 ## Initial interoperability
 
@@ -1308,8 +1394,11 @@ result = run_starlist_recommender(
 SVG_NS = "http://www.w3.org/2000/svg"
 XLINK_NS = "http://www.w3.org/1999/xlink"
 DANGEROUS_TAGS = {"script", "foreignObject"}
+METADATA_TAGS = {"metadata"}
 EVENT_ATTRIBUTE = re.compile(r"^on[a-z]+$", re.IGNORECASE)
 LENGTH = re.compile(r"^\s*([0-9]+(?:\.[0-9]+)?)(px)?\s*$", re.IGNORECASE)
+⋮----
+PROFILES = {
 ⋮----
 def _local_name(name: str) -> str
 ⋮----
@@ -1318,6 +1407,18 @@ def _is_external_reference(value: str) -> bool
 value = value.strip()
 ⋮----
 parsed = urlparse(value)
+⋮----
+def _parse_length(value: str | None) -> float | None
+⋮----
+match = LENGTH.match(value)
+⋮----
+def _parse_viewbox(view_box: str | None) -> tuple[float, float, float, float] | None
+⋮----
+parts = view_box.replace(",", " ").split()
+⋮----
+values = tuple(float(item) for item in parts)
+⋮----
+return values  # type: ignore[return-value]
 ⋮----
 def inspect_svg(path: Path) -> tuple[dict, list[str], list[str]]
 ⋮----
@@ -1332,15 +1433,19 @@ root = ET.fromstring(raw)
 width = root.attrib.get("width")
 height = root.attrib.get("height")
 view_box = root.attrib.get("viewBox")
+view_box_values = _parse_viewbox(view_box)
 ⋮----
-parts = view_box.replace(",", " ").split()
+width_value = _parse_length(width)
+height_value = _parse_length(height)
 ⋮----
-values = [float(item) for item in parts]
+pixel_ratio = width_value / height_value if height_value else None
+view_ratio = view_box_values[2] / view_box_values[3] if view_box_values[3] else None
 ⋮----
 element_count = 0
 external_refs: list[str] = []
 dangerous_tags: list[str] = []
 event_attributes: list[str] = []
+metadata_elements = 0
 ⋮----
 tag = _local_name(element.tag)
 ⋮----
@@ -1348,14 +1453,29 @@ local_key = _local_name(key)
 ⋮----
 info = {
 ⋮----
-def sanitize_svg(input_path: Path, output_path: Path) -> dict
+def validate_svg_profile(path: Path, profile: str) -> tuple[dict, list[str], list[str]]
+⋮----
+rules = PROFILES[profile]
+view_box_values = info.get("viewBoxValues")
+⋮----
+def normalize_viewbox(input_path: Path, output_path: Path) -> dict
 ⋮----
 raw = input_path.read_text(encoding="utf-8")
+⋮----
+current = _parse_viewbox(root.attrib.get("viewBox"))
+changed = False
+⋮----
+width = _parse_length(root.attrib.get("width"))
+height = _parse_length(root.attrib.get("height"))
+⋮----
+changed = True
 ⋮----
 removed_elements = 0
 removed_attributes = 0
 ⋮----
 def clean(parent: ET.Element) -> None
+⋮----
+local_tag = _local_name(child.tag)
 ⋮----
 value = child.attrib[key]
 ⋮----

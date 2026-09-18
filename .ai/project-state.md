@@ -51,21 +51,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T17:03:05Z
+Generated: 2026-09-18T17:56:51Z
 
 ### Git
 - Branch: `main`
-- Head: `9c1c7ff00863`
-- Commit date: 2026-09-18T19:03:00+02:00
-- Commit: docs: record expanded png and svg pipeline milestone
-- Tracked files: 68
+- Head: `33e9907871b9`
+- Commit date: 2026-09-18T19:56:28+02:00
+- Commit: docs: record vector profile milestone
+- Tracked files: 72
 
 ### Recently changed files
 - `README.md`
-- `.github/workflows/validate.yml`
-- `asset_forge.py`
+- `profiles/vector/logo.json`
+- `profiles/vector/ui.json`
+- `profiles/vector/icon.json`
 - `tests/test_svg_tools.py`
-- `pipelines/vector-svg.json`
 
 ### Project signals
 - No common build descriptor detected
