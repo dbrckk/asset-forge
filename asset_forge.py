@@ -12,6 +12,7 @@ from pathlib import Path
 
 from godot_export import write_spriteframes
 from raster_pack import pack_uniform_atlas, recompress_png
+from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
 
 PIPELINES = {
     "sprite": "pipelines/sprite-2d.json",
@@ -438,6 +439,15 @@ def parser() -> argparse.ArgumentParser:
     godot.add_argument("--animation", default="default")
     godot.add_argument("--fps", type=float, default=12.0)
     godot.add_argument("--no-loop", action="store_true")
+
+    discover = sub.add_parser("discover-tools", help="query dbrckk/star-list for visual tooling")
+    discover.add_argument("star_list_root", type=Path)
+    discover.add_argument("query", nargs="?")
+    discover.add_argument("--top", type=int, default=8)
+    discover.add_argument("--domain", default="graphics")
+    discover.add_argument("--max-complexity", choices=["low", "medium", "high"], default="medium")
+    discover.add_argument("--full-report", action="store_true")
+    discover.add_argument("--output", type=Path)
     return result
 
 
@@ -496,6 +506,31 @@ def main() -> int:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
         print(str(args.output))
+        return 0
+    if args.command == "discover-tools":
+        try:
+            if args.full_report:
+                result = build_visual_discovery_report(args.star_list_root)
+            else:
+                if not args.query:
+                    raise ValueError("query is required unless --full-report is used")
+                result = run_starlist_recommender(
+                    args.star_list_root,
+                    args.query,
+                    top=args.top,
+                    domain=args.domain,
+                    max_complexity=args.max_complexity,
+                )
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
+        if args.output:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(rendered, encoding="utf-8")
+            print(str(args.output))
+        else:
+            print(rendered, end="")
         return 0
     return 2
 
