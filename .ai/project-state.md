@@ -71,21 +71,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T18:39:23Z
+Generated: 2026-09-18T18:55:51Z
 
 ### Git
 - Branch: `main`
-- Head: `194c122cde7e`
-- Commit date: 2026-09-18T20:38:55+02:00
-- Commit: docs: record engine profile validation milestone
-- Tracked files: 99
+- Head: `ea8a294cb14f`
+- Commit date: 2026-09-18T20:55:04+02:00
+- Commit: docs: record single-source 3d and vector profile milestone
+- Tracked files: 104
 
 ### Recently changed files
 - `README.md`
 - `.github/workflows/validate.yml`
-- `tests/test_engine_profile_validation.py`
+- `tests/test_asset_profile_validation.py`
 - `asset_forge.py`
-- `godot_handoff.py`
+- `schemas/vector-profile.schema.json`
 
 ### Project signals
 - No common build descriptor detected

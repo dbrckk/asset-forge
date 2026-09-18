@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "9a55e51aaa0c4823d01090e6a9a073fbcf87e413",
-  "head": "194c122cde7eaa237e03b34a09acd212fbc4b2a2",
+  "base": "194c122cde7eaa237e03b34a09acd212fbc4b2a2",
+  "head": "ea8a294cb14f4a28b583a63dbbbb9378fdf5d673",
   "index_mode": "incremental",
   "changed_files": [
     {
@@ -18,199 +18,295 @@
       "status": "M"
     },
     {
-      "path": "engine_profile_validation.py",
+      "path": "asset_profile_validation.py",
       "status": "A"
     },
     {
-      "path": "godot_handoff.py",
+      "path": "gltf_quality.py",
       "status": "M"
     },
     {
-      "path": "schemas/godot4-handoff-profile.schema.json",
+      "path": "schemas/3d-quality-profile.schema.json",
       "status": "A"
     },
     {
-      "path": "tests/test_engine_profile_validation.py",
+      "path": "schemas/vector-profile.schema.json",
+      "status": "A"
+    },
+    {
+      "path": "svg_tools.py",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_asset_profile_validation.py",
       "status": "A"
     }
   ],
   "changed_source_files": [
     "asset_forge.py",
-    "engine_profile_validation.py",
-    "godot_handoff.py",
-    "tests/test_engine_profile_validation.py"
+    "asset_profile_validation.py",
+    "gltf_quality.py",
+    "svg_tools.py",
+    "tests/test_asset_profile_validation.py"
   ],
   "impacted_files": [
     "asset_forge.py",
-    "engine_profile_validation.py",
-    "godot_handoff.py",
+    "asset_profile_validation.py",
+    "gltf_quality.py",
+    "godot_3d_delivery.py",
+    "svg_tools.py",
     "tests/test_asset_forge.py",
-    "tests/test_engine_profile_validation.py",
-    "tests/test_godot_handoff.py",
-    "toolchain_3d.py"
+    "tests/test_asset_profile_validation.py",
+    "tests/test_gltf_binary_metrics.py",
+    "tests/test_gltf_quality.py",
+    "tests/test_svg_tools.py"
   ],
   "impacted_symbols": [
     {
       "name": "load_json",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 64
+      "line": 65
     },
     {
       "name": "validate_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 72
+      "line": 73
     },
     {
       "name": "is_power_of_two",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 130
+      "line": 131
     },
     {
       "name": "parse_png_chunks",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 134
+      "line": 135
     },
     {
       "name": "inspect_png",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 166
+      "line": 167
     },
     {
       "name": "sprite_grid",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 205
+      "line": 206
     },
     {
       "name": "build_atlas_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 226
+      "line": 227
     },
     {
       "name": "validate_raster_file",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 257
+      "line": 258
     },
     {
       "name": "select_tools",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 307
+      "line": 308
     },
     {
       "name": "build_plan",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 325
+      "line": 326
     },
     {
       "name": "load_valid_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 354
+      "line": 355
     },
     {
       "name": "cmd_validate",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 370
+      "line": 371
     },
     {
       "name": "cmd_plan",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 378
+      "line": 379
     },
     {
       "name": "cmd_validate_raster",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 386
+      "line": 387
     },
     {
       "name": "cmd_atlas_manifest",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 400
+      "line": 401
     },
     {
       "name": "parser",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 424
+      "line": 425
     },
     {
       "name": "main",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 557
+      "line": 559
     },
     {
-      "name": "_validate_object_keys",
+      "name": "_load_json",
       "kind": "function",
-      "file": "engine_profile_validation.py",
-      "line": 26
+      "file": "asset_profile_validation.py",
+      "line": 35
     },
     {
-      "name": "validate_godot_profile_data",
+      "name": "_validate_rule_types",
       "kind": "function",
-      "file": "engine_profile_validation.py",
-      "line": 56
+      "file": "asset_profile_validation.py",
+      "line": 47
     },
     {
-      "name": "validate_godot_profile_file",
+      "name": "validate_3d_profile_data",
       "kind": "function",
-      "file": "engine_profile_validation.py",
-      "line": 111
+      "file": "asset_profile_validation.py",
+      "line": 66
     },
     {
-      "name": "validate_all_godot_profiles",
+      "name": "validate_vector_profile_data",
       "kind": "function",
-      "file": "engine_profile_validation.py",
-      "line": 124
+      "file": "asset_profile_validation.py",
+      "line": 113
     },
     {
-      "name": "detect_godot",
+      "name": "validate_profile_file",
       "kind": "function",
-      "file": "godot_handoff.py",
-      "line": 12
+      "file": "asset_profile_validation.py",
+      "line": 144
     },
     {
-      "name": "load_godot_profile",
+      "name": "load_3d_profile",
       "kind": "function",
-      "file": "godot_handoff.py",
-      "line": 20
+      "file": "asset_profile_validation.py",
+      "line": 162
     },
     {
-      "name": "build_import_recommendations",
+      "name": "load_vector_profile",
       "kind": "function",
-      "file": "godot_handoff.py",
-      "line": 32
+      "file": "asset_profile_validation.py",
+      "line": 174
     },
     {
-      "name": "prepare_godot_handoff",
+      "name": "validate_all_asset_profiles",
       "kind": "function",
-      "file": "godot_handoff.py",
-      "line": 62
+      "file": "asset_profile_validation.py",
+      "line": 186
     },
     {
-      "name": "godot_import_command",
+      "name": "_accessor_count",
       "kind": "function",
-      "file": "godot_handoff.py",
+      "file": "gltf_quality.py",
+      "line": 11
+    },
+    {
+      "name": "_triangle_count",
+      "kind": "function",
+      "file": "gltf_quality.py",
+      "line": 23
+    },
+    {
+      "name": "build_quality_report",
+      "kind": "function",
+      "file": "gltf_quality.py",
+      "line": 31
+    },
+    {
+      "name": "evaluate_quality",
+      "kind": "function",
+      "file": "gltf_quality.py",
+      "line": 255
+    },
+    {
+      "name": "quality_report",
+      "kind": "function",
+      "file": "gltf_quality.py",
+      "line": 367
+    },
+    {
+      "name": "_name_suffixes",
+      "kind": "function",
+      "file": "godot_3d_delivery.py",
+      "line": 24
+    },
+    {
+      "name": "godot_3d_delivery_report",
+      "kind": "function",
+      "file": "godot_3d_delivery.py",
+      "line": 38
+    },
+    {
+      "name": "_local_name",
+      "kind": "function",
+      "file": "svg_tools.py",
+      "line": 17
+    },
+    {
+      "name": "_is_external_reference",
+      "kind": "function",
+      "file": "svg_tools.py",
+      "line": 21
+    },
+    {
+      "name": "_parse_length",
+      "kind": "function",
+      "file": "svg_tools.py",
+      "line": 29
+    },
+    {
+      "name": "_parse_viewbox",
+      "kind": "function",
+      "file": "svg_tools.py",
+      "line": 38
+    },
+    {
+      "name": "inspect_svg",
+      "kind": "function",
+      "file": "svg_tools.py",
+      "line": 51
+    },
+    {
+      "name": "validate_svg_profile",
+      "kind": "function",
+      "file": "svg_tools.py",
+      "line": 142
+    },
+    {
+      "name": "normalize_viewbox",
+      "kind": "function",
+      "file": "svg_tools.py",
       "line": 167
     },
     {
-      "name": "validate_godot_handoff",
+      "name": "sanitize_svg",
       "kind": "function",
-      "file": "godot_handoff.py",
-      "line": 177
+      "file": "svg_tools.py",
+      "line": 215
+    },
+    {
+      "name": "clean",
+      "kind": "function",
+      "file": "svg_tools.py",
+      "line": 234
     },
     {
       "name": "chunk",
@@ -315,213 +411,227 @@
       "line": 162
     },
     {
-      "name": "EngineProfileValidationTests",
+      "name": "AssetProfileValidationTests",
       "kind": "class",
-      "file": "tests/test_engine_profile_validation.py",
-      "line": 13
-    },
-    {
-      "name": "valid_profile",
-      "kind": "function",
-      "file": "tests/test_engine_profile_validation.py",
-      "line": 14
-    },
-    {
-      "name": "test_valid_profile_passes",
-      "kind": "function",
-      "file": "tests/test_engine_profile_validation.py",
-      "line": 37
-    },
-    {
-      "name": "test_missing_required_field_fails",
-      "kind": "function",
-      "file": "tests/test_engine_profile_validation.py",
-      "line": 40
-    },
-    {
-      "name": "test_unknown_field_fails",
-      "kind": "function",
-      "file": "tests/test_engine_profile_validation.py",
-      "line": 46
-    },
-    {
-      "name": "test_wrong_type_fails",
-      "kind": "function",
-      "file": "tests/test_engine_profile_validation.py",
-      "line": 52
-    },
-    {
-      "name": "test_invalid_fps_fails",
-      "kind": "function",
-      "file": "tests/test_engine_profile_validation.py",
-      "line": 58
-    },
-    {
-      "name": "test_profile_name_mismatch_fails",
-      "kind": "function",
-      "file": "tests/test_engine_profile_validation.py",
-      "line": 64
-    },
-    {
-      "name": "test_invalid_json_file_fails",
-      "kind": "function",
-      "file": "tests/test_engine_profile_validation.py",
-      "line": 69
+      "file": "tests/test_asset_profile_validation.py",
+      "line": 15
     },
     {
       "name": "test_repository_profiles_all_validate",
       "kind": "function",
-      "file": "tests/test_engine_profile_validation.py",
-      "line": 76
-    },
-    {
-      "name": "GodotHandoffTests",
-      "kind": "class",
-      "file": "tests/test_godot_handoff.py",
+      "file": "tests/test_asset_profile_validation.py",
       "line": 16
     },
     {
-      "name": "test_recommendations_disable_animation_for_prop_without_clips",
+      "name": "test_3d_loader_reads_versioned_budget",
       "kind": "function",
-      "file": "tests/test_godot_handoff.py",
-      "line": 17
+      "file": "tests/test_asset_profile_validation.py",
+      "line": 21
     },
     {
-      "name": "test_profiles_are_loaded_from_versioned_json",
+      "name": "test_vector_loader_reads_versioned_budget",
       "kind": "function",
-      "file": "tests/test_godot_handoff.py",
+      "file": "tests/test_asset_profile_validation.py",
       "line": 26
     },
     {
-      "name": "test_recommendations_report_profile_source",
+      "name": "test_invalid_3d_unknown_rule_fails",
       "kind": "function",
-      "file": "tests/test_godot_handoff.py",
-      "line": 36
+      "file": "tests/test_asset_profile_validation.py",
+      "line": 31
     },
     {
-      "name": "test_profile_loader_uses_file_contents_as_source_of_truth",
+      "name": "test_invalid_vector_type_fails",
       "kind": "function",
-      "file": "tests/test_godot_handoff.py",
-      "line": 44
+      "file": "tests/test_asset_profile_validation.py",
+      "line": 55
     },
     {
-      "name": "test_prepare_handoff_copies_glb_and_writes_project",
+      "name": "test_3d_loader_uses_file_as_source_of_truth",
       "kind": "function",
-      "file": "tests/test_godot_handoff.py",
-      "line": 82
+      "file": "tests/test_asset_profile_validation.py",
+      "line": 70
     },
     {
-      "name": "test_missing_delivery_report_is_rejected",
+      "name": "test_vector_loader_uses_file_as_source_of_truth",
       "kind": "function",
-      "file": "tests/test_godot_handoff.py",
-      "line": 127
+      "file": "tests/test_asset_profile_validation.py",
+      "line": 100
     },
     {
-      "name": "test_failed_delivery_report_is_rejected",
+      "name": "chunk",
       "kind": "function",
-      "file": "tests/test_godot_handoff.py",
-      "line": 139
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 16
     },
     {
-      "name": "test_allow_unvalidated_override",
+      "name": "tiny_png",
       "kind": "function",
-      "file": "tests/test_godot_handoff.py",
-      "line": 152
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 25
     },
     {
-      "name": "test_non_glb_is_rejected",
-      "kind": "function",
-      "file": "tests/test_godot_handoff.py",
-      "line": 166
+      "name": "GltfBinaryMetricsTests",
+      "kind": "class",
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 31
     },
     {
-      "name": "test_import_command_uses_headless_import",
+      "name": "test_data_uri_png_dimensions_and_memory",
       "kind": "function",
-      "file": "tests/test_godot_handoff.py",
-      "line": 174
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 32
     },
     {
-      "name": "test_missing_godot_is_non_blocking",
+      "name": "test_local_external_png_dimensions",
       "kind": "function",
-      "file": "tests/test_godot_handoff.py",
-      "line": 183
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 50
     },
     {
-      "name": "test_available_godot_import_passes",
+      "name": "test_animation_and_rig_metrics",
       "kind": "function",
-      "file": "tests/test_godot_handoff.py",
-      "line": 195
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 65
     },
     {
-      "name": "detect_3d_tools",
+      "name": "test_quality_report_includes_binary_metrics",
       "kind": "function",
-      "file": "toolchain_3d.py",
-      "line": 18
+      "file": "tests/test_gltf_binary_metrics.py",
+      "line": 91
     },
     {
-      "name": "_quote",
-      "kind": "function",
-      "file": "toolchain_3d.py",
-      "line": 40
+      "name": "GltfQualityTests",
+      "kind": "class",
+      "file": "tests/test_gltf_quality.py",
+      "line": 9
     },
     {
-      "name": "validator_command",
+      "name": "write",
       "kind": "function",
-      "file": "toolchain_3d.py",
-      "line": 44
+      "file": "tests/test_gltf_quality.py",
+      "line": 10
     },
     {
-      "name": "gltf_transform_command",
+      "name": "base",
       "kind": "function",
-      "file": "toolchain_3d.py",
+      "file": "tests/test_gltf_quality.py",
+      "line": 15
+    },
+    {
+      "name": "test_counts_vertices_and_triangles",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 50
+    },
+    {
+      "name": "test_triangle_strip_count",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 59
+    },
+    {
+      "name": "test_character_quality_requires_skin_attributes",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 68
+    },
+    {
+      "name": "test_textured_primitive_requires_uv",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 76
+    },
+    {
+      "name": "test_normal_map_without_tangent_warns",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 85
+    },
+    {
+      "name": "test_external_image_is_reported",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 93
+    },
+    {
+      "name": "test_untextured_primitive_does_not_require_uv",
+      "kind": "function",
+      "file": "tests/test_gltf_quality.py",
+      "line": 100
+    },
+    {
+      "name": "SvgToolsTests",
+      "kind": "class",
+      "file": "tests/test_svg_tools.py",
+      "line": 8
+    },
+    {
+      "name": "test_valid_svg_passes",
+      "kind": "function",
+      "file": "tests/test_svg_tools.py",
+      "line": 9
+    },
+    {
+      "name": "test_missing_viewbox_warns",
+      "kind": "function",
+      "file": "tests/test_svg_tools.py",
+      "line": 23
+    },
+    {
+      "name": "test_script_and_events_are_rejected",
+      "kind": "function",
+      "file": "tests/test_svg_tools.py",
+      "line": 35
+    },
+    {
+      "name": "test_external_href_is_rejected",
+      "kind": "function",
+      "file": "tests/test_svg_tools.py",
       "line": 48
     },
     {
-      "name": "gltfpack_command",
+      "name": "test_sanitize_removes_dangerous_content",
       "kind": "function",
-      "file": "toolchain_3d.py",
-      "line": 61
+      "file": "tests/test_svg_tools.py",
+      "line": 60
     },
     {
-      "name": "build_3d_pipeline",
+      "name": "test_icon_profile_requires_square_viewbox",
       "kind": "function",
-      "file": "toolchain_3d.py",
-      "line": 80
+      "file": "tests/test_svg_tools.py",
+      "line": 83
     },
     {
-      "name": "prepare_3d_pipeline",
+      "name": "test_ui_profile_accepts_non_square_viewbox",
       "kind": "function",
-      "file": "toolchain_3d.py",
-      "line": 305
+      "file": "tests/test_svg_tools.py",
+      "line": 94
     },
     {
-      "name": "execute_command",
+      "name": "test_aspect_ratio_mismatch_warns",
       "kind": "function",
-      "file": "toolchain_3d.py",
-      "line": 318
+      "file": "tests/test_svg_tools.py",
+      "line": 105
     },
     {
-      "name": "_read_json_if_exists",
+      "name": "test_normalize_viewbox_from_dimensions",
       "kind": "function",
-      "file": "toolchain_3d.py",
-      "line": 336
+      "file": "tests/test_svg_tools.py",
+      "line": 121
     },
     {
-      "name": "_build_production_summary",
+      "name": "test_sanitize_removes_metadata",
       "kind": "function",
-      "file": "toolchain_3d.py",
-      "line": 346
-    },
-    {
-      "name": "execute_3d_pipeline",
-      "kind": "function",
-      "file": "toolchain_3d.py",
-      "line": 388
+      "file": "tests/test_svg_tools.py",
+      "line": 138
     }
   ],
   "selected_tests": [
     "tests/test_asset_forge.py",
-    "tests/test_engine_profile_validation.py",
-    "tests/test_godot_handoff.py"
+    "tests/test_asset_profile_validation.py",
+    "tests/test_gltf_binary_metrics.py",
+    "tests/test_gltf_quality.py",
+    "tests/test_svg_tools.py"
   ]
 }

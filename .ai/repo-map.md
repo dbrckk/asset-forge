@@ -65,11 +65,14 @@ profiles/
     logo.json
     ui.json
 schemas/
+  3d-quality-profile.schema.json
   asset-manifest.schema.json
   godot4-handoff-profile.schema.json
+  vector-profile.schema.json
 tests/
   test_animation_infer.py
   test_asset_forge.py
+  test_asset_profile_validation.py
   test_blender_adapter.py
   test_engine_profile_validation.py
   test_gltf_binary_metrics.py
@@ -86,6 +89,7 @@ tests/
 AGENTS.md
 animation_infer.py
 asset_forge.py
+asset_profile_validation.py
 blender_adapter.py
 engine_profile_validation.py
 gltf_binary_metrics.py
@@ -150,7 +154,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -161,6 +165,8 @@ jobs:
         run: python asset_forge.py 3d-toolchain-status
       - name: Validate engine handoff profiles
         run: python asset_forge.py validate-engine-profiles
+      - name: Validate 3D and vector profiles
+        run: python asset_forge.py validate-asset-profiles
       - name: Checkout star-list
         uses: actions/checkout@v4
         with:
@@ -581,6 +587,50 @@ jobs:
 }
 ````
 
+## File: schemas/3d-quality-profile.schema.json
+````json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-forge 3D quality profile",
+  "type": "object",
+  "required": ["id", "assetTypes", "rules"],
+  "properties": {
+    "id": {"enum": ["prop", "environment", "character"]},
+    "assetTypes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "rules": {
+      "type": "object",
+      "required": [
+        "maxMeshes", "maxPrimitives", "maxMaterials", "maxVertices",
+        "maxTriangles", "maxTextures", "allowAnimations", "requireSkin",
+        "requireNormals", "requireUvWhenTextured", "maxTextureDimension",
+        "maxEstimatedTextureMipBytes", "maxJointsPerSkin"
+      ],
+      "properties": {
+        "maxMeshes": {"type": "integer", "minimum": 1},
+        "maxPrimitives": {"type": "integer", "minimum": 1},
+        "maxMaterials": {"type": "integer", "minimum": 1},
+        "maxVertices": {"type": "integer", "minimum": 1},
+        "maxTriangles": {"type": "integer", "minimum": 1},
+        "maxTextures": {"type": "integer", "minimum": 1},
+        "allowAnimations": {"type": "boolean"},
+        "requireSkin": {"type": "boolean"},
+        "requireNormals": {"type": "boolean"},
+        "requireUvWhenTextured": {"type": "boolean"},
+        "maxTextureDimension": {"type": "integer", "minimum": 1},
+        "maxEstimatedTextureMipBytes": {"type": "integer", "minimum": 1},
+        "maxJointsPerSkin": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+````
+
 ## File: schemas/asset-manifest.schema.json
 ````json
 {
@@ -683,6 +733,43 @@ jobs:
 }
 ````
 
+## File: schemas/vector-profile.schema.json
+````json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-forge vector validation profile",
+  "type": "object",
+  "required": ["id", "assetTypes", "rules"],
+  "properties": {
+    "id": {"enum": ["icon", "ui", "logo"]},
+    "assetTypes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "rules": {
+      "type": "object",
+      "required": [
+        "requireViewBox",
+        "requireSquareViewBox",
+        "maxElements",
+        "allowExternalReferences",
+        "removeMetadata"
+      ],
+      "properties": {
+        "requireViewBox": {"type": "boolean"},
+        "requireSquareViewBox": {"type": "boolean"},
+        "maxElements": {"type": "integer", "minimum": 1},
+        "allowExternalReferences": {"type": "boolean"},
+        "removeMetadata": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+````
+
 ## File: tests/test_animation_infer.py
 ````python
 class AnimationInferTests(unittest.TestCase)
@@ -767,6 +854,46 @@ def test_invalid_png_crc_is_rejected(self)
 image = Path(tmp) / "bad.png"
 ⋮----
 data = bytearray(image.read_bytes())
+````
+
+## File: tests/test_asset_profile_validation.py
+````python
+class AssetProfileValidationTests(unittest.TestCase)
+⋮----
+def test_repository_profiles_all_validate(self)
+⋮----
+root = Path(__file__).resolve().parents[1]
+report = validate_all_asset_profiles(root)
+⋮----
+def test_3d_loader_reads_versioned_budget(self)
+⋮----
+profile = load_3d_profile("character")
+⋮----
+def test_vector_loader_reads_versioned_budget(self)
+⋮----
+profile = load_vector_profile("icon")
+⋮----
+def test_invalid_3d_unknown_rule_fails(self)
+⋮----
+data = {
+errors = validate_3d_profile_data(data, "prop")
+⋮----
+def test_invalid_vector_type_fails(self)
+⋮----
+errors = validate_vector_profile_data(data, "icon")
+⋮----
+def test_3d_loader_uses_file_as_source_of_truth(self)
+⋮----
+root = Path(tmp)
+profile_dir = root / "profiles" / "3d"
+⋮----
+loaded = load_3d_profile("prop", root=root)
+⋮----
+def test_vector_loader_uses_file_as_source_of_truth(self)
+⋮----
+profile_dir = root / "profiles" / "vector"
+⋮----
+loaded = load_vector_profile("icon", root=root)
 ````
 
 ## File: tests/test_blender_adapter.py
@@ -1535,6 +1662,7 @@ godot_handoff = sub.add_parser("prepare-godot-handoff", help="prepare a self-con
 godot_import = sub.add_parser("validate-godot-handoff", help="run Godot headless import validation on a handoff")
 ⋮----
 engine_profiles = sub.add_parser("validate-engine-profiles", help="validate versioned engine handoff profiles")
+asset_profiles = sub.add_parser("validate-asset-profiles", help="validate versioned 3D and vector asset profiles")
 ⋮----
 blender_job = sub.add_parser("blender-export-job", help="create a reproducible Blender GLB export job")
 ⋮----
@@ -1592,6 +1720,8 @@ result = validate_godot_handoff(args.project_dir, executable=args.godot)
 ⋮----
 result = validate_all_godot_profiles(root)
 ⋮----
+result = validate_all_asset_profiles(root)
+⋮----
 result = quality_report(args.input, args.profile)
 ⋮----
 evaluation = result.get("evaluation")
@@ -1603,6 +1733,62 @@ result = {
 plan = build_3d_pipeline(
 ⋮----
 result = execute_3d_pipeline(plan, root)
+````
+
+## File: asset_profile_validation.py
+````python
+THREED_PROFILES = {"prop", "environment", "character"}
+VECTOR_PROFILES = {"icon", "ui", "logo"}
+⋮----
+THREED_RULE_TYPES = {
+⋮----
+VECTOR_RULE_TYPES = {
+⋮----
+def _load_json(path: Path) -> tuple[dict | None, list[str]]
+⋮----
+data = json.loads(path.read_text(encoding="utf-8"))
+⋮----
+def _validate_rule_types(rules, expected: dict[str, type], label: str) -> list[str]
+⋮----
+errors: list[str] = []
+⋮----
+def validate_3d_profile_data(data: dict, expected_profile: str | None = None) -> list[str]
+⋮----
+allowed = {"id", "assetTypes", "rules"}
+⋮----
+profile_id = data.get("id")
+⋮----
+asset_types = data.get("assetTypes")
+⋮----
+rules = data.get("rules")
+⋮----
+positive_or_zero = {
+⋮----
+value = rules.get(key)
+⋮----
+def validate_vector_profile_data(data: dict, expected_profile: str | None = None) -> list[str]
+⋮----
+max_elements = rules.get("maxElements")
+⋮----
+def load_3d_profile(profile: str, root: Path | None = None) -> dict
+⋮----
+base = root or Path(__file__).resolve().parent
+path = base / "profiles" / "3d" / f"{profile}.json"
+⋮----
+def load_vector_profile(profile: str, root: Path | None = None) -> dict
+⋮----
+path = base / "profiles" / "vector" / f"{profile}.json"
+⋮----
+def validate_all_asset_profiles(root: Path) -> dict
+⋮----
+groups = {}
+valid = True
+⋮----
+group = {}
+⋮----
+path = root / "profiles" / folder / f"{profile}.json"
+⋮----
+valid = valid and not errors
 ````
 
 ## File: blender_adapter.py
@@ -1960,8 +2146,6 @@ def deep_gltf_diagnostics(path: Path) -> dict
 
 ## File: gltf_quality.py
 ````python
-QUALITY_PROFILES = {
-⋮----
 def _accessor_count(accessors: list, index) -> int | None
 ⋮----
 accessor = accessors[index]
@@ -2065,7 +2249,8 @@ max_texture_height = max((int(item["height"]) for item in known_image_dimensions
 ⋮----
 def evaluate_quality(report: dict, profile: str) -> dict
 ⋮----
-rules = QUALITY_PROFILES[profile]
+profile_data = load_3d_profile(profile)
+rules = profile_data["rules"]
 geometry = report["geometry"]
 attributes = report["attributes"]
 materials = report["materials"]
@@ -2679,7 +2864,7 @@ python asset_forge.py validate-svg hud.svg --profile ui
 python asset_forge.py validate-svg brand.svg --profile logo
 ```
 
-The current vector validator checks XML validity, SVG root type, viewBox shape, width/height consistency, scripts/foreignObject, event-handler attributes, external href/src references, editor metadata, and profile-specific complexity/shape rules. Versioned profile descriptions live under `profiles/vector/`.
+The current vector validator checks XML validity, SVG root type, viewBox shape, width/height consistency, scripts/foreignObject, event-handler attributes, external href/src references, editor metadata, and profile-specific complexity/shape rules. Versioned profiles under `profiles/vector/` are the runtime source of truth; `svg_tools.py` loads them directly instead of duplicating their rules.
 
 ## 3D / Blender workflow
 
@@ -2709,7 +2894,7 @@ Measure production quality and budgets:
 python asset_forge.py quality-gltf prop.glb --profile prop --output build/prop-quality.json
 ```
 
-The quality report derives vertex and triangle counts from accessor metadata, measures primitive coverage for normals/UVs/tangents/skinning, summarizes PBR texture usage, identifies external images, and evaluates the versioned profile budgets under `profiles/3d/`.
+The quality report derives vertex and triangle counts from accessor metadata, measures primitive coverage for normals/UVs/tangents/skinning, summarizes PBR texture usage, identifies external images, and evaluates the versioned profile budgets under `profiles/3d/`. These JSON profiles are now the runtime source of truth for 3D quality budgets; `gltf_quality.py` loads them directly.
 
 When image bytes are locally available, the report also reads PNG/JPEG/WebP dimensions and estimates decoded RGBA8 texture memory with mipmaps. Remote URLs are not fetched. Rig/animation metrics include joints per skin, inverse bind matrices, animation channels/samplers, target paths, animated nodes, keyframe accessor counts, and duration when animation time accessors are locally readable.
 
@@ -2798,7 +2983,13 @@ Validate all engine profiles directly:
 python asset_forge.py validate-engine-profiles
 ```
 
-The contract is documented by `schemas/godot4-handoff-profile.schema.json`. Runtime validation rejects missing/unknown fields, wrong types, invalid profile identity, and animation FPS outside 1–240. CI runs this validation on every change. When Godot is available, handoff validation also runs the documented headless `--import` workflow.
+Validate the versioned 3D and vector asset profiles:
+
+```bash
+python asset_forge.py validate-asset-profiles
+```
+
+The Godot handoff contract is documented by `schemas/godot4-handoff-profile.schema.json`. The same pattern is used for `schemas/3d-quality-profile.schema.json` and `schemas/vector-profile.schema.json`. Runtime validation rejects malformed profile structures before they reach the consumers, and CI validates all three profile families on every change. When Godot is available, handoff validation also runs the documented headless `--import` workflow.
 
 The Godot delivery report checks glTF 2.0 suitability, stable/duplicate names, Godot import suffix hints, animation naming, PBR materials, double-sided materials, normal-map tangents, remote/external images, and the existing 3D quality profile.
 
@@ -2848,8 +3039,6 @@ DANGEROUS_TAGS = {"script", "foreignObject"}
 METADATA_TAGS = {"metadata"}
 EVENT_ATTRIBUTE = re.compile(r"^on[a-z]+$", re.IGNORECASE)
 LENGTH = re.compile(r"^\s*([0-9]+(?:\.[0-9]+)?)(px)?\s*$", re.IGNORECASE)
-⋮----
-PROFILES = {
 ⋮----
 def _local_name(name: str) -> str
 ⋮----
@@ -2906,7 +3095,9 @@ info = {
 ⋮----
 def validate_svg_profile(path: Path, profile: str) -> tuple[dict, list[str], list[str]]
 ⋮----
-rules = PROFILES[profile]
+profile_data = load_vector_profile(profile)
+⋮----
+rules = profile_data["rules"]
 view_box_values = info.get("viewBoxValues")
 ⋮----
 def normalize_viewbox(input_path: Path, output_path: Path) -> dict
