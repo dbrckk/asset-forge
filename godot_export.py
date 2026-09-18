@@ -13,6 +13,13 @@ def _validate_frames(atlas_metadata: dict) -> list[dict]:
     if not isinstance(frames, list) or not frames:
         raise ValueError("atlas metadata must contain at least one frame")
 
+    atlas_width = atlas_metadata.get("imageWidth")
+    atlas_height = atlas_metadata.get("imageHeight")
+    if atlas_width is not None:
+        atlas_width = int(atlas_width)
+    if atlas_height is not None:
+        atlas_height = int(atlas_height)
+
     normalized = []
     for index, frame in enumerate(frames):
         try:
@@ -25,8 +32,29 @@ def _validate_frames(atlas_metadata: dict) -> list[dict]:
                 f"invalid frame {index}: expected integer x/y/width/height"
             ) from exc
 
+        if x < 0 or y < 0:
+            raise ValueError(f"invalid frame {index}: x/y must be >= 0")
         if width <= 0 or height <= 0:
             raise ValueError(f"invalid frame {index}: width/height must be > 0")
+        if atlas_width is not None and x + width > atlas_width:
+            raise ValueError(f"invalid frame {index}: region exceeds atlas width")
+        if atlas_height is not None and y + height > atlas_height:
+            raise ValueError(f"invalid frame {index}: region exceeds atlas height")
+
+        source_width = int(frame.get("sourceWidth", width))
+        source_height = int(frame.get("sourceHeight", height))
+        offset_x = int(frame.get("offsetX", 0))
+        offset_y = int(frame.get("offsetY", 0))
+        if source_width < width or source_height < height:
+            raise ValueError(
+                f"invalid frame {index}: source dimensions cannot be smaller than trimmed region"
+            )
+        if offset_x < 0 or offset_y < 0:
+            raise ValueError(f"invalid frame {index}: trim offsets must be >= 0")
+        if offset_x + width > source_width or offset_y + height > source_height:
+            raise ValueError(
+                f"invalid frame {index}: trimmed region does not fit source dimensions"
+            )
 
         normalized.append(
             {
@@ -35,6 +63,10 @@ def _validate_frames(atlas_metadata: dict) -> list[dict]:
                 "y": y,
                 "width": width,
                 "height": height,
+                "sourceWidth": source_width,
+                "sourceHeight": source_height,
+                "offsetX": offset_x,
+                "offsetY": offset_y,
                 "name": frame.get("name"),
             }
         )
@@ -162,17 +194,23 @@ def render_spriteframes(
         index = frame["index"]
         resource_id = f"AtlasTexture_{index}"
         resource_ids.append(resource_id)
-        lines.extend(
-            [
-                f'[sub_resource type="AtlasTexture" id="{resource_id}"]',
-                'atlas = ExtResource("1_atlas")',
-                (
-                    f'region = Rect2({frame["x"]}, {frame["y"]}, '
-                    f'{frame["width"]}, {frame["height"]})'
-                ),
-                "",
-            ]
-        )
+        resource_lines = [
+            f'[sub_resource type="AtlasTexture" id="{resource_id}"]',
+            'atlas = ExtResource("1_atlas")',
+            (
+                f'region = Rect2({frame["x"]}, {frame["y"]}, '
+                f'{frame["width"]}, {frame["height"]})'
+            ),
+        ]
+        extra_width = frame["sourceWidth"] - frame["width"]
+        extra_height = frame["sourceHeight"] - frame["height"]
+        if extra_width or extra_height or frame["offsetX"] or frame["offsetY"]:
+            resource_lines.append(
+                f'margin = Rect2({frame["offsetX"]}, {frame["offsetY"]}, '
+                f'{extra_width}, {extra_height})'
+            )
+        resource_lines.append("")
+        lines.extend(resource_lines)
 
     rendered_animations = []
     for animation in animation_defs:
