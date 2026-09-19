@@ -12,6 +12,37 @@ class ProductionExecutionError(RuntimeError):
     pass
 
 
+def _safe_asset_id(value) -> str:
+    asset_id = str(value or "").strip()
+    if (
+        not asset_id
+        or asset_id in {".", ".."}
+        or "/" in asset_id
+        or "\\" in asset_id
+        or any(ord(ch) < 32 or ord(ch) == 127 for ch in asset_id)
+        or len(asset_id) > 128
+    ):
+        raise ProductionExecutionError("production job asset id is not a safe filename")
+    return asset_id
+
+
+def _trusted_generated_source(output_dir: Path, generation: dict, *, label: str = "generator") -> Path:
+    raw = generation.get("sourcePath") if isinstance(generation, dict) else None
+    source = Path(str(raw or ""))
+    if not source.is_file():
+        raise ProductionExecutionError(f"{label} result source file missing")
+    try:
+        resolved_out = Path(output_dir).resolve()
+        resolved_source = source.resolve()
+    except OSError as exc:
+        raise ProductionExecutionError(f"{label} source path cannot be resolved") from exc
+    if not resolved_source.is_relative_to(resolved_out):
+        raise ProductionExecutionError(f"{label} source path escapes output directory")
+    if source.is_symlink():
+        raise ProductionExecutionError(f"{label} source file must not be a symlink")
+    return source
+
+
 def execute_generated_raster_job(
     job: dict,
     output_dir: Path,
@@ -41,9 +72,7 @@ def execute_generated_raster_job(
             f"generated raster production does not support target format: {target_format or '<missing>'}"
         )
 
-    asset_id = str(job.get("assetId") or manifest.get("id") or "").strip()
-    if not asset_id:
-        raise ProductionExecutionError("production job asset id missing")
+    asset_id = _safe_asset_id(job.get("assetId") or manifest.get("id"))
 
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -54,9 +83,7 @@ def execute_generated_raster_job(
         model=model,
         timeout_seconds=timeout_seconds,
     )
-    source = Path(str(generation.get("sourcePath") or ""))
-    if not source.is_file():
-        raise ProductionExecutionError("generator result source file missing")
+    source = _trusted_generated_source(out, generation)
 
     final = out / f"{asset_id}.{target_format}"
     if target_format == "png":
@@ -129,9 +156,7 @@ def execute_generated_vector_job(
             f"generated vector production does not support asset type: {asset_type or '<missing>'}"
         )
 
-    asset_id = str(job.get("assetId") or manifest.get("id") or "").strip()
-    if not asset_id:
-        raise ProductionExecutionError("production job asset id missing")
+    asset_id = _safe_asset_id(job.get("assetId") or manifest.get("id"))
 
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -142,9 +167,7 @@ def execute_generated_vector_job(
         model=model,
         timeout_seconds=timeout_seconds,
     )
-    source = Path(str(generation.get("sourcePath") or ""))
-    if not source.is_file():
-        raise ProductionExecutionError("generator result source file missing")
+    source = _trusted_generated_source(out, generation)
 
     sanitized = out / "generated-sanitized.svg"
     final = out / f"{asset_id}.svg"
@@ -233,9 +256,7 @@ def execute_generated_3d_job(
             "generated 3D production currently emits self-contained GLB only"
         )
 
-    asset_id = str(job.get("assetId") or manifest.get("id") or "").strip()
-    if not asset_id:
-        raise ProductionExecutionError("production job asset id missing")
+    asset_id = _safe_asset_id(job.get("assetId") or manifest.get("id"))
 
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -246,9 +267,7 @@ def execute_generated_3d_job(
         resolution=resolution,
         timeout_seconds=timeout_seconds,
     )
-    source = Path(str(generation.get("sourcePath") or ""))
-    if not source.is_file():
-        raise ProductionExecutionError("3D generator result source file missing")
+    source = _trusted_generated_source(out, generation, label="3D generator")
 
     final = out / f"{asset_id}.glb"
     if source.resolve() != final.resolve():
