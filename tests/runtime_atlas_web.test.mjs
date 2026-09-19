@@ -400,6 +400,9 @@ assert.deepEqual(rotatedBatch.bounds[0], {
   visibleY: 202,
   visibleWidth: 16,
   visibleHeight: 12,
+  rotation: 0,
+  pivotWorldX: 100,
+  pivotWorldY: 200,
   frameIndex: 0,
   frameName: "hero_0.png",
 });
@@ -1353,6 +1356,9 @@ assert.deepEqual(
     visibleY: 23,
     visibleWidth: 8,
     visibleHeight: 15,
+    rotation: 0,
+    pivotWorldX: 10,
+    pivotWorldY: 20,
   },
 );
 
