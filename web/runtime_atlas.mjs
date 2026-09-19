@@ -1089,3 +1089,242 @@ export function buildTexturePageBatches(
     batches,
   };
 }
+
+
+function _compileWebGL2Shader(gl, type, source) {
+  const shader = gl.createShader(type);
+  if (!shader) {
+    throw new Error("WebGL2 shader allocation failed");
+  }
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    const log = gl.getShaderInfoLog(shader) || "unknown shader compile error";
+    gl.deleteShader(shader);
+    throw new Error(`WebGL2 shader compile failed: ${log}`);
+  }
+  return shader;
+}
+
+function _linkWebGL2Program(gl, vertexSource, fragmentSource) {
+  const vertex = _compileWebGL2Shader(gl, gl.VERTEX_SHADER, vertexSource);
+  const fragment = _compileWebGL2Shader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+  const program = gl.createProgram();
+  if (!program) {
+    gl.deleteShader(vertex);
+    gl.deleteShader(fragment);
+    throw new Error("WebGL2 program allocation failed");
+  }
+
+  gl.attachShader(program, vertex);
+  gl.attachShader(program, fragment);
+  gl.linkProgram(program);
+  gl.deleteShader(vertex);
+  gl.deleteShader(fragment);
+
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    const log = gl.getProgramInfoLog(program) || "unknown program link error";
+    gl.deleteProgram(program);
+    throw new Error(`WebGL2 program link failed: ${log}`);
+  }
+  return program;
+}
+
+export function createInstancedSpriteRendererWebGL2(gl, options = {}) {
+  if (!gl || typeof gl.drawElementsInstanced !== "function") {
+    throw new Error("WebGL2 context with drawElementsInstanced is required");
+  }
+
+  const shaderContract = options.shaders ?? instancedSpriteWebGL2Shaders();
+  const program = _linkWebGL2Program(
+    gl,
+    shaderContract.vertex,
+    shaderContract.fragment,
+  );
+
+  const vao = gl.createVertexArray();
+  const unitVertexBuffer = gl.createBuffer();
+  const unitIndexBuffer = gl.createBuffer();
+  const instanceBuffer = gl.createBuffer();
+  if (!vao || !unitVertexBuffer || !unitIndexBuffer || !instanceBuffer) {
+    if (vao) gl.deleteVertexArray(vao);
+    if (unitVertexBuffer) gl.deleteBuffer(unitVertexBuffer);
+    if (unitIndexBuffer) gl.deleteBuffer(unitIndexBuffer);
+    if (instanceBuffer) gl.deleteBuffer(instanceBuffer);
+    gl.deleteProgram(program);
+    throw new Error("WebGL2 sprite renderer buffer allocation failed");
+  }
+
+  const unitVertices = new Float32Array([
+    0, 0,
+    1, 0,
+    1, 1,
+    0, 1,
+  ]);
+  const unitIndices = new Uint16Array([0, 1, 2, 0, 2, 3]);
+
+  gl.bindVertexArray(vao);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, unitVertexBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, unitVertices, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 2 * 4, 0);
+  gl.vertexAttribDivisor(0, 0);
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, unitIndexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, unitIndices, gl.STATIC_DRAW);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
+  const layout = instancedSpriteAttributeViews(
+    buildInstancedSpriteBatch(
+      {
+        frame() {
+          throw new Error("internal layout probe should not resolve frames");
+        },
+      },
+      [],
+    ),
+  );
+  for (const attribute of layout.attributes) {
+    gl.enableVertexAttribArray(attribute.location);
+    gl.vertexAttribPointer(
+      attribute.location,
+      attribute.size,
+      gl.FLOAT,
+      false,
+      layout.strideBytes,
+      attribute.offsetBytes,
+    );
+    gl.vertexAttribDivisor(attribute.location, attribute.divisor);
+  }
+
+  gl.bindVertexArray(null);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+  const viewportLocation = gl.getUniformLocation(program, "uViewportSize");
+  const textureLocation = gl.getUniformLocation(program, "uTexture");
+  if (viewportLocation == null || textureLocation == null) {
+    gl.deleteVertexArray(vao);
+    gl.deleteBuffer(unitVertexBuffer);
+    gl.deleteBuffer(unitIndexBuffer);
+    gl.deleteBuffer(instanceBuffer);
+    gl.deleteProgram(program);
+    throw new Error("WebGL2 sprite renderer required uniforms not found");
+  }
+
+  let disposed = false;
+  let uploadedCapacityBytes = 0;
+
+  function assertActive() {
+    if (disposed) {
+      throw new Error("WebGL2 sprite renderer is disposed");
+    }
+  }
+
+  function renderBatch(batch, texture, viewportWidth, viewportHeight) {
+    assertActive();
+    if (!batch || !(batch.instances instanceof Float32Array)) {
+      throw new Error("instanced sprite batch required");
+    }
+    if (!(viewportWidth > 0) || !(viewportHeight > 0)) {
+      throw new Error("viewport dimensions must be > 0");
+    }
+    if (!texture) {
+      throw new Error("WebGL texture is required");
+    }
+    if (batch.instanceCount === 0) {
+      return { drawCalls: 0, instances: 0, uploadedBytes: 0 };
+    }
+
+    gl.useProgram(program);
+    gl.bindVertexArray(vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
+
+    if (batch.instances.byteLength > uploadedCapacityBytes) {
+      gl.bufferData(gl.ARRAY_BUFFER, batch.instances, gl.DYNAMIC_DRAW);
+      uploadedCapacityBytes = batch.instances.byteLength;
+    } else {
+      gl.bufferSubData(gl.ARRAY_BUFFER, 0, batch.instances);
+    }
+
+    gl.uniform2f(viewportLocation, viewportWidth, viewportHeight);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.uniform1i(textureLocation, 0);
+
+    gl.drawElementsInstanced(
+      gl.TRIANGLES,
+      6,
+      gl.UNSIGNED_SHORT,
+      0,
+      batch.instanceCount,
+    );
+
+    gl.bindVertexArray(null);
+
+    return {
+      drawCalls: 1,
+      instances: batch.instanceCount,
+      uploadedBytes: batch.instances.byteLength,
+    };
+  }
+
+  function renderPageBatches(pageBatches, viewportWidth, viewportHeight) {
+    assertActive();
+    if (!pageBatches || !Array.isArray(pageBatches.batches)) {
+      throw new Error("texture-page batches required");
+    }
+    let drawCalls = 0;
+    let instances = 0;
+    let uploadedBytes = 0;
+
+    for (const entry of pageBatches.batches) {
+      if (!entry.batch || !(entry.batch.instances instanceof Float32Array)) {
+        throw new Error("instanced texture-page batches required");
+      }
+      const result = renderBatch(
+        entry.batch,
+        entry.texture,
+        viewportWidth,
+        viewportHeight,
+      );
+      drawCalls += result.drawCalls;
+      instances += result.instances;
+      uploadedBytes += result.uploadedBytes;
+    }
+
+    return {
+      drawCalls,
+      instances,
+      uploadedBytes,
+      textureSwitches: Math.max(0, drawCalls - 1),
+    };
+  }
+
+  function dispose() {
+    if (disposed) return;
+    disposed = true;
+    gl.deleteVertexArray(vao);
+    gl.deleteBuffer(unitVertexBuffer);
+    gl.deleteBuffer(unitIndexBuffer);
+    gl.deleteBuffer(instanceBuffer);
+    gl.deleteProgram(program);
+  }
+
+  return {
+    program,
+    vao,
+    unitVertexBuffer,
+    unitIndexBuffer,
+    instanceBuffer,
+    renderBatch,
+    renderPageBatches,
+    dispose,
+    get disposed() {
+      return disposed;
+    },
+    get uploadedCapacityBytes() {
+      return uploadedCapacityBytes;
+    },
+  };
+}
