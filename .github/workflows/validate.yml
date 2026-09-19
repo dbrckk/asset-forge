@@ -29,6 +29,8 @@ jobs:
         run: python asset_forge.py production-job examples/production-request.json --output build/production-job.json
       - name: Inspect generator backends
         run: python asset_forge.py generator-backend-status
+      - name: Inspect operational readiness
+        run: python asset_forge.py operational-status
       - name: Inspect 3D toolchain
         run: python asset_forge.py 3d-toolchain-status
       - name: Validate engine handoff profiles
