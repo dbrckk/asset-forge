@@ -1229,6 +1229,8 @@ cameraRuntimeGl.viewport = (...args)
 followRuntimeGl.viewport = (...args)
 ⋮----
 boundedRuntimeGl.viewport = (...args)
+⋮----
+pickingRuntimeGl.viewport = (...args)
 ````
 
 ## File: tests/test_animation_infer.py
@@ -2663,6 +2665,9 @@ buildEntityBatches(batchOptions =
 updateAnimations(deltaSeconds)
 render(instancesOrBatches, batchOptions =
 renderEntities(batchOptions =
+screenToWorld(x, y)
+worldToScreen(x, y, parallax =
+pickEntity(x, y, pickOptions =
 async restore()
 ⋮----
 export function createSpriteEntityStore(options =
@@ -2775,6 +2780,26 @@ function clearShake()
 ⋮----
 get baseCamera()
 get shaking()
+⋮----
+export function worldToScreenPoint(x, y, camera =
+⋮----
+export function screenToWorldPoint(x, y, camera =
+⋮----
+export function pointHitsSpriteInstance(
+  atlasPages,
+  instance,
+  pointX,
+  pointY,
+  options = {},
+)
+⋮----
+export function pickSpriteInstances(
+  atlasPages,
+  instances,
+  pointX,
+  pointY,
+  options = {},
+)
 ````
 
 ## File: .repo-standards.yml
@@ -6030,6 +6055,66 @@ runtime.updateCameraFollowEntity(
 The entity target is resolved after parent-child hierarchy transforms, so following a child tracks its world-space position rather than its local coordinates. Offsets are useful for following an entity center or a custom focus point.
 
 When world bounds are cleared, camera coordinates become unrestricted again.
+
+
+### World/screen conversion and sprite picking
+
+The web runtime now includes helpers for interaction and touch/click picking.
+
+Coordinate conversion:
+
+```js
+worldToScreenPoint(x, y, camera, parallax)
+screenToWorldPoint(x, y, camera)
+```
+
+The canvas runtime exposes convenience wrappers:
+
+```js
+runtime.worldToScreen(worldX, worldY)
+runtime.screenToWorld(screenX, screenY)
+```
+
+Low-level hit testing:
+
+```js
+pointHitsSpriteInstance(
+  atlasPages,
+  instance,
+  screenX,
+  screenY,
+  { useVisibleBounds: false },
+)
+```
+
+Hit testing uses the sprite's logical source size by default. Set `useVisibleBounds: true` to use only the trimmed visible source region.
+
+Rotation and pivot are handled by inverse-rotating the query point around the sprite's world pivot before testing its local rectangle.
+
+Multiple instances can be queried with:
+
+```js
+pickSpriteInstances(
+  atlasPages,
+  instances,
+  screenX,
+  screenY,
+  { all: true },
+)
+```
+
+Hits are ordered from highest `z` to lowest. Equal-depth sprites use later input order as the top-most tie breaker, matching typical painter-style submission order.
+
+The canvas runtime exposes:
+
+```js
+runtime.pickEntity(screenX, screenY)
+runtime.pickEntity(screenX, screenY, { all: true })
+```
+
+`pickEntity()` reuses the normal entity preparation pipeline, so hierarchy transforms, layer visibility, runtime/per-call camera transforms, zoom, and parallax are applied before hit testing.
+
+This makes pointer/touch interaction possible directly against the same transformed geometry used for rendering.
 ````
 
 ## File: runtime_atlas.py

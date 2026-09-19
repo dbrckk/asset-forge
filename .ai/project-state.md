@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T14:18:16Z
+Generated: 2026-09-19T14:21:59Z
 
 ### Git
 - Branch: `main`
-- Head: `56d5ae9041d9`
-- Commit date: 2026-09-19T16:18:08+02:00
-- Commit: docs: record camera bounds and entity follow milestone
+- Head: `ea64c29ee468`
+- Commit date: 2026-09-19T16:21:51+02:00
+- Commit: docs: record entity picking milestone
 - Tracked files: 209
 
 ### Recently changed files
