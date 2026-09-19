@@ -31,6 +31,7 @@ import {
   resizeWebGL2Canvas,
   createWebGL2CanvasRuntime,
   createSpriteEntityStore,
+  createSpriteAnimationSystem,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -131,8 +132,6 @@ assert.deepEqual(plainCalls, [
   ["drawImage", image, 1, 2, 4, 5, 11, 21, 4, 5],
   ["restore"],
 ]);
-
-console.log("runtime_atlas.mjs smoke test passed");
 
 
 const animatedAtlas = {
@@ -1764,3 +1763,130 @@ assert.equal(suppliedRuntime.entities, suppliedStore);
 assert.equal(suppliedRuntime.renderEntities().instances, 1);
 suppliedRuntime.dispose();
 assert.equal(suppliedStore.size, 1);
+
+
+const completedReplayPlayer = createAnimationPlayer(animated, "once", {
+  autoplay: true,
+});
+completedReplayPlayer.update(2);
+assert.equal(completedReplayPlayer.playing, false);
+completedReplayPlayer.play();
+assert.equal(completedReplayPlayer.playing, false);
+
+const entityAnimationAtlas = {
+  ...animatedAtlas,
+  animations: [
+    {
+      ...animatedAtlas.animations[0],
+      events: [
+        { name: "step", timeSeconds: 0.05, payload: { foot: "left" } },
+        { name: "impact", timeSeconds: 0.15 },
+      ],
+    },
+    animatedAtlas.animations[1],
+  ],
+};
+const entityAnimationPages = createRuntimeAtlasPages([
+  {
+    id: "heroes",
+    atlas: entityAnimationAtlas,
+    texture: "heroes.png",
+  },
+]);
+const animatedEntities = createSpriteEntityStore();
+animatedEntities.add({
+  id: "animated-hero",
+  page: "heroes",
+  frame: 0,
+  x: 10,
+  y: 20,
+});
+
+const entityAnimationEvents = [];
+const entityAnimationFrames = [];
+const entityAnimationSystem = createSpriteAnimationSystem(
+  entityAnimationPages,
+  animatedEntities,
+  {
+    onEvent(event) {
+      entityAnimationEvents.push([
+        event.entityId,
+        event.name,
+        event.payload,
+      ]);
+    },
+    onFrame(event) {
+      entityAnimationFrames.push([
+        event.entityId,
+        event.sample.frame.index,
+      ]);
+    },
+  },
+);
+
+const heroBinding = entityAnimationSystem.bind(
+  "animated-hero",
+  "run",
+  { autoplay: true },
+);
+assert.equal(entityAnimationSystem.size, 1);
+assert.equal(heroBinding.playing, true);
+assert.equal(animatedEntities.get("animated-hero").frame, 0);
+
+const animationUpdateA = entityAnimationSystem.update(0.16);
+assert.equal(animationUpdateA.updatedCount, 1);
+assert.equal(animatedEntities.get("animated-hero").frame, 1);
+assert.deepEqual(entityAnimationEvents, [
+  ["animated-hero", "step", { foot: "left" }],
+  ["animated-hero", "impact", null],
+]);
+assert.ok(
+  entityAnimationFrames.some(
+    ([entityId, frameIndex]) =>
+      entityId === "animated-hero" && frameIndex === 1,
+  ),
+);
+
+heroBinding.pause();
+const pausedEntityTime = heroBinding.timeSeconds;
+entityAnimationSystem.update(1);
+assert.equal(heroBinding.timeSeconds, pausedEntityTime);
+
+heroBinding.seek(0);
+assert.equal(animatedEntities.get("animated-hero").frame, 0);
+heroBinding.setPlaybackRate(2);
+assert.equal(heroBinding.player.playbackRate, 2);
+heroBinding.play();
+entityAnimationSystem.update(0.08);
+assert.equal(animatedEntities.get("animated-hero").frame, 1);
+
+assert.equal(
+  entityAnimationSystem.get("animated-hero"),
+  heroBinding,
+);
+assert.equal(
+  entityAnimationSystem.unbind("animated-hero"),
+  heroBinding,
+);
+assert.equal(entityAnimationSystem.size, 0);
+
+entityAnimationSystem.bind("animated-hero", "once", {
+  autoplay: true,
+});
+entityAnimationSystem.update(2);
+assert.equal(
+  entityAnimationSystem.get("animated-hero").playing,
+  false,
+);
+
+animatedEntities.remove("animated-hero");
+const removedAnimationUpdate = entityAnimationSystem.update(0.1);
+assert.deepEqual(removedAnimationUpdate.removedEntityIds, ["animated-hero"]);
+assert.equal(entityAnimationSystem.size, 0);
+
+assert.throws(
+  () => entityAnimationSystem.bind("missing", "run"),
+  /sprite entity not found/,
+);
+
+console.log("runtime_atlas.mjs smoke test passed");
