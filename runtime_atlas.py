@@ -89,14 +89,56 @@ def _normalize_runtime_animations(
                 )
             frames.append({"index": index, "duration": float(duration)})
 
-        normalized.append(
-            {
-                "name": name,
-                "fps": float(fps),
-                "loop": loop,
-                "frames": frames,
+        duration_seconds = sum(frame["duration"] for frame in frames) / float(fps)
+        raw_events = animation.get("events", [])
+        if not isinstance(raw_events, list):
+            raise ValueError(f"animation {name}: events must be a list")
+
+        events = []
+        for event_position, event in enumerate(raw_events):
+            if not isinstance(event, dict):
+                raise ValueError(
+                    f"animation {name} event {event_position}: object required"
+                )
+            event_name = event.get("name")
+            if not isinstance(event_name, str) or not event_name.strip():
+                raise ValueError(
+                    f"animation {name} event {event_position}: non-empty name required"
+                )
+            time_seconds = event.get("timeSeconds")
+            if (
+                isinstance(time_seconds, bool)
+                or not isinstance(time_seconds, (int, float))
+                or time_seconds < 0
+                or time_seconds >= duration_seconds
+            ):
+                raise ValueError(
+                    f"animation {name} event {event_position}: timeSeconds must be >= 0 and < animation duration"
+                )
+            payload = event.get("payload")
+            if payload is not None and not isinstance(payload, dict):
+                raise ValueError(
+                    f"animation {name} event {event_position}: payload must be an object or null"
+                )
+            normalized_event = {
+                "name": event_name,
+                "timeSeconds": float(time_seconds),
             }
-        )
+            if payload is not None:
+                normalized_event["payload"] = payload
+            events.append(normalized_event)
+
+        events.sort(key=lambda item: item["timeSeconds"])
+
+        normalized_animation = {
+            "name": name,
+            "fps": float(fps),
+            "loop": loop,
+            "frames": frames,
+        }
+        if events:
+            normalized_animation["events"] = events
+        normalized.append(normalized_animation)
 
     return normalized
 
@@ -472,8 +514,9 @@ def validate_runtime_atlas(data: dict) -> list[str]:
         else:
             seen_animation_names: set[str] = set()
             valid_indices = set(seen_indices)
-            allowed_animation = {"name", "fps", "loop", "frames"}
+            allowed_animation = {"name", "fps", "loop", "frames", "events"}
             allowed_animation_frame = {"index", "duration"}
+            allowed_animation_event = {"name", "timeSeconds", "payload"}
 
             for animation_position, animation in enumerate(animations):
                 if not isinstance(animation, dict):
@@ -515,6 +558,7 @@ def validate_runtime_atlas(data: dict) -> list[str]:
                     )
                     continue
 
+                normalized_duration_units = 0.0
                 for frame_position, animation_frame in enumerate(animation_frames):
                     if not isinstance(animation_frame, dict):
                         errors.append(
@@ -551,5 +595,57 @@ def validate_runtime_atlas(data: dict) -> list[str]:
                         errors.append(
                             f"animation {name_label} frame {frame_position}.duration must be > 0"
                         )
+                    else:
+                        normalized_duration_units += float(duration)
+
+                animation_duration = None
+                if isinstance(fps, (int, float)) and not isinstance(fps, bool) and fps > 0:
+                    animation_duration = normalized_duration_units / float(fps)
+
+                animation_events = animation.get("events", [])
+                if not isinstance(animation_events, list):
+                    errors.append(f"animation {name_label}.events must be an array")
+                else:
+                    previous_time = -1.0
+                    for event_position, event in enumerate(animation_events):
+                        if not isinstance(event, dict):
+                            errors.append(
+                                f"animation {name_label} event {event_position}: object required"
+                            )
+                            continue
+                        for field in sorted(set(event) - allowed_animation_event):
+                            errors.append(
+                                f"animation {name_label} event {event_position}: unknown field {field}"
+                            )
+                        event_name = event.get("name")
+                        if not isinstance(event_name, str) or not event_name.strip():
+                            errors.append(
+                                f"animation {name_label} event {event_position}.name must be a non-empty string"
+                            )
+                        event_time = event.get("timeSeconds")
+                        if (
+                            isinstance(event_time, bool)
+                            or not isinstance(event_time, (int, float))
+                            or event_time < 0
+                        ):
+                            errors.append(
+                                f"animation {name_label} event {event_position}.timeSeconds must be >= 0"
+                            )
+                        else:
+                            event_time = float(event_time)
+                            if animation_duration is not None and event_time >= animation_duration:
+                                errors.append(
+                                    f"animation {name_label} event {event_position}.timeSeconds must be < animation duration"
+                                )
+                            if event_time < previous_time:
+                                errors.append(
+                                    f"animation {name_label}.events must be sorted by timeSeconds"
+                                )
+                            previous_time = event_time
+                        payload = event.get("payload")
+                        if payload is not None and not isinstance(payload, dict):
+                            errors.append(
+                                f"animation {name_label} event {event_position}.payload must be an object or null"
+                            )
 
     return errors
