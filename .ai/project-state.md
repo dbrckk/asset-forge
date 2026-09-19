@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T14:48:53Z
+Generated: 2026-09-19T14:57:25Z
 
 ### Git
 - Branch: `main`
-- Head: `58c28f1cef8d`
-- Commit date: 2026-09-19T16:48:46+02:00
-- Commit: docs: record drag snapping and bounds milestone
+- Head: `de7eb563ac3c`
+- Commit date: 2026-09-19T16:52:23+02:00
+- Commit: docs: record entity selection milestone
 - Tracked files: 209
 
 ### Recently changed files
