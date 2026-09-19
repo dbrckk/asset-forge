@@ -722,3 +722,101 @@ export function instancedSpriteUV(
     v: v1 - (v1 - v0) * unitX,
   };
 }
+
+
+export function instancedSpriteWebGL2Shaders() {
+  return {
+    attributes: {
+      aUnitPosition: { location: 0, components: 2, divisor: 0 },
+      aVisibleRect: { location: 1, components: 4, divisor: 1 },
+      aUvRect: { location: 2, components: 4, divisor: 1 },
+      aRotationAndSource: { location: 3, components: 4, divisor: 1 },
+    },
+    uniforms: {
+      uViewportSize: "vec2",
+      uTexture: "sampler2D",
+    },
+    vertex: `#version 300 es
+precision highp float;
+
+layout(location = 0) in vec2 aUnitPosition;
+layout(location = 1) in vec4 aVisibleRect;
+layout(location = 2) in vec4 aUvRect;
+layout(location = 3) in vec4 aRotationAndSource;
+
+uniform vec2 uViewportSize;
+
+out vec2 vUv;
+
+void main() {
+  vec2 pixelPosition =
+    aVisibleRect.xy + aUnitPosition * aVisibleRect.zw;
+
+  vec2 clip = vec2(
+    pixelPosition.x / uViewportSize.x * 2.0 - 1.0,
+    1.0 - pixelPosition.y / uViewportSize.y * 2.0
+  );
+
+  float rotationFlag = aRotationAndSource.x;
+  if (rotationFlag < 0.5) {
+    vUv = mix(aUvRect.xy, aUvRect.zw, aUnitPosition);
+  } else {
+    vUv = vec2(
+      mix(aUvRect.x, aUvRect.z, aUnitPosition.y),
+      mix(aUvRect.w, aUvRect.y, aUnitPosition.x)
+    );
+  }
+
+  gl_Position = vec4(clip, 0.0, 1.0);
+}
+`,
+    fragment: `#version 300 es
+precision mediump float;
+
+uniform sampler2D uTexture;
+in vec2 vUv;
+out vec4 outColor;
+
+void main() {
+  outColor = texture(uTexture, vUv);
+}
+`,
+  };
+}
+
+export function instancedSpriteAttributeViews(batch) {
+  if (!batch || !(batch.instances instanceof Float32Array)) {
+    throw new Error("invalid instanced sprite batch");
+  }
+  if (batch.instanceStrideFloats !== 12) {
+    throw new Error("unsupported instanced sprite stride");
+  }
+
+  return {
+    buffer: batch.instances,
+    strideBytes: batch.instanceStrideBytes,
+    attributes: [
+      {
+        name: "aVisibleRect",
+        location: 1,
+        size: 4,
+        offsetBytes: 0,
+        divisor: 1,
+      },
+      {
+        name: "aUvRect",
+        location: 2,
+        size: 4,
+        offsetBytes: 4 * Float32Array.BYTES_PER_ELEMENT,
+        divisor: 1,
+      },
+      {
+        name: "aRotationAndSource",
+        location: 3,
+        size: 4,
+        offsetBytes: 8 * Float32Array.BYTES_PER_ELEMENT,
+        divisor: 1,
+      },
+    ],
+  };
+}
