@@ -537,3 +537,32 @@ python asset_forge.py validate-runtime-atlas examples/runtime-atlas.json
 The dependency-free validator checks the versioned contract plus semantic relationships that JSON Schema alone does not express conveniently, including frame-count consistency, duplicate indices, UVs matching atlas regions, source/trim bounds, and rotation dimensions. Validation is strict about unknown fields and integer types, so booleans are not accepted as integers.
 
 CI validates `examples/runtime-atlas.json` as a smoke test. The example is a rotated + trimmed frame and can be used as a reference implementation for runtime consumers.
+
+
+### Web runtime consumer
+
+A dependency-free ES module is available at `web/runtime_atlas.mjs`.
+
+Canvas2D example:
+
+```js
+import {
+  indexRuntimeAtlas,
+  drawFrameCanvas2D,
+} from "./web/runtime_atlas.mjs";
+
+const atlasData = await fetch("./runtime-atlas.json").then((response) => response.json());
+const image = new Image();
+image.src = atlasData.image;
+await image.decode();
+
+const atlas = indexRuntimeAtlas(atlasData);
+const frame = atlas.frame("hero_0.png");
+drawFrameCanvas2D(context, image, frame, 32, 48);
+```
+
+`drawFrameCanvas2D` restores trim offsets and automatically undoes a stored 90° clockwise atlas rotation before drawing.
+
+For WebGL/custom renderers, `sourceOrientedUVs(frame)` returns UV coordinates in source-vertex order — top-left, top-right, bottom-right, bottom-left — with rotation already accounted for. `frameQuad(frame)` exposes the raw normalized UV rectangle plus source-size/trim/rotation metadata.
+
+The web helper is smoke-tested with Node 22 in CI against the versioned runtime atlas example.
