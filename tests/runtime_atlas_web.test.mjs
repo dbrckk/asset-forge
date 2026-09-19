@@ -14,6 +14,8 @@ import {
   drawSpriteBatchCanvas2D,
   buildInstancedSpriteBatch,
   instancedSpriteUV,
+  instancedSpriteWebGL2Shaders,
+  instancedSpriteAttributeViews,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -518,4 +520,44 @@ assert.throws(
 assert.throws(
   () => instancedSpriteUV(0, 0, 1, 1, 2, 0, 0),
   /rotationFlag must be 0 or 1/,
+);
+
+
+const shaderContract = instancedSpriteWebGL2Shaders();
+assert.equal(shaderContract.attributes.aUnitPosition.location, 0);
+assert.equal(shaderContract.attributes.aVisibleRect.divisor, 1);
+assert.equal(shaderContract.uniforms.uViewportSize, "vec2");
+assert.match(shaderContract.vertex, /#version 300 es/);
+assert.match(shaderContract.vertex, /rotationFlag/);
+assert.match(shaderContract.fragment, /texture\(uTexture, vUv\)/);
+
+const attributeViews = instancedSpriteAttributeViews(instanced);
+assert.equal(attributeViews.buffer, instanced.instances);
+assert.equal(attributeViews.strideBytes, 48);
+assert.deepEqual(attributeViews.attributes, [
+  {
+    name: "aVisibleRect",
+    location: 1,
+    size: 4,
+    offsetBytes: 0,
+    divisor: 1,
+  },
+  {
+    name: "aUvRect",
+    location: 2,
+    size: 4,
+    offsetBytes: 16,
+    divisor: 1,
+  },
+  {
+    name: "aRotationAndSource",
+    location: 3,
+    size: 4,
+    offsetBytes: 32,
+    divisor: 1,
+  },
+]);
+assert.throws(
+  () => instancedSpriteAttributeViews({ instances: new Float32Array(), instanceStrideFloats: 8 }),
+  /unsupported instanced sprite stride/,
 );
