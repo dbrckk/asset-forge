@@ -96,19 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T09:25:53Z
+Generated: 2026-09-19T09:33:28Z
 
 ### Git
 - Branch: `main`
-- Head: `7e0fa495eca4`
-- Commit date: 2026-09-19T11:25:45+02:00
-- Commit: docs: record entity animation binding milestone
+- Head: `c430f4faa677`
+- Commit date: 2026-09-19T11:33:16+02:00
+- Commit: feat: add version-aware entity batch cache
 - Tracked files: 209
 
 ### Recently changed files
+- `web/runtime_atlas.mjs`
 - `README.md`
 - `tests/runtime_atlas_web.test.mjs`
-- `web/runtime_atlas.mjs`
 
 ### Project signals
 - No common build descriptor detected

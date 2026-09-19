@@ -2685,6 +2685,22 @@ function get(entityId)
 function unbind(entityId)
 ⋮----
 function update(deltaSeconds)
+⋮----
+function _stableSceneCacheKey(value, seen = new Set())
+⋮----
+export function createSpriteEntityBatchCache(
+  runtimeScene,
+  entityStore,
+  options = {},
+)
+⋮----
+function invalidate()
+⋮----
+function ensureVersion()
+⋮----
+function build(batchOptions =
+⋮----
+get stats()
 ````
 
 ## File: .repo-standards.yml
