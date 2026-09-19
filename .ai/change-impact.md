@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 98b0dbdd8dd39f49cbf573e0c718b94dc5991225
-Head: d05591a7de2e575f96adc848c91aeb009c405883
+Base: f219c021eb5542116c029c1660694a53bb6c4f3e
+Head: c77eda1ff9de551a4a642bef0976bbbcb13d58c6
 
 ## Changed files
-- M tests/test_production_contract.py
+- M asset_forge.py
 
 ## Affected areas
-- tests
+- (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_asset_forge.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

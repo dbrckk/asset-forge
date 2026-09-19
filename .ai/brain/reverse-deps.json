@@ -15,24 +15,28 @@
         "asset_profile_validation.py",
         "blender_adapter.py",
         "engine_profile_validation.py",
+        "generator_backends.py",
         "gltf_diagnostics.py",
         "gltf_quality.py",
         "gltf_tools.py",
         "godot_3d_delivery.py",
         "godot_export.py",
         "godot_handoff.py",
+        "production_contract.py",
         "raster_pack.py",
         "runtime_atlas.py",
         "starlist_bridge.py",
         "svg_tools.py",
+        "tests/test_generator_backends.py",
         "toolchain_3d.py",
         "web/runtime_atlas.mjs"
       ],
       "dependents": [
-        "tests/test_asset_forge.py"
+        "tests/test_asset_forge.py",
+        "tests/test_production_contract.py"
       ],
-      "in_degree": 1,
-      "out_degree": 16
+      "in_degree": 2,
+      "out_degree": 19
     },
     "asset_profile_validation.py": {
       "dependencies": [],
@@ -74,10 +78,20 @@
       "in_degree": 3,
       "out_degree": 0
     },
+    "generator_backends.py": {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_generator_backends.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 0
+    },
     "gltf_binary_metrics.py": {
       "dependencies": [
         "gltf_tools.py",
-        "raster_pack.py"
+        "raster_pack.py",
+        "tests/test_generator_backends.py"
       ],
       "dependents": [
         "gltf_diagnostics.py",
@@ -85,7 +99,7 @@
         "tests/test_gltf_binary_metrics.py"
       ],
       "in_degree": 3,
-      "out_degree": 2
+      "out_degree": 3
     },
     "gltf_diagnostics.py": {
       "dependencies": [
@@ -162,6 +176,15 @@
       "in_degree": 3,
       "out_degree": 1
     },
+    "production_contract.py": {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_production_contract.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 0
+    },
     "raster_backend.py": {
       "dependencies": [],
       "dependents": [
@@ -173,7 +196,8 @@
     },
     "raster_pack.py": {
       "dependencies": [
-        "raster_backend.py"
+        "raster_backend.py",
+        "tests/test_generator_backends.py"
       ],
       "dependents": [
         "asset_forge.py",
@@ -182,10 +206,12 @@
         "tests/test_raster_pack.py"
       ],
       "in_degree": 4,
-      "out_degree": 1
+      "out_degree": 2
     },
     "runtime_atlas.py": {
-      "dependencies": [],
+      "dependencies": [
+        "tests/test_generator_backends.py"
+      ],
       "dependents": [
         "asset_forge.py",
         "benchmarks/runtime_atlas_web.bench.mjs",
@@ -193,16 +219,18 @@
         "tests/test_runtime_atlas.py"
       ],
       "in_degree": 4,
-      "out_degree": 0
+      "out_degree": 1
     },
     "starlist_bridge.py": {
-      "dependencies": [],
+      "dependencies": [
+        "tests/test_generator_backends.py"
+      ],
       "dependents": [
         "asset_forge.py",
         "tests/test_starlist_bridge.py"
       ],
       "in_degree": 2,
-      "out_degree": 0
+      "out_degree": 1
     },
     "svg_tools.py": {
       "dependencies": [
@@ -226,11 +254,12 @@
     },
     "tests/test_animation_infer.py": {
       "dependencies": [
-        "animation_infer.py"
+        "animation_infer.py",
+        "tests/test_generator_backends.py"
       ],
       "dependents": [],
       "in_degree": 0,
-      "out_degree": 1
+      "out_degree": 2
     },
     "tests/test_asset_forge.py": {
       "dependencies": [
@@ -262,6 +291,27 @@
       ],
       "dependents": [],
       "in_degree": 0,
+      "out_degree": 1
+    },
+    "tests/test_generator_backends.py": {
+      "dependencies": [
+        "generator_backends.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "gltf_binary_metrics.py",
+        "raster_pack.py",
+        "runtime_atlas.py",
+        "starlist_bridge.py",
+        "tests/test_animation_infer.py",
+        "tests/test_godot_handoff.py",
+        "tests/test_raster_pack.py",
+        "tests/test_runtime_atlas.py",
+        "tests/test_starlist_bridge.py",
+        "tests/test_toolchain_3d.py",
+        "toolchain_3d.py"
+      ],
+      "in_degree": 12,
       "out_degree": 1
     },
     "tests/test_gltf_binary_metrics.py": {
@@ -315,11 +365,21 @@
     },
     "tests/test_godot_handoff.py": {
       "dependencies": [
-        "godot_handoff.py"
+        "godot_handoff.py",
+        "tests/test_generator_backends.py"
       ],
       "dependents": [],
       "in_degree": 0,
-      "out_degree": 1
+      "out_degree": 2
+    },
+    "tests/test_production_contract.py": {
+      "dependencies": [
+        "asset_forge.py",
+        "production_contract.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 2
     },
     "tests/test_raster_backend.py": {
       "dependencies": [
@@ -332,28 +392,31 @@
     },
     "tests/test_raster_pack.py": {
       "dependencies": [
-        "raster_pack.py"
-      ],
-      "dependents": [],
-      "in_degree": 0,
-      "out_degree": 1
-    },
-    "tests/test_runtime_atlas.py": {
-      "dependencies": [
-        "runtime_atlas.py",
-        "web/runtime_atlas.mjs"
+        "raster_pack.py",
+        "tests/test_generator_backends.py"
       ],
       "dependents": [],
       "in_degree": 0,
       "out_degree": 2
     },
-    "tests/test_starlist_bridge.py": {
+    "tests/test_runtime_atlas.py": {
       "dependencies": [
-        "starlist_bridge.py"
+        "runtime_atlas.py",
+        "tests/test_generator_backends.py",
+        "web/runtime_atlas.mjs"
       ],
       "dependents": [],
       "in_degree": 0,
-      "out_degree": 1
+      "out_degree": 3
+    },
+    "tests/test_starlist_bridge.py": {
+      "dependencies": [
+        "starlist_bridge.py",
+        "tests/test_generator_backends.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 2
     },
     "tests/test_svg_tools.py": {
       "dependencies": [
@@ -365,23 +428,25 @@
     },
     "tests/test_toolchain_3d.py": {
       "dependencies": [
+        "tests/test_generator_backends.py",
         "toolchain_3d.py"
       ],
       "dependents": [],
       "in_degree": 0,
-      "out_degree": 1
+      "out_degree": 2
     },
     "toolchain_3d.py": {
       "dependencies": [
         "blender_adapter.py",
-        "godot_handoff.py"
+        "godot_handoff.py",
+        "tests/test_generator_backends.py"
       ],
       "dependents": [
         "asset_forge.py",
         "tests/test_toolchain_3d.py"
       ],
       "in_degree": 2,
-      "out_degree": 2
+      "out_degree": 3
     },
     "web/runtime_atlas.mjs": {
       "dependencies": [],

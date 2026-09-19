@@ -96,20 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T20:38:20Z
+Generated: 2026-09-19T20:59:28Z
 
 ### Git
 - Branch: `main`
-- Head: `d05591a7de2e`
-- Commit date: 2026-09-19T22:38:10+02:00
-- Commit: test: import Path in production contract tests
-- Tracked files: 217
+- Head: `c77eda1ff9de`
+- Commit date: 2026-09-19T22:59:16+02:00
+- Commit: feat: expose generated asset execution CLI
+- Tracked files: 219
 
 ### Recently changed files
-- `tests/test_production_contract.py`
-- `.github/workflows/validate.yml`
-- `examples/production-request.json`
 - `asset_forge.py`
+- `tests/test_generator_backends.py`
+- `generator_backends.py`
+- `tests/test_production_contract.py`
 
 ### Project signals
 - No common build descriptor detected

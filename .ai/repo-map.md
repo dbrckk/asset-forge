@@ -84,6 +84,7 @@ tests/
   test_asset_profile_validation.py
   test_blender_adapter.py
   test_engine_profile_validation.py
+  test_generator_backends.py
   test_gltf_binary_metrics.py
   test_gltf_diagnostics.py
   test_gltf_quality.py
@@ -107,6 +108,7 @@ asset_forge.py
 asset_profile_validation.py
 blender_adapter.py
 engine_profile_validation.py
+generator_backends.py
 gltf_binary_metrics.py
 gltf_diagnostics.py
 gltf_quality.py
@@ -1537,6 +1539,44 @@ def test_repository_profiles_all_validate(self)
 ⋮----
 root = Path(__file__).resolve().parents[1]
 report = validate_all_godot_profiles(root)
+````
+
+## File: tests/test_generator_backends.py
+````python
+def job()
+⋮----
+class GeneratorBackendsTests(unittest.TestCase)
+⋮----
+def test_prompt_preserves_hard_sprite_constraints(self)
+⋮----
+prompt = build_generation_prompt(job())
+⋮----
+def test_pollinations_command_never_contains_api_key(self)
+⋮----
+command = pollinations_command(
+⋮----
+def test_backend_status_reports_auth_without_secret_value(self)
+⋮----
+status = generator_backend_status(
+⋮----
+def test_execute_generated_asset_uses_bounded_subprocess_and_output(self)
+⋮----
+out = Path(td)
+def runner(command, **kwargs)
+⋮----
+target = Path(command[command.index("--output") + 1])
+⋮----
+class Result
+⋮----
+returncode = 0
+stdout = '{"ok":true}'
+stderr = ""
+⋮----
+result = execute_generated_asset(
+⋮----
+def test_unsupported_generated_type_fails_closed(self)
+⋮----
+bad = job()
 ````
 
 ## File: tests/test_gltf_binary_metrics.py
@@ -3397,6 +3437,9 @@ plan = sub.add_parser("plan", help="build a deterministic asset production plan"
 ⋮----
 production_job = sub.add_parser("production-job", help="compile a Production OS/AI Dev Server asset request into an executable job")
 ⋮----
+generator_status = sub.add_parser("generator-backend-status", help="inspect available generation backends")
+generate = sub.add_parser("generate", help="execute a generated-asset production job")
+⋮----
 raster = sub.add_parser("validate-raster", help="validate a PNG or WebP against an asset manifest")
 ⋮----
 atlas = sub.add_parser("atlas-manifest", help="build uniform-grid atlas metadata from PNG or WebP")
@@ -3461,6 +3504,9 @@ plan = build_plan(request["manifest"], root)
 job = build_production_job(request, plan)
 ⋮----
 rendered = json.dumps(job, indent=2, sort_keys=True) + "\n"
+⋮----
+job = load_json(args.job)
+result = execute_generated_asset(
 ⋮----
 metadata = pack_uniform_atlas(
 ⋮----
@@ -3645,6 +3691,64 @@ valid = True
 path = profile_dir / f"{profile}.json"
 ⋮----
 valid = valid and not errors
+````
+
+## File: generator_backends.py
+````python
+RASTER_GENERATED_TYPES = {"sprite", "sprite-sheet", "tileset", "pixel-art"}
+⋮----
+class GenerationError(RuntimeError)
+⋮----
+def generator_backend_status(*, environ=None, home: Path | None = None) -> dict
+⋮----
+env = os.environ if environ is None else environ
+home_dir = Path.home() if home is None else Path(home)
+polli = shutil.which("polli")
+credentials = home_dir / ".pollinations" / "credentials.json"
+authenticated = bool(str(env.get("POLLINATIONS_API_KEY") or "").strip()) or credentials.is_file()
+⋮----
+def build_generation_prompt(job: dict) -> str
+⋮----
+instruction = str(job.get("instruction") or "").strip()
+asset_type = str(job.get("assetType") or "").strip()
+⋮----
+manifest = job.get("manifest")
+⋮----
+constraints = manifest.get("constraints")
+⋮----
+constraints = {}
+⋮----
+details = [
+⋮----
+fw = constraints.get("frameWidth")
+fh = constraints.get("frameHeight")
+frames = constraints.get("expectedFrames")
+⋮----
+prompt = " ".join(details)
+⋮----
+prompt = build_generation_prompt(job)
+command = [
+⋮----
+asset_type = str(job.get("assetType") or "")
+⋮----
+executable = shutil.which("polli")
+⋮----
+timeout = float(timeout_seconds)
+⋮----
+output_dir = Path(output_dir)
+⋮----
+output = output_dir / "generated-source.png"
+command = pollinations_command(job, output, model=model, executable=executable)
+completed = runner(
+⋮----
+stderr = str(completed.stderr or "").strip()
+⋮----
+stdout = str(completed.stdout or "").strip()
+metadata = None
+⋮----
+parsed = json.loads(stdout)
+⋮----
+metadata = parsed
 ````
 
 ## File: gltf_binary_metrics.py
