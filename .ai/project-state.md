@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T14:24:51Z
+Generated: 2026-09-19T14:37:47Z
 
 ### Git
 - Branch: `main`
-- Head: `86d9ea9e6439`
-- Commit date: 2026-09-19T16:24:47+02:00
-- Commit: docs: record pointer interaction milestone
+- Head: `2f4c89039edc`
+- Commit date: 2026-09-19T16:37:43+02:00
+- Commit: docs: record hierarchy-safe dragging milestone
 - Tracked files: 209
 
 ### Recently changed files
