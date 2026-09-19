@@ -24,6 +24,7 @@ from generator_backends import THREE_D_GENERATED_TYPES, VECTOR_GENERATED_TYPES, 
 from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png
 from production_contract import build_production_job, validate_production_request
 from production_executor import execute_generated_3d_job, execute_generated_raster_job, execute_generated_vector_job
+from operational_status import build_operational_status
 from runtime_atlas import build_runtime_atlas, validate_runtime_atlas
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
 from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline
@@ -379,6 +380,7 @@ def parser() -> argparse.ArgumentParser:
     production_job.add_argument("--output", type=Path)
 
     generator_status = sub.add_parser("generator-backend-status", help="inspect available generation backends")
+    operational_status = sub.add_parser("operational-status", help="report machine-readable production readiness")
     generate = sub.add_parser("generate", help="execute a generated-asset production job")
     generate.add_argument("job", type=Path)
     generate.add_argument("output_dir", type=Path)
@@ -598,6 +600,9 @@ def main() -> int:
         return 0
     if args.command == "generator-backend-status":
         print(json.dumps(generator_backend_status(), indent=2, sort_keys=True))
+        return 0
+    if args.command == "operational-status":
+        print(json.dumps(build_operational_status(), indent=2, sort_keys=True))
         return 0
     if args.command == "generate":
         try:
