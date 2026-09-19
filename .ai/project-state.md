@@ -94,20 +94,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T06:33:38Z
+Generated: 2026-09-19T06:35:30Z
 
 ### Git
 - Branch: `main`
-- Head: `1eeeb06cce07`
-- Commit date: 2026-09-19T08:33:26+02:00
-- Commit: docs: record runtime atlas validation milestone
+- Head: `c196da815940`
+- Commit date: 2026-09-19T08:34:59+02:00
+- Commit: chore(ai): adopt repo standards v16
 - Tracked files: 192
 
 ### Recently changed files
+- `.repo-standards.yml`
 - `README.md`
 - `tests/test_runtime_atlas.py`
 - `runtime_atlas.py`
-- `.github/workflows/validate.yml`
 
 ### Project signals
 - No common build descriptor detected

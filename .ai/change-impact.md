@@ -1,10 +1,10 @@
 # Change impact
 
-Base: 2291fd99bf6b62cf716ad5ff109ae877121ac623
-Head: aa52d0a88e9e60ce515d56c23591665978ec557a
+Base: d9f5b9032405e84c3bfe91d43928b7ba96ca586b
+Head: c196da8159402134b9fff6e31c7f6e6dbc88ae4f
 
 ## Changed files
-- M README.md
+- M .repo-standards.yml
 
 ## Affected areas
 - (root)
