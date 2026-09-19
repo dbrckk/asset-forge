@@ -16,6 +16,8 @@ import {
   instancedSpriteUV,
   instancedSpriteWebGL2Shaders,
   instancedSpriteAttributeViews,
+  createRuntimeAtlasPages,
+  buildTexturePageBatches,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -560,4 +562,89 @@ assert.deepEqual(attributeViews.attributes, [
 assert.throws(
   () => instancedSpriteAttributeViews({ instances: new Float32Array(), instanceStrideFloats: 8 }),
   /unsupported instanced sprite stride/,
+);
+
+
+const atlasB = {
+  ...plainAtlas,
+  image: "atlas-b.png",
+  frames: [
+    {
+      ...plainAtlas.frames[0],
+      index: 0,
+      name: "enemy",
+      atlasRegion: { x: 2, y: 3, width: 4, height: 5 },
+      uv: { u0: 2 / 16, v0: 3 / 16, u1: 6 / 16, v1: 8 / 16 },
+    },
+  ],
+};
+
+const pages = createRuntimeAtlasPages([
+  { id: "heroes", atlas: indexRuntimeAtlas(plainAtlas), texture: { id: "tex-a" } },
+  { id: "enemies", atlas: atlasB, texture: { id: "tex-b" } },
+]);
+assert.equal(pages.page("heroes").atlas.frame("plain").index, 0);
+assert.equal(pages.page("enemies").atlas.frame("enemy").name, "enemy");
+assert.equal(pages.page("heroes").texture.id, "tex-a");
+
+const paged = buildTexturePageBatches(
+  pages,
+  [
+    { page: "heroes", frame: "plain", x: 0, y: 0 },
+    { page: "enemies", frame: "enemy", x: 10, y: 0 },
+    { page: "heroes", frame: "plain", x: 20, y: 0 },
+    { page: "enemies", frame: "enemy", x: 30, y: 0 },
+  ],
+  { mode: "instanced" },
+);
+assert.equal(paged.pageCount, 2);
+assert.equal(paged.instanceCount, 4);
+assert.equal(paged.inputTextureSwitches, 3);
+assert.equal(paged.groupedTextureSwitches, 1);
+assert.equal(paged.textureSwitchesSaved, 2);
+assert.deepEqual(paged.inputPageSequence, [
+  "heroes",
+  "enemies",
+  "heroes",
+  "enemies",
+]);
+assert.deepEqual(
+  paged.batches.map((batch) => [batch.pageId, batch.instanceCount, batch.inputIndices]),
+  [
+    ["heroes", 2, [0, 2]],
+    ["enemies", 2, [1, 3]],
+  ],
+);
+assert.equal(paged.batches[0].batch.instanceCount, 2);
+assert.equal(paged.batches[1].batch.instanceCount, 2);
+
+const pagedClassic = buildTexturePageBatches(
+  pages,
+  [
+    { page: "enemies", frame: "enemy", x: 0, y: 0 },
+    { page: "heroes", frame: "plain", x: 10, y: 0 },
+  ],
+  { mode: "classic", preserveOrder: true },
+);
+assert.equal(pagedClassic.mode, "classic");
+assert.deepEqual(
+  pagedClassic.batches.map((batch) => batch.pageId),
+  ["enemies", "heroes"],
+);
+assert.equal(pagedClassic.batches[0].batch.vertexCount, 4);
+
+assert.throws(
+  () => createRuntimeAtlasPages([
+    { id: "dup", atlas: plainAtlas },
+    { id: "dup", atlas: atlasB },
+  ]),
+  /duplicate runtime atlas page id/,
+);
+assert.throws(
+  () => buildTexturePageBatches(pages, [{ page: "missing", frame: "plain" }]),
+  /runtime atlas page not found/,
+);
+assert.throws(
+  () => buildTexturePageBatches(pages, [], { mode: "unknown" }),
+  /mode must be instanced or classic/,
 );
