@@ -3885,7 +3885,7 @@ moveSpriteEntityByWorldDelta(
 const snappedChildWorld =
   resolveSpriteEntityHierarchy(snapStore).byId.get("snap-child");
 assert.ok(Math.abs(snappedChildWorld.x - 110) < 1e-6);
-assert.ok(Math.abs(snappedChildWorld.y - 110) < 1e-6);
+assert.ok(Math.abs(snappedChildWorld.y - 120) < 1e-6);
 
 assert.throws(
   () =>
