@@ -53,6 +53,7 @@ import {
   moveSpriteEntityByWorldDelta,
   createSpriteSelectionModel,
   moveSelectedSpriteEntitiesByWorldDelta,
+  transformSelectedSpriteEntities,
   selectSpriteInstancesInRect,
 } from "../web/runtime_atlas.mjs";
 
@@ -4366,5 +4367,34 @@ assert.equal(pastedParent.y, 70);
 assert.equal(pastedChild.parent, pastedParent.id);
 assert.equal(pastedChild.x, 5);
 assert.equal(pastedChild.y, 6);
+
+
+
+const groupTransformStore = createSpriteEntityStore();
+groupTransformStore.add({ id: "transform-a", page: "heroes", frame: "plain", x: 0, y: 0 });
+groupTransformStore.add({ id: "transform-b", page: "heroes", frame: "plain", x: 10, y: 0 });
+const groupTransformSelection = createSpriteSelectionModel();
+groupTransformSelection.set(["transform-a", "transform-b"]);
+const rotatedGroup = transformSelectedSpriteEntities(
+  groupTransformStore,
+  groupTransformSelection,
+  { rotation: Math.PI / 2, pivotX: 5, pivotY: 0 },
+);
+assert.equal(rotatedGroup.count, 2);
+assert.ok(Math.abs(groupTransformStore.get("transform-a").x - 5) < 1e-6);
+assert.ok(Math.abs(groupTransformStore.get("transform-a").y + 5) < 1e-6);
+assert.ok(Math.abs(groupTransformStore.get("transform-b").x - 5) < 1e-6);
+assert.ok(Math.abs(groupTransformStore.get("transform-b").y - 5) < 1e-6);
+assert.ok(Math.abs(groupTransformStore.get("transform-a").rotation - Math.PI / 2) < 1e-6);
+
+transformSelectedSpriteEntities(
+  groupTransformStore,
+  groupTransformSelection,
+  { scaleX: 2, scaleY: 3, pivotX: 5, pivotY: 0 },
+);
+assert.ok(Math.abs(groupTransformStore.get("transform-a").y + 15) < 1e-6);
+assert.ok(Math.abs(groupTransformStore.get("transform-b").y - 15) < 1e-6);
+assert.ok(Math.abs(groupTransformStore.get("transform-a").scaleX - 2) < 1e-6);
+assert.ok(Math.abs(groupTransformStore.get("transform-a").scaleY - 3) < 1e-6);
 
 console.log("runtime_atlas.mjs smoke test passed");
