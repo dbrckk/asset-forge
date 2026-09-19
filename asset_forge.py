@@ -23,6 +23,7 @@ from godot_export import write_spriteframes
 from generator_backends import execute_generated_asset, generator_backend_status
 from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png
 from production_contract import build_production_job, validate_production_request
+from production_executor import execute_generated_raster_job
 from runtime_atlas import build_runtime_atlas, validate_runtime_atlas
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
 from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline
@@ -385,6 +386,13 @@ def parser() -> argparse.ArgumentParser:
     generate.add_argument("--model")
     generate.add_argument("--timeout", type=float, default=180.0)
 
+    produce = sub.add_parser("produce", help="generate, process, validate, and report a raster production job")
+    produce.add_argument("job", type=Path)
+    produce.add_argument("--output-dir", type=Path)
+    produce.add_argument("--backend", choices=["pollinations"], default="pollinations")
+    produce.add_argument("--model")
+    produce.add_argument("--timeout", type=float, default=180.0)
+
     raster = sub.add_parser("validate-raster", help="validate a PNG or WebP against an asset manifest")
     raster.add_argument("manifest", type=Path)
     raster.add_argument("asset", type=Path)
@@ -605,6 +613,29 @@ def main() -> int:
             return 2
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0
+    if args.command == "produce":
+        try:
+            job = load_json(args.job)
+            output_dir = args.output_dir
+            if output_dir is None:
+                delivery = job.get("delivery") if isinstance(job, dict) else None
+                configured = delivery.get("outputDir") if isinstance(delivery, dict) else None
+                output_dir = Path(configured) if isinstance(configured, str) and configured.strip() else Path("build/asset-forge") / str(job.get("requestId") or "job")
+            result = execute_generated_raster_job(
+                job,
+                output_dir,
+                validator=validate_raster_file,
+                png_optimizer=recompress_png,
+                webp_encoder=encode_webp,
+                backend=args.backend,
+                model=args.model,
+                timeout_seconds=args.timeout,
+            )
+        except (OSError, ValueError, RuntimeError, json.JSONDecodeError, zlib.error) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result.get("success") else 1
     if args.command == "validate-raster":
         return cmd_validate_raster(args.manifest, args.asset)
     if args.command == "atlas-manifest":
