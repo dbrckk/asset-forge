@@ -338,11 +338,13 @@ export function createAnimationPlayer(indexedAtlas, animationName, options = {})
       lastFrameIndex = sample.frameIndex;
       onFrame?.(sample);
     }
-    if (sample.finished && !finishEmitted) {
-      finishEmitted = true;
+    if (sample.finished) {
       playing = false;
-      onFinish?.(sample);
-    } else if (!sample.finished) {
+      if (!finishEmitted) {
+        finishEmitted = true;
+        onFinish?.(sample);
+      }
+    } else {
       finishEmitted = false;
     }
     return sample;
@@ -2263,6 +2265,200 @@ export function createSpriteEntityStore(options = {}) {
     },
     get version() {
       return version;
+    },
+  };
+}
+
+
+export function createSpriteAnimationSystem(
+  atlasPages,
+  entityStore,
+  options = {},
+) {
+  if (!atlasPages || typeof atlasPages.page !== "function") {
+    throw new Error("runtime atlas page catalogue required");
+  }
+  if (
+    !entityStore ||
+    typeof entityStore.get !== "function" ||
+    typeof entityStore.update !== "function"
+  ) {
+    throw new Error("sprite entity store required");
+  }
+
+  const bindings = new Map();
+  const onEvent =
+    typeof options.onEvent === "function" ? options.onEvent : null;
+  const onFinish =
+    typeof options.onFinish === "function" ? options.onFinish : null;
+  const onLoop =
+    typeof options.onLoop === "function" ? options.onLoop : null;
+  const onFrame =
+    typeof options.onFrame === "function" ? options.onFrame : null;
+
+  function ensureEntity(entityId) {
+    const entity = entityStore.get(entityId);
+    if (!entity) {
+      throw new Error(`sprite entity not found: ${entityId}`);
+    }
+    return entity;
+  }
+
+  function bind(entityId, animationName, bindOptions = {}) {
+    const entity = ensureEntity(entityId);
+    if (typeof animationName !== "string" || animationName.length === 0) {
+      throw new Error("animationName must be a non-empty string");
+    }
+
+    const pageId = bindOptions.page ?? entity.page;
+    const page = atlasPages.page(pageId);
+    page.atlas.animation(animationName);
+
+    if (bindings.has(entityId)) {
+      bindings.delete(entityId);
+    }
+
+    let binding;
+    const player = createAnimationPlayer(page.atlas, animationName, {
+      autoplay: bindOptions.autoplay ?? true,
+      startTime: bindOptions.startTime ?? 0,
+      playbackRate: bindOptions.playbackRate ?? 1,
+      onFrame(sample) {
+        const current = entityStore.get(entityId);
+        if (!current) return;
+        const nextFrame = sample.frame.index;
+        const patch = {};
+        if (current.frame !== nextFrame) patch.frame = nextFrame;
+        if (current.page !== pageId) patch.page = pageId;
+        if (Object.keys(patch).length > 0) {
+          entityStore.update(entityId, patch);
+        }
+        onFrame?.({
+          entityId,
+          pageId,
+          animationName,
+          sample,
+          binding,
+        });
+        bindOptions.onFrame?.(sample);
+      },
+      onEvent(event) {
+        const payload = {
+          entityId,
+          pageId,
+          animationName,
+          ...event,
+        };
+        onEvent?.(payload);
+        bindOptions.onEvent?.(payload);
+      },
+      onLoop(event) {
+        const payload = {
+          entityId,
+          pageId,
+          animationName,
+          ...event,
+        };
+        onLoop?.(payload);
+        bindOptions.onLoop?.(payload);
+      },
+      onFinish(sample) {
+        const payload = {
+          entityId,
+          pageId,
+          animationName,
+          sample,
+        };
+        onFinish?.(payload);
+        bindOptions.onFinish?.(payload);
+      },
+    });
+
+    binding = {
+      entityId,
+      pageId,
+      animationName,
+      player,
+      get playing() {
+        return player.playing;
+      },
+      get timeSeconds() {
+        return player.timeSeconds;
+      },
+      play() {
+        return player.play();
+      },
+      pause() {
+        return player.pause();
+      },
+      seek(timeSeconds) {
+        return player.seek(timeSeconds);
+      },
+      setPlaybackRate(rate) {
+        return player.setPlaybackRate(rate);
+      },
+      sample() {
+        return player.sample();
+      },
+    };
+
+    bindings.set(entityId, binding);
+    player.sample();
+    return binding;
+  }
+
+  function get(entityId) {
+    return bindings.get(entityId) ?? null;
+  }
+
+  function unbind(entityId) {
+    const binding = bindings.get(entityId);
+    if (!binding) return null;
+    bindings.delete(entityId);
+    return binding;
+  }
+
+  function update(deltaSeconds) {
+    if (!Number.isFinite(deltaSeconds) || deltaSeconds < 0) {
+      throw new Error("deltaSeconds must be a finite value >= 0");
+    }
+
+    const samples = [];
+    const removedEntityIds = [];
+    for (const [entityId, binding] of bindings) {
+      if (!entityStore.has(entityId)) {
+        bindings.delete(entityId);
+        removedEntityIds.push(entityId);
+        continue;
+      }
+      samples.push({
+        entityId,
+        sample: binding.player.update(deltaSeconds),
+      });
+    }
+
+    return {
+      bindingCount: bindings.size,
+      updatedCount: samples.length,
+      removedEntityIds,
+      samples,
+    };
+  }
+
+  function clear() {
+    const count = bindings.size;
+    bindings.clear();
+    return count;
+  }
+
+  return {
+    bind,
+    get,
+    unbind,
+    update,
+    clear,
+    get size() {
+      return bindings.size;
     },
   };
 }
