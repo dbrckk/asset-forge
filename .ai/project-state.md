@@ -12,6 +12,7 @@ Status: active
 - Godot SpriteFrames export now maps trim metadata to AtlasTexture.margin and validates atlas bounds/source-offset consistency before emitting resources.
 - A versioned engine-neutral runtime atlas exporter preserves atlas region, normalized UVs, pre-rotation source region, source canvas size, trim offsets, and explicit clockwise rotation metadata; its JSON contract is defined by schemas/runtime-atlas.schema.json.
 - Runtime atlas JSON has a dependency-free strict validator with semantic checks for frame count, duplicate indices, UV-region consistency, source/trim bounds, rotation dimensions, unknown fields, and strict integer typing; CI smoke-validates examples/runtime-atlas.json.
+- A dependency-free ES module web/runtime_atlas.mjs indexes frames by index/name, draws trim+rotation-correct sprites to Canvas2D, and exposes source-oriented UVs for WebGL/custom renderers; Node 22 smoke-tests this consumer in CI.
 - PNG recompression is no-growth: the original bytes are retained whenever the adaptive candidate is not smaller, including in-place output.
 - Indexed PNG decoding supports 1/2/4/8-bit palette indices with packed scanline layout, PNG filtering, row-padding handling, and tRNS palette alpha.
 - Grayscale PNG decoding supports 1/2/4/8/16-bit non-interlaced samples, scales low-bit/16-bit luminance to RGBA8, ignores packed padding bits, and applies validated grayscale tRNS transparency.
@@ -68,7 +69,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Add concrete runtime consumer snippets/adapters for common engines or web renderers while keeping the versioned runtime-atlas contract stable.
+- Consider additional engine adapters and animation helpers; the versioned runtime-atlas contract now has a concrete Canvas2D/WebGL consumer.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -89,7 +90,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-19: latest GitHub source inspected after adding strict dependency-free runtime-atlas validation, CLI/CI smoke validation, a rotated+trimmed example, and schema-aligned unknown-field/type checks.
+- 2026-09-19: latest GitHub source inspected after adding a dependency-free Canvas2D/WebGL runtime atlas consumer with rotation-aware drawing, source-oriented UV mapping, Node CI smoke tests, and documentation.
 
 <!-- AUTO:START -->
 ## Automatic repository state
