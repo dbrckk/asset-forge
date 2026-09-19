@@ -11,7 +11,7 @@ from production_contract import (
 
 class ProductionContractTests(unittest.TestCase):
     def request(self):
-        manifest = asset_forge.load_json(asset_forge.Path(__file__).resolve().parents[1] / "examples/asset-manifest.json")
+        manifest = asset_forge.load_json(Path(__file__).resolve().parents[1] / "examples/asset-manifest.json")
         manifest["source"] = {"mode": "generated"}
         return {
             "schema": REQUEST_SCHEMA,
@@ -27,7 +27,7 @@ class ProductionContractTests(unittest.TestCase):
             validate_production_request(request, asset_forge.validate_manifest),
             [],
         )
-        plan = asset_forge.build_plan(request["manifest"], asset_forge.Path(__file__).resolve().parents[1])
+        plan = asset_forge.build_plan(request["manifest"], Path(__file__).resolve().parents[1])
         job = build_production_job(request, plan)
         self.assertEqual(job["schema"], JOB_SCHEMA)
         self.assertEqual(job["status"], "ready")
