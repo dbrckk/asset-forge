@@ -2056,3 +2056,190 @@ export async function createWebGL2CanvasRuntime(
     },
   };
 }
+
+
+export function createSpriteEntityStore(options = {}) {
+  const entities = new Map();
+  let nextNumericId = options.startId ?? 1;
+  let version = 0;
+
+  if (!Number.isInteger(nextNumericId) || nextNumericId < 1) {
+    throw new Error("startId must be a positive integer");
+  }
+
+  function normalizeId(id) {
+    if (
+      (typeof id !== "string" && typeof id !== "number") ||
+      id === ""
+    ) {
+      throw new Error("sprite entity id must be a non-empty string or number");
+    }
+    return id;
+  }
+
+  function validateEntity(entity, label = "sprite entity") {
+    if (!entity || typeof entity !== "object") {
+      throw new Error(`${label} must be an object`);
+    }
+    if (typeof entity.page !== "string" || entity.page.length === 0) {
+      throw new Error(`${label}.page must be a non-empty string`);
+    }
+    if (
+      typeof entity.frame !== "string" &&
+      typeof entity.frame !== "number"
+    ) {
+      throw new Error(`${label}.frame must be a string or number`);
+    }
+
+    for (const field of ["x", "y", "z", "scale", "scaleX", "scaleY"]) {
+      if (entity[field] != null && !Number.isFinite(entity[field])) {
+        throw new Error(`${label}.${field} must be finite`);
+      }
+    }
+    const sx = entity.scaleX ?? entity.scale ?? 1;
+    const sy = entity.scaleY ?? entity.scale ?? 1;
+    if (!(sx > 0) || !(sy > 0)) {
+      throw new Error(`${label} scale must be > 0`);
+    }
+  }
+
+  function cloneEntity(entity) {
+    return { ...entity };
+  }
+
+  function add(entity) {
+    validateEntity(entity);
+    const requestedId = entity.id;
+    const id =
+      requestedId == null ? nextNumericId++ : normalizeId(requestedId);
+    if (entities.has(id)) {
+      throw new Error(`sprite entity already exists: ${id}`);
+    }
+
+    const stored = cloneEntity({ ...entity, id });
+    entities.set(id, stored);
+    version += 1;
+    return cloneEntity(stored);
+  }
+
+  function get(id) {
+    const stored = entities.get(normalizeId(id));
+    return stored ? cloneEntity(stored) : null;
+  }
+
+  function has(id) {
+    return entities.has(normalizeId(id));
+  }
+
+  function update(id, patch) {
+    id = normalizeId(id);
+    const current = entities.get(id);
+    if (!current) {
+      throw new Error(`sprite entity not found: ${id}`);
+    }
+    if (!patch || typeof patch !== "object") {
+      throw new Error("sprite entity patch must be an object");
+    }
+    if ("id" in patch && patch.id !== id) {
+      throw new Error("sprite entity id cannot be changed");
+    }
+
+    const next = { ...current, ...patch, id };
+    validateEntity(next);
+    entities.set(id, next);
+    version += 1;
+    return cloneEntity(next);
+  }
+
+  function remove(id) {
+    id = normalizeId(id);
+    const existing = entities.get(id);
+    if (!existing) {
+      return null;
+    }
+    entities.delete(id);
+    version += 1;
+    return cloneEntity(existing);
+  }
+
+  function clear() {
+    if (entities.size === 0) {
+      return 0;
+    }
+    const count = entities.size;
+    entities.clear();
+    version += 1;
+    return count;
+  }
+
+  function snapshot(options = {}) {
+    const includeDisabled = options.includeDisabled ?? false;
+    if (typeof includeDisabled !== "boolean") {
+      throw new Error("includeDisabled must be boolean");
+    }
+
+    const result = [];
+    for (const entity of entities.values()) {
+      if (!includeDisabled && entity.enabled === false) {
+        continue;
+      }
+      result.push(cloneEntity(entity));
+    }
+    return result;
+  }
+
+  function instances(options = {}) {
+    return snapshot(options).map((entity) => {
+      const { enabled, ...instance } = entity;
+      return instance;
+    });
+  }
+
+  function transact(callback) {
+    if (typeof callback !== "function") {
+      throw new Error("sprite entity transaction callback required");
+    }
+
+    const before = new Map(
+      Array.from(entities.entries(), ([id, entity]) => [id, cloneEntity(entity)]),
+    );
+    const beforeNextId = nextNumericId;
+    const beforeVersion = version;
+
+    try {
+      return callback({
+        add,
+        get,
+        has,
+        update,
+        remove,
+      });
+    } catch (error) {
+      entities.clear();
+      for (const [id, entity] of before) {
+        entities.set(id, entity);
+      }
+      nextNumericId = beforeNextId;
+      version = beforeVersion;
+      throw error;
+    }
+  }
+
+  return {
+    add,
+    get,
+    has,
+    update,
+    remove,
+    clear,
+    snapshot,
+    instances,
+    transact,
+    get size() {
+      return entities.size;
+    },
+    get version() {
+      return version;
+    },
+  };
+}
