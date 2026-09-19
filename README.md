@@ -1036,3 +1036,67 @@ runtime.renderEntities(options)
 ```
 
 The logical entity store is intentionally independent from GPU state. If WebGL2 context is lost and restored, shaders/buffers/textures are rebuilt while the same entity store survives unchanged.
+
+
+### Animation binding for persistent entities
+
+Persistent sprite entities can now be driven directly by runtime-atlas animations through `createSpriteAnimationSystem()`.
+
+```js
+const animations = createSpriteAnimationSystem(
+  pages,
+  entities,
+  {
+    onEvent(event) {
+      if (event.name === "impact") {
+        handleImpact(event.entityId, event.payload);
+      }
+    },
+  },
+);
+
+animations.bind("hero", "run", {
+  autoplay: true,
+  playbackRate: 1,
+});
+
+animations.update(deltaSeconds);
+```
+
+Binding automatically updates the entity's `frame` as the animation advances. If the binding targets another page, the entity page is updated as well.
+
+Bindings expose the underlying deterministic player controls:
+
+```text
+play()
+pause()
+seek(seconds)
+setPlaybackRate(rate)
+sample()
+```
+
+Global and per-binding callbacks can observe frame changes, timeline events, loops, and finish notifications. Animation events are enriched with `entityId`, `pageId`, and `animationName`.
+
+If a bound entity is removed from the entity store, the next animation-system update automatically removes the stale binding. `unbind()` and `clear()` are also available explicitly.
+
+`createWebGL2CanvasRuntime()` now exposes:
+
+```text
+runtime.animations
+runtime.updateAnimations(deltaSeconds)
+```
+
+so retained-mode game loops can be written as:
+
+```js
+runtime.updateAnimations(deltaSeconds);
+runtime.renderEntities({
+  viewport,
+  sort: true,
+  preserveOrder: true,
+});
+```
+
+Entity and animation state are CPU-side and survive WebGL2 context reconstruction. Logical animation updates may continue while the context is lost; only GPU rendering is blocked.
+
+The animation-player finish path was also hardened: calling `play()` again on an already-finished non-looping clip no longer leaves the player incorrectly marked as playing.
