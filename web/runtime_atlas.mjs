@@ -1933,6 +1933,8 @@ export async function createWebGL2CanvasRuntime(
     pageDefinitions,
     options.sceneOptions,
   );
+  const entityStore =
+    options.entityStore ?? createSpriteEntityStore(options.entityStoreOptions);
   let contextLost = false;
   let disposed = false;
   let restorePromise = null;
@@ -1995,6 +1997,7 @@ export async function createWebGL2CanvasRuntime(
   }
 
   return {
+    entities: entityStore,
     get gl() {
       return gl;
     },
@@ -2022,6 +2025,13 @@ export async function createWebGL2CanvasRuntime(
       }
       return scene.buildBatches(instances, batchOptions);
     },
+    buildEntityBatches(batchOptions = {}) {
+      assertActive();
+      if (contextLost) {
+        throw new Error("WebGL2 context is lost");
+      }
+      return scene.buildBatches(entityStore.instances(), batchOptions);
+    },
     render(instancesOrBatches, batchOptions = {}) {
       assertActive();
       if (contextLost) {
@@ -2030,6 +2040,19 @@ export async function createWebGL2CanvasRuntime(
       const size = resize();
       return scene.render(
         instancesOrBatches,
+        size.width,
+        size.height,
+        batchOptions,
+      );
+    },
+    renderEntities(batchOptions = {}) {
+      assertActive();
+      if (contextLost) {
+        throw new Error("WebGL2 context is lost");
+      }
+      const size = resize();
+      return scene.render(
+        entityStore.instances(),
         size.width,
         size.height,
         batchOptions,
