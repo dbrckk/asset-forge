@@ -4,14 +4,19 @@ import json
 import os
 import shutil
 import subprocess
+import urllib.error
+import urllib.request
 from pathlib import Path
 from typing import Callable
 
 
 RASTER_GENERATED_TYPES = {"sprite", "sprite-sheet", "tileset", "pixel-art"}
 VECTOR_GENERATED_TYPES = {"vector", "svg", "icon", "ui-vector", "logo"}
-SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES
+THREE_D_GENERATED_TYPES = {"mesh", "prop", "environment", "character-3d"}
+SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES | THREE_D_GENERATED_TYPES
 DEFAULT_VECTOR_MODEL = "recraft/recraft-v4.1-vector"
+DEFAULT_3D_MODEL = "microsoft/trellis-2"
+MAX_3D_BYTES = 100 * 1024 * 1024
 
 
 class GenerationError(RuntimeError):
@@ -64,6 +69,10 @@ def build_generation_prompt(job: dict) -> str:
     if asset_type in VECTOR_GENERATED_TYPES:
         details.append(
             "Return clean editable vector artwork with a valid SVG viewBox, compact paths, and no embedded external resources."
+        )
+    elif asset_type in THREE_D_GENERATED_TYPES:
+        details.append(
+            "Create one clearly isolated subject suitable as an image-to-3D reference, shown fully in frame from a useful three-quarter view, with simple lighting and a clean neutral background."
         )
     else:
         details.append("Use a transparent background when appropriate.")
@@ -178,4 +187,168 @@ def execute_generated_asset(
         "sourcePath": str(output),
         "sourceBytes": output.stat().st_size,
         "metadata": metadata,
+    }
+
+
+
+class _NoCredentialRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise GenerationError("credential-bearing 3D redirects are refused")
+
+
+def _default_3d_opener(request, timeout):
+    return urllib.request.build_opener(_NoCredentialRedirect()).open(
+        request,
+        timeout=timeout,
+    )
+
+
+def _upload_reference_image(
+    path: Path,
+    *,
+    executable: str,
+    timeout_seconds: float,
+    runner: Callable[..., subprocess.CompletedProcess],
+) -> str:
+    completed = runner(
+        [executable, "upload", str(Path(path)), "--json"],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=timeout_seconds,
+    )
+    if completed.returncode != 0:
+        stderr = str(completed.stderr or "").strip()
+        raise GenerationError(
+            "pollinations reference upload failed"
+            + (f": {stderr[:1000]}" if stderr else "")
+        )
+    try:
+        payload = json.loads(str(completed.stdout or ""))
+    except json.JSONDecodeError as exc:
+        raise GenerationError("pollinations upload returned invalid JSON") from exc
+    if not isinstance(payload, dict):
+        raise GenerationError("pollinations upload response must be an object")
+    url = payload.get("url")
+    if not isinstance(url, str) or not url.startswith("https://media.pollinations.ai/"):
+        raise GenerationError("pollinations upload response missing trusted media URL")
+    return url
+
+
+def execute_generated_3d_asset(
+    job: dict,
+    output_dir: Path,
+    *,
+    model: str = DEFAULT_3D_MODEL,
+    resolution: str = "low",
+    timeout_seconds: float = 600.0,
+    environ=None,
+    generator: Callable = execute_generated_asset,
+    upload_runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,
+    opener: Callable = _default_3d_opener,
+) -> dict:
+    if job.get("requiresGenerator") is not True:
+        raise GenerationError("production job does not require a generator")
+    asset_type = str(job.get("assetType") or "")
+    if asset_type not in THREE_D_GENERATED_TYPES:
+        raise GenerationError(
+            f"unsupported generated 3D asset type: {asset_type or '<missing>'}"
+        )
+    if model != DEFAULT_3D_MODEL:
+        raise GenerationError(
+            "only microsoft/trellis-2 is enabled by default for free-first 3D production"
+        )
+    if resolution not in {"low", "medium", "high"}:
+        raise GenerationError("3D resolution must be low, medium, or high")
+
+    env = os.environ if environ is None else environ
+    api_key = str(env.get("POLLINATIONS_API_KEY") or "").strip()
+    if not api_key:
+        raise GenerationError(
+            "POLLINATIONS_API_KEY is required for server-side 3D generation"
+        )
+
+    executable = shutil.which("polli")
+    if not executable:
+        raise GenerationError("polli executable not found; install @pollinations/cli")
+
+    try:
+        timeout = float(timeout_seconds)
+    except (TypeError, ValueError) as exc:
+        raise GenerationError("timeout_seconds must be positive") from exc
+    if timeout <= 0:
+        raise GenerationError("timeout_seconds must be positive")
+
+    out = Path(output_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    reference_dir = out / "reference"
+    reference = generator(
+        job,
+        reference_dir,
+        backend="pollinations",
+        model=None,
+        timeout_seconds=min(timeout, 180.0),
+    )
+    reference_path = Path(str(reference.get("sourcePath") or ""))
+    if not reference_path.is_file():
+        raise GenerationError("3D reference generation did not produce an image")
+
+    image_url = _upload_reference_image(
+        reference_path,
+        executable=executable,
+        timeout_seconds=min(timeout, 120.0),
+        runner=upload_runner,
+    )
+
+    endpoint = "https://gen.pollinations.ai/3d/no_prompt_for_trellis_needed"
+    body = json.dumps(
+        {
+            "model": model,
+            "image": image_url,
+            "resolution": resolution,
+        },
+        separators=(",", ":"),
+    ).encode("utf-8")
+    request = urllib.request.Request(
+        endpoint,
+        data=body,
+        method="POST",
+        headers={
+            "Authorization": "Bearer " + api_key,
+            "Content-Type": "application/json",
+            "Accept": "model/gltf-binary,application/octet-stream",
+        },
+    )
+    try:
+        with opener(request, timeout) as response:
+            status = int(getattr(response, "status", 200))
+            if status != 200:
+                raise GenerationError(f"Pollinations 3D returned HTTP {status}")
+            raw = response.read(MAX_3D_BYTES + 1)
+    except urllib.error.HTTPError as exc:
+        raise GenerationError(
+            f"Pollinations 3D returned HTTP {exc.code}"
+        ) from None
+    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        raise GenerationError(
+            f"Pollinations 3D unavailable: {type(exc).__name__}"
+        ) from None
+
+    if len(raw) > MAX_3D_BYTES:
+        raise GenerationError("generated GLB exceeds 100MB safety limit")
+    if len(raw) < 12 or raw[:4] != b"glTF":
+        raise GenerationError("Pollinations 3D response is not a GLB")
+
+    output = out / "generated-source.glb"
+    output.write_bytes(raw)
+    return {
+        "success": True,
+        "backend": "pollinations",
+        "model": model,
+        "resolution": resolution,
+        "assetType": asset_type,
+        "referencePath": str(reference_path),
+        "referenceUrl": image_url,
+        "sourcePath": str(output),
+        "sourceBytes": len(raw),
     }
