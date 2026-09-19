@@ -505,12 +505,24 @@ export function buildSpriteBatch(indexedAtlas, instances, options = {}) {
     const right = left + frame.sourceRegion.width * scaleX;
     const bottom = top + frame.sourceRegion.height * scaleY;
     const uvs = sourceOrientedUVs(frame);
+    const pivotWorldX = x + pivotX * scaleX;
+    const pivotWorldY = y + pivotY * scaleY;
+    const cosRotation = Math.cos(spriteRotation);
+    const sinRotation = Math.sin(spriteRotation);
     const positions = [
       [left, top],
       [right, top],
       [right, bottom],
       [left, bottom],
-    ];
+    ].map(([px, py]) => {
+      if (spriteRotation === 0) return [px, py];
+      const dx = px - pivotWorldX;
+      const dy = py - pivotWorldY;
+      return [
+        pivotWorldX + dx * cosRotation - dy * sinRotation,
+        pivotWorldY + dx * sinRotation + dy * cosRotation,
+      ];
+    });
 
     const vertexBase = instanceIndex * 4;
     for (let corner = 0; corner < 4; corner += 1) {
@@ -534,10 +546,17 @@ export function buildSpriteBatch(indexedAtlas, instances, options = {}) {
       y,
       width: frame.sourceSize.width * scaleX,
       height: frame.sourceSize.height * scaleY,
-      visibleX: left,
-      visibleY: top,
-      visibleWidth: frame.sourceRegion.width * scaleX,
-      visibleHeight: frame.sourceRegion.height * scaleY,
+      visibleX: Math.min(...positions.map(([px]) => px)),
+      visibleY: Math.min(...positions.map(([, py]) => py)),
+      visibleWidth:
+        Math.max(...positions.map(([px]) => px)) -
+        Math.min(...positions.map(([px]) => px)),
+      visibleHeight:
+        Math.max(...positions.map(([, py]) => py)) -
+        Math.min(...positions.map(([, py]) => py)),
+      rotation: spriteRotation,
+      pivotWorldX,
+      pivotWorldY,
       frameIndex: frame.index,
       frameName: frame.name ?? null,
     };
@@ -619,8 +638,13 @@ export function buildInstancedSpriteBatch(indexedAtlas, instances, options = {})
     const y = instance.y ?? 0;
     const scaleX = instance.scaleX ?? instance.scale ?? 1;
     const scaleY = instance.scaleY ?? instance.scale ?? 1;
+    const spriteRotation = instance.rotation ?? 0;
+    const pivotX = instance.pivotX ?? 0;
+    const pivotY = instance.pivotY ?? 0;
 
-    for (const [name, value] of Object.entries({ x, y, scaleX, scaleY })) {
+    for (const [name, value] of Object.entries({
+      x, y, scaleX, scaleY, spriteRotation, pivotX, pivotY,
+    })) {
       if (!Number.isFinite(value)) {
         throw new Error(
           `instanced sprite batch instance ${instanceIndex} ${name} must be finite`,
