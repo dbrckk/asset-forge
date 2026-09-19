@@ -22,7 +22,7 @@ from godot_handoff import prepare_godot_handoff, validate_godot_handoff
 from godot_export import write_spriteframes
 from generator_backends import THREE_D_GENERATED_TYPES, VECTOR_GENERATED_TYPES, execute_generated_asset, generator_backend_status
 from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png
-from production_contract import build_production_job, validate_production_request
+from production_contract import build_production_job, validate_production_report, validate_production_request
 from production_executor import execute_generated_3d_job, execute_generated_raster_job, execute_generated_vector_job
 from operational_status import build_operational_status
 from runtime_atlas import build_runtime_atlas, validate_runtime_atlas
@@ -535,6 +535,9 @@ def parser() -> argparse.ArgumentParser:
     production_job.add_argument("request", type=Path)
     production_job.add_argument("--output", type=Path)
 
+    production_report = sub.add_parser("validate-production-report", help="validate a machine-readable production report")
+    production_report.add_argument("report", type=Path)
+
     generator_status = sub.add_parser("generator-backend-status", help="inspect available generation backends")
     operational_status = sub.add_parser("operational-status", help="report machine-readable production readiness")
     generate = sub.add_parser("generate", help="execute a generated-asset production job")
@@ -740,6 +743,20 @@ def main() -> int:
         return 0
     if args.command == "plan":
         return cmd_plan(args.manifest, root)
+    if args.command == "validate-production-report":
+        try:
+            report = load_json(args.report)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        errors = validate_production_report(report)
+        if errors:
+            print("INVALID")
+            for error in errors:
+                print(f"- {error}")
+            return 1
+        print("VALID")
+        return 0
     if args.command == "production-job":
         try:
             request = load_json(args.request)
@@ -800,6 +817,12 @@ def main() -> int:
                 timeout_seconds=args.timeout,
             )
             result = _enrich_engine_handoff(job, result, output_dir)
+            contract_errors = validate_production_report(result)
+            if contract_errors:
+                raise ValueError(
+                    "production report contract invalid: "
+                    + "; ".join(contract_errors)
+                )
         except (OSError, ValueError, RuntimeError, json.JSONDecodeError, zlib.error) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
@@ -832,6 +855,12 @@ def main() -> int:
                 timeout_seconds=args.timeout,
             )
             result = _enrich_engine_handoff(job, result, output_dir)
+            contract_errors = validate_production_report(result)
+            if contract_errors:
+                raise ValueError(
+                    "production report contract invalid: "
+                    + "; ".join(contract_errors)
+                )
         except (OSError, ValueError, RuntimeError, json.JSONDecodeError, zlib.error) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
