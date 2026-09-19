@@ -2716,6 +2716,13 @@ redo()
 selectEntitiesInRect(rect, selectOptions =
 moveEntityByWorldDelta(entityId, deltaX, deltaY, moveOptions =
 transformSelection(transformOptions =
+selectionHandles(handleOptions =
+dragSelectionHandle(
+      handle,
+      startPoint,
+      currentPoint,
+      handleOptions = {},
+)
 moveSelectionByWorldDelta(deltaX, deltaY, moveOptions =
 pointerMove(pointerId, x, y, pickOptions =
 pointerDown(pointerId, x, y, pickOptions =
@@ -2941,6 +2948,21 @@ function cancel(pointerId)
 get hoverEntityId()
 get activePointerCount()
 pointerState(pointerId)
+⋮----
+export function selectionTransformHandleGeometry(
+  entityStore,
+  selectionModel,
+  options = {},
+)
+⋮----
+export function applySelectionTransformHandleDrag(
+  entityStore,
+  selectionModel,
+  handle,
+  startPoint,
+  currentPoint,
+  options = {},
+)
 ⋮----
 export function transformSelectedSpriteEntities(
   entityStore,
@@ -6698,6 +6720,24 @@ const pasted = runtime.pasteEntities(clipboard, {
 Internal parent-child links are remapped to the newly created entity IDs. Only copied hierarchy roots receive the paste/duplicate offset, so descendants keep their local transforms and the copied hierarchy preserves its shape.
 
 The clipboard contract is versioned as `asset-forge-sprite-clipboard` version 1. Pasting into another compatible entity store remaps internal parents and detaches unavailable external parents safely. Duplicate and paste automatically select the newly created entities.
+
+
+### Selection transform gizmo primitives
+
+The runtime now exposes editor-ready transform handle geometry:
+
+```js
+const gizmo = runtime.selectionHandles();
+```
+
+It returns selection bounds, a center pivot, four corner scale handles, and a rotation handle. Drag operations can be applied directly:
+
+```js
+runtime.dragSelectionHandle("se", startWorld, currentWorld);
+runtime.dragSelectionHandle("rotate", startWorld, currentWorld);
+```
+
+Corner handles perform non-uniform scaling around the selection pivot; `uniform: true` forces uniform scale. The rotation handle derives an angular delta around the same pivot. These primitives are renderer-independent so a game/editor UI can draw the gizmo with Canvas, WebGL, DOM, or another frontend.
 ````
 
 ## File: runtime_atlas.py

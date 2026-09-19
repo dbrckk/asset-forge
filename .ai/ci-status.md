@@ -2,11 +2,11 @@
 
 Summary: 0 success / 3 failure / 2 active
 
-- Validate asset-forge: queued / pending (fcbff034)
-- Validate asset-forge: in_progress / pending (8aa6e752)
-- Validate asset-forge: completed / failure (bc9da6b7)
-- Validate asset-forge: completed / failure (dea129ee)
-- Validate asset-forge: completed / failure (a8c74ac3)
+- Validate asset-forge: queued / pending (4523b80a)
+- Validate asset-forge: in_progress / pending (807e1e7a)
+- Validate asset-forge: completed / failure (bb8db8b2)
+- Validate asset-forge: completed / failure (5d0edfbc)
+- Validate asset-forge: completed / failure (fcbff034)
 
 ## Latest failed run structure
 - Job: webp-backend
