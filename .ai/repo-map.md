@@ -1617,6 +1617,10 @@ stderr = ""
 ⋮----
 result = execute_generated_asset(
 ⋮----
+def test_generator_metadata_redacts_credentials_before_reporting(self)
+⋮----
+stdout = (
+⋮----
 def test_required_alpha_runs_transparency_processor_before_normalization(self)
 ⋮----
 alpha_job = job()
@@ -3895,6 +3899,16 @@ SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES | TH
 DEFAULT_VECTOR_MODEL = "recraft/recraft-v4.1-vector"
 DEFAULT_3D_MODEL = "microsoft/trellis-2"
 MAX_3D_BYTES = 100 * 1024 * 1024
+MAX_METADATA_ITEMS = 64
+MAX_METADATA_STRING = 4096
+MAX_METADATA_DEPTH = 6
+_SENSITIVE_METADATA_KEY = re.compile(
+⋮----
+def _sanitize_metadata(value, *, depth: int = 0)
+⋮----
+cleaned = {}
+⋮----
+name = str(key)[:256]
 ⋮----
 class GenerationError(RuntimeError)
 ⋮----
@@ -4005,7 +4019,7 @@ metadata = None
 ⋮----
 parsed = json.loads(stdout)
 ⋮----
-metadata = parsed
+metadata = _sanitize_metadata(parsed)
 ⋮----
 class _NoCredentialRedirect(urllib.request.HTTPRedirectHandler)
 ⋮----

@@ -4,5 +4,3415 @@
   "scope": "symbols defined in changed source files",
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
-  "symbols": {}
+  "symbols": {
+    "_sanitize_metadata": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 31,
+        "end": 55
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "GenerationError": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 58,
+        "end": 59
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "generator_backend_status": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 62,
+        "end": 84
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_sprite_sheet_geometry": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 87,
+        "end": 119
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_generation_dimensions": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 122,
+        "end": 133
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_sprite_sheet_geometry",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 87,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_ensure_transparency": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 136,
+        "end": 213
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_normalize_raster_geometry": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 216,
+        "end": 257
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_sprite_sheet_geometry",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 87,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "build_generation_prompt": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 260,
+        "end": 309
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_sprite_sheet_geometry",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 87,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "pollinations_command": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 312,
+        "end": 340
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_generation_dimensions",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 122,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "execute_generated_asset": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 343,
+        "end": 441
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_ensure_transparency",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_normalize_raster_geometry",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 216,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_sanitize_metadata",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 31,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_sprite_sheet_geometry",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 87,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "pollinations_command",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 312,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 6
+    },
+    "_NoCredentialRedirect": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 445,
+        "end": 447
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "redirect_request",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 446,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "redirect_request": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 446,
+        "end": 447
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_default_3d_opener": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 450,
+        "end": 454
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_NoCredentialRedirect",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 445,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_upload_reference_image": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 457,
+        "end": 486
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "execute_generated_3d_asset": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 489,
+        "end": 605
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_default_3d_opener",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 450,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_upload_reference_image",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 457,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 343,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "job": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 16,
+        "end": 31
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "GeneratorBackendsTests": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 34,
+        "end": 281
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 228,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 92,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 172,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 222,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__enter__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 230,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__exit__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 232,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 489,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 343,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 213,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "generator_backend_status",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 62,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalize",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 182,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "opener",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 237,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "pollinations_command",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 312,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "read",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 234,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 127,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 169,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_generation_requires_server_api_key",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_prompt_is_reference_image_oriented",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 200,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_backend_status_reports_auth_without_secret_value",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 74,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 208,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_execute_generated_asset_uses_bounded_subprocess_and_output",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 86,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_generator_metadata_redacts_credentials_before_reporting",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 123,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_pollinations_command_never_contains_api_key",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 41,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_prompt_preserves_hard_sprite_constraints",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 35,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_required_alpha_runs_transparency_processor_before_normalization",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 161,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 277,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_vector_generation_defaults_to_recraft_svg_model",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 57,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "transparency",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 178,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "upload_runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 219,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 29
+    },
+    "test_prompt_preserves_hard_sprite_constraints": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 35,
+        "end": 39
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_pollinations_command_never_contains_api_key": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 41,
+        "end": 55
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "pollinations_command",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 312,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_vector_generation_defaults_to_recraft_svg_model": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 57,
+        "end": 72
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "pollinations_command",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 312,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_backend_status_reports_auth_without_secret_value": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 74,
+        "end": 84
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "generator_backend_status",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 62,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_execute_generated_asset_uses_bounded_subprocess_and_output": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 86,
+        "end": 121
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 92,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 172,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 222,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 343,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 127,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 169,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "runner": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 89,
+        "end": 209
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 92,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 172,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 222,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 343,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalize",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 182,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_prompt_is_reference_image_oriented",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 200,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 208,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_generator_metadata_redacts_credentials_before_reporting",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 123,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_required_alpha_runs_transparency_processor_before_normalization",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 161,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "transparency",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 178,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 10
+    },
+    "Result": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 92,
+        "end": 212
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 343,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalize",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 182,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 127,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 169,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_prompt_is_reference_image_oriented",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 200,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 208,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_generator_metadata_redacts_credentials_before_reporting",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 123,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_required_alpha_runs_transparency_processor_before_normalization",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 161,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "transparency",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 178,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 10
+    },
+    "test_generator_metadata_redacts_credentials_before_reporting": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 123,
+        "end": 159
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 92,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 172,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 222,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 343,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 127,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 169,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "test_required_alpha_runs_transparency_processor_before_normalization": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 161,
+        "end": 198
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 92,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 172,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 222,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 343,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalize",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 182,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 127,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 169,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "transparency",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 178,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 6
+    },
+    "transparency": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 178,
+        "end": 298
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 228,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 92,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 172,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 222,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__enter__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 230,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__exit__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 232,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 489,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 343,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 213,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalize",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 182,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "opener",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 237,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "read",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 234,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 127,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 169,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_generation_requires_server_api_key",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_prompt_is_reference_image_oriented",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 200,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 208,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 277,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "upload_runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 219,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 19
+    },
+    "normalize": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 182,
+        "end": 302
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 228,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 92,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 172,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 222,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__enter__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 230,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__exit__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 232,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 489,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 343,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 213,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "opener",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 237,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "read",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 234,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 127,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 169,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_generation_requires_server_api_key",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_prompt_is_reference_image_oriented",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 200,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 208,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 277,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "transparency",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 178,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "upload_runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 219,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 19
+    },
+    "test_3d_prompt_is_reference_image_oriented": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 200,
+        "end": 206
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 208,
+        "end": 265
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 228,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 92,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 172,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 222,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__enter__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 230,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__exit__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 232,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 489,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 213,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "opener",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 237,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "read",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 234,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "upload_runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 219,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 10
+    },
+    "generator": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 213,
+        "end": 333
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 228,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 92,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 172,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 222,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__enter__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 230,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__exit__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 232,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 489,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "opener",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 237,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "read",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 234,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_generation_requires_server_api_key",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 277,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "upload_runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 219,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 13
+    },
+    "upload_runner": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 219,
+        "end": 339
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 228,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 92,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 172,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 222,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__enter__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 230,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__exit__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 232,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 489,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 213,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "opener",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 237,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "read",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 234,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_generation_requires_server_api_key",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 277,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 13
+    },
+    "Response": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 228,
+        "end": 348
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "__enter__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 230,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__exit__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 232,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 489,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 213,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "opener",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 237,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "read",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 234,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_generation_requires_server_api_key",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 277,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "upload_runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 219,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 12
+    },
+    "__enter__": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 230,
+        "end": 350
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 228,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__exit__",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 232,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 489,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 213,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "opener",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 237,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "read",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 234,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_generation_requires_server_api_key",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 277,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "upload_runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 219,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 12
+    },
+    "__exit__": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 232,
+        "end": 352
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 228,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 489,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 213,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "opener",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 237,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "read",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 234,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_generation_requires_server_api_key",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 277,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "upload_runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 219,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 11
+    },
+    "read": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 234,
+        "end": 354
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 228,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 489,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 213,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "opener",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 237,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_generation_requires_server_api_key",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 277,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "upload_runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 219,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 10
+    },
+    "opener": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 237,
+        "end": 357
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 228,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 489,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 213,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_3d_generation_requires_server_api_key",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 277,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "upload_runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 219,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 9
+    },
+    "test_3d_generation_requires_server_api_key": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 267,
+        "end": 275
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 489,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_unsupported_generated_type_fails_closed": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 277,
+        "end": 281
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 260,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    }
+  }
 }

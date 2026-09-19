@@ -34,9 +34,10 @@
       ],
       "dependents": [
         "tests/test_asset_forge.py",
+        "tests/test_fulfill.py",
         "tests/test_production_contract.py"
       ],
-      "in_degree": 2,
+      "in_degree": 3,
       "out_degree": 20
     },
     "asset_profile_validation.py": {
@@ -311,6 +312,14 @@
     "tests/test_engine_profile_validation.py": {
       "dependencies": [
         "engine_profile_validation.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1
+    },
+    "tests/test_fulfill.py": {
+      "dependencies": [
+        "asset_forge.py"
       ],
       "dependents": [],
       "in_degree": 0,

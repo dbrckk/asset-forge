@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T21:27:28Z
+Generated: 2026-09-19T21:28:55Z
 
 ### Git
 - Branch: `main`
-- Head: `16da4d5518c5`
-- Commit date: 2026-09-19T23:27:18+02:00
-- Commit: docs: document autonomous production workflow
+- Head: `f0bf62392662`
+- Commit date: 2026-09-19T23:28:40+02:00
+- Commit: test: prevent credential leakage in generator metadata
 - Tracked files: 232
 
 ### Recently changed files
+- `tests/test_generator_backends.py`
+- `generator_backends.py`
 - `README.md`
 - `tests/test_fulfill.py`
 - `asset_forge.py`
-- `production_contract.py`
-- `.github/workflows/validate.yml`
 
 ### Project signals
 - No common build descriptor detected

@@ -1114,6 +1114,147 @@
       },
       "task": "offline progress"
     },
+    "12b8729b1bdde4d8912cfb648dc980e2eb9f0460c9ceb02f663bfc667dfa3da2": {
+      "route": {
+        "budget": {
+          "confidence": "low",
+          "expand_to": 12,
+          "max_files": 6,
+          "requested_max_files": 12,
+          "score_margin": 0,
+          "tier": "broad",
+          "top_score": 9
+        },
+        "candidate_count": 5,
+        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
+        "files": [
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "generator_backends.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "GenerationError",
+              "_NoCredentialRedirect",
+              "_default_3d_opener",
+              "_ensure_transparency",
+              "_generation_dimensions",
+              "_normalize_raster_geometry",
+              "_sanitize_metadata",
+              "_sprite_sheet_geometry",
+              "_upload_reference_image",
+              "build_generation_prompt",
+              "execute_generated_3d_asset",
+              "execute_generated_asset",
+              "generator_backend_status",
+              "pollinations_command",
+              "redirect_request"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "tests/test_generator_backends.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "GeneratorBackendsTests",
+              "Response",
+              "Result",
+              "__enter__",
+              "__exit__",
+              "generator",
+              "job",
+              "normalize",
+              "opener",
+              "read",
+              "runner",
+              "test_3d_generation_requires_server_api_key",
+              "test_3d_prompt_is_reference_image_oriented",
+              "test_backend_status_reports_auth_without_secret_value",
+              "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+              "test_execute_generated_asset_uses_bounded_subprocess_and_output",
+              "test_generator_metadata_redacts_credentials_before_reporting",
+              "test_pollinations_command_never_contains_api_key",
+              "test_prompt_preserves_hard_sprite_constraints",
+              "test_required_alpha_runs_transparency_processor_before_normalization"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "asset_forge.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "_write_production_inputs",
+              "build_atlas_manifest",
+              "build_plan",
+              "cmd_atlas_manifest",
+              "cmd_plan",
+              "cmd_validate",
+              "cmd_validate_raster",
+              "execute_compiled_production_job",
+              "is_power_of_two",
+              "load_json",
+              "load_valid_manifest",
+              "main",
+              "parser",
+              "select_tools",
+              "sprite_grid",
+              "validate_manifest",
+              "validate_raster_file"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "operational_status.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "build_operational_status"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "production_executor.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "ProductionExecutionError",
+              "_safe_asset_id",
+              "_trusted_generated_source",
+              "execute_generated_3d_job",
+              "execute_generated_raster_job",
+              "execute_generated_vector_job"
+            ]
+          }
+        ],
+        "generated_by": "dbrckk/repo-brain-v8",
+        "schema_version": 1,
+        "task": "privacy consent",
+        "terms": [
+          "privacy",
+          "consent"
+        ]
+      },
+      "task": "privacy consent"
+    },
     "14bcf45c5923f2082854669bdc931f4f96ab72005f8b822f18e2a4e93db18998": {
       "route": {
         "budget": {
@@ -2187,6 +2328,177 @@
         ]
       },
       "task": "purchase billing"
+    },
+    "23975f6440c1fa45341e86e6c06857b767b9de902f7334e88d572db20b2b02cd": {
+      "route": {
+        "budget": {
+          "confidence": "medium",
+          "expand_to": 12,
+          "max_files": 6,
+          "requested_max_files": 12,
+          "score_margin": 2,
+          "tier": "bounded",
+          "top_score": 29
+        },
+        "candidate_count": 15,
+        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
+        "files": [
+          {
+            "learning_score": 0,
+            "matched_terms": [
+              "engine",
+              "game"
+            ],
+            "path": "godot_handoff.py",
+            "reasons": [
+              "search-index"
+            ],
+            "score": 29,
+            "symbols": [
+              "build_import_recommendations",
+              "detect_godot",
+              "godot_import_command",
+              "load_godot_profile",
+              "prepare_godot_handoff",
+              "validate_godot_handoff"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [
+              "engine"
+            ],
+            "path": "engine_profile_validation.py",
+            "reasons": [
+              "search-index"
+            ],
+            "score": 27,
+            "symbols": [
+              "_validate_object_keys",
+              "validate_all_godot_profiles",
+              "validate_godot_profile_data",
+              "validate_godot_profile_file"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [
+              "engine"
+            ],
+            "path": "tests/test_engine_profile_validation.py",
+            "reasons": [
+              "search-index"
+            ],
+            "score": 27,
+            "symbols": [
+              "EngineProfileValidationTests",
+              "test_invalid_fps_fails",
+              "test_invalid_json_file_fails",
+              "test_missing_required_field_fails",
+              "test_profile_name_mismatch_fails",
+              "test_repository_profiles_all_validate",
+              "test_unknown_field_fails",
+              "test_valid_profile_passes",
+              "test_wrong_type_fails",
+              "valid_profile"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [
+              "game"
+            ],
+            "path": "tests/test_generator_backends.py",
+            "reasons": [
+              "impact",
+              "recently-changed",
+              "search-index"
+            ],
+            "score": 26,
+            "symbols": [
+              "GeneratorBackendsTests",
+              "Response",
+              "Result",
+              "__enter__",
+              "__exit__",
+              "generator",
+              "job",
+              "normalize",
+              "opener",
+              "read",
+              "runner",
+              "test_3d_generation_requires_server_api_key",
+              "test_3d_prompt_is_reference_image_oriented",
+              "test_backend_status_reports_auth_without_secret_value",
+              "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+              "test_execute_generated_asset_uses_bounded_subprocess_and_output",
+              "test_generator_metadata_redacts_credentials_before_reporting",
+              "test_pollinations_command_never_contains_api_key",
+              "test_prompt_preserves_hard_sprite_constraints",
+              "test_required_alpha_runs_transparency_processor_before_normalization"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [
+              "engine"
+            ],
+            "path": "asset_forge.py",
+            "reasons": [
+              "impact",
+              "search-index"
+            ],
+            "score": 23,
+            "symbols": [
+              "_write_production_inputs",
+              "build_atlas_manifest",
+              "build_plan",
+              "cmd_atlas_manifest",
+              "cmd_plan",
+              "cmd_validate",
+              "cmd_validate_raster",
+              "execute_compiled_production_job",
+              "is_power_of_two",
+              "load_json",
+              "load_valid_manifest",
+              "main",
+              "parser",
+              "select_tools",
+              "sprite_grid",
+              "validate_manifest",
+              "validate_raster_file"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [
+              "engine"
+            ],
+            "path": "production_executor.py",
+            "reasons": [
+              "impact",
+              "search-index"
+            ],
+            "score": 23,
+            "symbols": [
+              "ProductionExecutionError",
+              "_safe_asset_id",
+              "_trusted_generated_source",
+              "execute_generated_3d_job",
+              "execute_generated_raster_job",
+              "execute_generated_vector_job"
+            ]
+          }
+        ],
+        "generated_by": "dbrckk/repo-brain-v8",
+        "schema_version": 1,
+        "task": "game engine",
+        "terms": [
+          "game",
+          "engine"
+        ]
+      },
+      "task": "game engine"
     },
     "24405d3b1393ad9f744f36f085be919911612d3425ecf3d357a437366a7a4385": {
       "route": {
@@ -5556,6 +5868,147 @@
             ],
             "score": 3,
             "symbols": []
+          }
+        ],
+        "generated_by": "dbrckk/repo-brain-v8",
+        "schema_version": 1,
+        "task": "offline progress",
+        "terms": [
+          "offline",
+          "progress"
+        ]
+      },
+      "task": "offline progress"
+    },
+    "4ac43e67374909fd0e8258911630d97754a0d13546698f725ab2f71d8e4d2890": {
+      "route": {
+        "budget": {
+          "confidence": "low",
+          "expand_to": 12,
+          "max_files": 6,
+          "requested_max_files": 12,
+          "score_margin": 0,
+          "tier": "broad",
+          "top_score": 9
+        },
+        "candidate_count": 5,
+        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
+        "files": [
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "generator_backends.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "GenerationError",
+              "_NoCredentialRedirect",
+              "_default_3d_opener",
+              "_ensure_transparency",
+              "_generation_dimensions",
+              "_normalize_raster_geometry",
+              "_sanitize_metadata",
+              "_sprite_sheet_geometry",
+              "_upload_reference_image",
+              "build_generation_prompt",
+              "execute_generated_3d_asset",
+              "execute_generated_asset",
+              "generator_backend_status",
+              "pollinations_command",
+              "redirect_request"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "tests/test_generator_backends.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "GeneratorBackendsTests",
+              "Response",
+              "Result",
+              "__enter__",
+              "__exit__",
+              "generator",
+              "job",
+              "normalize",
+              "opener",
+              "read",
+              "runner",
+              "test_3d_generation_requires_server_api_key",
+              "test_3d_prompt_is_reference_image_oriented",
+              "test_backend_status_reports_auth_without_secret_value",
+              "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+              "test_execute_generated_asset_uses_bounded_subprocess_and_output",
+              "test_generator_metadata_redacts_credentials_before_reporting",
+              "test_pollinations_command_never_contains_api_key",
+              "test_prompt_preserves_hard_sprite_constraints",
+              "test_required_alpha_runs_transparency_processor_before_normalization"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "asset_forge.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "_write_production_inputs",
+              "build_atlas_manifest",
+              "build_plan",
+              "cmd_atlas_manifest",
+              "cmd_plan",
+              "cmd_validate",
+              "cmd_validate_raster",
+              "execute_compiled_production_job",
+              "is_power_of_two",
+              "load_json",
+              "load_valid_manifest",
+              "main",
+              "parser",
+              "select_tools",
+              "sprite_grid",
+              "validate_manifest",
+              "validate_raster_file"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "operational_status.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "build_operational_status"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "production_executor.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "ProductionExecutionError",
+              "_safe_asset_id",
+              "_trusted_generated_source",
+              "execute_generated_3d_job",
+              "execute_generated_raster_job",
+              "execute_generated_vector_job"
+            ]
           }
         ],
         "generated_by": "dbrckk/repo-brain-v8",
@@ -9383,6 +9836,147 @@
             ],
             "score": 3,
             "symbols": []
+          }
+        ],
+        "generated_by": "dbrckk/repo-brain-v8",
+        "schema_version": 1,
+        "task": "purchase billing",
+        "terms": [
+          "purchase",
+          "billing"
+        ]
+      },
+      "task": "purchase billing"
+    },
+    "9755d9da750d4aa827cfd3fed4527e31f3de7f604596bf010b9eaaf72dc42d54": {
+      "route": {
+        "budget": {
+          "confidence": "low",
+          "expand_to": 12,
+          "max_files": 6,
+          "requested_max_files": 12,
+          "score_margin": 0,
+          "tier": "broad",
+          "top_score": 9
+        },
+        "candidate_count": 5,
+        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
+        "files": [
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "generator_backends.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "GenerationError",
+              "_NoCredentialRedirect",
+              "_default_3d_opener",
+              "_ensure_transparency",
+              "_generation_dimensions",
+              "_normalize_raster_geometry",
+              "_sanitize_metadata",
+              "_sprite_sheet_geometry",
+              "_upload_reference_image",
+              "build_generation_prompt",
+              "execute_generated_3d_asset",
+              "execute_generated_asset",
+              "generator_backend_status",
+              "pollinations_command",
+              "redirect_request"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "tests/test_generator_backends.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "GeneratorBackendsTests",
+              "Response",
+              "Result",
+              "__enter__",
+              "__exit__",
+              "generator",
+              "job",
+              "normalize",
+              "opener",
+              "read",
+              "runner",
+              "test_3d_generation_requires_server_api_key",
+              "test_3d_prompt_is_reference_image_oriented",
+              "test_backend_status_reports_auth_without_secret_value",
+              "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+              "test_execute_generated_asset_uses_bounded_subprocess_and_output",
+              "test_generator_metadata_redacts_credentials_before_reporting",
+              "test_pollinations_command_never_contains_api_key",
+              "test_prompt_preserves_hard_sprite_constraints",
+              "test_required_alpha_runs_transparency_processor_before_normalization"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "asset_forge.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "_write_production_inputs",
+              "build_atlas_manifest",
+              "build_plan",
+              "cmd_atlas_manifest",
+              "cmd_plan",
+              "cmd_validate",
+              "cmd_validate_raster",
+              "execute_compiled_production_job",
+              "is_power_of_two",
+              "load_json",
+              "load_valid_manifest",
+              "main",
+              "parser",
+              "select_tools",
+              "sprite_grid",
+              "validate_manifest",
+              "validate_raster_file"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "operational_status.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "build_operational_status"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "production_executor.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "ProductionExecutionError",
+              "_safe_asset_id",
+              "_trusted_generated_source",
+              "execute_generated_3d_job",
+              "execute_generated_raster_job",
+              "execute_generated_vector_job"
+            ]
           }
         ],
         "generated_by": "dbrckk/repo-brain-v8",
@@ -13434,6 +14028,147 @@
         ]
       },
       "task": "purchase billing"
+    },
+    "e0e3762e1a4258524c4504a5769a282ed1a9430cc45b25b8d9c2cf0450ce3058": {
+      "route": {
+        "budget": {
+          "confidence": "low",
+          "expand_to": 12,
+          "max_files": 6,
+          "requested_max_files": 12,
+          "score_margin": 0,
+          "tier": "broad",
+          "top_score": 9
+        },
+        "candidate_count": 5,
+        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
+        "files": [
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "generator_backends.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "GenerationError",
+              "_NoCredentialRedirect",
+              "_default_3d_opener",
+              "_ensure_transparency",
+              "_generation_dimensions",
+              "_normalize_raster_geometry",
+              "_sanitize_metadata",
+              "_sprite_sheet_geometry",
+              "_upload_reference_image",
+              "build_generation_prompt",
+              "execute_generated_3d_asset",
+              "execute_generated_asset",
+              "generator_backend_status",
+              "pollinations_command",
+              "redirect_request"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "tests/test_generator_backends.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "GeneratorBackendsTests",
+              "Response",
+              "Result",
+              "__enter__",
+              "__exit__",
+              "generator",
+              "job",
+              "normalize",
+              "opener",
+              "read",
+              "runner",
+              "test_3d_generation_requires_server_api_key",
+              "test_3d_prompt_is_reference_image_oriented",
+              "test_backend_status_reports_auth_without_secret_value",
+              "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+              "test_execute_generated_asset_uses_bounded_subprocess_and_output",
+              "test_generator_metadata_redacts_credentials_before_reporting",
+              "test_pollinations_command_never_contains_api_key",
+              "test_prompt_preserves_hard_sprite_constraints",
+              "test_required_alpha_runs_transparency_processor_before_normalization"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "asset_forge.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "_write_production_inputs",
+              "build_atlas_manifest",
+              "build_plan",
+              "cmd_atlas_manifest",
+              "cmd_plan",
+              "cmd_validate",
+              "cmd_validate_raster",
+              "execute_compiled_production_job",
+              "is_power_of_two",
+              "load_json",
+              "load_valid_manifest",
+              "main",
+              "parser",
+              "select_tools",
+              "sprite_grid",
+              "validate_manifest",
+              "validate_raster_file"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "operational_status.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "build_operational_status"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "production_executor.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "ProductionExecutionError",
+              "_safe_asset_id",
+              "_trusted_generated_source",
+              "execute_generated_3d_job",
+              "execute_generated_raster_job",
+              "execute_generated_vector_job"
+            ]
+          }
+        ],
+        "generated_by": "dbrckk/repo-brain-v8",
+        "schema_version": 1,
+        "task": "income progression",
+        "terms": [
+          "income",
+          "progression"
+        ]
+      },
+      "task": "income progression"
     },
     "e3e8583fb80b159231c356b3df465cd41cc391cd6df5a5f4a18463d39ec5f9ca": {
       "route": {

@@ -9,10 +9,10 @@
     "top_score": 29
   },
   "cache": {
-    "fingerprint": "509f6a64b35bb06393f1f29dcb2ec49602d6d565d8d7e4193bc77cac4110fd94",
+    "fingerprint": "23975f6440c1fa45341e86e6c06857b767b9de902f7334e88d572db20b2b02cd",
     "hit": false
   },
-  "candidate_count": 18,
+  "candidate_count": 15,
   "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
   "files": [
     {
@@ -78,9 +78,9 @@
     {
       "learning_score": 0,
       "matched_terms": [
-        "engine"
+        "game"
       ],
-      "path": "asset_forge.py",
+      "path": "tests/test_generator_backends.py",
       "reasons": [
         "impact",
         "recently-changed",
@@ -88,12 +88,48 @@
       ],
       "score": 26,
       "symbols": [
+        "GeneratorBackendsTests",
+        "Response",
+        "Result",
+        "__enter__",
+        "__exit__",
+        "generator",
+        "job",
+        "normalize",
+        "opener",
+        "read",
+        "runner",
+        "test_3d_generation_requires_server_api_key",
+        "test_3d_prompt_is_reference_image_oriented",
+        "test_backend_status_reports_auth_without_secret_value",
+        "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+        "test_execute_generated_asset_uses_bounded_subprocess_and_output",
+        "test_generator_metadata_redacts_credentials_before_reporting",
+        "test_pollinations_command_never_contains_api_key",
+        "test_prompt_preserves_hard_sprite_constraints",
+        "test_required_alpha_runs_transparency_processor_before_normalization"
+      ]
+    },
+    {
+      "learning_score": 0,
+      "matched_terms": [
+        "engine"
+      ],
+      "path": "asset_forge.py",
+      "reasons": [
+        "impact",
+        "search-index"
+      ],
+      "score": 23,
+      "symbols": [
+        "_write_production_inputs",
         "build_atlas_manifest",
         "build_plan",
         "cmd_atlas_manifest",
         "cmd_plan",
         "cmd_validate",
         "cmd_validate_raster",
+        "execute_compiled_production_job",
         "is_power_of_two",
         "load_json",
         "load_valid_manifest",
@@ -110,30 +146,12 @@
       "matched_terms": [
         "engine"
       ],
-      "path": "production_contract.py",
-      "reasons": [
-        "impact",
-        "recently-changed",
-        "search-index"
-      ],
-      "score": 26,
-      "symbols": [
-        "build_production_job",
-        "validate_production_request"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine"
-      ],
       "path": "production_executor.py",
       "reasons": [
         "impact",
-        "recently-changed",
         "search-index"
       ],
-      "score": 26,
+      "score": 23,
       "symbols": [
         "ProductionExecutionError",
         "_safe_asset_id",
