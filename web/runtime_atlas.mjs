@@ -1829,31 +1829,32 @@ export function spriteInstanceBounds(atlasPages, instance) {
   const pivotWorldX = x + pivotX * scaleX;
   const pivotWorldY = y + pivotY * scaleY;
 
+  const cosRotation = rotation === 0 ? 1 : Math.cos(rotation);
+  const sinRotation = rotation === 0 ? 0 : Math.sin(rotation);
+
   function rotatedAabb(rx, ry, rw, rh) {
     if (rotation === 0) {
       return { x: rx, y: ry, width: rw, height: rh };
     }
-    const cos = Math.cos(rotation);
-    const sin = Math.sin(rotation);
-    const corners = [
-      [rx, ry],
-      [rx + rw, ry],
-      [rx + rw, ry + rh],
-      [rx, ry + rh],
-    ].map(([cx, cy]) => {
-      const dx = cx - pivotWorldX;
-      const dy = cy - pivotWorldY;
-      return [
-        pivotWorldX + dx * cos - dy * sin,
-        pivotWorldY + dx * sin + dy * cos,
-      ];
-    });
-    const xs = corners.map(([cx]) => cx);
-    const ys = corners.map(([, cy]) => cy);
-    const minX = Math.min(...xs);
-    const maxX = Math.max(...xs);
-    const minY = Math.min(...ys);
-    const maxY = Math.max(...ys);
+
+    const x0 = rx - pivotWorldX;
+    const y0 = ry - pivotWorldY;
+    const x1 = x0 + rw;
+    const y1 = y0 + rh;
+
+    const p0x = pivotWorldX + x0 * cosRotation - y0 * sinRotation;
+    const p0y = pivotWorldY + x0 * sinRotation + y0 * cosRotation;
+    const p1x = pivotWorldX + x1 * cosRotation - y0 * sinRotation;
+    const p1y = pivotWorldY + x1 * sinRotation + y0 * cosRotation;
+    const p2x = pivotWorldX + x1 * cosRotation - y1 * sinRotation;
+    const p2y = pivotWorldY + x1 * sinRotation + y1 * cosRotation;
+    const p3x = pivotWorldX + x0 * cosRotation - y1 * sinRotation;
+    const p3y = pivotWorldY + x0 * sinRotation + y1 * cosRotation;
+
+    const minX = Math.min(p0x, p1x, p2x, p3x);
+    const maxX = Math.max(p0x, p1x, p2x, p3x);
+    const minY = Math.min(p0y, p1y, p2y, p3y);
+    const maxY = Math.max(p0y, p1y, p2y, p3y);
     return {
       x: minX,
       y: minY,
