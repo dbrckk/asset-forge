@@ -600,8 +600,9 @@ const paged = buildTexturePageBatches(
 assert.equal(paged.pageCount, 2);
 assert.equal(paged.instanceCount, 4);
 assert.equal(paged.inputTextureSwitches, 3);
-assert.equal(paged.groupedTextureSwitches, 1);
+assert.equal(paged.outputTextureSwitches, 1);
 assert.equal(paged.textureSwitchesSaved, 2);
+assert.equal(paged.batchCount, 2);
 assert.deepEqual(paged.inputPageSequence, [
   "heroes",
   "enemies",
@@ -623,14 +624,25 @@ const pagedClassic = buildTexturePageBatches(
   [
     { page: "enemies", frame: "enemy", x: 0, y: 0 },
     { page: "heroes", frame: "plain", x: 10, y: 0 },
+    { page: "enemies", frame: "enemy", x: 20, y: 0 },
   ],
   { mode: "classic", preserveOrder: true },
 );
 assert.equal(pagedClassic.mode, "classic");
+assert.equal(pagedClassic.preserveOrder, true);
 assert.deepEqual(
-  pagedClassic.batches.map((batch) => batch.pageId),
-  ["enemies", "heroes"],
+  pagedClassic.batches.map((batch) => [batch.pageId, batch.inputIndices]),
+  [
+    ["enemies", [0]],
+    ["heroes", [1]],
+    ["enemies", [2]],
+  ],
 );
+assert.equal(pagedClassic.pageCount, 2);
+assert.equal(pagedClassic.batchCount, 3);
+assert.equal(pagedClassic.inputTextureSwitches, 2);
+assert.equal(pagedClassic.outputTextureSwitches, 2);
+assert.equal(pagedClassic.textureSwitchesSaved, 0);
 assert.equal(pagedClassic.batches[0].batch.vertexCount, 4);
 
 assert.throws(
