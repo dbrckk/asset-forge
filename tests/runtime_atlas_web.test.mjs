@@ -36,6 +36,7 @@ import {
   duplicateSpriteEntities,
   copySpriteEntities,
   pasteSpriteEntities,
+  createSpriteClipboardController,
   removeSpriteEntityHierarchy,
   createSpriteAnimationSystem,
   resolveSpriteEntityHierarchy,
@@ -4433,5 +4434,37 @@ applySelectionTransformHandleDrag(
 gizmoResolved = resolveSpriteEntityHierarchy(gizmoStore);
 assert.ok(Math.abs(gizmoResolved.byId.get("gizmo-a").rotation - Math.PI / 2) < 1e-6);
 assert.ok(Math.abs(gizmoResolved.byId.get("gizmo-b").rotation - Math.PI / 2) < 1e-6);
+
+
+
+const retainedClipboardStore = createSpriteEntityStore();
+retainedClipboardStore.add({ id: "clip-a", page: "heroes", frame: "plain", x: 10, y: 20 });
+retainedClipboardStore.add({ id: "clip-b", page: "heroes", frame: "plain", x: 30, y: 40 });
+const retainedClipboardSelection = createSpriteSelectionModel();
+retainedClipboardSelection.set(["clip-a"]);
+const retainedClipboard = createSpriteClipboardController(
+  retainedClipboardStore,
+  retainedClipboardSelection,
+  { offsetX: 8, offsetY: 12 },
+);
+const retainedCopied = retainedClipboard.copy();
+assert.equal(retainedCopied.entities.length, 1);
+assert.equal(retainedClipboard.hasData, true);
+const retainedPasted = retainedClipboard.paste();
+assert.equal(retainedPasted.count, 1);
+assert.equal(retainedClipboardStore.get(retainedPasted.ids[0]).x, 18);
+assert.equal(retainedClipboardStore.get(retainedPasted.ids[0]).y, 32);
+assert.deepEqual(retainedClipboardSelection.snapshot().ids, retainedPasted.ids);
+
+retainedClipboardSelection.set(["clip-b"]);
+const retainedCut = retainedClipboard.cut();
+assert.equal(retainedCut.count, 1);
+assert.equal(retainedClipboardStore.has("clip-b"), false);
+assert.equal(retainedClipboardSelection.size, 0);
+const retainedCutPaste = retainedClipboard.paste({ offsetX: 2, offsetY: 3 });
+assert.equal(retainedClipboardStore.get(retainedCutPaste.ids[0]).x, 32);
+assert.equal(retainedClipboardStore.get(retainedCutPaste.ids[0]).y, 43);
+assert.equal(retainedClipboard.clear(), true);
+assert.equal(retainedClipboard.hasData, false);
 
 console.log("runtime_atlas.mjs smoke test passed");
