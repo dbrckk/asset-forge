@@ -225,6 +225,94 @@ export function animationFrameAtTime(indexedAtlas, animationOrName, timeSeconds)
 }
 
 
+export function animationDurationSeconds(animation) {
+  if (!animation || !(animation.fps > 0) || !Array.isArray(animation.frames) || animation.frames.length === 0) {
+    throw new Error("invalid runtime atlas animation");
+  }
+  let units = 0;
+  for (const entry of animation.frames) {
+    if (!(entry.duration > 0)) {
+      throw new Error("animation frame duration must be > 0");
+    }
+    units += entry.duration;
+  }
+  return units / animation.fps;
+}
+
+export function animationEventsBetween(animation, startTimeSeconds, endTimeSeconds) {
+  if (!Number.isFinite(startTimeSeconds) || !Number.isFinite(endTimeSeconds)) {
+    throw new Error("animation event interval must be finite");
+  }
+  if (startTimeSeconds < 0 || endTimeSeconds < startTimeSeconds) {
+    throw new Error("invalid animation event interval");
+  }
+  if (endTimeSeconds === startTimeSeconds) {
+    return [];
+  }
+
+  const events = animation.events ?? [];
+  if (!Array.isArray(events) || events.length === 0) {
+    return [];
+  }
+
+  const durationSeconds = animationDurationSeconds(animation);
+  const occurrences = [];
+  const includeOccurrence = (event, absoluteTimeSeconds, loopCount, eventIndex) => {
+    const crossed =
+      (absoluteTimeSeconds > startTimeSeconds ||
+        (startTimeSeconds === 0 && absoluteTimeSeconds === 0)) &&
+      absoluteTimeSeconds <= endTimeSeconds;
+    if (!crossed) {
+      return;
+    }
+    occurrences.push({
+      event,
+      name: event.name,
+      payload: event.payload ?? null,
+      timeSeconds: event.timeSeconds,
+      absoluteTimeSeconds,
+      loopCount,
+      eventIndex,
+    });
+    if (occurrences.length > 10000) {
+      throw new Error("too many animation events crossed in one update");
+    }
+  };
+
+  if (animation.loop) {
+    const firstLoop = Math.floor(startTimeSeconds / durationSeconds);
+    const lastLoop = Math.floor(endTimeSeconds / durationSeconds);
+    for (let loopCount = firstLoop; loopCount <= lastLoop; loopCount += 1) {
+      for (let eventIndex = 0; eventIndex < events.length; eventIndex += 1) {
+        const event = events[eventIndex];
+        includeOccurrence(
+          event,
+          loopCount * durationSeconds + event.timeSeconds,
+          loopCount,
+          eventIndex,
+        );
+      }
+    }
+  } else {
+    const cappedEnd = Math.min(endTimeSeconds, durationSeconds);
+    for (let eventIndex = 0; eventIndex < events.length; eventIndex += 1) {
+      const event = events[eventIndex];
+      const absoluteTimeSeconds = event.timeSeconds;
+      if (absoluteTimeSeconds <= cappedEnd) {
+        includeOccurrence(event, absoluteTimeSeconds, 0, eventIndex);
+      }
+    }
+  }
+
+  occurrences.sort(
+    (a, b) =>
+      a.absoluteTimeSeconds - b.absoluteTimeSeconds ||
+      a.eventIndex - b.eventIndex,
+  );
+  return occurrences;
+}
+
+
 export function createAnimationPlayer(indexedAtlas, animationName, options = {}) {
   const animation = indexedAtlas.animation(animationName);
   let timeSeconds = options.startTime ?? 0;
@@ -243,6 +331,7 @@ export function createAnimationPlayer(indexedAtlas, animationName, options = {})
   const onFrame = typeof options.onFrame === "function" ? options.onFrame : null;
   const onFinish = typeof options.onFinish === "function" ? options.onFinish : null;
   const onLoop = typeof options.onLoop === "function" ? options.onLoop : null;
+  const onEvent = typeof options.onEvent === "function" ? options.onEvent : null;
 
   function emit(sample) {
     if (sample.frameIndex !== lastFrameIndex) {
@@ -318,6 +407,19 @@ export function createAnimationPlayer(indexedAtlas, animationName, options = {})
               animation,
               loopCount: loopIndex + 1,
               durationSeconds: after.durationSeconds,
+            });
+          }
+        }
+
+        if (onEvent) {
+          for (const occurrence of animationEventsBetween(
+            animation,
+            previousTime,
+            timeSeconds,
+          )) {
+            onEvent({
+              ...occurrence,
+              animation,
             });
           }
         }
