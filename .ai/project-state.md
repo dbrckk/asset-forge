@@ -96,20 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T20:59:28Z
+Generated: 2026-09-19T21:03:35Z
 
 ### Git
 - Branch: `main`
-- Head: `c77eda1ff9de`
-- Commit date: 2026-09-19T22:59:16+02:00
-- Commit: feat: expose generated asset execution CLI
-- Tracked files: 219
+- Head: `0cf3535a367b`
+- Commit date: 2026-09-19T23:03:25+02:00
+- Commit: ci: inspect asset generation backend readiness
+- Tracked files: 225
 
 ### Recently changed files
+- `.github/workflows/validate.yml`
 - `asset_forge.py`
-- `tests/test_generator_backends.py`
-- `generator_backends.py`
-- `tests/test_production_contract.py`
+- `tests/test_production_executor.py`
+- `production_executor.py`
 
 ### Project signals
 - No common build descriptor detected

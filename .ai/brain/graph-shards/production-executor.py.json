@@ -1,0 +1,31 @@
+{
+  "area": "production-executor.py",
+  "edges": [
+    {
+      "source": "asset_forge.py",
+      "target": "production_executor.py",
+      "type": "imports"
+    },
+    {
+      "source": "production_executor.py",
+      "target": "generator_backends.py",
+      "type": "imports"
+    },
+    {
+      "source": "production_executor.py",
+      "target": "tests/test_generator_backends.py",
+      "type": "symbol-reference"
+    },
+    {
+      "source": "tests/test_production_executor.py",
+      "target": "production_executor.py",
+      "type": "imports"
+    },
+    {
+      "source": "tests/test_production_executor.py",
+      "target": "production_executor.py",
+      "type": "symbol-reference"
+    }
+  ],
+  "schema_version": 1
+}

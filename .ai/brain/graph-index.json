@@ -15,6 +15,7 @@
     "godot-export.py",
     "godot-handoff.py",
     "production-contract.py",
+    "production-executor.py",
     "raster-backend.py",
     "raster-pack.py",
     "runtime-atlas.py",
@@ -39,6 +40,7 @@
         "godot_export.py",
         "godot_handoff.py",
         "production_contract.py",
+        "production_executor.py",
         "raster_pack.py",
         "runtime_atlas.py",
         "starlist_bridge.py",
@@ -52,7 +54,7 @@
         "tests/test_production_contract.py"
       ],
       "in_degree": 2,
-      "out_degree": 19,
+      "out_degree": 20,
       "path": "asset_forge.py"
     },
     {
@@ -62,6 +64,7 @@
       "dependents": [
         "asset_forge.py",
         "gltf_binary_metrics.py",
+        "production_executor.py",
         "raster_pack.py",
         "runtime_atlas.py",
         "starlist_bridge.py",
@@ -73,7 +76,7 @@
         "tests/test_toolchain_3d.py",
         "toolchain_3d.py"
       ],
-      "in_degree": 12,
+      "in_degree": 13,
       "out_degree": 1,
       "path": "tests/test_generator_backends.py"
     },
@@ -231,6 +234,19 @@
       "path": "godot_3d_delivery.py"
     },
     {
+      "dependencies": [
+        "generator_backends.py",
+        "tests/test_generator_backends.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_production_executor.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 2,
+      "path": "production_executor.py"
+    },
+    {
       "dependencies": [],
       "dependents": [
         "asset_forge.py",
@@ -251,6 +267,17 @@
       "in_degree": 3,
       "out_degree": 0,
       "path": "engine_profile_validation.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "production_executor.py",
+        "tests/test_generator_backends.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 0,
+      "path": "generator_backends.py"
     },
     {
       "dependencies": [
@@ -296,16 +323,6 @@
       "in_degree": 2,
       "out_degree": 0,
       "path": "animation_infer.py"
-    },
-    {
-      "dependencies": [],
-      "dependents": [
-        "asset_forge.py",
-        "tests/test_generator_backends.py"
-      ],
-      "in_degree": 2,
-      "out_degree": 0,
-      "path": "generator_backends.py"
     },
     {
       "dependencies": [],
@@ -520,6 +537,15 @@
     },
     {
       "dependencies": [
+        "production_executor.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_production_executor.py"
+    },
+    {
+      "dependencies": [
         "svg_tools.py"
       ],
       "dependents": [],
@@ -528,8 +554,8 @@
       "path": "tests/test_svg_tools.py"
     }
   ],
-  "edge_count": 74,
+  "edge_count": 79,
   "generated_by": "dbrckk/repo-brain-v7-graph",
-  "node_count": 43,
+  "node_count": 45,
   "schema_version": 1
 }

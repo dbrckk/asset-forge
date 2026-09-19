@@ -93,6 +93,7 @@ tests/
   test_godot_export.py
   test_godot_handoff.py
   test_production_contract.py
+  test_production_executor.py
   test_raster_backend.py
   test_raster_pack.py
   test_runtime_atlas.py
@@ -117,6 +118,7 @@ godot_3d_delivery.py
 godot_export.py
 godot_handoff.py
 production_contract.py
+production_executor.py
 raster_backend.py
 raster_pack.py
 README.md
@@ -230,6 +232,8 @@ jobs:
         run: python asset_forge.py plan examples/asset-manifest.json
       - name: Compile Production OS asset request
         run: python asset_forge.py production-job examples/production-request.json --output build/production-job.json
+      - name: Inspect generator backends
+        run: python asset_forge.py generator-backend-status
       - name: Inspect 3D toolchain
         run: python asset_forge.py 3d-toolchain-status
       - name: Validate engine handoff profiles
@@ -1900,6 +1904,35 @@ def test_invalid_request_is_rejected(self)
 errors = validate_production_request(request, asset_forge.validate_manifest)
 ````
 
+## File: tests/test_production_executor.py
+````python
+def job(target_format="png")
+⋮----
+class ProductionExecutorTests(unittest.TestCase)
+⋮----
+def test_generated_png_flows_through_processing_validation_and_report(self)
+⋮----
+root = Path(td)
+⋮----
+def generator(value, output_dir, **kwargs)
+⋮----
+source = Path(output_dir) / "generated-source.png"
+⋮----
+def optimizer(source, output)
+⋮----
+def validator(path, manifest)
+⋮----
+report = execute_generated_raster_job(
+⋮----
+def test_webp_target_encodes_before_validation(self)
+⋮----
+def encode(source, output, **kwargs)
+⋮----
+def test_validation_errors_block_artifact_promotion(self)
+⋮----
+def test_non_raster_target_fails_closed(self)
+````
+
 ## File: tests/test_raster_backend.py
 ````python
 class RasterBackendTests(unittest.TestCase)
@@ -3440,6 +3473,8 @@ production_job = sub.add_parser("production-job", help="compile a Production OS/
 generator_status = sub.add_parser("generator-backend-status", help="inspect available generation backends")
 generate = sub.add_parser("generate", help="execute a generated-asset production job")
 ⋮----
+produce = sub.add_parser("produce", help="generate, process, validate, and report a raster production job")
+⋮----
 raster = sub.add_parser("validate-raster", help="validate a PNG or WebP against an asset manifest")
 ⋮----
 atlas = sub.add_parser("atlas-manifest", help="build uniform-grid atlas metadata from PNG or WebP")
@@ -3507,6 +3542,13 @@ rendered = json.dumps(job, indent=2, sort_keys=True) + "\n"
 ⋮----
 job = load_json(args.job)
 result = execute_generated_asset(
+⋮----
+output_dir = args.output_dir
+⋮----
+delivery = job.get("delivery") if isinstance(job, dict) else None
+configured = delivery.get("outputDir") if isinstance(delivery, dict) else None
+output_dir = Path(configured) if isinstance(configured, str) and configured.strip() else Path("build/asset-forge") / str(job.get("requestId") or "job")
+result = execute_generated_raster_job(
 ⋮----
 metadata = pack_uniform_atlas(
 ⋮----
@@ -4473,6 +4515,33 @@ delivery = request.get("delivery") or {}
 output_dir = delivery.get("outputDir") or str(Path(default_output_dir) / request["requestId"])
 ⋮----
 requires_generator = source_mode == "generated"
+````
+
+## File: production_executor.py
+````python
+class ProductionExecutionError(RuntimeError)
+⋮----
+manifest = job.get("manifest")
+⋮----
+target = manifest.get("target")
+⋮----
+target_format = str(target.get("format") or "").lower()
+⋮----
+asset_id = str(job.get("assetId") or manifest.get("id") or "").strip()
+⋮----
+out = Path(output_dir)
+⋮----
+generation = generator(
+source = Path(str(generation.get("sourcePath") or ""))
+⋮----
+final = out / f"{asset_id}.{target_format}"
+⋮----
+processing = png_optimizer(source, final)
+⋮----
+processing = webp_encoder(source, final, lossless=True)
+⋮----
+report = {
+report_path = out / "production-report.json"
 ````
 
 ## File: raster_backend.py
