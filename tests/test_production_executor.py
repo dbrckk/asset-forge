@@ -6,6 +6,7 @@ from production_executor import (
     ProductionExecutionError,
     execute_generated_raster_job,
     execute_generated_vector_job,
+    execute_generated_3d_job,
 )
 
 
@@ -180,6 +181,91 @@ class ProductionExecutorTests(unittest.TestCase):
             self.assertFalse(report["success"])
             self.assertIsNone(report["artifact"])
             self.assertEqual(report["validation"]["errors"], ["logo too complex"])
+
+    def test_generated_3d_flows_through_profile_quality_and_godot_gates(self):
+        three_d = job("glb")
+        three_d["assetType"] = "prop"
+        three_d["manifest"]["target"]["engine"] = "godot4"
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+
+            def generator(value, output_dir, **kwargs):
+                source = Path(output_dir) / "generated-source.glb"
+                source.write_bytes(b"glTF" + b"\x00" * 16)
+                return {
+                    "success": True,
+                    "sourcePath": str(source),
+                    "model": "microsoft/trellis-2",
+                }
+
+            def profile_validator(path, profile):
+                self.assertEqual(profile, "prop")
+                self.assertEqual(path.name, "hero-run.glb")
+                return {"container": "glb"}, [], ["minor structural warning"]
+
+            def quality(path, profile):
+                return {
+                    "evaluation": {
+                        "passed": True,
+                        "errors": [],
+                        "warnings": ["quality warning"],
+                    }
+                }
+
+            def godot(path, profile):
+                self.assertEqual(profile, "prop")
+                return {"ready": True, "errors": [], "warnings": []}
+
+            report = execute_generated_3d_job(
+                three_d,
+                root,
+                structural_validator=lambda p: self.fail("generic validator must not run"),
+                profile_validator=profile_validator,
+                quality_reporter=quality,
+                godot_delivery_reporter=godot,
+                generator=generator,
+            )
+
+            self.assertTrue(report["success"])
+            self.assertEqual(report["artifact"], str(root / "hero-run.glb"))
+            self.assertIn("quality warning", report["validation"]["warnings"])
+            self.assertTrue((root / "production-report.json").is_file())
+
+    def test_generated_character_3d_fails_when_profile_quality_fails(self):
+        three_d = job("glb")
+        three_d["assetType"] = "character-3d"
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+
+            def generator(value, output_dir, **kwargs):
+                source = Path(output_dir) / "generated-source.glb"
+                source.write_bytes(b"glTF" + b"\x00" * 16)
+                return {"success": True, "sourcePath": str(source)}
+
+            report = execute_generated_3d_job(
+                three_d,
+                root,
+                structural_validator=lambda p: ({}, [], []),
+                profile_validator=lambda p, profile: ({}, [], []),
+                quality_reporter=lambda p, profile: {
+                    "evaluation": {
+                        "passed": False,
+                        "errors": ["character joint or skin requirements not met"],
+                        "warnings": [],
+                    }
+                },
+                godot_delivery_reporter=lambda p, profile: {"ready": True, "errors": [], "warnings": []},
+                generator=generator,
+            )
+
+            self.assertFalse(report["success"])
+            self.assertIsNone(report["artifact"])
+            self.assertIn(
+                "character joint or skin requirements not met",
+                report["validation"]["errors"],
+            )
 
     def test_non_raster_target_fails_closed(self):
         with tempfile.TemporaryDirectory() as td:
