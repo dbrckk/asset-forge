@@ -1,16 +1,16 @@
 # Change impact
 
-Base: f65a5bfbfdddd4b5f4561d6487db3f607fe35ae2
-Head: da30cd61d2b6c2fc2ad0a325d0d9f20e72c38878
+Base: e9f1bd2b3697c34beac0d2a6fa8fceea74aa9ec1
+Head: 037504f3c5c797d2b47a0e2d8261e8f27683f773
 
 ## Changed files
-- M production_contract.py
+- A tests/test_fulfill.py
 
 ## Affected areas
-- (root)
+- tests
 
 ## Related test candidates
-- tests/test_production_contract.py
+- No direct filename-based test match detected.
 
 ## Agent guidance
 - Read this file before broad repository exploration.

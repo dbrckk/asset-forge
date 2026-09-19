@@ -84,6 +84,7 @@ tests/
   test_asset_profile_validation.py
   test_blender_adapter.py
   test_engine_profile_validation.py
+  test_fulfill.py
   test_generator_backends.py
   test_gltf_binary_metrics.py
   test_gltf_diagnostics.py
@@ -1547,6 +1548,36 @@ def test_repository_profiles_all_validate(self)
 ⋮----
 root = Path(__file__).resolve().parents[1]
 report = validate_all_godot_profiles(root)
+````
+
+## File: tests/test_fulfill.py
+````python
+ROOT = Path(__file__).resolve().parents[1]
+⋮----
+class FulfillCommandTests(unittest.TestCase)
+⋮----
+def test_parser_accepts_end_to_end_fulfill_command(self)
+⋮----
+args = asset_forge.parser().parse_args(
+⋮----
+def test_production_inputs_are_persisted_for_handoff_and_audit(self)
+⋮----
+request = asset_forge.load_json(ROOT / "examples/production-request.json")
+plan = asset_forge.build_plan(request["manifest"], ROOT)
+job = asset_forge.build_production_job(request, plan)
+⋮----
+out = Path(td)
+⋮----
+written_job = json.loads((out / "production-job.json").read_text())
+written_manifest = json.loads((out / "asset-manifest.json").read_text())
+written_plan = json.loads((out / "production-plan.json").read_text())
+⋮----
+def test_compiled_job_routes_raster_to_generated_raster_executor(self)
+⋮----
+job = {
+expected = {"success": True, "artifact": "hero.png"}
+⋮----
+result = asset_forge.execute_compiled_production_job(
 ````
 
 ## File: tests/test_generator_backends.py
@@ -3568,6 +3599,12 @@ atlas = build_atlas_manifest(asset_path, manifest)
 ⋮----
 rendered = json.dumps(atlas, indent=2, sort_keys=True) + "\n"
 ⋮----
+asset_type = str(job.get("assetType") or "")
+⋮----
+def _write_production_inputs(output_dir: Path, job: dict) -> None
+⋮----
+payloads = {
+⋮----
 def parser() -> argparse.ArgumentParser
 ⋮----
 result = argparse.ArgumentParser(prog="asset-forge")
@@ -3584,6 +3621,8 @@ operational_status = sub.add_parser("operational-status", help="report machine-r
 generate = sub.add_parser("generate", help="execute a generated-asset production job")
 ⋮----
 produce = sub.add_parser("produce", help="generate, process, validate, and report a raster production job")
+⋮----
+fulfill = sub.add_parser("fulfill", help="compile and execute a generated production request end to end")
 ⋮----
 raster = sub.add_parser("validate-raster", help="validate a PNG or WebP against an asset manifest")
 ⋮----
@@ -3658,13 +3697,9 @@ output_dir = args.output_dir
 delivery = job.get("delivery") if isinstance(job, dict) else None
 configured = delivery.get("outputDir") if isinstance(delivery, dict) else None
 output_dir = Path(configured) if isinstance(configured, str) and configured.strip() else Path("build/asset-forge") / str(job.get("requestId") or "job")
-asset_type = str(job.get("assetType") or "")
+result = execute_compiled_production_job(
 ⋮----
-result = execute_generated_3d_job(
-⋮----
-result = execute_generated_vector_job(
-⋮----
-result = execute_generated_raster_job(
+configured = job.get("delivery", {}).get("outputDir")
 ⋮----
 metadata = pack_uniform_atlas(
 ⋮----

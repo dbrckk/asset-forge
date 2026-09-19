@@ -96,21 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T21:22:50Z
+Generated: 2026-09-19T21:25:45Z
 
 ### Git
 - Branch: `main`
-- Head: `da30cd61d2b6`
-- Commit date: 2026-09-19T23:22:40+02:00
-- Commit: security: constrain production request identifiers
-- Tracked files: 229
+- Head: `037504f3c5c7`
+- Commit date: 2026-09-19T23:25:28+02:00
+- Commit: test: cover one-command production fulfillment
+- Tracked files: 232
 
 ### Recently changed files
+- `tests/test_fulfill.py`
+- `asset_forge.py`
 - `production_contract.py`
 - `.github/workflows/validate.yml`
-- `asset_forge.py`
-- `tests/test_operational_status.py`
-- `operational_status.py`
 
 ### Project signals
 - No common build descriptor detected
