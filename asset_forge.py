@@ -20,6 +20,7 @@ from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_3d_delivery import godot_3d_delivery_report
 from godot_handoff import prepare_godot_handoff, validate_godot_handoff
 from godot_export import write_spriteframes
+from generator_backends import execute_generated_asset, generator_backend_status
 from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png
 from production_contract import build_production_job, validate_production_request
 from runtime_atlas import build_runtime_atlas, validate_runtime_atlas
@@ -376,6 +377,14 @@ def parser() -> argparse.ArgumentParser:
     production_job.add_argument("request", type=Path)
     production_job.add_argument("--output", type=Path)
 
+    generator_status = sub.add_parser("generator-backend-status", help="inspect available generation backends")
+    generate = sub.add_parser("generate", help="execute a generated-asset production job")
+    generate.add_argument("job", type=Path)
+    generate.add_argument("output_dir", type=Path)
+    generate.add_argument("--backend", choices=["pollinations"], default="pollinations")
+    generate.add_argument("--model")
+    generate.add_argument("--timeout", type=float, default=180.0)
+
     raster = sub.add_parser("validate-raster", help="validate a PNG or WebP against an asset manifest")
     raster.add_argument("manifest", type=Path)
     raster.add_argument("asset", type=Path)
@@ -577,6 +586,24 @@ def main() -> int:
             print(str(args.output))
         else:
             print(rendered, end="")
+        return 0
+    if args.command == "generator-backend-status":
+        print(json.dumps(generator_backend_status(), indent=2, sort_keys=True))
+        return 0
+    if args.command == "generate":
+        try:
+            job = load_json(args.job)
+            result = execute_generated_asset(
+                job,
+                args.output_dir,
+                backend=args.backend,
+                model=args.model,
+                timeout_seconds=args.timeout,
+            )
+        except (OSError, ValueError, RuntimeError, json.JSONDecodeError) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(result, indent=2, sort_keys=True))
         return 0
     if args.command == "validate-raster":
         return cmd_validate_raster(args.manifest, args.asset)
