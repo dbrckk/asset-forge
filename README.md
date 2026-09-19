@@ -1100,3 +1100,48 @@ runtime.renderEntities({
 Entity and animation state are CPU-side and survive WebGL2 context reconstruction. Logical animation updates may continue while the context is lost; only GPU rendering is blocked.
 
 The animation-player finish path was also hardened: calling `play()` again on an already-finished non-looping clip no longer leaves the player incorrectly marked as playing.
+
+
+### Parent-child sprite entity transforms
+
+Persistent sprite entities now support an optional `parent` ID. Before culling/batching/rendering, `resolveSpriteEntityHierarchy()` converts local transforms into world-space instances.
+
+```js
+runtime.entities.add({
+  id: "player",
+  page: "heroes",
+  frame: "body",
+  x: 100,
+  y: 50,
+  z: 10,
+  scale: 2,
+});
+
+runtime.entities.add({
+  id: "weapon",
+  parent: "player",
+  page: "heroes",
+  frame: "sword",
+  x: 12,
+  y: 4,
+  z: 1,
+});
+```
+
+The child transform resolves as:
+
+```text
+worldX = parent.worldX + localX * parent.worldScaleX
+worldY = parent.worldY + localY * parent.worldScaleY
+worldZ = parent.worldZ + localZ
+worldScaleX = parent.worldScaleX * localScaleX
+worldScaleY = parent.worldScaleY * localScaleY
+```
+
+Hierarchy resolution is recursive, preserves entity insertion order, rejects cycles, and rejects missing parents by default. `allowMissingParents: true` treats missing parents as roots.
+
+Disabled state is inherited by descendants by default. Use `inheritDisabled: false` to disable that propagation or `includeDisabled: true` to inspect/render disabled branches explicitly.
+
+`buildSpriteEntityInstances()` is the shared bridge used by entity rendering and the version-aware entity batch cache. Hierarchy resolution is enabled by default for entity rendering; pass `hierarchy: false` for legacy local-space behavior.
+
+Because parent mutations increment `entityStore.version`, cached batches are invalidated automatically when a parent moves, scales, changes depth, or changes enabled state.
