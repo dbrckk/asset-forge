@@ -1953,3 +1953,29 @@ const pasted = runtime.pasteEntities(copy, { offsetX: 16, offsetY: 16 });
 Internal parent-child links are remapped to the newly allocated IDs. Only top-level copied roots receive the paste offset, so descendant local transforms remain unchanged and the duplicated hierarchy preserves its shape.
 
 The clipboard contract is versioned as `asset-forge-sprite-clipboard` version 1.
+
+
+### Hierarchy-aware duplicate, copy, and paste
+
+The retained editor runtime can now duplicate selections and serialize them into a portable clipboard payload.
+
+```js
+const duplicated = runtime.duplicateSelection({
+  includeDescendants: true,
+  offsetX: 16,
+  offsetY: 16,
+});
+
+const clipboard = runtime.copySelection({
+  includeDescendants: true,
+});
+
+const pasted = runtime.pasteEntities(clipboard, {
+  offsetX: 32,
+  offsetY: 32,
+});
+```
+
+Internal parent-child links are remapped to the newly created entity IDs. Only copied hierarchy roots receive the paste/duplicate offset, so descendants keep their local transforms and the copied hierarchy preserves its shape.
+
+The clipboard contract is versioned as `asset-forge-sprite-clipboard` version 1. Pasting into another compatible entity store remaps internal parents and detaches unavailable external parents safely. Duplicate and paste automatically select the newly created entities.
