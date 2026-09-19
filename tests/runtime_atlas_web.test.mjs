@@ -1004,3 +1004,67 @@ assert.throws(
   () => createWebGL2TextureCache({}),
   /texture-capable context required/,
 );
+
+
+const asyncTextureGl = createMockWebGL2();
+const asyncTextureCache = createWebGL2TextureCache(asyncTextureGl);
+let factoryCalls = 0;
+let resolveSource;
+const sourcePromise = new Promise((resolve) => {
+  resolveSource = resolve;
+});
+const firstLoad = asyncTextureCache.load("shared", async () => {
+  factoryCalls += 1;
+  return sourcePromise;
+});
+const secondLoad = asyncTextureCache.load("shared", async () => {
+  factoryCalls += 1;
+  return { id: "should-not-be-used" };
+});
+assert.equal(asyncTextureCache.pendingCount, 1);
+assert.equal(factoryCalls, 1);
+resolveSource({ id: "shared-source" });
+const [loadedOne, loadedTwo] = await Promise.all([firstLoad, secondLoad]);
+assert.equal(loadedOne, loadedTwo);
+assert.equal(asyncTextureCache.pendingCount, 0);
+assert.equal(asyncTextureCache.references("shared"), 2);
+assert.equal(
+  asyncTextureGl.calls.filter((call) => call[0] === "createTexture").length,
+  1,
+);
+assert.equal(asyncTextureCache.release("shared"), false);
+assert.equal(asyncTextureCache.release("shared"), true);
+
+const cachedTexture = await asyncTextureCache.load(
+  "cached",
+  Promise.resolve({ id: "cached-source" }),
+);
+const createCountBeforeCachedReload = asyncTextureGl.calls.filter(
+  (call) => call[0] === "createTexture",
+).length;
+const cachedAgain = await asyncTextureCache.load(
+  "cached",
+  Promise.resolve({ id: "unused-source" }),
+);
+assert.equal(cachedTexture, cachedAgain);
+assert.equal(asyncTextureCache.references("cached"), 2);
+assert.equal(
+  asyncTextureGl.calls.filter((call) => call[0] === "createTexture").length,
+  createCountBeforeCachedReload,
+);
+asyncTextureCache.dispose();
+
+const disposedDuringLoadGl = createMockWebGL2();
+const disposedDuringLoadCache = createWebGL2TextureCache(disposedDuringLoadGl);
+let finishDisposedLoad;
+const waitingLoad = disposedDuringLoadCache.load(
+  "late",
+  () =>
+    new Promise((resolve) => {
+      finishDisposedLoad = resolve;
+    }),
+);
+disposedDuringLoadCache.dispose();
+finishDisposedLoad({ id: "late-source" });
+await assert.rejects(waitingLoad, /texture cache is disposed/);
+assert.equal(disposedDuringLoadCache.pendingCount, 0);
