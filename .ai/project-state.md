@@ -12,7 +12,7 @@ Status: active
 - Godot SpriteFrames export now maps trim metadata to AtlasTexture.margin and validates atlas bounds/source-offset consistency before emitting resources.
 - A versioned engine-neutral runtime atlas exporter preserves atlas region, normalized UVs, pre-rotation source region, source canvas size, trim offsets, and explicit clockwise rotation metadata; its JSON contract is defined by schemas/runtime-atlas.schema.json.
 - Runtime atlas JSON has a dependency-free strict validator with semantic checks for frame count, duplicate indices, UV-region consistency, source/trim bounds, rotation dimensions, unknown fields, and strict integer typing; CI smoke-validates examples/runtime-atlas.json.
-- A dependency-free ES module web/runtime_atlas.mjs indexes frames by index/name, draws trim+rotation-correct sprites to Canvas2D, exposes source-oriented UVs for WebGL/custom renderers, indexes animations, samples animation frames deterministically by elapsed seconds, and provides a host-driven play/pause/seek/rate controller with frame/loop/finish/event callbacks plus Canvas2D drawing; event markers remain deterministic across skipped frames and multiple crossed loops. It also builds WebGL-ready interleaved sprite batches with automatic uint16/uint32 indices and provides Canvas2D batch convenience drawing. Node 22 smoke-tests this consumer in CI.
+- A dependency-free ES module web/runtime_atlas.mjs indexes frames by index/name, draws trim+rotation-correct sprites to Canvas2D, exposes source-oriented UVs for WebGL/custom renderers, indexes animations, samples animation frames deterministically by elapsed seconds, and provides a host-driven play/pause/seek/rate controller with frame/loop/finish/event callbacks plus Canvas2D drawing; event markers remain deterministic across skipped frames and multiple crossed loops. It builds both classic interleaved WebGL sprite batches and compact instanced batches, with a reference WebGL2 shader/attribute contract for drawElementsInstanced. Node 22 smoke-tests this consumer in CI.
 - Runtime atlas v1 optionally embeds validated animations (name/fps/loop/frame index/duration) plus sorted timeline event markers with optional payload objects. export-runtime-atlas can infer animations from filenames or consume an explicit animation config without changing non-animation outputs.
 - PNG recompression is no-growth: the original bytes are retained whenever the adaptive candidate is not smaller, including in-place output.
 - Indexed PNG decoding supports 1/2/4/8-bit palette indices with packed scanline layout, PNG filtering, row-padding handling, and tRNS palette alpha.
@@ -70,7 +70,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Consider additional engine adapters, instanced-rendering adapters, and texture/page batching; runtime-atlas now includes WebGL-ready sprite buffer generation and Canvas2D batch convenience drawing.
+- Consider additional engine adapters and texture/page batching; runtime-atlas now includes classic and instanced WebGL sprite buffer generation plus a reference WebGL2 shader contract.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -91,7 +91,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-19: latest GitHub source inspected after adding WebGL-ready sprite batch buffers with trim/rotation-correct geometry/UVs, automatic uint16/uint32 indices, allocation guards, Canvas2D batch drawing, tests, and documentation.
+- 2026-09-19: latest GitHub source inspected after adding compact instanced sprite batches, a shared unit quad, rotation-aware WebGL2 shader sources, attribute-view metadata, memory/layout tests, and documentation.
 
 <!-- AUTO:START -->
 ## Automatic repository state
