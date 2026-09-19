@@ -96,16 +96,17 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T17:33:41Z
+Generated: 2026-09-19T17:34:39Z
 
 ### Git
 - Branch: `main`
-- Head: `e1c348107f1d`
-- Commit date: 2026-09-19T19:33:27+02:00
-- Commit: test: accept implicit zero child rotation
-- Tracked files: 210
+- Head: `dd46ce74bef4`
+- Commit date: 2026-09-19T19:34:29+02:00
+- Commit: fix: resolve star-list bridge root before subprocess
+- Tracked files: 211
 
 ### Recently changed files
+- `starlist_bridge.py`
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
 - `.github/workflows/validate.yml`

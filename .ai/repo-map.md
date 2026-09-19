@@ -6972,6 +6972,7 @@ previous_time = event_time
 ## File: starlist_bridge.py
 ````python
 """Run dbrckk/star-list's recommender without duplicating its ranking logic."""
+star_list_root = star_list_root.resolve()
 script = star_list_root / "scripts" / "recommend.py"
 ⋮----
 command = [

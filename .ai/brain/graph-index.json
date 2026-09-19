@@ -3,6 +3,7 @@
     "animation-infer.py",
     "asset-forge.py",
     "asset-profile-validation.py",
+    "benchmarks",
     "blender-adapter.py",
     "engine-profile-validation.py",
     "gltf-binary-metrics.py",
@@ -134,6 +135,30 @@
       "path": "asset_profile_validation.py"
     },
     {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "benchmarks/runtime_atlas_web.bench.mjs",
+        "tests/runtime_atlas_web.test.mjs",
+        "tests/test_runtime_atlas.py"
+      ],
+      "in_degree": 4,
+      "out_degree": 0,
+      "path": "runtime_atlas.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "benchmarks/runtime_atlas_web.bench.mjs",
+        "tests/runtime_atlas_web.test.mjs",
+        "tests/test_runtime_atlas.py"
+      ],
+      "in_degree": 4,
+      "out_degree": 0,
+      "path": "web/runtime_atlas.mjs"
+    },
+    {
       "dependencies": [
         "engine_profile_validation.py"
       ],
@@ -195,28 +220,6 @@
       "path": "engine_profile_validation.py"
     },
     {
-      "dependencies": [],
-      "dependents": [
-        "asset_forge.py",
-        "tests/runtime_atlas_web.test.mjs",
-        "tests/test_runtime_atlas.py"
-      ],
-      "in_degree": 3,
-      "out_degree": 0,
-      "path": "runtime_atlas.py"
-    },
-    {
-      "dependencies": [],
-      "dependents": [
-        "asset_forge.py",
-        "tests/runtime_atlas_web.test.mjs",
-        "tests/test_runtime_atlas.py"
-      ],
-      "in_degree": 3,
-      "out_degree": 0,
-      "path": "web/runtime_atlas.mjs"
-    },
-    {
       "dependencies": [
         "asset_profile_validation.py"
       ],
@@ -267,6 +270,16 @@
       "in_degree": 2,
       "out_degree": 0,
       "path": "starlist_bridge.py"
+    },
+    {
+      "dependencies": [
+        "runtime_atlas.py",
+        "web/runtime_atlas.mjs"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 2,
+      "path": "benchmarks/runtime_atlas_web.bench.mjs"
     },
     {
       "dependencies": [
@@ -444,8 +457,8 @@
       "path": "tests/test_toolchain_3d.py"
     }
   ],
-  "edge_count": 54,
+  "edge_count": 56,
   "generated_by": "dbrckk/repo-brain-v7-graph",
-  "node_count": 38,
+  "node_count": 39,
   "schema_version": 1
 }

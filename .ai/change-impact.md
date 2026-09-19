@@ -1,16 +1,16 @@
 # Change impact
 
-Base: cc8c25f9778537368762137e5f45626432708c26
-Head: e1c348107f1d18e2c8153767c7547dc87f9e2a0a
+Base: ebb875d0902e04c68058c0956e93d6bd6db5f675
+Head: dd46ce74bef4b895915a7e786dbc16d6ac3b4310
 
 ## Changed files
-- M tests/runtime_atlas_web.test.mjs
+- M starlist_bridge.py
 
 ## Affected areas
-- tests
+- (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_starlist_bridge.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.
