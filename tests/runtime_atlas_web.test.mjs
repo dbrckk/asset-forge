@@ -44,6 +44,7 @@ import {
   pointHitsSpriteInstance,
   pickSpriteInstances,
   createSpritePointerInteractionController,
+  moveSpriteEntityByWorldDelta,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -3589,5 +3590,209 @@ assert.equal(pointerRuntime.pointerInteractions.activePointerCount, 0);
 pointerRuntime.pointerDown("touch-2", 42, 82);
 pointerRuntime.dispose();
 assert.equal(pointerRuntime.pointerInteractions.activePointerCount, 0);
+
+
+
+const dragStore = createSpriteEntityStore();
+dragStore.add({
+  id: "drag-root",
+  page: "heroes",
+  frame: "plain",
+  x: 10,
+  y: 20,
+});
+const dragVersionBefore = dragStore.version;
+moveSpriteEntityByWorldDelta(
+  dragStore,
+  "drag-root",
+  5,
+  -3,
+);
+assert.deepEqual(
+  {
+    x: dragStore.get("drag-root").x,
+    y: dragStore.get("drag-root").y,
+  },
+  { x: 15, y: 17 },
+);
+assert.ok(dragStore.version > dragVersionBefore);
+
+moveSpriteEntityByWorldDelta(
+  dragStore,
+  "drag-root",
+  10,
+  10,
+  { axis: "x" },
+);
+assert.deepEqual(
+  {
+    x: dragStore.get("drag-root").x,
+    y: dragStore.get("drag-root").y,
+  },
+  { x: 25, y: 17 },
+);
+
+dragStore.add({
+  id: "drag-parent",
+  page: "heroes",
+  frame: "plain",
+  x: 100,
+  y: 100,
+  rotation: Math.PI / 2,
+  scaleX: 2,
+  scaleY: 4,
+});
+dragStore.add({
+  id: "drag-child",
+  parent: "drag-parent",
+  page: "heroes",
+  frame: "plain",
+  x: 10,
+  y: 5,
+});
+
+const childWorldBefore =
+  resolveSpriteEntityHierarchy(dragStore).byId.get("drag-child");
+moveSpriteEntityByWorldDelta(
+  dragStore,
+  "drag-child",
+  8,
+  4,
+);
+const childWorldAfter =
+  resolveSpriteEntityHierarchy(dragStore).byId.get("drag-child");
+assert.ok(
+  Math.abs(childWorldAfter.x - (childWorldBefore.x + 8)) < 1e-6,
+);
+assert.ok(
+  Math.abs(childWorldAfter.y - (childWorldBefore.y + 4)) < 1e-6,
+);
+
+assert.throws(
+  () =>
+    moveSpriteEntityByWorldDelta(
+      dragStore,
+      "drag-root",
+      1,
+      1,
+      { axis: "diagonal" },
+    ),
+  /drag axis must be both, x, or y/,
+);
+
+const autoDragGl = createMockWebGL2();
+autoDragGl.viewport = (...args) =>
+  autoDragGl.calls.push(["viewport", ...args]);
+const autoDragCanvas = createMockCanvas();
+const autoDragEvents = [];
+
+const autoDragRuntime = await createWebGL2CanvasRuntime(
+  autoDragCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    camera: { x: 100, y: 40, zoom: 2 },
+    pointerOptions: {
+      dragThreshold: 2,
+      autoDragEntities: true,
+      dragAxis: "both",
+      onDrag(event) {
+        autoDragEvents.push({
+          id: event.capturedEntityId,
+          x: event.draggedEntity?.x,
+          y: event.draggedEntity?.y,
+        });
+      },
+    },
+    getContext() {
+      return autoDragGl;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+
+autoDragRuntime.entities.add({
+  id: "draggable",
+  page: "heroes",
+  frame: "plain",
+  x: 120,
+  y: 80,
+  z: 10,
+});
+
+const draggableVersionBefore = autoDragRuntime.entities.version;
+autoDragRuntime.pointerDown("touch-drag", 42, 82);
+autoDragRuntime.pointerMove("touch-drag", 52, 92);
+
+const draggedEntity = autoDragRuntime.entities.get("draggable");
+assert.equal(draggedEntity.x, 125);
+assert.equal(draggedEntity.y, 85);
+assert.ok(autoDragRuntime.entities.version > draggableVersionBefore);
+assert.deepEqual(autoDragEvents[0], {
+  id: "draggable",
+  x: 125,
+  y: 85,
+});
+
+autoDragRuntime.pointerUp("touch-drag", 52, 92);
+
+autoDragRuntime.moveEntityByWorldDelta(
+  "draggable",
+  7,
+  9,
+  { axis: "y" },
+);
+assert.deepEqual(
+  {
+    x: autoDragRuntime.entities.get("draggable").x,
+    y: autoDragRuntime.entities.get("draggable").y,
+  },
+  { x: 125, y: 94 },
+);
+
+autoDragRuntime.dispose();
+
+assert.throws(
+  async () =>
+    createWebGL2CanvasRuntime(
+      createMockCanvas(),
+      [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+      {
+        pointerOptions: {
+          autoDragEntities: "yes",
+        },
+        getContext() {
+          return createMockWebGL2();
+        },
+        resizeOptions: { pixelRatio: 1 },
+        sceneOptions: {
+          loaderOptions: {
+            fetchImpl: async () => ({
+              ok: true,
+              status: 200,
+              async blob() {
+                return {};
+              },
+            }),
+            createImageBitmapImpl: async () => ({}),
+          },
+        },
+      },
+    ),
+  /autoDragEntities must be boolean/,
+);
 
 console.log("runtime_atlas.mjs smoke test passed");
