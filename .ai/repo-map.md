@@ -1162,6 +1162,8 @@ enableVertexAttribArray(location)
 vertexAttribPointer(location, size, type, normalized, stride, offset)
 vertexAttribDivisor(location, divisor)
 getUniformLocation(program, name)
+enable(capability)
+blendFunc(source, destination)
 useProgram(program)
 uniform2f(location, x, y)
 activeTexture(texture)
@@ -2547,6 +2549,7 @@ function dispose()
 ⋮----
 get disposed()
 get uploadedCapacityBytes()
+get alphaBlending()
 ⋮----
 export function createWebGL2TextureCache(gl, options =
 ⋮----
@@ -5651,6 +5654,67 @@ This is a 64-byte instance record. The WebGL2 shader rotates each visible sprite
 The classic CPU-generated quad batch also applies sprite rotation around the same pivot. `spriteInstanceBounds()` returns rotation-aware axis-aligned bounding boxes, so viewport culling remains correct for rotated sprites.
 
 Because rotations and pivots live in the entity store, changing any of them increments `entityStore.version` and naturally invalidates the version-aware batch cache.
+
+
+### Per-sprite tint and alpha
+
+Instanced sprite rendering now supports per-instance color modulation without splitting batches:
+
+```js
+runtime.entities.add({
+  id: "ghost",
+  page: "characters",
+  frame: "idle",
+  tintR: 0.6,
+  tintG: 0.8,
+  tintB: 1.0,
+  alpha: 0.45,
+});
+```
+
+`tintR`, `tintG`, `tintB`, and `alpha` are normalized values in `[0, 1]`. Defaults are all `1`.
+
+Color and alpha inherit multiplicatively through the parent-child hierarchy. A child with `alpha: 0.5` under a parent with `alpha: 0.5` resolves to world alpha `0.25`.
+
+The instanced record is now 20 floats / 80 bytes:
+
+```text
+visibleX
+visibleY
+visibleWidth
+visibleHeight
+u0
+v0
+u1
+v1
+atlasRotationFlag
+sourceWidth
+sourceHeight
+spriteRotationRadians
+pivotWorldX
+pivotWorldY
+reserved0
+reserved1
+tintR
+tintG
+tintB
+alpha
+```
+
+The WebGL2 shader exposes `aTint` at attribute location 5 and computes:
+
+```glsl
+outColor = texture(uTexture, vUv) * vTint;
+```
+
+The instanced renderer enables standard alpha blending by default:
+
+```text
+SRC_ALPHA
+ONE_MINUS_SRC_ALPHA
+```
+
+Set `alphaBlending: false` when the host engine owns blend state itself.
 ````
 
 ## File: runtime_atlas.py

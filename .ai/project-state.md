@@ -96,19 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T12:25:44Z
+Generated: 2026-09-19T12:27:19Z
 
 ### Git
 - Branch: `main`
-- Head: `094407105162`
-- Commit date: 2026-09-19T14:25:33+02:00
-- Commit: test: cover per-sprite tint alpha inheritance and shader modulation
+- Head: `c77a5c1f2082`
+- Commit date: 2026-09-19T14:27:12+02:00
+- Commit: docs: record per-sprite tint and alpha milestone
 - Tracked files: 209
 
 ### Recently changed files
+- `README.md`
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
-- `README.md`
 
 ### Project signals
 - No common build descriptor detected
