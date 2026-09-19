@@ -32,6 +32,8 @@ import {
   createWebGL2CanvasRuntime,
   createSpriteEntityStore,
   createSpriteEntityHistory,
+  reparentSpriteEntity,
+  removeSpriteEntityHierarchy,
   createSpriteAnimationSystem,
   resolveSpriteEntityHierarchy,
   buildSpriteEntityInstances,
@@ -4277,5 +4279,45 @@ assert.equal(historyRuntime.entities.get("runtime-history").x, 1);
 historyRuntime.redo();
 assert.equal(historyRuntime.entities.get("runtime-history").x, 11);
 historyRuntime.dispose();
+
+
+
+const hierarchyEditStore = createSpriteEntityStore();
+hierarchyEditStore.add({ id: "edit-root-a", page: "heroes", frame: "plain", x: 100, y: 50, rotation: 0.5, scaleX: 2, scaleY: 3 });
+hierarchyEditStore.add({ id: "edit-root-b", page: "heroes", frame: "plain", x: -20, y: 40, rotation: -0.25, scaleX: 1.5, scaleY: 0.75 });
+hierarchyEditStore.add({ id: "edit-child", parent: "edit-root-a", page: "heroes", frame: "plain", x: 10, y: 5, rotation: 0.2, scaleX: 0.5, scaleY: 2 });
+const editWorldBefore = resolveSpriteEntityHierarchy(hierarchyEditStore).byId.get("edit-child");
+reparentSpriteEntity(hierarchyEditStore, "edit-child", "edit-root-b");
+const editWorldAfter = resolveSpriteEntityHierarchy(hierarchyEditStore).byId.get("edit-child");
+for (const key of ["x", "y", "z", "rotation", "scaleX", "scaleY"]) {
+  assert.ok(Math.abs(editWorldAfter[key] - editWorldBefore[key]) < 1e-6);
+}
+assert.throws(
+  () => reparentSpriteEntity(hierarchyEditStore, "edit-root-b", "edit-child"),
+  /create a cycle/,
+);
+
+hierarchyEditStore.add({ id: "detach-parent", page: "heroes", frame: "plain", x: 30, y: 30 });
+hierarchyEditStore.add({ id: "detach-child", parent: "detach-parent", page: "heroes", frame: "plain", x: 7, y: 8 });
+const detachBefore = resolveSpriteEntityHierarchy(hierarchyEditStore).byId.get("detach-child");
+removeSpriteEntityHierarchy(hierarchyEditStore, "detach-parent", { childPolicy: "detach" });
+const detachAfter = resolveSpriteEntityHierarchy(hierarchyEditStore).byId.get("detach-child");
+assert.equal(detachAfter.parent, null);
+assert.ok(Math.abs(detachAfter.x - detachBefore.x) < 1e-6);
+assert.ok(Math.abs(detachAfter.y - detachBefore.y) < 1e-6);
+
+hierarchyEditStore.add({ id: "cascade-parent", page: "heroes", frame: "plain" });
+hierarchyEditStore.add({ id: "cascade-child", parent: "cascade-parent", page: "heroes", frame: "plain" });
+hierarchyEditStore.add({ id: "cascade-grandchild", parent: "cascade-child", page: "heroes", frame: "plain" });
+const cascadeResult = removeSpriteEntityHierarchy(hierarchyEditStore, "cascade-parent", { childPolicy: "cascade" });
+assert.equal(cascadeResult.count, 3);
+assert.equal(hierarchyEditStore.has("cascade-grandchild"), false);
+
+hierarchyEditStore.add({ id: "reject-parent", page: "heroes", frame: "plain" });
+hierarchyEditStore.add({ id: "reject-child", parent: "reject-parent", page: "heroes", frame: "plain" });
+assert.throws(
+  () => removeSpriteEntityHierarchy(hierarchyEditStore, "reject-parent", { childPolicy: "reject" }),
+  /has children/,
+);
 
 console.log("runtime_atlas.mjs smoke test passed");
