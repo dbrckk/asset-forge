@@ -4860,7 +4860,11 @@ export function createSpritePointerInteractionController(options = {}) {
       return hoverEntityId;
     },
     get activePointerCount() {
-      return pointers.size;
+      let count = 0;
+      for (const state of pointers.values()) {
+        if (state.down) count += 1;
+      }
+      return count;
     },
     pointerState(pointerId) {
       const state = pointers.get(pointerId);
