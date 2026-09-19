@@ -37,6 +37,7 @@ import {
   createSpriteEntityBatchCache,
   filterSpriteInstancesByLayer,
   applyCameraToSpriteInstances,
+  createCamera2DController,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -2872,5 +2873,144 @@ assert.throws(
   /camera zoom must be > 0/,
 );
 cameraRuntime.dispose();
+
+
+
+const followController = createCamera2DController(
+  { x: 0, y: 0, zoom: 2 },
+  {
+    deadZoneWidth: 20,
+    deadZoneHeight: 10,
+    smoothing: 0,
+  },
+);
+assert.deepEqual(
+  followController.update(5, 2, 0.016),
+  { x: 0, y: 0, zoom: 2 },
+);
+assert.deepEqual(
+  followController.update(30, 20, 0.016),
+  { x: 20, y: 15, zoom: 2 },
+);
+
+const smoothController = createCamera2DController(
+  { x: 0, y: 0, zoom: 1 },
+  { smoothing: 4 },
+);
+const smoothedCamera = smoothController.update(100, 0, 0.25);
+assert.ok(smoothedCamera.x > 0 && smoothedCamera.x < 100);
+assert.equal(smoothedCamera.y, 0);
+assert.equal(smoothedCamera.zoom, 1);
+
+const shakeControllerA = createCamera2DController(
+  { x: 10, y: 20, zoom: 1 },
+);
+const shakeStartA = shakeControllerA.shake(8, 1, 10);
+assert.equal(shakeControllerA.shaking, true);
+const shakeStepA = shakeControllerA.update(10, 20, 0.25);
+assert.notDeepEqual(shakeStepA, { x: 10, y: 20, zoom: 1 });
+shakeControllerA.update(10, 20, 0.75);
+assert.equal(shakeControllerA.shaking, false);
+assert.deepEqual(shakeControllerA.camera, {
+  x: 10,
+  y: 20,
+  zoom: 1,
+});
+
+const shakeControllerB = createCamera2DController(
+  { x: 10, y: 20, zoom: 1 },
+);
+const shakeStartB = shakeControllerB.shake(8, 1, 10);
+assert.deepEqual(shakeStartA, shakeStartB);
+assert.deepEqual(
+  shakeControllerB.update(10, 20, 0.25),
+  shakeStepA,
+);
+assert.deepEqual(shakeControllerB.clearShake(), {
+  x: 10,
+  y: 20,
+  zoom: 1,
+});
+assert.equal(shakeControllerB.shaking, false);
+
+assert.throws(
+  () => createCamera2DController({}, { deadZoneWidth: -1 }),
+  /deadZoneWidth must be a finite value >= 0/,
+);
+assert.throws(
+  () => shakeControllerB.update(0, 0, -0.1),
+  /deltaSeconds must be >= 0/,
+);
+assert.throws(
+  () => shakeControllerB.shake(5, 1, 0),
+  /frequency must be > 0 when shake is active/,
+);
+
+const followRuntimeGl = createMockWebGL2();
+followRuntimeGl.viewport = (...args) =>
+  followRuntimeGl.calls.push(["viewport", ...args]);
+const followRuntimeCanvas = createMockCanvas();
+const followRuntime = await createWebGL2CanvasRuntime(
+  followRuntimeCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    camera: { x: 0, y: 0, zoom: 1 },
+    cameraControllerOptions: {
+      deadZoneWidth: 20,
+      deadZoneHeight: 20,
+      smoothing: 0,
+    },
+    getContext() {
+      return followRuntimeGl;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+followRuntime.entities.add({
+  id: "follow-target",
+  page: "heroes",
+  frame: "plain",
+  x: 100,
+  y: 50,
+});
+assert.deepEqual(
+  followRuntime.updateCameraFollow(100, 50, 0.016),
+  { x: 90, y: 40, zoom: 1 },
+);
+const followedBatches = followRuntime.buildEntityBatches({
+  preserveOrder: true,
+});
+assert.equal(followedBatches.batches[0].batch.bounds[0].x, 10);
+assert.equal(followedBatches.batches[0].batch.bounds[0].y, 10);
+
+const runtimeShake = followRuntime.shakeCamera(4, 0.5, 12);
+assert.notDeepEqual(runtimeShake, {
+  x: 90,
+  y: 40,
+  zoom: 1,
+});
+assert.equal(followRuntime.cameraController.shaking, true);
+followRuntime.clearCameraShake();
+assert.equal(followRuntime.cameraController.shaking, false);
+assert.deepEqual(followRuntime.camera, {
+  x: 90,
+  y: 40,
+  zoom: 1,
+});
+followRuntime.dispose();
 
 console.log("runtime_atlas.mjs smoke test passed");
