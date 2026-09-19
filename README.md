@@ -1913,3 +1913,27 @@ reject   refuse deletion when children exist
 ```
 
 The canvas runtime exposes `reparentEntity()`, `removeEntity()`, and `removeSelection()`. Removed IDs are also removed from the retained selection model.
+
+
+### Hierarchy-aware duplicate, copy, and paste
+
+The retained editor runtime can duplicate selected entities and preserve internal parent-child relationships. `includeDescendants: true` expands a selected hierarchy automatically. Offsets apply only to duplicated roots, so child local transforms remain unchanged.
+
+```js
+runtime.duplicateSelection({
+  includeDescendants: true,
+  offsetX: 16,
+  offsetY: 16,
+});
+
+const clipboard = runtime.copySelection({
+  includeDescendants: true,
+});
+
+runtime.pasteEntities(clipboard, {
+  offsetX: 32,
+  offsetY: 32,
+});
+```
+
+Clipboard payloads use the versioned `asset-forge-sprite-clipboard` format. Pasted entities receive fresh IDs, internal parent references are remapped, and the newly created entities become the active selection.
