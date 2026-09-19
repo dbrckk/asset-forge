@@ -1148,6 +1148,10 @@ export function createInstancedSpriteRendererWebGL2(gl, options = {}) {
   }
 
   const shaderContract = options.shaders ?? instancedSpriteWebGL2Shaders();
+  const alphaBlending = options.alphaBlending ?? true;
+  if (typeof alphaBlending !== "boolean") {
+    throw new Error("alphaBlending must be boolean");
+  }
   const resolveTexture =
     typeof options.resolveTexture === "function"
       ? options.resolveTexture
@@ -1252,6 +1256,10 @@ export function createInstancedSpriteRendererWebGL2(gl, options = {}) {
       return { drawCalls: 0, instances: 0, uploadedBytes: 0 };
     }
 
+    if (alphaBlending) {
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    }
     gl.useProgram(program);
     gl.bindVertexArray(vao);
     gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
@@ -1345,6 +1353,9 @@ export function createInstancedSpriteRendererWebGL2(gl, options = {}) {
     },
     get uploadedCapacityBytes() {
       return uploadedCapacityBytes;
+    },
+    get alphaBlending() {
+      return alphaBlending;
     },
   };
 }
