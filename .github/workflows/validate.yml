@@ -25,6 +25,8 @@ jobs:
         run: python asset_forge.py validate examples/asset-manifest.json
       - name: Build example plan
         run: python asset_forge.py plan examples/asset-manifest.json
+      - name: Compile Production OS asset request
+        run: python asset_forge.py production-job examples/production-request.json --output build/production-job.json
       - name: Inspect 3D toolchain
         run: python asset_forge.py 3d-toolchain-status
       - name: Validate engine handoff profiles
