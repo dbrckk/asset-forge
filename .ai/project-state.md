@@ -96,14 +96,14 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T09:18:20Z
+Generated: 2026-09-19T09:25:53Z
 
 ### Git
 - Branch: `main`
-- Head: `b4a283e3f518`
-- Commit date: 2026-09-19T11:18:08+02:00
-- Commit: docs: record persistent entity store milestone
-- Tracked files: 208
+- Head: `7e0fa495eca4`
+- Commit date: 2026-09-19T11:25:45+02:00
+- Commit: docs: record entity animation binding milestone
+- Tracked files: 209
 
 ### Recently changed files
 - `README.md`
