@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T20:36:51Z
+Generated: 2026-09-19T20:38:20Z
 
 ### Git
 - Branch: `main`
-- Head: `d1d4a656c3be`
-- Commit date: 2026-09-19T22:36:38+02:00
-- Commit: test: simplify production contract fixtures
+- Head: `d05591a7de2e`
+- Commit date: 2026-09-19T22:38:10+02:00
+- Commit: test: import Path in production contract tests
 - Tracked files: 217
 
 ### Recently changed files

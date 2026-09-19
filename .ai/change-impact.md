@@ -1,7 +1,7 @@
 # Change impact
 
-Base: 53cc0ad0c3ee016f5a3115908bedfc1689b12cb2
-Head: d1d4a656c3beb85ba67c90b470cb62003b71aee7
+Base: 98b0dbdd8dd39f49cbf573e0c718b94dc5991225
+Head: d05591a7de2e575f96adc848c91aeb009c405883
 
 ## Changed files
 - M tests/test_production_contract.py
