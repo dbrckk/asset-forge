@@ -1467,3 +1467,197 @@ export function createWebGL2TextureCache(gl, options = {}) {
     defaults: { ...defaults },
   };
 }
+
+
+export async function loadImageBitmapSource(url, options = {}) {
+  if (typeof url !== "string" || url.length === 0) {
+    throw new Error("image URL must be a non-empty string");
+  }
+
+  const fetchImpl = options.fetchImpl ?? globalThis.fetch;
+  const createImageBitmapImpl =
+    options.createImageBitmapImpl ?? globalThis.createImageBitmap;
+
+  if (typeof fetchImpl !== "function") {
+    throw new Error("fetch implementation is required");
+  }
+  if (typeof createImageBitmapImpl !== "function") {
+    throw new Error("createImageBitmap implementation is required");
+  }
+
+  const response = await fetchImpl(url, options.fetchOptions);
+  if (!response || !response.ok) {
+    const status = response?.status ?? "unknown";
+    throw new Error(`image fetch failed for ${url}: HTTP ${status}`);
+  }
+
+  const blob = await response.blob();
+  return createImageBitmapImpl(blob, options.imageBitmapOptions);
+}
+
+export async function preloadRuntimeAtlasPageTextures(
+  atlasPages,
+  textureCache,
+  options = {},
+) {
+  if (!atlasPages || !Array.isArray(atlasPages.pages)) {
+    throw new Error("runtime atlas page catalogue required");
+  }
+  if (!textureCache || typeof textureCache.load !== "function") {
+    throw new Error("WebGL2 texture cache with load() required");
+  }
+
+  const resolveUrl =
+    typeof options.resolveUrl === "function"
+      ? options.resolveUrl
+      : (textureKey) => textureKey;
+
+  const loaded = [];
+  try {
+    for (const page of atlasPages.pages) {
+      const textureKey = page.texture;
+      const url = resolveUrl(textureKey, page);
+      if (typeof url !== "string" || url.length === 0) {
+        throw new Error(`texture URL could not be resolved for page ${page.id}`);
+      }
+
+      const texture = await textureCache.load(
+        textureKey,
+        () =>
+          loadImageBitmapSource(url, {
+            fetchImpl: options.fetchImpl,
+            fetchOptions: options.fetchOptions,
+            createImageBitmapImpl: options.createImageBitmapImpl,
+            imageBitmapOptions: options.imageBitmapOptions,
+          }),
+        options.textureOptions,
+      );
+
+      loaded.push({
+        pageId: page.id,
+        textureKey,
+        texture,
+      });
+    }
+  } catch (error) {
+    for (let index = loaded.length - 1; index >= 0; index -= 1) {
+      textureCache.release(loaded[index].textureKey);
+    }
+    throw error;
+  }
+
+  return {
+    count: loaded.length,
+    pages: loaded,
+  };
+}
+
+export function releaseRuntimeAtlasPageTextures(textureCache, preloadResult) {
+  if (!textureCache || typeof textureCache.release !== "function") {
+    throw new Error("WebGL2 texture cache with release() required");
+  }
+  if (!preloadResult || !Array.isArray(preloadResult.pages)) {
+    throw new Error("runtime atlas preload result required");
+  }
+
+  let deleted = 0;
+  for (const page of preloadResult.pages) {
+    if (textureCache.release(page.textureKey)) {
+      deleted += 1;
+    }
+  }
+  return {
+    released: preloadResult.pages.length,
+    deleted,
+  };
+}
+
+export async function createWebGL2RuntimeAtlasScene(
+  gl,
+  pageDefinitions,
+  options = {},
+) {
+  if (!Array.isArray(pageDefinitions) || pageDefinitions.length === 0) {
+    throw new Error("pageDefinitions must be a non-empty array");
+  }
+
+  const pages = createRuntimeAtlasPages(pageDefinitions);
+  const textureCache =
+    options.textureCache ??
+    createWebGL2TextureCache(gl, options.textureCacheOptions);
+  const ownsTextureCache = !options.textureCache;
+
+  let preloadResult;
+  let renderer;
+  try {
+    preloadResult = await preloadRuntimeAtlasPageTextures(
+      pages,
+      textureCache,
+      options.loaderOptions,
+    );
+
+    renderer = createInstancedSpriteRendererWebGL2(gl, {
+      ...options.rendererOptions,
+      resolveTexture(textureKey) {
+        const texture = textureCache.get(textureKey);
+        if (!texture) {
+          throw new Error(`texture not loaded: ${textureKey}`);
+        }
+        return texture;
+      },
+    });
+  } catch (error) {
+    if (preloadResult) {
+      releaseRuntimeAtlasPageTextures(textureCache, preloadResult);
+    }
+    if (ownsTextureCache) {
+      textureCache.dispose();
+    }
+    throw error;
+  }
+
+  let disposed = false;
+
+  return {
+    pages,
+    textureCache,
+    renderer,
+    buildBatches(instances, batchOptions = {}) {
+      if (disposed) {
+        throw new Error("runtime atlas scene is disposed");
+      }
+      return buildTexturePageBatches(pages, instances, {
+        mode: "instanced",
+        ...batchOptions,
+      });
+    },
+    render(instancesOrBatches, viewportWidth, viewportHeight, batchOptions = {}) {
+      if (disposed) {
+        throw new Error("runtime atlas scene is disposed");
+      }
+      const batches = Array.isArray(instancesOrBatches)
+        ? buildTexturePageBatches(pages, instancesOrBatches, {
+            mode: "instanced",
+            ...batchOptions,
+          })
+        : instancesOrBatches;
+      return renderer.renderPageBatches(
+        batches,
+        viewportWidth,
+        viewportHeight,
+      );
+    },
+    dispose() {
+      if (disposed) return;
+      disposed = true;
+      renderer.dispose();
+      releaseRuntimeAtlasPageTextures(textureCache, preloadResult);
+      if (ownsTextureCache) {
+        textureCache.dispose();
+      }
+    },
+    get disposed() {
+      return disposed;
+    },
+  };
+}
