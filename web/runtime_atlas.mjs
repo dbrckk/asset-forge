@@ -2177,6 +2177,32 @@ export async function createWebGL2CanvasRuntime(
     );
   }
 
+  function pickRuntimeEntity(x, y, pickOptions = {}) {
+    const {
+      all = false,
+      useVisibleBounds = false,
+      ...batchOptions
+    } = pickOptions;
+    const prepared = buildSpriteEntityInstances(entityStore, {
+      visibilityMask,
+      camera,
+      ...batchOptions,
+    });
+    return pickSpriteInstances(
+      scene.pages,
+      prepared.instances,
+      x,
+      y,
+      { all, useVisibleBounds },
+    );
+  }
+
+  const pointerInteractions = createSpritePointerInteractionController({
+    ...(options.pointerOptions ?? {}),
+    pick: pickRuntimeEntity,
+    toWorld: (x, y) => screenToWorldPoint(x, y, camera),
+  });
+
   async function rebuildAfterContextRestore() {
     assertActive();
     const restoredGl = getContext();
@@ -2412,23 +2438,24 @@ export async function createWebGL2CanvasRuntime(
     },
     pickEntity(x, y, pickOptions = {}) {
       assertActive();
-      const {
-        all = false,
-        useVisibleBounds = false,
-        ...batchOptions
-      } = pickOptions;
-      const prepared = buildSpriteEntityInstances(entityStore, {
-        visibilityMask,
-        camera,
-        ...batchOptions,
-      });
-      return pickSpriteInstances(
-        scene.pages,
-        prepared.instances,
-        x,
-        y,
-        { all, useVisibleBounds },
-      );
+      return pickRuntimeEntity(x, y, pickOptions);
+    },
+    pointerInteractions,
+    pointerMove(pointerId, x, y, pickOptions = {}) {
+      assertActive();
+      return pointerInteractions.move(pointerId, x, y, pickOptions);
+    },
+    pointerDown(pointerId, x, y, pickOptions = {}) {
+      assertActive();
+      return pointerInteractions.down(pointerId, x, y, pickOptions);
+    },
+    pointerUp(pointerId, x, y, pickOptions = {}) {
+      assertActive();
+      return pointerInteractions.up(pointerId, x, y, pickOptions);
+    },
+    pointerCancel(pointerId) {
+      assertActive();
+      return pointerInteractions.cancel(pointerId);
     },
     async restore() {
       assertActive();
@@ -2444,6 +2471,7 @@ export async function createWebGL2CanvasRuntime(
       disposed = true;
       canvas.removeEventListener?.("webglcontextlost", handleContextLost);
       canvas.removeEventListener?.("webglcontextrestored", handleContextRestored);
+      pointerInteractions.clear();
       scene.dispose();
     },
     get disposed() {
@@ -3691,4 +3719,270 @@ export function pickSpriteInstances(
 
   hits.sort((a, b) => b.z - a.z || b.inputIndex - a.inputIndex);
   return all ? hits : (hits[0] ?? null);
+}
+
+
+export function createSpritePointerInteractionController(options = {}) {
+  if (typeof options.pick !== "function") {
+    throw new Error("pointer interaction pick() callback required");
+  }
+  const toWorld =
+    typeof options.toWorld === "function"
+      ? options.toWorld
+      : (x, y) => ({ x, y });
+  const dragThreshold = options.dragThreshold ?? 4;
+  if (!Number.isFinite(dragThreshold) || dragThreshold < 0) {
+    throw new Error("dragThreshold must be a finite value >= 0");
+  }
+
+  const callbacks = {
+    onEnter: typeof options.onEnter === "function" ? options.onEnter : null,
+    onLeave: typeof options.onLeave === "function" ? options.onLeave : null,
+    onMove: typeof options.onMove === "function" ? options.onMove : null,
+    onDown: typeof options.onDown === "function" ? options.onDown : null,
+    onUp: typeof options.onUp === "function" ? options.onUp : null,
+    onClick: typeof options.onClick === "function" ? options.onClick : null,
+    onDragStart:
+      typeof options.onDragStart === "function" ? options.onDragStart : null,
+    onDrag: typeof options.onDrag === "function" ? options.onDrag : null,
+    onDragEnd:
+      typeof options.onDragEnd === "function" ? options.onDragEnd : null,
+    onCancel: typeof options.onCancel === "function" ? options.onCancel : null,
+  };
+
+  const pointers = new Map();
+  let hoverEntityId = null;
+
+  function validatePointer(pointerId, x, y) {
+    if (
+      (typeof pointerId !== "string" && typeof pointerId !== "number") ||
+      pointerId === ""
+    ) {
+      throw new Error("pointerId must be a non-empty string or number");
+    }
+    if (!Number.isFinite(x) || !Number.isFinite(y)) {
+      throw new Error("pointer coordinates must be finite");
+    }
+  }
+
+  function pickedEntity(hit) {
+    return hit?.instance ?? null;
+  }
+
+  function makeEvent(type, state, hit, x, y, extra = {}) {
+    const world = toWorld(x, y);
+    return {
+      type,
+      pointerId: state.pointerId,
+      x,
+      y,
+      worldX: world.x,
+      worldY: world.y,
+      entity: pickedEntity(hit),
+      hit,
+      dragging: state.dragging,
+      capturedEntityId: state.capturedEntityId,
+      ...extra,
+    };
+  }
+
+  function updateHover(state, hit, x, y) {
+    if (state.pointerId !== 0 && state.pointerId !== "mouse") {
+      return;
+    }
+    const nextId = pickedEntity(hit)?.id ?? null;
+    if (nextId === hoverEntityId) return;
+
+    const previousId = hoverEntityId;
+    hoverEntityId = nextId;
+    if (previousId != null) {
+      callbacks.onLeave?.(
+        makeEvent("leave", state, null, x, y, {
+          entityId: previousId,
+        }),
+      );
+    }
+    if (nextId != null) {
+      callbacks.onEnter?.(
+        makeEvent("enter", state, hit, x, y, {
+          entityId: nextId,
+        }),
+      );
+    }
+  }
+
+  function move(pointerId, x, y, pickOptions = {}) {
+    validatePointer(pointerId, x, y);
+    let state = pointers.get(pointerId);
+    if (!state) {
+      state = {
+        pointerId,
+        down: false,
+        startX: x,
+        startY: y,
+        lastX: x,
+        lastY: y,
+        dragging: false,
+        capturedEntityId: null,
+        downEntityId: null,
+      };
+      pointers.set(pointerId, state);
+    }
+
+    const hit = options.pick(x, y, pickOptions);
+    updateHover(state, hit, x, y);
+
+    const dx = x - state.lastX;
+    const dy = y - state.lastY;
+    const totalDx = x - state.startX;
+    const totalDy = y - state.startY;
+
+    if (
+      state.down &&
+      !state.dragging &&
+      Math.hypot(totalDx, totalDy) >= dragThreshold
+    ) {
+      state.dragging = true;
+      const dragStart = makeEvent("dragstart", state, hit, x, y, {
+        dx,
+        dy,
+        totalDx,
+        totalDy,
+      });
+      callbacks.onDragStart?.(dragStart);
+    }
+
+    if (state.down && state.dragging) {
+      callbacks.onDrag?.(
+        makeEvent("drag", state, hit, x, y, {
+          dx,
+          dy,
+          totalDx,
+          totalDy,
+        }),
+      );
+    }
+
+    state.lastX = x;
+    state.lastY = y;
+    const event = makeEvent("move", state, hit, x, y, {
+      dx,
+      dy,
+      totalDx,
+      totalDy,
+    });
+    callbacks.onMove?.(event);
+    return event;
+  }
+
+  function down(pointerId, x, y, pickOptions = {}) {
+    validatePointer(pointerId, x, y);
+    const hit = options.pick(x, y, pickOptions);
+    const entity = pickedEntity(hit);
+    const state = {
+      pointerId,
+      down: true,
+      startX: x,
+      startY: y,
+      lastX: x,
+      lastY: y,
+      dragging: false,
+      capturedEntityId: entity?.id ?? null,
+      downEntityId: entity?.id ?? null,
+    };
+    pointers.set(pointerId, state);
+    updateHover(state, hit, x, y);
+    const event = makeEvent("down", state, hit, x, y);
+    callbacks.onDown?.(event);
+    return event;
+  }
+
+  function up(pointerId, x, y, pickOptions = {}) {
+    validatePointer(pointerId, x, y);
+    const state = pointers.get(pointerId) ?? {
+      pointerId,
+      down: false,
+      startX: x,
+      startY: y,
+      lastX: x,
+      lastY: y,
+      dragging: false,
+      capturedEntityId: null,
+      downEntityId: null,
+    };
+    const hit = options.pick(x, y, pickOptions);
+    const upEntityId = pickedEntity(hit)?.id ?? null;
+    const wasDragging = state.dragging;
+    state.down = false;
+
+    const event = makeEvent("up", state, hit, x, y, {
+      totalDx: x - state.startX,
+      totalDy: y - state.startY,
+    });
+    callbacks.onUp?.(event);
+
+    if (wasDragging) {
+      callbacks.onDragEnd?.(
+        makeEvent("dragend", state, hit, x, y, {
+          totalDx: x - state.startX,
+          totalDy: y - state.startY,
+        }),
+      );
+    } else if (
+      state.downEntityId != null &&
+      state.downEntityId === upEntityId
+    ) {
+      callbacks.onClick?.(
+        makeEvent("click", state, hit, x, y),
+      );
+    }
+
+    state.capturedEntityId = null;
+    pointers.delete(pointerId);
+    return event;
+  }
+
+  function cancel(pointerId) {
+    const state = pointers.get(pointerId);
+    if (!state) return null;
+    const event = {
+      type: "cancel",
+      pointerId,
+      entity: null,
+      hit: null,
+      dragging: state.dragging,
+      capturedEntityId: state.capturedEntityId,
+    };
+    if (state.dragging) {
+      callbacks.onDragEnd?.({ ...event, type: "dragend", cancelled: true });
+    }
+    callbacks.onCancel?.(event);
+    pointers.delete(pointerId);
+    return event;
+  }
+
+  function clear() {
+    for (const pointerId of Array.from(pointers.keys())) {
+      cancel(pointerId);
+    }
+    hoverEntityId = null;
+  }
+
+  return {
+    move,
+    down,
+    up,
+    cancel,
+    clear,
+    get hoverEntityId() {
+      return hoverEntityId;
+    },
+    get activePointerCount() {
+      return pointers.size;
+    },
+    pointerState(pointerId) {
+      const state = pointers.get(pointerId);
+      return state ? { ...state } : null;
+    },
+  };
 }
