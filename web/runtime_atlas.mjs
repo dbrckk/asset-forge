@@ -2132,6 +2132,9 @@ export async function createWebGL2CanvasRuntime(
     zoom: options.camera?.zoom ?? 1,
   };
   applyCameraToSpriteInstances([], camera);
+  const cameraController =
+    options.cameraController ??
+    createCamera2DController(camera, options.cameraControllerOptions);
   let contextLost = false;
   let disposed = false;
   let restorePromise = null;
@@ -2214,6 +2217,7 @@ export async function createWebGL2CanvasRuntime(
     get camera() {
       return { ...camera };
     },
+    cameraController,
     setCamera(nextCamera = {}) {
       assertActive();
       const candidate = {
@@ -2223,6 +2227,27 @@ export async function createWebGL2CanvasRuntime(
       };
       applyCameraToSpriteInstances([], candidate);
       camera = candidate;
+      cameraController.setCamera(candidate);
+      return { ...camera };
+    },
+    updateCameraFollow(targetX, targetY, deltaSeconds) {
+      assertActive();
+      camera = cameraController.update(targetX, targetY, deltaSeconds);
+      return { ...camera };
+    },
+    shakeCamera(amplitude, durationSeconds, frequency) {
+      assertActive();
+      cameraController.setCamera(camera);
+      camera = cameraController.shake(
+        amplitude,
+        durationSeconds,
+        frequency,
+      );
+      return { ...camera };
+    },
+    clearCameraShake() {
+      assertActive();
+      camera = cameraController.clearShake();
       return { ...camera };
     },
     get gl() {
@@ -3196,5 +3221,144 @@ export function buildSpriteEntityInstances(entityStore, batchOptions = {}) {
     layerFiltering,
     cameraTransform,
     sceneBatchOptions,
+  };
+}
+
+
+export function createCamera2DController(initialCamera = {}, options = {}) {
+  let camera = {
+    x: initialCamera.x ?? 0,
+    y: initialCamera.y ?? 0,
+    zoom: initialCamera.zoom ?? 1,
+  };
+  applyCameraToSpriteInstances([], camera);
+
+  const deadZoneWidth = options.deadZoneWidth ?? 0;
+  const deadZoneHeight = options.deadZoneHeight ?? 0;
+  const smoothing = options.smoothing ?? 0;
+  for (const [name, value] of Object.entries({
+    deadZoneWidth,
+    deadZoneHeight,
+    smoothing,
+  })) {
+    if (!Number.isFinite(value) || value < 0) {
+      throw new Error(`${name} must be a finite value >= 0`);
+    }
+  }
+
+  let shakeTime = 0;
+  let shakeDuration = 0;
+  let shakeAmplitude = 0;
+  let shakeFrequency = 24;
+  let shakePhase = 0;
+
+  function baseCamera() {
+    return { ...camera };
+  }
+
+  function shakenCamera() {
+    if (!(shakeTime < shakeDuration) || shakeAmplitude <= 0) {
+      return baseCamera();
+    }
+    const remaining = 1 - shakeTime / shakeDuration;
+    const amplitude = shakeAmplitude * remaining;
+    const phase = shakePhase + shakeTime * shakeFrequency * Math.PI * 2;
+    return {
+      x: camera.x + Math.sin(phase) * amplitude,
+      y: camera.y + Math.cos(phase * 1.61803398875) * amplitude,
+      zoom: camera.zoom,
+    };
+  }
+
+  function update(targetX, targetY, deltaSeconds) {
+    for (const [name, value] of Object.entries({
+      targetX,
+      targetY,
+      deltaSeconds,
+    })) {
+      if (!Number.isFinite(value)) {
+        throw new Error(`${name} must be finite`);
+      }
+    }
+    if (deltaSeconds < 0) {
+      throw new Error("deltaSeconds must be >= 0");
+    }
+
+    const halfW = deadZoneWidth / 2;
+    const halfH = deadZoneHeight / 2;
+    let desiredX = camera.x;
+    let desiredY = camera.y;
+
+    if (targetX < camera.x - halfW) desiredX = targetX + halfW;
+    else if (targetX > camera.x + halfW) desiredX = targetX - halfW;
+
+    if (targetY < camera.y - halfH) desiredY = targetY + halfH;
+    else if (targetY > camera.y + halfH) desiredY = targetY - halfH;
+
+    if (smoothing > 0 && deltaSeconds > 0) {
+      const alpha = 1 - Math.exp(-smoothing * deltaSeconds);
+      camera.x += (desiredX - camera.x) * alpha;
+      camera.y += (desiredY - camera.y) * alpha;
+    } else {
+      camera.x = desiredX;
+      camera.y = desiredY;
+    }
+
+    shakeTime = Math.min(shakeDuration, shakeTime + deltaSeconds);
+    return shakenCamera();
+  }
+
+  function setCamera(nextCamera = {}) {
+    const candidate = {
+      x: nextCamera.x ?? camera.x,
+      y: nextCamera.y ?? camera.y,
+      zoom: nextCamera.zoom ?? camera.zoom,
+    };
+    applyCameraToSpriteInstances([], candidate);
+    camera = candidate;
+    return baseCamera();
+  }
+
+  function shake(amplitude, durationSeconds, frequency = 24) {
+    for (const [name, value] of Object.entries({
+      amplitude,
+      durationSeconds,
+      frequency,
+    })) {
+      if (!Number.isFinite(value) || value < 0) {
+        throw new Error(`${name} must be a finite value >= 0`);
+      }
+    }
+    if (frequency === 0 && amplitude > 0 && durationSeconds > 0) {
+      throw new Error("frequency must be > 0 when shake is active");
+    }
+    shakeAmplitude = amplitude;
+    shakeDuration = durationSeconds;
+    shakeFrequency = frequency || 24;
+    shakeTime = 0;
+    shakePhase += Math.PI / 7;
+    return shakenCamera();
+  }
+
+  function clearShake() {
+    shakeTime = shakeDuration;
+    shakeAmplitude = 0;
+    return baseCamera();
+  }
+
+  return {
+    update,
+    setCamera,
+    shake,
+    clearShake,
+    get camera() {
+      return shakenCamera();
+    },
+    get baseCamera() {
+      return baseCamera();
+    },
+    get shaking() {
+      return shakeTime < shakeDuration && shakeAmplitude > 0;
+    },
   };
 }
