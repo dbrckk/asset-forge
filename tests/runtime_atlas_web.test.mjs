@@ -30,6 +30,7 @@ import {
   prepareSpriteSceneInstances,
   resizeWebGL2Canvas,
   createWebGL2CanvasRuntime,
+  createSpriteEntityStore,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -1544,3 +1545,97 @@ canvasRuntime.dispose();
 assert.equal(canvasRuntime.disposed, true);
 assert.throws(() => canvasRuntime.resize(), /runtime is disposed/);
 canvasRuntime.dispose();
+
+
+const entityStore = createSpriteEntityStore();
+const heroEntity = entityStore.add({
+  page: "heroes",
+  frame: "plain",
+  x: 10,
+  y: 20,
+  z: 2,
+});
+assert.equal(heroEntity.id, 1);
+assert.equal(entityStore.size, 1);
+assert.equal(entityStore.version, 1);
+assert.deepEqual(entityStore.get(1), heroEntity);
+
+const enemyEntity = entityStore.add({
+  id: "enemy-1",
+  page: "heroes",
+  frame: "plain",
+  x: 30,
+  y: 40,
+  enabled: false,
+});
+assert.equal(enemyEntity.id, "enemy-1");
+assert.equal(entityStore.size, 2);
+assert.equal(entityStore.version, 2);
+assert.deepEqual(
+  entityStore.snapshot().map((entity) => entity.id),
+  [1],
+);
+assert.deepEqual(
+  entityStore.snapshot({ includeDisabled: true }).map((entity) => entity.id),
+  [1, "enemy-1"],
+);
+
+const updatedHero = entityStore.update(1, { x: 15, z: 5 });
+assert.equal(updatedHero.x, 15);
+assert.equal(updatedHero.z, 5);
+assert.equal(entityStore.version, 3);
+
+const renderInstances = entityStore.instances();
+assert.deepEqual(renderInstances, [
+  {
+    id: 1,
+    page: "heroes",
+    frame: "plain",
+    x: 15,
+    y: 20,
+    z: 5,
+  },
+]);
+
+const versionBeforeTransaction = entityStore.version;
+assert.throws(
+  () =>
+    entityStore.transact((tx) => {
+      tx.update(1, { x: 99 });
+      tx.add({
+        id: "temporary",
+        page: "heroes",
+        frame: "plain",
+      });
+      throw new Error("rollback");
+    }),
+  /rollback/,
+);
+assert.equal(entityStore.version, versionBeforeTransaction);
+assert.equal(entityStore.get(1).x, 15);
+assert.equal(entityStore.has("temporary"), false);
+
+entityStore.transact((tx) => {
+  tx.update(1, { x: 25 });
+  tx.remove("enemy-1");
+});
+assert.equal(entityStore.get(1).x, 25);
+assert.equal(entityStore.has("enemy-1"), false);
+assert.equal(entityStore.size, 1);
+
+assert.throws(
+  () => entityStore.update(1, { id: 2 }),
+  /id cannot be changed/,
+);
+assert.throws(
+  () =>
+    entityStore.add({
+      page: "heroes",
+      frame: "plain",
+      scale: 0,
+    }),
+  /scale must be > 0/,
+);
+assert.equal(entityStore.remove("missing"), null);
+assert.equal(entityStore.clear(), 1);
+assert.equal(entityStore.size, 0);
