@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-forge production request",
+  "type": "object",
+  "required": ["schema", "requestId", "instruction", "manifest"],
+  "properties": {
+    "schema": {"const": "asset-forge/production-request/v1"},
+    "requestId": {"type": "string", "minLength": 1},
+    "instruction": {"type": "string", "minLength": 1},
+    "manifest": {"$ref": "asset-manifest.schema.json"},
+    "delivery": {
+      "type": "object",
+      "properties": {
+        "engine": {"type": ["string", "null"], "minLength": 1},
+        "outputDir": {"type": ["string", "null"], "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
