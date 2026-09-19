@@ -267,6 +267,46 @@ class ProductionExecutorTests(unittest.TestCase):
                 report["validation"]["errors"],
             )
 
+    def test_generator_source_must_stay_inside_job_output(self):
+        with tempfile.TemporaryDirectory() as td, tempfile.TemporaryDirectory() as outside_td:
+            root = Path(td)
+            outside = Path(outside_td) / "outside.png"
+            outside.write_bytes(b"source")
+
+            def generator(value, output_dir, **kwargs):
+                return {"success": True, "sourcePath": str(outside)}
+
+            with self.assertRaisesRegex(
+                ProductionExecutionError,
+                "escapes output directory",
+            ):
+                execute_generated_raster_job(
+                    job(),
+                    root,
+                    validator=lambda p, m: ({}, []),
+                    png_optimizer=lambda *a: {},
+                    webp_encoder=lambda *a, **k: {},
+                    generator=generator,
+                )
+
+    def test_asset_id_cannot_escape_job_output(self):
+        bad = job()
+        bad["assetId"] = "../escape"
+
+        with tempfile.TemporaryDirectory() as td:
+            with self.assertRaisesRegex(
+                ProductionExecutionError,
+                "safe filename",
+            ):
+                execute_generated_raster_job(
+                    bad,
+                    Path(td),
+                    validator=lambda p, m: ({}, []),
+                    png_optimizer=lambda *a: {},
+                    webp_encoder=lambda *a, **k: {},
+                    generator=lambda *a, **k: {},
+                )
+
     def test_non_raster_target_fails_closed(self):
         with tempfile.TemporaryDirectory() as td:
             with self.assertRaisesRegex(ProductionExecutionError, "target format"):
