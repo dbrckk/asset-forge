@@ -4,5 +4,1672 @@
   "scope": "symbols defined in changed source files",
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
-  "symbols": {}
+  "symbols": {
+    "load_json": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 66,
+        "end": 71
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "validate_manifest": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 74,
+        "end": 129
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "is_power_of_two": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 132,
+        "end": 133
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "sprite_grid": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 136,
+        "end": 154
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "build_atlas_manifest": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 157,
+        "end": 185
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "inspect_raster",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 380,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "sprite_grid",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "validate_raster_file": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 188,
+        "end": 244
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "inspect_raster",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 380,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "is_power_of_two",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 132,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sprite_grid",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "select_tools": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 247,
+        "end": 262
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "build_plan": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 265,
+        "end": 291
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_json",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 66,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "select_tools",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 247,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "load_valid_manifest": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 294,
+        "end": 307
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_json",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 66,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 74,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "cmd_validate": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 310,
+        "end": 315
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_valid_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 294,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "cmd_plan": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 318,
+        "end": 323
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_plan",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 265,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "load_valid_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 294,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "cmd_validate_raster": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 326,
+        "end": 337
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_valid_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 294,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_raster_file",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 188,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "cmd_atlas_manifest": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 340,
+        "end": 361
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_atlas_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 157,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "load_valid_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 294,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_raster_file",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 188,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "parser": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 364,
+        "end": 540
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "main": {
+      "source": {
+        "file": "asset_forge.py",
+        "start": 543,
+        "end": 927
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_3d_pipeline",
+          "definitions": [
+            {
+              "file": "toolchain_3d.py",
+              "line": 80,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "build_blender_export_job",
+          "definitions": [
+            {
+              "file": "blender_adapter.py",
+              "line": 20,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "build_visual_discovery_report",
+          "definitions": [
+            {
+              "file": "starlist_bridge.py",
+              "line": 65,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "cmd_atlas_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 340,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "cmd_plan",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 318,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "cmd_validate",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 310,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "cmd_validate_raster",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 326,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "deep_gltf_diagnostics",
+          "definitions": [
+            {
+              "file": "gltf_diagnostics.py",
+              "line": 459,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "detect_3d_tools",
+          "definitions": [
+            {
+              "file": "toolchain_3d.py",
+              "line": 18,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "encode_webp",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 870,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_3d_pipeline",
+          "definitions": [
+            {
+              "file": "toolchain_3d.py",
+              "line": 388,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "godot_3d_delivery_report",
+          "definitions": [
+            {
+              "file": "godot_3d_delivery.py",
+              "line": 38,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "infer_animations",
+          "definitions": [
+            {
+              "file": "animation_infer.py",
+              "line": 9,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_gltf",
+          "definitions": [
+            {
+              "file": "gltf_tools.py",
+              "line": 200,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "inspect_svg",
+          "definitions": [
+            {
+              "file": "svg_tools.py",
+              "line": 73,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "load_json",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 66,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalize_viewbox",
+          "definitions": [
+            {
+              "file": "svg_tools.py",
+              "line": 215,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "pack_compact_atlas",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1523,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "pack_uniform_atlas",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 1667,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "parser",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 364,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "prepare_3d_pipeline",
+          "definitions": [
+            {
+              "file": "toolchain_3d.py",
+              "line": 305,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "prepare_godot_handoff",
+          "definitions": [
+            {
+              "file": "godot_handoff.py",
+              "line": 62,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "quality_report",
+          "definitions": [
+            {
+              "file": "gltf_quality.py",
+              "line": 367,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "raster_backend_status",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 712,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "recompress_png",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 909,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "render_blender_command",
+          "definitions": [
+            {
+              "file": "blender_adapter.py",
+              "line": 71,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "run_starlist_recommender",
+          "definitions": [
+            {
+              "file": "starlist_bridge.py",
+              "line": 9,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "sanitize_svg",
+          "definitions": [
+            {
+              "file": "svg_tools.py",
+              "line": 269,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_all_asset_profiles",
+          "definitions": [
+            {
+              "file": "asset_profile_validation.py",
+              "line": 189,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_all_godot_profiles",
+          "definitions": [
+            {
+              "file": "engine_profile_validation.py",
+              "line": 124,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_gltf_profile",
+          "definitions": [
+            {
+              "file": "gltf_tools.py",
+              "line": 314,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_godot_handoff",
+          "definitions": [
+            {
+              "file": "godot_handoff.py",
+              "line": 177,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_manifest",
+          "definitions": [
+            {
+              "file": "asset_forge.py",
+              "line": 74,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 240,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_svg_profile",
+          "definitions": [
+            {
+              "file": "svg_tools.py",
+              "line": 182,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write_blender_export_script",
+          "definitions": [
+            {
+              "file": "blender_adapter.py",
+              "line": 66,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write_job_manifest",
+          "definitions": [
+            {
+              "file": "blender_adapter.py",
+              "line": 83,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "write_spriteframes",
+          "definitions": [
+            {
+              "file": "godot_export.py",
+              "line": 250,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 39
+    },
+    "_positive_int": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 4,
+        "end": 10
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_non_negative_int": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 13,
+        "end": 19
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_normalize_runtime_animations": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 22,
+        "end": 101
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "build_runtime_atlas": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 104,
+        "end": 236
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_non_negative_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 13,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_normalize_runtime_animations",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_positive_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 4,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "validate_runtime_atlas": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 240,
+        "end": 555
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_non_negative_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 13,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_positive_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 4,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "read_size",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 362,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "read_size": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 362,
+        "end": 482
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_non_negative_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 13,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_positive_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 4,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "RuntimeAtlasTests": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 6,
+        "end": 298
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_build_runtime_atlas_normalizes_animations",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 195,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_build_runtime_atlas_rejects_missing_animation_frame",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 233,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_defaults_non_rotated_source_region",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 56,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_exports_trim_and_rotation_semantics",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 7,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_rejects_duplicate_indices",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 110,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_rejects_rotation_dimension_mismatch",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 69,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_rejects_source_trim_out_of_bounds",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 90,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_accepts_generated_runtime_atlas",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 123,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_detects_frame_count_mismatch",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 145,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_detects_uv_drift",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 133,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_animation_frame_reference_drift",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 253,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_boolean_integer_fields",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 169,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_duplicate_animation_names",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 275,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_unknown_fields",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 157,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_unknown_nested_fields",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 181,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 240,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 17
+    },
+    "test_exports_trim_and_rotation_semantics": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 7,
+        "end": 54
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_defaults_non_rotated_source_region": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 56,
+        "end": 67
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_rejects_rotation_dimension_mismatch": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 69,
+        "end": 88
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_rejects_source_trim_out_of_bounds": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 90,
+        "end": 108
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_rejects_duplicate_indices": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 110,
+        "end": 121
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_validator_accepts_generated_runtime_atlas": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 123,
+        "end": 131
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 240,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_detects_uv_drift": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 133,
+        "end": 143
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 240,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_detects_frame_count_mismatch": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 145,
+        "end": 155
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 240,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_rejects_unknown_fields": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 157,
+        "end": 167
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 240,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_rejects_boolean_integer_fields": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 169,
+        "end": 179
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 240,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_rejects_unknown_nested_fields": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 181,
+        "end": 193
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 240,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_build_runtime_atlas_normalizes_animations": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 195,
+        "end": 231
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 240,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_build_runtime_atlas_rejects_missing_animation_frame": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 233,
+        "end": 251
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_validator_rejects_animation_frame_reference_drift": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 253,
+        "end": 273
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 240,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_rejects_duplicate_animation_names": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 275,
+        "end": 298
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 240,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "indexRuntimeAtlas": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 1,
+        "end": 56
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "frameQuad": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 58,
+        "end": 73
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "drawFrameCanvas2D": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 75,
+        "end": 141
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "sourceOrientedUVs": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 144,
+        "end": 166
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "animationFrameAtTime": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 169,
+        "end": 225
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    }
+  }
 }

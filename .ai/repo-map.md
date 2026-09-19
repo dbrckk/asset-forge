@@ -74,6 +74,7 @@ schemas/
   runtime-atlas.schema.json
   vector-profile.schema.json
 tests/
+  runtime_atlas_web.test.mjs
   test_animation_infer.py
   test_asset_forge.py
   test_asset_profile_validation.py
@@ -92,6 +93,8 @@ tests/
   test_starlist_bridge.py
   test_svg_tools.py
   test_toolchain_3d.py
+web/
+  runtime_atlas.mjs
 .repo-standards.yml
 AGENTS.md
 animation_infer.py
@@ -230,6 +233,11 @@ jobs:
           path: star-list
       - name: Validate runtime atlas example
         run: python asset_forge.py validate-runtime-atlas examples/runtime-atlas.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Smoke-test web runtime atlas consumer
+        run: node tests/runtime_atlas_web.test.mjs
       - name: Smoke-test star-list bridge
         run: python asset_forge.py discover-tools star-list "pixel art sprites atlas" --top 3
 
@@ -430,6 +438,19 @@ jobs:
         "rotated": true,
         "degreesClockwise": 90
       }
+    }
+  ],
+  "animations": [
+    {
+      "name": "hero",
+      "fps": 8,
+      "loop": true,
+      "frames": [
+        {
+          "index": 0,
+          "duration": 1
+        }
+      ]
     }
   ]
 }
@@ -902,6 +923,33 @@ jobs:
         "clockwise90Rotation": {"const": true}
       }
     },
+    "animations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "fps", "loop", "frames"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "fps": {"type": "number", "exclusiveMinimum": 0},
+          "loop": {"type": "boolean"},
+          "frames": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["index", "duration"],
+              "additionalProperties": false,
+              "properties": {
+                "index": {"type": "integer", "minimum": 0},
+                "duration": {"type": "number", "exclusiveMinimum": 0}
+              }
+            }
+          }
+        }
+      }
+    },
     "frames": {
       "type": "array",
       "minItems": 1,
@@ -1042,6 +1090,18 @@ jobs:
   },
   "additionalProperties": false
 }
+````
+
+## File: tests/runtime_atlas_web.test.mjs
+````javascript
+save()
+restore()
+translate(x, y)
+rotate(angle)
+drawImage(...args)
+⋮----
+translate(...args)
+rotate(...args)
 ````
 
 ## File: tests/test_animation_infer.py
@@ -2086,6 +2146,16 @@ def test_validator_rejects_unknown_fields(self)
 def test_validator_rejects_boolean_integer_fields(self)
 ⋮----
 def test_validator_rejects_unknown_nested_fields(self)
+⋮----
+def test_build_runtime_atlas_normalizes_animations(self)
+⋮----
+runtime = build_runtime_atlas(
+⋮----
+def test_build_runtime_atlas_rejects_missing_animation_frame(self)
+⋮----
+def test_validator_rejects_animation_frame_reference_drift(self)
+⋮----
+def test_validator_rejects_duplicate_animation_names(self)
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -2236,11 +2306,40 @@ result = execute_3d_pipeline(plan, Path("."))
 def test_invalid_target_engine_is_rejected(self)
 ````
 
+## File: web/runtime_atlas.mjs
+````javascript
+export function indexRuntimeAtlas(atlas)
+⋮----
+frame(indexOrName)
+animation(name)
+⋮----
+export function frameQuad(frame)
+⋮----
+export function drawFrameCanvas2D(
+  ctx,
+  image,
+  frame,
+  destinationX = 0,
+  destinationY = 0,
+  options = {},
+)
+⋮----
+// Atlas pixels are stored 90° clockwise. Rotate the destination context
+// 90° counter-clockwise so the sprite is restored to source orientation.
+⋮----
+export function sourceOrientedUVs(frame)
+⋮----
+// Return UVs in source-orientation vertex order:
+// top-left, top-right, bottom-right, bottom-left.
+⋮----
+export function animationFrameAtTime(indexedAtlas, animationOrName, timeSeconds)
+````
+
 ## File: .repo-standards.yml
 ````yaml
 source: dbrckk/repo-standards
 ref: main
-version: 16
+version: 17
 adopted: true
 workflow_mode: unified-single-commit
 repo_brain: dbrckk/repo-brain@main
@@ -2251,6 +2350,7 @@ graph_resolver: java-kotlin-tail-v2
 graph_enrichment: unique-type-symbol-references-v1
 context_budget: confidence-dynamic-3-6-12
 routing_learning: deterministic-term-feedback-v1
+auto_routing_learning: source-diff-success-v1
 ai_context:
   index: .ai/index.md
   project_state: .ai/project-state.md
@@ -2286,6 +2386,7 @@ ai_context:
   brain_search_shards: .ai/brain/search-shards/
   brain_query_cache: .ai/brain/query-cache.json
   brain_routing_learning: .ai/brain/routing-learning.json
+  brain_auto_learning: .ai/brain/auto-learning.json
   brain_hotset: .ai/brain/hotset.json
   brain_context_manifest: .ai/brain/context-manifest.json
   brain_context_packets: .ai/brain/context/
@@ -2569,13 +2670,16 @@ data = load_json(args.input)
 errors = validate_runtime_atlas(data)
 ⋮----
 source = load_json(args.metadata)
-runtime = build_runtime_atlas(source)
-⋮----
-metadata = load_json(args.metadata)
 animations = None
 ⋮----
 animation_config = load_json(args.animations)
 animations = animation_config.get("animations")
+⋮----
+inferred = infer_animations(
+animations = inferred.get("animations")
+runtime = build_runtime_atlas(source, animations=animations)
+⋮----
+metadata = load_json(args.metadata)
 ⋮----
 result = build_visual_discovery_report(args.star_list_root)
 ⋮----
@@ -4501,6 +4605,66 @@ python asset_forge.py validate-runtime-atlas examples/runtime-atlas.json
 The dependency-free validator checks the versioned contract plus semantic relationships that JSON Schema alone does not express conveniently, including frame-count consistency, duplicate indices, UVs matching atlas regions, source/trim bounds, and rotation dimensions. Validation is strict about unknown fields and integer types, so booleans are not accepted as integers.
 
 CI validates `examples/runtime-atlas.json` as a smoke test. The example is a rotated + trimmed frame and can be used as a reference implementation for runtime consumers.
+
+
+### Web runtime consumer
+
+A dependency-free ES module is available at `web/runtime_atlas.mjs`.
+
+Canvas2D example:
+
+```js
+import {
+  indexRuntimeAtlas,
+  drawFrameCanvas2D,
+} from "./web/runtime_atlas.mjs";
+
+const atlasData = await fetch("./runtime-atlas.json").then((response) => response.json());
+const image = new Image();
+image.src = atlasData.image;
+await image.decode();
+
+const atlas = indexRuntimeAtlas(atlasData);
+const frame = atlas.frame("hero_0.png");
+drawFrameCanvas2D(context, image, frame, 32, 48);
+```
+
+`drawFrameCanvas2D` restores trim offsets and automatically undoes a stored 90° clockwise atlas rotation before drawing.
+
+For WebGL/custom renderers, `sourceOrientedUVs(frame)` returns UV coordinates in source-vertex order — top-left, top-right, bottom-right, bottom-left — with rotation already accounted for. `frameQuad(frame)` exposes the raw normalized UV rectangle plus source-size/trim/rotation metadata.
+
+The web helper is smoke-tested with Node 22 in CI against the versioned runtime atlas example.
+
+
+### Runtime animations
+
+Runtime atlas export can now include animations while keeping the base v1 format backward compatible.
+
+Infer groups from frame filenames:
+
+```bash
+python asset_forge.py export-runtime-atlas build/atlas.json build/runtime-atlas.json \
+  --infer-animations --fps 12
+```
+
+Or provide an explicit animation JSON file using the same `animations` structure already accepted by the Godot exporter:
+
+```bash
+python asset_forge.py export-runtime-atlas build/atlas.json build/runtime-atlas.json \
+  --animations animations.json
+```
+
+`--animations` and `--infer-animations` are mutually exclusive. Runtime animations contain `name`, `fps`, `loop`, and normalized frame entries with `index` plus a positive `duration` multiplier. Frame references are validated against the atlas.
+
+The web consumer indexes animations by name and exposes:
+
+```js
+const atlas = indexRuntimeAtlas(runtimeAtlas);
+const sample = animationFrameAtTime(atlas, "run", elapsedSeconds);
+drawFrameCanvas2D(ctx, image, sample.frame, x, y);
+```
+
+Looping animations wrap by total duration. Non-looping animations clamp to the final frame and return `finished: true`. Per-frame duration multipliers are interpreted in units of `1 / fps`.
 ````
 
 ## File: runtime_atlas.py
@@ -4511,7 +4675,24 @@ result = value
 ⋮----
 def _non_negative_int(value, field: str) -> int
 ⋮----
-def build_runtime_atlas(atlas_metadata: dict) -> dict
+normalized = []
+seen_names: set[str] = set()
+⋮----
+name = animation.get("name")
+⋮----
+fps = animation.get("fps", 12.0)
+⋮----
+loop = animation.get("loop", True)
+⋮----
+raw_frames = animation.get("frames")
+⋮----
+frames = []
+⋮----
+index = raw
+duration = 1.0
+⋮----
+index = raw.get("index")
+duration = raw.get("duration", 1.0)
 ⋮----
 frames = atlas_metadata.get("frames")
 ⋮----
@@ -4544,6 +4725,9 @@ source_height = _positive_int(
 offset_x = _non_negative_int(frame.get("offsetX", 0), f"frame {index}.offsetX")
 offset_y = _non_negative_int(frame.get("offsetY", 0), f"frame {index}.offsetY")
 ⋮----
+result = {
+normalized_animations = _normalize_runtime_animations(animations, seen_indices)
+⋮----
 def validate_runtime_atlas(data: dict) -> list[str]
 ⋮----
 errors: list[str] = []
@@ -4563,8 +4747,6 @@ atlas_height = _positive_int(image_size.get("height"), "imageSize.height")
 capabilities = data.get("capabilities")
 ⋮----
 frames = data.get("frames")
-⋮----
-frames = []
 ⋮----
 frame_count = data.get("frameCount")
 ⋮----
@@ -4616,6 +4798,27 @@ values = []
 value = uv.get(key)
 ⋮----
 expected = (
+⋮----
+animations = data.get("animations")
+⋮----
+seen_animation_names: set[str] = set()
+valid_indices = set(seen_indices)
+allowed_animation = {"name", "fps", "loop", "frames"}
+allowed_animation_frame = {"index", "duration"}
+⋮----
+name_label = animation_position
+⋮----
+name_label = name
+⋮----
+fps = animation.get("fps")
+⋮----
+loop = animation.get("loop")
+⋮----
+animation_frames = animation.get("frames")
+⋮----
+index = animation_frame.get("index")
+⋮----
+duration = animation_frame.get("duration")
 ````
 
 ## File: starlist_bridge.py
