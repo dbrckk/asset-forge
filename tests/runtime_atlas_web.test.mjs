@@ -24,6 +24,10 @@ import {
   preloadRuntimeAtlasPageTextures,
   releaseRuntimeAtlasPageTextures,
   createWebGL2RuntimeAtlasScene,
+  spriteInstanceBounds,
+  cullSpriteInstances,
+  stableSortSpriteInstances,
+  prepareSpriteSceneInstances,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -1242,3 +1246,114 @@ externalScene.dispose();
 assert.equal(externalCache.disposed, false);
 assert.equal(externalCache.size, 0);
 externalCache.dispose();
+
+
+const scenePagesForCulling = createRuntimeAtlasPages([
+  { id: "heroes", atlas: plainAtlas, texture: "heroes.png" },
+]);
+
+assert.deepEqual(
+  spriteInstanceBounds(scenePagesForCulling, {
+    page: "heroes",
+    frame: "plain",
+    x: 10,
+    y: 20,
+    scaleX: 2,
+    scaleY: 3,
+  }),
+  {
+    x: 10,
+    y: 20,
+    width: 12,
+    height: 21,
+    visibleX: 12,
+    visibleY: 23,
+    visibleWidth: 8,
+    visibleHeight: 15,
+  },
+);
+
+const cullingInput = [
+  { page: "heroes", frame: "plain", x: 0, y: 0, z: 5, id: "inside-a" },
+  { page: "heroes", frame: "plain", x: 20, y: 20, z: 1, id: "inside-b" },
+  { page: "heroes", frame: "plain", x: 200, y: 200, z: 3, id: "outside" },
+  { page: "heroes", frame: "plain", x: -3, y: -3, z: 1, id: "edge" },
+];
+const culled = cullSpriteInstances(
+  scenePagesForCulling,
+  cullingInput,
+  { x: 0, y: 0, width: 64, height: 64 },
+);
+assert.equal(culled.inputCount, 4);
+assert.equal(culled.visibleCount, 3);
+assert.equal(culled.culledCount, 1);
+assert.deepEqual(culled.culledIndices, [2]);
+assert.deepEqual(
+  culled.instances.map((instance) => instance.id),
+  ["inside-a", "inside-b", "edge"],
+);
+
+const paddedCull = cullSpriteInstances(
+  scenePagesForCulling,
+  [{ page: "heroes", frame: "plain", x: 66, y: 0, id: "near" }],
+  { x: 0, y: 0, width: 64, height: 64 },
+  { padding: 8 },
+);
+assert.equal(paddedCull.visibleCount, 1);
+
+const stableSorted = stableSortSpriteInstances(
+  [
+    { id: "a", z: 2 },
+    { id: "b", z: 1 },
+    { id: "c", z: 1 },
+    { id: "d", z: 3 },
+  ],
+);
+assert.deepEqual(
+  stableSorted.map((instance) => instance.id),
+  ["b", "c", "a", "d"],
+);
+
+const stableSortedDesc = stableSortSpriteInstances(
+  [
+    { id: "a", z: 2 },
+    { id: "b", z: 1 },
+    { id: "c", z: 1 },
+    { id: "d", z: 3 },
+  ],
+  { direction: "descending" },
+);
+assert.deepEqual(
+  stableSortedDesc.map((instance) => instance.id),
+  ["d", "a", "b", "c"],
+);
+
+const preparedScene = prepareSpriteSceneInstances(
+  scenePagesForCulling,
+  cullingInput,
+  {
+    viewport: { x: 0, y: 0, width: 64, height: 64 },
+    sortKey: "z",
+  },
+);
+assert.equal(preparedScene.inputCount, 4);
+assert.equal(preparedScene.outputCount, 3);
+assert.equal(preparedScene.culledCount, 1);
+assert.deepEqual(
+  preparedScene.instances.map((instance) => instance.id),
+  ["inside-b", "edge", "inside-a"],
+);
+
+assert.throws(
+  () => stableSortSpriteInstances([{ z: Number.NaN }]),
+  /sort value z must be finite/,
+);
+assert.throws(
+  () =>
+    cullSpriteInstances(
+      scenePagesForCulling,
+      cullingInput,
+      { width: -1, height: 10 },
+    ),
+  /viewport width\/height must be >= 0/,
+);
