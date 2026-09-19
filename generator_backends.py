@@ -28,15 +28,18 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
     home_dir = Path.home() if home is None else Path(home)
     polli = shutil.which("polli")
     credentials = home_dir / ".pollinations" / "credentials.json"
-    authenticated = bool(str(env.get("POLLINATIONS_API_KEY") or "").strip()) or credentials.is_file()
+    api_key_available = bool(str(env.get("POLLINATIONS_API_KEY") or "").strip())
+    authenticated = api_key_available or credentials.is_file()
     return {
         "pollinations": {
             "installed": polli is not None,
             "executable": polli,
             "authenticated": authenticated,
+            "rasterVectorReady": polli is not None and authenticated,
+            "threeDReady": polli is not None and api_key_available,
             "credentialSource": (
                 "environment"
-                if bool(str(env.get("POLLINATIONS_API_KEY") or "").strip())
+                if api_key_available
                 else "credential-store"
                 if credentials.is_file()
                 else None
