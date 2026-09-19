@@ -2666,6 +2666,30 @@ export async function createWebGL2CanvasRuntime(
         transformOptions,
       );
     },
+    selectionHandles(handleOptions = {}) {
+      assertActive();
+      return selectionTransformHandleGeometry(
+        entityStore,
+        selection,
+        handleOptions,
+      );
+    },
+    dragSelectionHandle(
+      handle,
+      startPoint,
+      currentPoint,
+      handleOptions = {},
+    ) {
+      assertActive();
+      return applySelectionTransformHandleDrag(
+        entityStore,
+        selection,
+        handle,
+        startPoint,
+        currentPoint,
+        handleOptions,
+      );
+    },
     moveSelectionByWorldDelta(deltaX, deltaY, moveOptions = {}) {
       assertActive();
       return moveSelectedSpriteEntitiesByWorldDelta(
@@ -4738,6 +4762,121 @@ export function createSpritePointerInteractionController(options = {}) {
       return state ? { ...state } : null;
     },
   };
+}
+
+
+export function selectionTransformHandleGeometry(
+  entityStore,
+  selectionModel,
+  options = {},
+) {
+  const snapshot = selectionModel.snapshot();
+  if (!snapshot.ids.length) return null;
+  const resolved = resolveSpriteEntityHierarchy(entityStore, {
+    includeDisabled: true,
+  });
+  const worlds = snapshot.ids.map((id) => {
+    const entity = resolved.byId.get(id);
+    if (!entity) throw new Error(`sprite entity not found: ${id}`);
+    return entity;
+  });
+  const minX = Math.min(...worlds.map((entity) => entity.x));
+  const minY = Math.min(...worlds.map((entity) => entity.y));
+  const maxX = Math.max(...worlds.map((entity) => entity.x));
+  const maxY = Math.max(...worlds.map((entity) => entity.y));
+  const pivotX = options.pivotX ?? (minX + maxX) / 2;
+  const pivotY = options.pivotY ?? (minY + maxY) / 2;
+  const handleDistance = options.handleDistance ?? 32;
+  if (![pivotX, pivotY, handleDistance].every(Number.isFinite)) {
+    throw new Error("selection handle geometry values must be finite");
+  }
+  if (handleDistance < 0) {
+    throw new Error("selection handleDistance must be >= 0");
+  }
+  return {
+    bounds: {
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
+    },
+    pivot: { x: pivotX, y: pivotY },
+    handles: {
+      nw: { x: minX, y: minY },
+      ne: { x: maxX, y: minY },
+      se: { x: maxX, y: maxY },
+      sw: { x: minX, y: maxY },
+      rotate: { x: pivotX, y: minY - handleDistance },
+      pivot: { x: pivotX, y: pivotY },
+    },
+  };
+}
+
+export function applySelectionTransformHandleDrag(
+  entityStore,
+  selectionModel,
+  handle,
+  startPoint,
+  currentPoint,
+  options = {},
+) {
+  if (!startPoint || !currentPoint) {
+    throw new Error("selection transform handle points required");
+  }
+  for (const value of [
+    startPoint.x,
+    startPoint.y,
+    currentPoint.x,
+    currentPoint.y,
+  ]) {
+    if (!Number.isFinite(value)) {
+      throw new Error("selection transform handle points must be finite");
+    }
+  }
+  const geometry = selectionTransformHandleGeometry(
+    entityStore,
+    selectionModel,
+    options,
+  );
+  if (!geometry) return { ids: [], count: 0, entities: [] };
+  const pivot = geometry.pivot;
+
+  if (handle === "rotate") {
+    const a0 = Math.atan2(startPoint.y - pivot.y, startPoint.x - pivot.x);
+    const a1 = Math.atan2(currentPoint.y - pivot.y, currentPoint.x - pivot.x);
+    return transformSelectedSpriteEntities(entityStore, selectionModel, {
+      pivotX: pivot.x,
+      pivotY: pivot.y,
+      rotation: a1 - a0,
+    });
+  }
+
+  if (!["nw", "ne", "se", "sw"].includes(handle)) {
+    throw new Error("selection transform handle must be nw, ne, se, sw, or rotate");
+  }
+  const startDx = startPoint.x - pivot.x;
+  const startDy = startPoint.y - pivot.y;
+  const currentDx = currentPoint.x - pivot.x;
+  const currentDy = currentPoint.y - pivot.y;
+  const uniform = options.uniform ?? false;
+  if (typeof uniform !== "boolean") {
+    throw new Error("selection transform uniform must be boolean");
+  }
+  let scaleX = Math.abs(startDx) < 1e-9 ? 1 : Math.abs(currentDx / startDx);
+  let scaleY = Math.abs(startDy) < 1e-9 ? 1 : Math.abs(currentDy / startDy);
+  if (uniform) {
+    const scale = Math.max(scaleX, scaleY);
+    scaleX = scale;
+    scaleY = scale;
+  }
+  scaleX = Math.max(scaleX, 1e-6);
+  scaleY = Math.max(scaleY, 1e-6);
+  return transformSelectedSpriteEntities(entityStore, selectionModel, {
+    pivotX: pivot.x,
+    pivotY: pivot.y,
+    scaleX,
+    scaleY,
+  });
 }
 
 
