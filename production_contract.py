@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 from typing import Callable
 
 
 REQUEST_SCHEMA = "asset-forge/production-request/v1"
 JOB_SCHEMA = "asset-forge/production-job/v1"
+SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$")
 
 
 def validate_production_request(request: dict, validate_manifest: Callable[[dict], list[str]]) -> list[str]:
@@ -16,6 +18,8 @@ def validate_production_request(request: dict, validate_manifest: Callable[[dict
     request_id = request.get("requestId")
     if not isinstance(request_id, str) or not request_id.strip():
         errors.append("requestId: non-empty string required")
+    elif not SAFE_ID.fullmatch(request_id):
+        errors.append("requestId: safe identifier required")
 
     instruction = request.get("instruction")
     if not isinstance(instruction, str) or not instruction.strip():
@@ -26,6 +30,9 @@ def validate_production_request(request: dict, validate_manifest: Callable[[dict
         errors.append("manifest: object required")
     else:
         errors.extend(f"manifest.{error}" for error in validate_manifest(manifest))
+        asset_id = manifest.get("id")
+        if isinstance(asset_id, str) and asset_id.strip() and not SAFE_ID.fullmatch(asset_id):
+            errors.append("manifest.id: safe identifier required for production jobs")
 
     delivery = request.get("delivery", {})
     if delivery is not None and not isinstance(delivery, dict):
