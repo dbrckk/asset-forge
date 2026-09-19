@@ -43,6 +43,32 @@ def _trusted_generated_source(output_dir: Path, generation: dict, *, label: str 
     return source
 
 
+def _stage_provided_source(source_path: Path, output_dir: Path, *, suffix: str) -> dict:
+    source = Path(source_path)
+    if not source.is_file():
+        raise ProductionExecutionError("provided source file missing")
+    if source.is_symlink():
+        raise ProductionExecutionError("provided source file must not be a symlink")
+    size = source.stat().st_size
+    if size <= 0:
+        raise ProductionExecutionError("provided source file is empty")
+    if size > 100 * 1024 * 1024:
+        raise ProductionExecutionError("provided source file exceeds 100 MiB safety limit")
+    out = Path(output_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    staged = out / f"provided-source{suffix}"
+    if source.resolve() != staged.resolve():
+        shutil.copyfile(source, staged)
+    return {
+        "success": True,
+        "backend": "provided",
+        "model": None,
+        "sourcePath": str(staged),
+        "sourceBytes": staged.stat().st_size,
+        "metadata": None,
+    }
+
+
 def execute_generated_raster_job(
     job: dict,
     output_dir: Path,
@@ -54,11 +80,12 @@ def execute_generated_raster_job(
     backend: str = "pollinations",
     model: str | None = None,
     timeout_seconds: float = 180.0,
+    source_path: Path | None = None,
 ) -> dict:
     if job.get("schema") != "asset-forge/production-job/v1":
         raise ProductionExecutionError("unsupported production job schema")
-    if job.get("requiresGenerator") is not True:
-        raise ProductionExecutionError("production job does not require generation")
+    if source_path is None and job.get("requiresGenerator") is not True:
+        raise ProductionExecutionError("production job requires --source or generation")
 
     manifest = job.get("manifest")
     if not isinstance(manifest, dict):
@@ -76,14 +103,24 @@ def execute_generated_raster_job(
 
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
-    generation = generator(
-        job,
-        out,
-        backend=backend,
-        model=model,
-        timeout_seconds=timeout_seconds,
-    )
-    source = _trusted_generated_source(out, generation)
+    if source_path is None:
+        generation = generator(
+            job,
+            out,
+            backend=backend,
+            model=model,
+            timeout_seconds=timeout_seconds,
+        )
+        source = _trusted_generated_source(out, generation)
+    else:
+        if target_format == "png" and Path(source_path).suffix.lower() != ".png":
+            raise ProductionExecutionError("provided PNG target requires a PNG source")
+        generation = _stage_provided_source(
+            source_path,
+            out,
+            suffix=Path(source_path).suffix.lower(),
+        )
+        source = _trusted_generated_source(out, generation, label="provided source")
 
     final = out / f"{asset_id}.{target_format}"
     if target_format == "png":
@@ -132,11 +169,12 @@ def execute_generated_vector_job(
     backend: str = "pollinations",
     model: str | None = None,
     timeout_seconds: float = 180.0,
+    source_path: Path | None = None,
 ) -> dict:
     if job.get("schema") != "asset-forge/production-job/v1":
         raise ProductionExecutionError("unsupported production job schema")
-    if job.get("requiresGenerator") is not True:
-        raise ProductionExecutionError("production job does not require generation")
+    if source_path is None and job.get("requiresGenerator") is not True:
+        raise ProductionExecutionError("production job requires --source or generation")
 
     manifest = job.get("manifest")
     if not isinstance(manifest, dict):
@@ -160,14 +198,20 @@ def execute_generated_vector_job(
 
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
-    generation = generator(
-        job,
-        out,
-        backend=backend,
-        model=model,
-        timeout_seconds=timeout_seconds,
-    )
-    source = _trusted_generated_source(out, generation)
+    if source_path is None:
+        generation = generator(
+            job,
+            out,
+            backend=backend,
+            model=model,
+            timeout_seconds=timeout_seconds,
+        )
+        source = _trusted_generated_source(out, generation)
+    else:
+        if Path(source_path).suffix.lower() != ".svg":
+            raise ProductionExecutionError("provided vector source must be SVG")
+        generation = _stage_provided_source(source_path, out, suffix=".svg")
+        source = _trusted_generated_source(out, generation, label="provided source")
 
     sanitized = out / "generated-sanitized.svg"
     final = out / f"{asset_id}.svg"
@@ -228,11 +272,12 @@ def execute_generated_3d_job(
     model: str = "microsoft/trellis-2",
     resolution: str = "low",
     timeout_seconds: float = 600.0,
+    source_path: Path | None = None,
 ) -> dict:
     if job.get("schema") != "asset-forge/production-job/v1":
         raise ProductionExecutionError("unsupported production job schema")
-    if job.get("requiresGenerator") is not True:
-        raise ProductionExecutionError("production job does not require generation")
+    if source_path is None and job.get("requiresGenerator") is not True:
+        raise ProductionExecutionError("production job requires --source or generation")
 
     manifest = job.get("manifest")
     if not isinstance(manifest, dict):
@@ -260,14 +305,20 @@ def execute_generated_3d_job(
 
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
-    generation = generator(
-        job,
-        out,
-        model=model,
-        resolution=resolution,
-        timeout_seconds=timeout_seconds,
-    )
-    source = _trusted_generated_source(out, generation, label="3D generator")
+    if source_path is None:
+        generation = generator(
+            job,
+            out,
+            model=model,
+            resolution=resolution,
+            timeout_seconds=timeout_seconds,
+        )
+        source = _trusted_generated_source(out, generation, label="3D generator")
+    else:
+        if Path(source_path).suffix.lower() != ".glb":
+            raise ProductionExecutionError("provided 3D source must be a GLB")
+        generation = _stage_provided_source(source_path, out, suffix=".glb")
+        source = _trusted_generated_source(out, generation, label="provided source")
 
     final = out / f"{asset_id}.glb"
     if source.resolve() != final.resolve():
