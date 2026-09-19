@@ -2227,6 +2227,10 @@ export async function createWebGL2CanvasRuntime(
     ...pointerControllerOptions
   } = pointerOptions;
 
+  const selection =
+    options.selectionModel ??
+    createSpriteSelectionModel(options.selectionOptions);
+
   const pointerInteractions = createSpritePointerInteractionController({
     ...pointerControllerOptions,
     pick: pickRuntimeEntity,
@@ -2491,6 +2495,50 @@ export async function createWebGL2CanvasRuntime(
       return pickRuntimeEntity(x, y, pickOptions);
     },
     pointerInteractions,
+    selection,
+    selectEntity(entityId, selectOptions = {}) {
+      assertActive();
+      if (!entityStore.has(entityId)) {
+        throw new Error(`sprite entity not found: ${entityId}`);
+      }
+      return selection.select(entityId, selectOptions);
+    },
+    clearSelection() {
+      assertActive();
+      return selection.clear();
+    },
+    selectEntitiesInRect(rect, selectOptions = {}) {
+      assertActive();
+      const {
+        additive = false,
+        mode = "intersect",
+        ...batchOptions
+      } = selectOptions;
+      if (typeof additive !== "boolean") {
+        throw new Error("selection additive must be boolean");
+      }
+      const prepared = buildSpriteEntityInstances(entityStore, {
+        visibilityMask,
+        camera,
+        ...batchOptions,
+      });
+      const hits = selectSpriteInstancesInRect(
+        scene.pages,
+        prepared.instances,
+        rect,
+        { mode },
+      );
+      const ids = hits
+        .map((hit) => hit.instance.id)
+        .filter((id) => id != null);
+      if (additive) {
+        for (const id of ids) {
+          selection.select(id, { additive: true });
+        }
+        return selection.snapshot();
+      }
+      return selection.set(ids);
+    },
     moveEntityByWorldDelta(entityId, deltaX, deltaY, moveOptions = {}) {
       assertActive();
       return moveSpriteEntityByWorldDelta(
@@ -4152,4 +4200,147 @@ export function createSpritePointerInteractionController(options = {}) {
       return state ? { ...state } : null;
     },
   };
+}
+
+
+export function createSpriteSelectionModel(options = {}) {
+  const selected = new Set();
+  let primaryId = null;
+  const onChange =
+    typeof options.onChange === "function" ? options.onChange : null;
+
+  function emit(reason) {
+    const snapshot = api.snapshot();
+    onChange?.({ reason, ...snapshot });
+    return snapshot;
+  }
+
+  function select(entityId, selectOptions = {}) {
+    const additive = selectOptions.additive ?? false;
+    const toggle = selectOptions.toggle ?? false;
+    if (typeof additive !== "boolean" || typeof toggle !== "boolean") {
+      throw new Error("selection additive/toggle options must be boolean");
+    }
+    if (!additive && !toggle) {
+      selected.clear();
+    }
+    if (toggle && selected.has(entityId)) {
+      selected.delete(entityId);
+      if (primaryId === entityId) {
+        primaryId = selected.size ? Array.from(selected).at(-1) : null;
+      }
+    } else {
+      selected.add(entityId);
+      primaryId = entityId;
+    }
+    return emit("select");
+  }
+
+  function set(ids) {
+    if (!Array.isArray(ids)) {
+      throw new Error("selection ids must be an array");
+    }
+    selected.clear();
+    for (const id of ids) selected.add(id);
+    primaryId = ids.length ? ids[ids.length - 1] : null;
+    return emit("set");
+  }
+
+  function clear() {
+    selected.clear();
+    primaryId = null;
+    return emit("clear");
+  }
+
+  function remove(entityId) {
+    const changed = selected.delete(entityId);
+    if (!changed) return api.snapshot();
+    if (primaryId === entityId) {
+      primaryId = selected.size ? Array.from(selected).at(-1) : null;
+    }
+    return emit("remove");
+  }
+
+  const api = {
+    select,
+    set,
+    clear,
+    remove,
+    has(entityId) {
+      return selected.has(entityId);
+    },
+    snapshot() {
+      return {
+        ids: Array.from(selected),
+        primaryId,
+        count: selected.size,
+      };
+    },
+    get primaryId() {
+      return primaryId;
+    },
+    get size() {
+      return selected.size;
+    },
+  };
+
+  return api;
+}
+
+export function selectSpriteInstancesInRect(
+  atlasPages,
+  instances,
+  rect,
+  options = {},
+) {
+  if (!atlasPages || typeof atlasPages.page !== "function") {
+    throw new Error("runtime atlas page catalogue required");
+  }
+  if (!Array.isArray(instances)) {
+    throw new Error("sprite instances must be an array");
+  }
+  if (!rect || typeof rect !== "object") {
+    throw new Error("selection rect must be an object");
+  }
+
+  const x1 = rect.x1 ?? rect.x ?? 0;
+  const y1 = rect.y1 ?? rect.y ?? 0;
+  const x2 = rect.x2 ?? ((rect.x ?? 0) + (rect.width ?? 0));
+  const y2 = rect.y2 ?? ((rect.y ?? 0) + (rect.height ?? 0));
+  for (const [name, value] of Object.entries({ x1, y1, x2, y2 })) {
+    if (!Number.isFinite(value)) {
+      throw new Error(`selection rect ${name} must be finite`);
+    }
+  }
+  const minX = Math.min(x1, x2);
+  const minY = Math.min(y1, y2);
+  const maxX = Math.max(x1, x2);
+  const maxY = Math.max(y1, y2);
+  const mode = options.mode ?? "intersect";
+  if (!["intersect", "contain"].includes(mode)) {
+    throw new Error("selection rect mode must be intersect or contain");
+  }
+
+  const hits = [];
+  for (let index = 0; index < instances.length; index += 1) {
+    const instance = instances[index];
+    const bounds = spriteInstanceBounds(atlasPages, instance);
+    const bx1 = bounds.x;
+    const by1 = bounds.y;
+    const bx2 = bounds.x + bounds.width;
+    const by2 = bounds.y + bounds.height;
+    const match = mode === "contain"
+      ? bx1 >= minX && by1 >= minY && bx2 <= maxX && by2 <= maxY
+      : bx2 >= minX && by2 >= minY && bx1 <= maxX && by1 <= maxY;
+    if (match) {
+      hits.push({ instance, inputIndex: index, bounds });
+    }
+  }
+
+  hits.sort(
+    (a, b) =>
+      (b.instance.z ?? 0) - (a.instance.z ?? 0) ||
+      b.inputIndex - a.inputIndex,
+  );
+  return hits;
 }
