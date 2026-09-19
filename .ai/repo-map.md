@@ -92,6 +92,7 @@ tests/
   test_godot_3d_delivery.py
   test_godot_export.py
   test_godot_handoff.py
+  test_operational_status.py
   test_production_contract.py
   test_production_executor.py
   test_raster_backend.py
@@ -117,6 +118,7 @@ gltf_tools.py
 godot_3d_delivery.py
 godot_export.py
 godot_handoff.py
+operational_status.py
 production_contract.py
 production_executor.py
 raster_backend.py
@@ -234,6 +236,8 @@ jobs:
         run: python asset_forge.py production-job examples/production-request.json --output build/production-job.json
       - name: Inspect generator backends
         run: python asset_forge.py generator-backend-status
+      - name: Inspect operational readiness
+        run: python asset_forge.py operational-status
       - name: Inspect 3D toolchain
         run: python asset_forge.py 3d-toolchain-status
       - name: Validate engine handoff profiles
@@ -1582,6 +1586,52 @@ stderr = ""
 ⋮----
 result = execute_generated_asset(
 ⋮----
+def test_required_alpha_runs_transparency_processor_before_normalization(self)
+⋮----
+alpha_job = job()
+⋮----
+calls = []
+⋮----
+stdout = "{}"
+⋮----
+def transparency(path, value, **kwargs)
+⋮----
+def normalize(raw, output, value)
+⋮----
+def test_3d_prompt_is_reference_image_oriented(self)
+⋮----
+three_d = job()
+⋮----
+prompt = build_generation_prompt(three_d)
+⋮----
+def test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth(self)
+⋮----
+root = Path(td)
+seen = {}
+⋮----
+def generator(value, output_dir, **kwargs)
+⋮----
+source = Path(output_dir) / "generated-source.png"
+⋮----
+def upload_runner(command, **kwargs)
+⋮----
+stdout = '{"url":"https://media.pollinations.ai/ref-123","id":"ref-123"}'
+⋮----
+class Response
+⋮----
+status = 200
+def __enter__(self)
+def __exit__(self, exc_type, exc, tb)
+def read(self, limit=-1)
+⋮----
+def opener(request, timeout)
+⋮----
+result = execute_generated_3d_asset(
+⋮----
+payload = __import__("json").loads(seen["body"].decode("utf-8"))
+⋮----
+def test_3d_generation_requires_server_api_key(self)
+⋮----
 def test_unsupported_generated_type_fails_closed(self)
 ⋮----
 bad = job()
@@ -1888,6 +1938,21 @@ result = validate_godot_handoff(project)
     def test_available_godot_import_passes(self, detect, run)
 ````
 
+## File: tests/test_operational_status.py
+````python
+class OperationalStatusTests(unittest.TestCase)
+⋮----
+def test_ready_matrix_is_machine_readable(self)
+⋮----
+def which(name)
+⋮----
+mapping = {
+⋮----
+status = build_operational_status(
+⋮----
+def test_missing_optional_tools_are_reported_without_crashing(self)
+````
+
 ## File: tests/test_production_contract.py
 ````python
 class ProductionContractTests(unittest.TestCase)
@@ -1951,6 +2016,28 @@ report = execute_generated_vector_job(
 def test_vector_validation_errors_block_promotion(self)
 ⋮----
 def copy_step(source, output)
+⋮----
+def test_generated_3d_flows_through_profile_quality_and_godot_gates(self)
+⋮----
+three_d = job("glb")
+⋮----
+source = Path(output_dir) / "generated-source.glb"
+⋮----
+def quality(path, profile)
+⋮----
+def godot(path, profile)
+⋮----
+report = execute_generated_3d_job(
+⋮----
+def test_generated_character_3d_fails_when_profile_quality_fails(self)
+⋮----
+def test_generator_source_must_stay_inside_job_output(self)
+⋮----
+outside = Path(outside_td) / "outside.png"
+⋮----
+def test_asset_id_cannot_escape_job_output(self)
+⋮----
+bad = job()
 ⋮----
 def test_non_raster_target_fails_closed(self)
 ````
@@ -3493,6 +3580,7 @@ plan = sub.add_parser("plan", help="build a deterministic asset production plan"
 production_job = sub.add_parser("production-job", help="compile a Production OS/AI Dev Server asset request into an executable job")
 ⋮----
 generator_status = sub.add_parser("generator-backend-status", help="inspect available generation backends")
+operational_status = sub.add_parser("operational-status", help="report machine-readable production readiness")
 generate = sub.add_parser("generate", help="execute a generated-asset production job")
 ⋮----
 produce = sub.add_parser("produce", help="generate, process, validate, and report a raster production job")
@@ -3570,6 +3658,9 @@ output_dir = args.output_dir
 delivery = job.get("delivery") if isinstance(job, dict) else None
 configured = delivery.get("outputDir") if isinstance(delivery, dict) else None
 output_dir = Path(configured) if isinstance(configured, str) and configured.strip() else Path("build/asset-forge") / str(job.get("requestId") or "job")
+asset_type = str(job.get("assetType") or "")
+⋮----
+result = execute_generated_3d_job(
 ⋮----
 result = execute_generated_vector_job(
 ⋮----
@@ -3764,8 +3855,11 @@ valid = valid and not errors
 ````python
 RASTER_GENERATED_TYPES = {"sprite", "sprite-sheet", "tileset", "pixel-art"}
 VECTOR_GENERATED_TYPES = {"vector", "svg", "icon", "ui-vector", "logo"}
-SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES
+THREE_D_GENERATED_TYPES = {"mesh", "prop", "environment", "character-3d"}
+SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES | THREE_D_GENERATED_TYPES
 DEFAULT_VECTOR_MODEL = "recraft/recraft-v4.1-vector"
+DEFAULT_3D_MODEL = "microsoft/trellis-2"
+MAX_3D_BYTES = 100 * 1024 * 1024
 ⋮----
 class GenerationError(RuntimeError)
 ⋮----
@@ -3775,16 +3869,60 @@ env = os.environ if environ is None else environ
 home_dir = Path.home() if home is None else Path(home)
 polli = shutil.which("polli")
 credentials = home_dir / ".pollinations" / "credentials.json"
-authenticated = bool(str(env.get("POLLINATIONS_API_KEY") or "").strip()) or credentials.is_file()
+api_key_available = bool(str(env.get("POLLINATIONS_API_KEY") or "").strip())
+authenticated = api_key_available or credentials.is_file()
+⋮----
+def _sprite_sheet_geometry(job: dict) -> tuple[int, int, int, int] | None
+⋮----
+asset_type = str(job.get("assetType") or "")
+⋮----
+manifest = job.get("manifest")
+⋮----
+constraints = manifest.get("constraints")
+⋮----
+frame_width = constraints.get("frameWidth")
+frame_height = constraints.get("frameHeight")
+frame_count = constraints.get("expectedFrames")
+⋮----
+columns = max(1, math.ceil(math.sqrt(frame_count)))
+⋮----
+rows = frame_count // columns
+⋮----
+def _generation_dimensions(job: dict) -> tuple[int, int] | None
+⋮----
+geometry = _sprite_sheet_geometry(job)
+⋮----
+shortest = max(1, min(width, height))
+longest = max(width, height)
+desired_scale = max(1.0, 512.0 / shortest)
+scale = min(desired_scale, 2048.0 / max(1, longest))
+request_width = min(2048, max(64, int(round(width * scale))))
+request_height = min(2048, max(64, int(round(height * scale))))
+⋮----
+constraints = manifest.get("constraints") if isinstance(manifest, dict) else None
+⋮----
+alpha = image.convert("RGBA").getchannel("A")
+⋮----
+executable = shutil.which("rembg")
+⋮----
+temporary = path.with_name(path.stem + "-transparent.png")
+completed = runner(
+⋮----
+stderr = str(completed.stderr or "").strip()
+⋮----
+def _normalize_raster_geometry(raw: Path, output: Path, job: dict) -> dict | None
+⋮----
+constraints = job.get("manifest", {}).get("constraints", {})
+pixel_art = isinstance(constraints, dict) and constraints.get("pixelArt") is True
+resampling = Image.Resampling.NEAREST if pixel_art else Image.Resampling.LANCZOS
+⋮----
+original = image.size
+normalized = image.convert("RGBA").resize(
 ⋮----
 def build_generation_prompt(job: dict) -> str
 ⋮----
 instruction = str(job.get("instruction") or "").strip()
 asset_type = str(job.get("assetType") or "").strip()
-⋮----
-manifest = job.get("manifest")
-⋮----
-constraints = manifest.get("constraints")
 ⋮----
 constraints = {}
 ⋮----
@@ -3797,11 +3935,13 @@ frames = constraints.get("expectedFrames")
 prompt = " ".join(details)
 ⋮----
 prompt = build_generation_prompt(job)
-asset_type = str(job.get("assetType") or "")
+⋮----
 effective_model = model
 ⋮----
 effective_model = DEFAULT_VECTOR_MODEL
 command = [
+⋮----
+dimensions = _generation_dimensions(job)
 ⋮----
 executable = shutil.which("polli")
 ⋮----
@@ -3810,12 +3950,20 @@ timeout = float(timeout_seconds)
 output_dir = Path(output_dir)
 ⋮----
 vector = asset_type in VECTOR_GENERATED_TYPES
-output = output_dir / ("generated-source.svg" if vector else "generated-source.png")
+constrained_raster = (
+output = output_dir / (
 effective_model = model or (DEFAULT_VECTOR_MODEL if vector else None)
 command = pollinations_command(job, output, model=effective_model, executable=executable)
-completed = runner(
 ⋮----
-stderr = str(completed.stderr or "").strip()
+transparency = None
+⋮----
+transparency = transparency_processor(
+⋮----
+normalization = None
+final_output = output
+⋮----
+final_output = output_dir / "generated-source.png"
+normalization = raster_normalizer(output, final_output, job)
 ⋮----
 stdout = str(completed.stdout or "").strip()
 metadata = None
@@ -3823,6 +3971,36 @@ metadata = None
 parsed = json.loads(stdout)
 ⋮----
 metadata = parsed
+⋮----
+class _NoCredentialRedirect(urllib.request.HTTPRedirectHandler)
+⋮----
+def redirect_request(self, req, fp, code, msg, headers, newurl)
+⋮----
+def _default_3d_opener(request, timeout)
+⋮----
+payload = json.loads(str(completed.stdout or ""))
+⋮----
+url = payload.get("url")
+⋮----
+api_key = str(env.get("POLLINATIONS_API_KEY") or "").strip()
+⋮----
+out = Path(output_dir)
+⋮----
+reference_dir = out / "reference"
+reference = generator(
+reference_path = Path(str(reference.get("sourcePath") or ""))
+⋮----
+image_url = _upload_reference_image(
+⋮----
+endpoint = "https://gen.pollinations.ai/3d/no_prompt_for_trellis_needed"
+body = json.dumps(
+request = urllib.request.Request(
+⋮----
+status = int(getattr(response, "status", 200))
+⋮----
+raw = response.read(MAX_3D_BYTES + 1)
+⋮----
+output = out / "generated-source.glb"
 ````
 
 ## File: gltf_binary_metrics.py
@@ -4520,10 +4698,28 @@ command = godot_import_command(chosen, project_dir)
 completed = subprocess.run(
 ````
 
+## File: operational_status.py
+````python
+def build_operational_status(*, environ=None, home=None, which=shutil.which) -> dict
+⋮----
+generation = generator_backend_status(environ=environ, home=home)
+raster = raster_backend_status()
+tools_3d = detect_3d_tools()
+⋮----
+pollinations = generation["pollinations"]
+webp_encode = bool(
+godot_executable = which("godot4") or which("godot")
+⋮----
+capabilities = {
+⋮----
+blockers = []
+````
+
 ## File: production_contract.py
 ````python
 REQUEST_SCHEMA = "asset-forge/production-request/v1"
 JOB_SCHEMA = "asset-forge/production-job/v1"
+SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$")
 ⋮----
 def validate_production_request(request: dict, validate_manifest: Callable[[dict], list[str]]) -> list[str]
 ⋮----
@@ -4534,6 +4730,8 @@ request_id = request.get("requestId")
 instruction = request.get("instruction")
 ⋮----
 manifest = request.get("manifest")
+⋮----
+asset_id = manifest.get("id")
 ⋮----
 delivery = request.get("delivery", {})
 ⋮----
@@ -4553,18 +4751,30 @@ requires_generator = source_mode == "generated"
 ````python
 class ProductionExecutionError(RuntimeError)
 ⋮----
+def _safe_asset_id(value) -> str
+⋮----
+asset_id = str(value or "").strip()
+⋮----
+def _trusted_generated_source(output_dir: Path, generation: dict, *, label: str = "generator") -> Path
+⋮----
+raw = generation.get("sourcePath") if isinstance(generation, dict) else None
+source = Path(str(raw or ""))
+⋮----
+resolved_out = Path(output_dir).resolve()
+resolved_source = source.resolve()
+⋮----
 manifest = job.get("manifest")
 ⋮----
 target = manifest.get("target")
 ⋮----
 target_format = str(target.get("format") or "").lower()
 ⋮----
-asset_id = str(job.get("assetId") or manifest.get("id") or "").strip()
+asset_id = _safe_asset_id(job.get("assetId") or manifest.get("id"))
 ⋮----
 out = Path(output_dir)
 ⋮----
 generation = generator(
-source = Path(str(generation.get("sourcePath") or ""))
+source = _trusted_generated_source(out, generation)
 ⋮----
 final = out / f"{asset_id}.{target_format}"
 ⋮----
@@ -4583,6 +4793,27 @@ sanitize_result = sanitizer(source, sanitized)
 normalize_result = normalizer(sanitized, final)
 ⋮----
 profile = {
+⋮----
+source = _trusted_generated_source(out, generation, label="3D generator")
+⋮----
+final = out / f"{asset_id}.glb"
+⋮----
+quality = quality_reporter(final, profile)
+⋮----
+evaluation = quality.get("evaluation") if isinstance(quality, dict) else None
+quality_errors = []
+quality_warnings = []
+⋮----
+quality_errors = list(evaluation.get("errors") or [])
+quality_warnings = list(evaluation.get("warnings") or [])
+⋮----
+engine = str(target.get("engine") or "").lower()
+godot_delivery = None
+⋮----
+godot_delivery = godot_delivery_reporter(
+⋮----
+combined_errors = list(errors) + quality_errors
+combined_warnings = list(warnings) + quality_warnings
 ````
 
 ## File: raster_backend.py

@@ -9,10 +9,10 @@
     "top_score": 29
   },
   "cache": {
-    "fingerprint": "f711615124d8fbb9753cee19856ee8a874cc67e82545c5461f3579848d999436",
+    "fingerprint": "509f6a64b35bb06393f1f29dcb2ec49602d6d565d8d7e4193bc77cac4110fd94",
     "hit": false
   },
-  "candidate_count": 15,
+  "candidate_count": 18,
   "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
   "files": [
     {
@@ -110,35 +110,37 @@
       "matched_terms": [
         "engine"
       ],
-      "path": "tests/test_production_contract.py",
+      "path": "production_contract.py",
       "reasons": [
         "impact",
+        "recently-changed",
         "search-index"
       ],
-      "score": 23,
+      "score": 26,
       "symbols": [
-        "ProductionContractTests",
-        "request",
-        "test_invalid_request_is_rejected",
-        "test_valid_request_builds_machine_readable_job"
+        "build_production_job",
+        "validate_production_request"
       ]
     },
     {
       "learning_score": 0,
       "matched_terms": [
-        "game"
+        "engine"
       ],
-      "path": "generator_backends.py",
+      "path": "production_executor.py",
       "reasons": [
+        "impact",
+        "recently-changed",
         "search-index"
       ],
-      "score": 17,
+      "score": 26,
       "symbols": [
-        "GenerationError",
-        "build_generation_prompt",
-        "execute_generated_asset",
-        "generator_backend_status",
-        "pollinations_command"
+        "ProductionExecutionError",
+        "_safe_asset_id",
+        "_trusted_generated_source",
+        "execute_generated_3d_job",
+        "execute_generated_raster_job",
+        "execute_generated_vector_job"
       ]
     }
   ],

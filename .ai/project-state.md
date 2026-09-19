@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T21:07:34Z
+Generated: 2026-09-19T21:22:50Z
 
 ### Git
 - Branch: `main`
-- Head: `d69690a7639f`
-- Commit date: 2026-09-19T23:07:18+02:00
-- Commit: feat: route produce across raster and vector assets
-- Tracked files: 227
+- Head: `da30cd61d2b6`
+- Commit date: 2026-09-19T23:22:40+02:00
+- Commit: security: constrain production request identifiers
+- Tracked files: 229
 
 ### Recently changed files
+- `production_contract.py`
+- `.github/workflows/validate.yml`
 - `asset_forge.py`
-- `tests/test_production_executor.py`
-- `production_executor.py`
-- `tests/test_generator_backends.py`
-- `generator_backends.py`
+- `tests/test_operational_status.py`
+- `operational_status.py`
 
 ### Project signals
 - No common build descriptor detected
