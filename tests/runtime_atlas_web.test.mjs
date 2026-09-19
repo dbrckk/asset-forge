@@ -45,6 +45,8 @@ import {
   pickSpriteInstances,
   createSpritePointerInteractionController,
   moveSpriteEntityByWorldDelta,
+  createSpriteSelectionModel,
+  selectSpriteInstancesInRect,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -3968,5 +3970,169 @@ assert.deepEqual(
 );
 constrainedDragRuntime.pointerUp("snap-touch", 999, 999);
 constrainedDragRuntime.dispose();
+
+
+
+const selectionChanges = [];
+const selectionModel = createSpriteSelectionModel({
+  onChange(event) {
+    selectionChanges.push(event);
+  },
+});
+selectionModel.select("a");
+assert.deepEqual(selectionModel.snapshot(), {
+  ids: ["a"],
+  primaryId: "a",
+  count: 1,
+});
+selectionModel.select("b", { additive: true });
+assert.deepEqual(selectionModel.snapshot(), {
+  ids: ["a", "b"],
+  primaryId: "b",
+  count: 2,
+});
+selectionModel.select("b", { toggle: true });
+assert.deepEqual(selectionModel.snapshot(), {
+  ids: ["a"],
+  primaryId: "a",
+  count: 1,
+});
+selectionModel.set(["a", "c"]);
+assert.equal(selectionModel.primaryId, "c");
+selectionModel.remove("c");
+assert.equal(selectionModel.primaryId, "a");
+selectionModel.clear();
+assert.equal(selectionModel.size, 0);
+assert.ok(selectionChanges.length >= 5);
+
+const selectionPages = createRuntimeAtlasPages([
+  { id: "heroes", atlas: plainAtlas, texture: "heroes.png" },
+]);
+const marqueeInstances = [
+  {
+    id: "one",
+    page: "heroes",
+    frame: "plain",
+    x: 10,
+    y: 10,
+    z: 1,
+  },
+  {
+    id: "two",
+    page: "heroes",
+    frame: "plain",
+    x: 30,
+    y: 30,
+    z: 5,
+  },
+  {
+    id: "three",
+    page: "heroes",
+    frame: "plain",
+    x: 100,
+    y: 100,
+    z: 2,
+  },
+];
+const marqueeIntersect = selectSpriteInstancesInRect(
+  selectionPages,
+  marqueeInstances,
+  { x1: 40, y1: 40, x2: 0, y2: 0 },
+  { mode: "intersect" },
+);
+assert.deepEqual(
+  marqueeIntersect.map((hit) => hit.instance.id),
+  ["two", "one"],
+);
+const marqueeContain = selectSpriteInstancesInRect(
+  selectionPages,
+  marqueeInstances,
+  { x: 0, y: 0, width: 20, height: 20 },
+  { mode: "contain" },
+);
+assert.deepEqual(
+  marqueeContain.map((hit) => hit.instance.id),
+  ["one"],
+);
+
+const selectionRuntimeGl = createMockWebGL2();
+selectionRuntimeGl.viewport = (...args) =>
+  selectionRuntimeGl.calls.push(["viewport", ...args]);
+const selectionRuntimeCanvas = createMockCanvas();
+const selectionRuntime = await createWebGL2CanvasRuntime(
+  selectionRuntimeCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    camera: { x: 100, y: 40, zoom: 2 },
+    getContext() {
+      return selectionRuntimeGl;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+selectionRuntime.entities.add({
+  id: "sel-a",
+  page: "heroes",
+  frame: "plain",
+  x: 120,
+  y: 80,
+  z: 1,
+});
+selectionRuntime.entities.add({
+  id: "sel-b",
+  page: "heroes",
+  frame: "plain",
+  x: 140,
+  y: 80,
+  z: 2,
+});
+
+selectionRuntime.selectEntity("sel-a");
+selectionRuntime.selectEntity("sel-b", { additive: true });
+assert.deepEqual(selectionRuntime.selection.snapshot(), {
+  ids: ["sel-a", "sel-b"],
+  primaryId: "sel-b",
+  count: 2,
+});
+selectionRuntime.clearSelection();
+assert.equal(selectionRuntime.selection.size, 0);
+
+const rectSelection = selectionRuntime.selectEntitiesInRect({
+  x: 35,
+  y: 75,
+  width: 50,
+  height: 20,
+});
+assert.deepEqual(rectSelection.ids, ["sel-b", "sel-a"]);
+assert.equal(rectSelection.primaryId, "sel-a");
+
+selectionRuntime.clearSelection();
+selectionRuntime.selectEntity("sel-a");
+const additiveRectSelection =
+  selectionRuntime.selectEntitiesInRect(
+    {
+      x: 75,
+      y: 75,
+      width: 30,
+      height: 20,
+    },
+    { additive: true },
+  );
+assert.deepEqual(additiveRectSelection.ids, ["sel-a", "sel-b"]);
+selectionRuntime.dispose();
 
 console.log("runtime_atlas.mjs smoke test passed");
