@@ -1,7 +1,7 @@
 # Change impact
 
-Base: 66229d50ff19a6a123b63761ded903d5f33a0ab3
-Head: 0e0ea567891700b2658c5db96336e3203c29d97f
+Base: 82d15f49671a47fd86696d800f4835226cb2b146
+Head: 7183d9ca5a71e29ed1da74e2c7f82573833497a9
 
 ## Changed files
 - M tests/runtime_atlas_web.test.mjs
