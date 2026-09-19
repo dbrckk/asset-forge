@@ -120,6 +120,45 @@ class GeneratorBackendsTests(unittest.TestCase):
             self.assertEqual(result["normalization"]["rows"], 2)
             self.assertEqual(result["metadata"], {"ok": True})
 
+    def test_required_alpha_runs_transparency_processor_before_normalization(self):
+        alpha_job = job()
+        alpha_job["manifest"]["constraints"]["requiresAlpha"] = True
+
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            calls = []
+
+            def runner(command, **kwargs):
+                target = Path(command[command.index("--output") + 1])
+                target.write_bytes(b"PNG")
+                class Result:
+                    returncode = 0
+                    stdout = "{}"
+                    stderr = ""
+                return Result()
+
+            def transparency(path, value, **kwargs):
+                calls.append(("transparency", path.name))
+                return {"required": True, "changed": True, "backend": "rembg"}
+
+            def normalize(raw, output, value):
+                calls.append(("normalize", raw.name))
+                output.write_bytes(raw.read_bytes())
+                return {"width": 64, "height": 64, "columns": 2, "rows": 2}
+
+            with patch("generator_backends.shutil.which", return_value="/usr/bin/polli"):
+                result = execute_generated_asset(
+                    alpha_job,
+                    out,
+                    runner=runner,
+                    transparency_processor=transparency,
+                    raster_normalizer=normalize,
+                )
+
+            self.assertEqual(calls[0][0], "transparency")
+            self.assertEqual(calls[1][0], "normalize")
+            self.assertEqual(result["transparency"]["backend"], "rembg")
+
     def test_3d_prompt_is_reference_image_oriented(self):
         three_d = job()
         three_d["assetType"] = "prop"
