@@ -373,6 +373,7 @@ def execute_compiled_production_job(
     model: str | None = None,
     resolution: str = "low",
     timeout_seconds: float = 600.0,
+    source_path: Path | None = None,
 ) -> dict:
     asset_type = str(job.get("assetType") or "")
     if asset_type in THREE_D_GENERATED_TYPES:
@@ -386,6 +387,7 @@ def execute_compiled_production_job(
             model=model or "microsoft/trellis-2",
             resolution=resolution,
             timeout_seconds=timeout_seconds,
+            source_path=source_path,
         )
     if asset_type in VECTOR_GENERATED_TYPES:
         return execute_generated_vector_job(
@@ -398,6 +400,7 @@ def execute_compiled_production_job(
             backend=backend,
             model=model,
             timeout_seconds=min(timeout_seconds, 180.0),
+            source_path=source_path,
         )
     return execute_generated_raster_job(
         job,
@@ -408,6 +411,7 @@ def execute_compiled_production_job(
         backend=backend,
         model=model,
         timeout_seconds=min(timeout_seconds, 180.0),
+        source_path=source_path,
     )
 
 
@@ -554,6 +558,7 @@ def parser() -> argparse.ArgumentParser:
     produce.add_argument("--model")
     produce.add_argument("--resolution", choices=["low", "medium", "high"], default="low")
     produce.add_argument("--timeout", type=float, default=600.0)
+    produce.add_argument("--source", type=Path, help="process a provided local source instead of generating one")
 
     fulfill = sub.add_parser("fulfill", help="compile and execute a generated production request end to end")
     fulfill.add_argument("request", type=Path)
@@ -562,6 +567,7 @@ def parser() -> argparse.ArgumentParser:
     fulfill.add_argument("--model")
     fulfill.add_argument("--resolution", choices=["low", "medium", "high"], default="low")
     fulfill.add_argument("--timeout", type=float, default=600.0)
+    fulfill.add_argument("--source", type=Path, help="local source for external/custom requests")
 
     raster = sub.add_parser("validate-raster", help="validate a PNG or WebP against an asset manifest")
     raster.add_argument("manifest", type=Path)
@@ -815,6 +821,7 @@ def main() -> int:
                 model=args.model,
                 resolution=args.resolution,
                 timeout_seconds=args.timeout,
+                source_path=args.source,
             )
             result = _enrich_engine_handoff(job, result, output_dir)
             contract_errors = validate_production_report(result)
@@ -839,8 +846,8 @@ def main() -> int:
                 return 1
             plan = build_plan(request["manifest"], root)
             job = build_production_job(request, plan)
-            if job.get("requiresGenerator") is not True:
-                raise ValueError("fulfill currently requires manifest.source.mode=generated")
+            if job.get("requiresGenerator") is not True and args.source is None:
+                raise ValueError("fulfill requires --source for external/custom requests")
             output_dir = args.output_dir
             if output_dir is None:
                 configured = job.get("delivery", {}).get("outputDir")
@@ -853,6 +860,7 @@ def main() -> int:
                 model=args.model,
                 resolution=args.resolution,
                 timeout_seconds=args.timeout,
+                source_path=args.source,
             )
             result = _enrich_engine_handoff(job, result, output_dir)
             contract_errors = validate_production_report(result)
