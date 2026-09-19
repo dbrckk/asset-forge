@@ -2135,6 +2135,17 @@ export async function createWebGL2CanvasRuntime(
   const cameraController =
     options.cameraController ??
     createCamera2DController(camera, options.cameraControllerOptions);
+  let worldBounds = options.worldBounds
+    ? { ...options.worldBounds }
+    : null;
+  if (worldBounds) {
+    clampCameraToWorldBounds(
+      camera,
+      worldBounds,
+      canvas.width ?? 0,
+      canvas.height ?? 0,
+    );
+  }
   let contextLost = false;
   let disposed = false;
   let restorePromise = null;
@@ -2151,6 +2162,19 @@ export async function createWebGL2CanvasRuntime(
       ...options.resizeOptions,
       ...resizeOptions,
     });
+  }
+
+  function clampRuntimeCamera(nextCamera) {
+    if (!worldBounds) {
+      return { ...nextCamera };
+    }
+    const size = resize();
+    return clampCameraToWorldBounds(
+      nextCamera,
+      worldBounds,
+      size.width,
+      size.height,
+    );
   }
 
   async function rebuildAfterContextRestore() {
@@ -2217,7 +2241,27 @@ export async function createWebGL2CanvasRuntime(
     get camera() {
       return { ...camera };
     },
+    get worldBounds() {
+      return worldBounds ? { ...worldBounds } : null;
+    },
     cameraController,
+    setWorldBounds(nextBounds) {
+      assertActive();
+      if (nextBounds == null) {
+        worldBounds = null;
+        return null;
+      }
+      const candidate = { ...nextBounds };
+      camera = clampCameraToWorldBounds(
+        camera,
+        candidate,
+        canvas.width ?? 0,
+        canvas.height ?? 0,
+      );
+      worldBounds = candidate;
+      cameraController.setCamera(camera);
+      return { ...worldBounds };
+    },
     setCamera(nextCamera = {}) {
       assertActive();
       const candidate = {
@@ -2226,28 +2270,59 @@ export async function createWebGL2CanvasRuntime(
         zoom: nextCamera.zoom ?? camera.zoom,
       };
       applyCameraToSpriteInstances([], candidate);
-      camera = candidate;
-      cameraController.setCamera(candidate);
+      camera = clampRuntimeCamera(candidate);
+      cameraController.setCamera(camera);
       return { ...camera };
     },
     updateCameraFollow(targetX, targetY, deltaSeconds) {
       assertActive();
-      camera = cameraController.update(targetX, targetY, deltaSeconds);
+      const nextCamera = cameraController.update(
+        targetX,
+        targetY,
+        deltaSeconds,
+      );
+      camera = clampRuntimeCamera(nextCamera);
+      cameraController.setCamera(camera);
       return { ...camera };
+    },
+    updateCameraFollowEntity(entityId, deltaSeconds, followOptions = {}) {
+      assertActive();
+      const resolved = resolveSpriteEntityHierarchy(entityStore, {
+        includeDisabled: true,
+      });
+      const entity = resolved.byId.get(entityId);
+      if (!entity) {
+        throw new Error(`sprite entity not found: ${entityId}`);
+      }
+      const offsetX = followOptions.offsetX ?? 0;
+      const offsetY = followOptions.offsetY ?? 0;
+      for (const [name, value] of Object.entries({ offsetX, offsetY })) {
+        if (!Number.isFinite(value)) {
+          throw new Error(`${name} must be finite`);
+        }
+      }
+      return this.updateCameraFollow(
+        entity.x + offsetX,
+        entity.y + offsetY,
+        deltaSeconds,
+      );
     },
     shakeCamera(amplitude, durationSeconds, frequency) {
       assertActive();
       cameraController.setCamera(camera);
-      camera = cameraController.shake(
+      const nextCamera = cameraController.shake(
         amplitude,
         durationSeconds,
         frequency,
       );
+      camera = clampRuntimeCamera(nextCamera);
+      cameraController.setCamera(camera);
       return { ...camera };
     },
     clearCameraShake() {
       assertActive();
-      camera = cameraController.clearShake();
+      camera = clampRuntimeCamera(cameraController.clearShake());
+      cameraController.setCamera(camera);
       return { ...camera };
     },
     get gl() {
@@ -3224,6 +3299,70 @@ export function buildSpriteEntityInstances(entityStore, batchOptions = {}) {
   };
 }
 
+
+export function clampCameraToWorldBounds(
+  camera,
+  worldBounds,
+  viewportWidth,
+  viewportHeight,
+) {
+  if (!camera || typeof camera !== "object") {
+    throw new Error("camera must be an object");
+  }
+  if (!worldBounds || typeof worldBounds !== "object") {
+    throw new Error("worldBounds must be an object");
+  }
+
+  const x = camera.x ?? 0;
+  const y = camera.y ?? 0;
+  const zoom = camera.zoom ?? 1;
+  const boundsX = worldBounds.x ?? 0;
+  const boundsY = worldBounds.y ?? 0;
+  const boundsWidth = worldBounds.width;
+  const boundsHeight = worldBounds.height;
+
+  for (const [name, value] of Object.entries({
+    x,
+    y,
+    zoom,
+    boundsX,
+    boundsY,
+    boundsWidth,
+    boundsHeight,
+    viewportWidth,
+    viewportHeight,
+  })) {
+    if (!Number.isFinite(value)) {
+      throw new Error(`${name} must be finite`);
+    }
+  }
+  if (!(zoom > 0)) {
+    throw new Error("camera zoom must be > 0");
+  }
+  if (boundsWidth < 0 || boundsHeight < 0) {
+    throw new Error("world bounds width/height must be >= 0");
+  }
+  if (viewportWidth < 0 || viewportHeight < 0) {
+    throw new Error("viewport width/height must be >= 0");
+  }
+
+  const visibleWorldWidth = viewportWidth / zoom;
+  const visibleWorldHeight = viewportHeight / zoom;
+
+  function clampAxis(value, min, size, visibleSize) {
+    const max = min + size - visibleSize;
+    if (max < min) {
+      return min + (size - visibleSize) / 2;
+    }
+    return Math.min(max, Math.max(min, value));
+  }
+
+  return {
+    x: clampAxis(x, boundsX, boundsWidth, visibleWorldWidth),
+    y: clampAxis(y, boundsY, boundsHeight, visibleWorldHeight),
+    zoom,
+  };
+}
 
 export function createCamera2DController(initialCamera = {}, options = {}) {
   let camera = {
