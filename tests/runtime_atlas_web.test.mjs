@@ -19,6 +19,7 @@ import {
   createRuntimeAtlasPages,
   buildTexturePageBatches,
   createInstancedSpriteRendererWebGL2,
+  createWebGL2TextureCache,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -680,6 +681,17 @@ function createMockWebGL2() {
     FLOAT: 0x1406,
     TEXTURE0: 0x84C0,
     TEXTURE_2D: 0x0DE1,
+    TEXTURE_MIN_FILTER: 0x2801,
+    TEXTURE_MAG_FILTER: 0x2800,
+    TEXTURE_WRAP_S: 0x2802,
+    TEXTURE_WRAP_T: 0x2803,
+    LINEAR: 0x2601,
+    NEAREST: 0x2600,
+    CLAMP_TO_EDGE: 0x812F,
+    REPEAT: 0x2901,
+    RGBA: 0x1908,
+    UNSIGNED_BYTE: 0x1401,
+    UNPACK_PREMULTIPLY_ALPHA_WEBGL: 0x9241,
     TRIANGLES: 0x0004,
     UNSIGNED_SHORT: 0x1403,
     createShader(type) {
@@ -725,6 +737,14 @@ function createMockWebGL2() {
       calls.push(["createBuffer", value.id]);
       return value;
     },
+    createTexture() {
+      const value = object("texture");
+      calls.push(["createTexture", value.id]);
+      return value;
+    },
+    deleteTexture(texture) {
+      calls.push(["deleteTexture", texture.id]);
+    },
     deleteBuffer(buffer) { calls.push(["deleteBuffer", buffer.id]); },
     bindVertexArray(vao) { calls.push(["bindVertexArray", vao?.id ?? null]); },
     bindBuffer(target, buffer) { calls.push(["bindBuffer", target, buffer?.id ?? null]); },
@@ -762,7 +782,28 @@ function createMockWebGL2() {
     },
     activeTexture(texture) { calls.push(["activeTexture", texture]); },
     bindTexture(target, texture) {
-      calls.push(["bindTexture", target, texture?.id ?? texture]);
+      calls.push(["bindTexture", target, texture?.id ?? texture ?? null]);
+    },
+    pixelStorei(parameter, value) {
+      calls.push(["pixelStorei", parameter, value]);
+    },
+    texParameteri(target, parameter, value) {
+      calls.push(["texParameteri", target, parameter, value]);
+    },
+    texImage2D(...args) {
+      const source = args.at(-1);
+      calls.push([
+        "texImage2D",
+        args[0],
+        args[1],
+        args[2],
+        args[3],
+        args[4],
+        source?.id ?? source,
+      ]);
+    },
+    generateMipmap(target) {
+      calls.push(["generateMipmap", target]);
     },
     uniform1i(location, value) {
       calls.push(["uniform1i", location.name, value]);
@@ -884,3 +925,82 @@ assert.ok(
   ),
 );
 resolvingRenderer.dispose();
+
+
+const textureGl = createMockWebGL2();
+const textureCache = createWebGL2TextureCache(textureGl, {
+  minFilter: textureGl.NEAREST,
+  magFilter: textureGl.LINEAR,
+  wrapS: textureGl.CLAMP_TO_EDGE,
+  wrapT: textureGl.REPEAT,
+  premultiplyAlpha: true,
+});
+const imageSource = { id: "image-source" };
+const textureOne = textureCache.acquire("hero", imageSource);
+const textureAgain = textureCache.acquire("hero", imageSource);
+assert.equal(textureOne, textureAgain);
+assert.equal(textureCache.size, 1);
+assert.equal(textureCache.references("hero"), 2);
+assert.equal(textureCache.has("hero"), true);
+assert.equal(textureCache.get("hero"), textureOne);
+assert.ok(
+  textureGl.calls.some(
+    (call) =>
+      call[0] === "texParameteri" &&
+      call[2] === textureGl.TEXTURE_MIN_FILTER &&
+      call[3] === textureGl.NEAREST,
+  ),
+);
+assert.ok(
+  textureGl.calls.some(
+    (call) =>
+      call[0] === "pixelStorei" &&
+      call[1] === textureGl.UNPACK_PREMULTIPLY_ALPHA_WEBGL &&
+      call[2] === 1,
+  ),
+);
+assert.ok(
+  textureGl.calls.some(
+    (call) => call[0] === "texImage2D" && call.at(-1) === "image-source",
+  ),
+);
+
+assert.equal(textureCache.release("hero"), false);
+assert.equal(textureCache.references("hero"), 1);
+assert.equal(textureCache.release("hero"), true);
+assert.equal(textureCache.has("hero"), false);
+assert.equal(
+  textureGl.calls.filter((call) => call[0] === "deleteTexture").length,
+  1,
+);
+
+const mipSource = { id: "mip-source" };
+textureCache.acquire("mip", mipSource, {
+  generateMipmap: true,
+  minFilter: textureGl.LINEAR,
+});
+assert.ok(
+  textureGl.calls.some((call) => call[0] === "generateMipmap"),
+);
+assert.equal(textureCache.delete("mip"), true);
+
+textureCache.acquire("a", { id: "a-source" });
+textureCache.acquire("b", { id: "b-source" });
+assert.equal(textureCache.size, 2);
+textureCache.clear();
+assert.equal(textureCache.size, 0);
+
+textureCache.acquire("c", { id: "c-source" });
+textureCache.dispose();
+assert.equal(textureCache.disposed, true);
+assert.equal(textureCache.size, 0);
+assert.throws(
+  () => textureCache.acquire("d", { id: "d-source" }),
+  /texture cache is disposed/,
+);
+textureCache.dispose();
+
+assert.throws(
+  () => createWebGL2TextureCache({}),
+  /texture-capable context required/,
+);
