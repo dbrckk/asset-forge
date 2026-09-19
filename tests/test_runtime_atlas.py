@@ -1,6 +1,6 @@
 import unittest
 
-from runtime_atlas import build_runtime_atlas
+from runtime_atlas import build_runtime_atlas, validate_runtime_atlas
 
 
 class RuntimeAtlasTests(unittest.TestCase):
@@ -119,6 +119,52 @@ class RuntimeAtlasTests(unittest.TestCase):
         }
         with self.assertRaisesRegex(ValueError, "duplicate frame index"):
             build_runtime_atlas(metadata)
+
+    def test_validator_accepts_generated_runtime_atlas(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [{"x": 0, "y": 0, "width": 4, "height": 5}],
+        }
+        runtime = build_runtime_atlas(source)
+        self.assertEqual(validate_runtime_atlas(runtime), [])
+
+    def test_validator_detects_uv_drift(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [{"x": 4, "y": 4, "width": 4, "height": 4}],
+        }
+        runtime = build_runtime_atlas(source)
+        runtime["frames"][0]["uv"]["u0"] = 0.0
+        errors = validate_runtime_atlas(runtime)
+        self.assertTrue(any("uv.u0 does not match atlasRegion" in error for error in errors))
+
+    def test_validator_detects_frame_count_mismatch(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [{"x": 0, "y": 0, "width": 4, "height": 4}],
+        }
+        runtime = build_runtime_atlas(source)
+        runtime["frameCount"] = 2
+        errors = validate_runtime_atlas(runtime)
+        self.assertTrue(any("does not match frames length" in error for error in errors))
+
+    def test_validator_rejects_unknown_fields(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [{"x": 0, "y": 0, "width": 4, "height": 4}],
+        }
+        runtime = build_runtime_atlas(source)
+        runtime["extra"] = True
+        errors = validate_runtime_atlas(runtime)
+        self.assertIn("unknown top-level field: extra", errors)
 
 
 if __name__ == "__main__":
