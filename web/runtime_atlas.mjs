@@ -242,6 +242,7 @@ export function createAnimationPlayer(indexedAtlas, animationName, options = {})
 
   const onFrame = typeof options.onFrame === "function" ? options.onFrame : null;
   const onFinish = typeof options.onFinish === "function" ? options.onFinish : null;
+  const onLoop = typeof options.onLoop === "function" ? options.onLoop : null;
 
   function emit(sample) {
     if (sample.frameIndex !== lastFrameIndex) {
@@ -304,9 +305,45 @@ export function createAnimationPlayer(indexedAtlas, animationName, options = {})
         throw new Error("deltaSeconds must be a finite value >= 0");
       }
       if (playing) {
+        const before = animationFrameAtTime(indexedAtlas, animation, timeSeconds);
+        const previousTime = timeSeconds;
         timeSeconds += deltaSeconds * playbackRate;
+        const after = animationFrameAtTime(indexedAtlas, animation, timeSeconds);
+
+        if (animation.loop && before.durationSeconds > 0 && onLoop) {
+          const previousLoops = Math.floor(previousTime / before.durationSeconds);
+          const nextLoops = Math.floor(timeSeconds / after.durationSeconds);
+          for (let loopIndex = previousLoops; loopIndex < nextLoops; loopIndex += 1) {
+            onLoop({
+              animation,
+              loopCount: loopIndex + 1,
+              durationSeconds: after.durationSeconds,
+            });
+          }
+        }
       }
       return sample();
     },
   };
+}
+
+
+export function drawAnimationPlayerCanvas2D(
+  ctx,
+  image,
+  player,
+  destinationX = 0,
+  destinationY = 0,
+  options = {},
+) {
+  const sample = player.sample();
+  const bounds = drawFrameCanvas2D(
+    ctx,
+    image,
+    sample.frame,
+    destinationX,
+    destinationY,
+    options,
+  );
+  return { ...sample, bounds };
 }
