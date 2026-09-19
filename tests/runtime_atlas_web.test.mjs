@@ -39,6 +39,10 @@ import {
   applyCameraToSpriteInstances,
   createCamera2DController,
   clampCameraToWorldBounds,
+  worldToScreenPoint,
+  screenToWorldPoint,
+  pointHitsSpriteInstance,
+  pickSpriteInstances,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -3181,5 +3185,228 @@ assert.throws(
 );
 
 boundedRuntime.dispose();
+
+
+
+assert.deepEqual(
+  worldToScreenPoint(
+    120,
+    80,
+    { x: 100, y: 40, zoom: 2 },
+  ),
+  { x: 40, y: 80 },
+);
+assert.deepEqual(
+  screenToWorldPoint(
+    40,
+    80,
+    { x: 100, y: 40, zoom: 2 },
+  ),
+  { x: 120, y: 80 },
+);
+assert.deepEqual(
+  worldToScreenPoint(
+    120,
+    80,
+    { x: 100, y: 40, zoom: 2 },
+    { parallaxX: 0.5, parallaxY: 0.25 },
+  ),
+  { x: 140, y: 140 },
+);
+
+const pickingPages = createRuntimeAtlasPages([
+  { id: "heroes", atlas: plainAtlas, texture: "heroes.png" },
+]);
+const plainHit = pointHitsSpriteInstance(
+  pickingPages,
+  {
+    page: "heroes",
+    frame: "plain",
+    x: 10,
+    y: 20,
+  },
+  12,
+  22,
+);
+assert.equal(plainHit.hit, true);
+assert.equal(
+  pointHitsSpriteInstance(
+    pickingPages,
+    {
+      page: "heroes",
+      frame: "plain",
+      x: 10,
+      y: 20,
+    },
+    100,
+    100,
+  ).hit,
+  false,
+);
+
+const visibleOnlyMiss = pointHitsSpriteInstance(
+  pickingPages,
+  {
+    page: "heroes",
+    frame: "plain",
+    x: 10,
+    y: 20,
+  },
+  10.5,
+  20.5,
+  { useVisibleBounds: true },
+);
+assert.equal(visibleOnlyMiss.hit, false);
+
+const rotatedPickInstance = {
+  page: "heroes",
+  frame: "plain",
+  x: 10,
+  y: 20,
+  rotation: Math.PI / 2,
+  pivotX: 3,
+  pivotY: 3.5,
+};
+assert.equal(
+  pointHitsSpriteInstance(
+    pickingPages,
+    rotatedPickInstance,
+    13,
+    23.5,
+  ).hit,
+  true,
+);
+
+const overlappingPick = pickSpriteInstances(
+  pickingPages,
+  [
+    {
+      id: "back",
+      page: "heroes",
+      frame: "plain",
+      x: 10,
+      y: 20,
+      z: 1,
+    },
+    {
+      id: "front",
+      page: "heroes",
+      frame: "plain",
+      x: 10,
+      y: 20,
+      z: 5,
+    },
+    {
+      id: "front-later",
+      page: "heroes",
+      frame: "plain",
+      x: 10,
+      y: 20,
+      z: 5,
+    },
+  ],
+  12,
+  22,
+);
+assert.equal(overlappingPick.instance.id, "front-later");
+
+const allOverlappingPicks = pickSpriteInstances(
+  pickingPages,
+  [
+    {
+      id: "back",
+      page: "heroes",
+      frame: "plain",
+      x: 10,
+      y: 20,
+      z: 1,
+    },
+    {
+      id: "front",
+      page: "heroes",
+      frame: "plain",
+      x: 10,
+      y: 20,
+      z: 5,
+    },
+  ],
+  12,
+  22,
+  { all: true },
+);
+assert.deepEqual(
+  allOverlappingPicks.map((entry) => entry.instance.id),
+  ["front", "back"],
+);
+
+const pickingRuntimeGl = createMockWebGL2();
+pickingRuntimeGl.viewport = (...args) =>
+  pickingRuntimeGl.calls.push(["viewport", ...args]);
+const pickingRuntimeCanvas = createMockCanvas();
+const pickingRuntime = await createWebGL2CanvasRuntime(
+  pickingRuntimeCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    camera: { x: 100, y: 40, zoom: 2 },
+    getContext() {
+      return pickingRuntimeGl;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+pickingRuntime.entities.add({
+  id: "pick-back",
+  page: "heroes",
+  frame: "plain",
+  x: 120,
+  y: 80,
+  z: 1,
+});
+pickingRuntime.entities.add({
+  id: "pick-front",
+  page: "heroes",
+  frame: "plain",
+  x: 120,
+  y: 80,
+  z: 10,
+});
+
+assert.deepEqual(
+  pickingRuntime.worldToScreen(120, 80),
+  { x: 40, y: 80 },
+);
+assert.deepEqual(
+  pickingRuntime.screenToWorld(40, 80),
+  { x: 120, y: 80 },
+);
+assert.equal(
+  pickingRuntime.pickEntity(42, 82).instance.id,
+  "pick-front",
+);
+assert.deepEqual(
+  pickingRuntime
+    .pickEntity(42, 82, { all: true })
+    .map((entry) => entry.instance.id),
+  ["pick-front", "pick-back"],
+);
+assert.equal(
+  pickingRuntime.pickEntity(500, 500),
+  null,
+);
+pickingRuntime.dispose();
 
 console.log("runtime_atlas.mjs smoke test passed");
