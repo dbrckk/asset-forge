@@ -4,8 +4,10 @@ from pathlib import Path
 import asset_forge
 from production_contract import (
     JOB_SCHEMA,
+    REPORT_SCHEMA,
     REQUEST_SCHEMA,
     build_production_job,
+    validate_production_report,
     validate_production_request,
 )
 
@@ -36,6 +38,36 @@ class ProductionContractTests(unittest.TestCase):
         self.assertEqual(job["execution"]["strategy"], "generate-then-process")
         self.assertEqual(job["delivery"]["engine"], "godot4")
         self.assertEqual(job["delivery"]["reportPath"], "build/player/production-report.json")
+
+    def test_valid_production_report_contract(self):
+        report = {
+            "schema": REPORT_SCHEMA,
+            "requestId": "request-1",
+            "assetId": "hero",
+            "assetType": "sprite-sheet",
+            "success": True,
+            "generation": {"backend": "pollinations"},
+            "validation": {"errors": [], "warnings": []},
+            "artifact": "build/hero.png",
+            "engineHandoff": {"engine": "godot4", "ready": True},
+        }
+        self.assertEqual(validate_production_report(report), [])
+
+    def test_failed_report_cannot_claim_an_artifact(self):
+        report = {
+            "schema": REPORT_SCHEMA,
+            "requestId": "request-1",
+            "assetId": "hero",
+            "assetType": "sprite-sheet",
+            "success": False,
+            "generation": {},
+            "validation": {"errors": ["invalid"]},
+            "artifact": "build/hero.png",
+        }
+        self.assertIn(
+            "artifact: must be null when success=false",
+            validate_production_report(report),
+        )
 
     def test_invalid_request_is_rejected(self):
         request = self.request()
