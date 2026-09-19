@@ -1345,6 +1345,7 @@ def test_webp_raster_validation_supports_dimensions_and_alpha(self)
 ⋮----
 vp8x = bytes([0x10, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
 vp8 = (0).to_bytes(3, "little") + b"\x9d\x01\x2a" + width.to_bytes(2, "little") + height.to_bytes(2, "little")
+alpha = b"\x00\x00"
 chunks = (
 body = b"WEBP" + chunks
 data = b"RIFF" + struct.pack("<I", len(body)) + body
@@ -4754,7 +4755,7 @@ cell_y = row * (cell_height + gap)
 x = cell_x + extrude
 y = cell_y + extrude
 ⋮----
-output_bytes = _enforce_atlas_file_budget(output, max_bytes)
+output_bytes = _write_atlas_png(
 ````
 
 ## File: README.md

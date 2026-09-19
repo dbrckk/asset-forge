@@ -1,32 +1,35 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "cf3bfcbf66fbaa9ebdb0d1b711e5ce0438c1cc68",
-  "head": "dbe0a766d9bce65a8a9f26db7690227b28924bb9",
+  "base": "dbe0a766d9bce65a8a9f26db7690227b28924bb9",
+  "head": "63ba29825cd81de3f3be3ec89311dc8f9c8b8288",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "README.md",
+      "path": "raster_pack.py",
       "status": "M"
     },
     {
-      "path": "tests/runtime_atlas_web.test.mjs",
+      "path": "tests/test_asset_forge.py",
       "status": "M"
     },
     {
-      "path": "web/runtime_atlas.mjs",
+      "path": "tests/test_raster_pack.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
-    "tests/runtime_atlas_web.test.mjs",
-    "web/runtime_atlas.mjs"
+    "raster_pack.py",
+    "tests/test_asset_forge.py",
+    "tests/test_raster_pack.py"
   ],
   "impacted_files": [
     "asset_forge.py",
-    "tests/runtime_atlas_web.test.mjs",
-    "tests/test_runtime_atlas.py",
-    "web/runtime_atlas.mjs"
+    "gltf_binary_metrics.py",
+    "raster_pack.py",
+    "tests/test_asset_forge.py",
+    "tests/test_raster_backend.py",
+    "tests/test_raster_pack.py"
   ],
   "impacted_symbols": [
     {
@@ -120,986 +123,1041 @@
       "line": 543
     },
     {
-      "name": "createMockWebGL2",
+      "name": "_decode_data_uri",
       "kind": "function",
-      "file": "tests/runtime_atlas_web.test.mjs",
-      "line": 734
+      "file": "gltf_binary_metrics.py",
+      "line": 12
     },
     {
-      "name": "object",
+      "name": "_safe_local_path",
       "kind": "function",
-      "file": "tests/runtime_atlas_web.test.mjs",
-      "line": 739
+      "file": "gltf_binary_metrics.py",
+      "line": 24
     },
     {
-      "name": "fakeFetch",
+      "name": "_glb_bin_chunk",
       "kind": "function",
-      "file": "tests/runtime_atlas_web.test.mjs",
-      "line": 1166
+      "file": "gltf_binary_metrics.py",
+      "line": 36
     },
     {
-      "name": "fakeCreateImageBitmap",
+      "name": "load_buffer_payloads",
       "kind": "function",
-      "file": "tests/runtime_atlas_web.test.mjs",
-      "line": 1176
+      "file": "gltf_binary_metrics.py",
+      "line": 58
     },
     {
-      "name": "createMockCanvas",
+      "name": "buffer_view_bytes",
       "kind": "function",
-      "file": "tests/runtime_atlas_web.test.mjs",
-      "line": 1502
-    },
-    {
-      "name": "RuntimeAtlasTests",
-      "kind": "class",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 6
-    },
-    {
-      "name": "test_exports_trim_and_rotation_semantics",
-      "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 7
-    },
-    {
-      "name": "test_defaults_non_rotated_source_region",
-      "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 56
-    },
-    {
-      "name": "test_rejects_rotation_dimension_mismatch",
-      "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 69
-    },
-    {
-      "name": "test_rejects_source_trim_out_of_bounds",
-      "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
+      "file": "gltf_binary_metrics.py",
       "line": 90
     },
     {
-      "name": "test_rejects_duplicate_indices",
+      "name": "_png_dimensions",
       "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 110
+      "file": "gltf_binary_metrics.py",
+      "line": 121
     },
     {
-      "name": "test_validator_accepts_generated_runtime_atlas",
+      "name": "_jpeg_dimensions",
       "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 123
+      "file": "gltf_binary_metrics.py",
+      "line": 128
     },
     {
-      "name": "test_validator_detects_uv_drift",
+      "name": "_webp_dimensions",
       "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 133
+      "file": "gltf_binary_metrics.py",
+      "line": 155
     },
     {
-      "name": "test_validator_detects_frame_count_mismatch",
+      "name": "image_dimensions",
       "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 145
+      "file": "gltf_binary_metrics.py",
+      "line": 163
     },
     {
-      "name": "test_validator_rejects_unknown_fields",
+      "name": "inspect_images",
       "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 157
+      "file": "gltf_binary_metrics.py",
+      "line": 175
     },
     {
-      "name": "test_validator_rejects_boolean_integer_fields",
+      "name": "inspect_rig_and_animation",
       "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 169
-    },
-    {
-      "name": "test_validator_rejects_unknown_nested_fields",
-      "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 181
-    },
-    {
-      "name": "test_build_runtime_atlas_normalizes_animations",
-      "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 195
-    },
-    {
-      "name": "test_build_runtime_atlas_rejects_missing_animation_frame",
-      "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 233
-    },
-    {
-      "name": "test_validator_rejects_animation_frame_reference_drift",
-      "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 253
-    },
-    {
-      "name": "test_validator_rejects_duplicate_animation_names",
-      "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 275
-    },
-    {
-      "name": "test_build_runtime_atlas_normalizes_animation_events",
-      "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 300
-    },
-    {
-      "name": "test_build_runtime_atlas_rejects_event_at_animation_end",
-      "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 335
-    },
-    {
-      "name": "test_validator_rejects_unsorted_animation_events",
-      "kind": "function",
-      "file": "tests/test_runtime_atlas.py",
-      "line": 356
-    },
-    {
-      "name": "indexRuntimeAtlas",
-      "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1
-    },
-    {
-      "name": "frameQuad",
-      "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 57
-    },
-    {
-      "name": "drawFrameCanvas2D",
-      "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 74
-    },
-    {
-      "name": "sourceOrientedUVs",
-      "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 142
-    },
-    {
-      "name": "animationFrameAtTime",
-      "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 167
-    },
-    {
-      "name": "animationDurationSeconds",
-      "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 226
-    },
-    {
-      "name": "animationEventsBetween",
-      "kind": "function",
-      "file": "web/runtime_atlas.mjs",
+      "file": "gltf_binary_metrics.py",
       "line": 241
     },
     {
-      "name": "includeOccurrence",
+      "name": "_read_webp_bytes",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 260
+      "file": "raster_pack.py",
+      "line": 20
     },
     {
-      "name": "createAnimationPlayer",
+      "name": "_webp_chunks",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 314
+      "file": "raster_pack.py",
+      "line": 27
     },
     {
-      "name": "emit",
+      "name": "_webp_vp8x_info",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 335
+      "file": "raster_pack.py",
+      "line": 60
     },
     {
-      "name": "sample",
+      "name": "_webp_vp8l_info",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 352
+      "file": "raster_pack.py",
+      "line": 79
     },
     {
-      "name": "drawAnimationPlayerCanvas2D",
+      "name": "_webp_vp8_info",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 433
+      "file": "raster_pack.py",
+      "line": 96
     },
     {
-      "name": "buildSpriteBatch",
+      "name": "inspect_webp_bytes",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 454
+      "file": "raster_pack.py",
+      "line": 118
     },
     {
-      "name": "drawSpriteBatchCanvas2D",
+      "name": "inspect_webp",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 577
+      "file": "raster_pack.py",
+      "line": 184
     },
     {
-      "name": "buildInstancedSpriteBatch",
+      "name": "_read_png_bytes",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 605
+      "file": "raster_pack.py",
+      "line": 188
     },
     {
-      "name": "instancedSpriteUV",
+      "name": "_chunks",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 767
+      "file": "raster_pack.py",
+      "line": 195
     },
     {
-      "name": "instancedSpriteWebGL2Shaders",
+      "name": "_validate_ihdr",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
+      "file": "raster_pack.py",
+      "line": 262
+    },
+    {
+      "name": "_validate_palette_transparency",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 286
+    },
+    {
+      "name": "_decompress_idat",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 351
+    },
+    {
+      "name": "inspect_raster",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 380
+    },
+    {
+      "name": "inspect_png",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 391
+    },
+    {
+      "name": "_paeth",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 419
+    },
+    {
+      "name": "_unfilter_scanlines",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 431
+    },
+    {
+      "name": "_scanline_layout",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 472
+    },
+    {
+      "name": "_unpack_packed_samples",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 480
+    },
+    {
+      "name": "_sample16_to_u8",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 500
+    },
+    {
+      "name": "_adam7_extent",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 515
+    },
+    {
+      "name": "_decode_row_to_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 521
+    },
+    {
+      "name": "_decode_adam7",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 632
+    },
+    {
+      "name": "decode_raster_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 687
+    },
+    {
+      "name": "raster_backend_status",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 712
+    },
+    {
+      "name": "decode_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 727
+    },
+    {
+      "name": "_chunk",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 789
+    },
+    {
+      "name": "_filter_row",
+      "kind": "function",
+      "file": "raster_pack.py",
       "line": 798
     },
     {
-      "name": "instancedSpriteAttributeViews",
+      "name": "_filter_score",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 878
+      "file": "raster_pack.py",
+      "line": 822
     },
     {
-      "name": "createRuntimeAtlasPages",
+      "name": "_png_bytes_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 929
+      "file": "raster_pack.py",
+      "line": 826
     },
     {
-      "name": "buildTexturePageBatches",
+      "name": "encode_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 980
+      "file": "raster_pack.py",
+      "line": 859
     },
     {
-      "name": "_compileWebGL2Shader",
+      "name": "encode_webp",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1104
+      "file": "raster_pack.py",
+      "line": 870
     },
     {
-      "name": "_linkWebGL2Program",
+      "name": "recompress_png",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1120
+      "file": "raster_pack.py",
+      "line": 909
     },
     {
-      "name": "createInstancedSpriteRendererWebGL2",
+      "name": "_alpha_bounds",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1144
+      "file": "raster_pack.py",
+      "line": 934
     },
     {
-      "name": "assertActive",
+      "name": "_crop_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1237
+      "file": "raster_pack.py",
+      "line": 952
     },
     {
-      "name": "renderBatch",
+      "name": "_blit_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1243
+      "file": "raster_pack.py",
+      "line": 974
     },
     {
-      "name": "renderPageBatches",
+      "name": "_extrude_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1295
+      "file": "raster_pack.py",
+      "line": 991
     },
     {
-      "name": "dispose",
+      "name": "_rotate_rgba_clockwise",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1331
+      "file": "raster_pack.py",
+      "line": 1038
     },
     {
-      "name": "createWebGL2TextureCache",
+      "name": "_prepare_frame",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1362
+      "file": "raster_pack.py",
+      "line": 1052
     },
     {
-      "name": "assertActive",
+      "name": "_validate_atlas_dimensions",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1381
+      "file": "raster_pack.py",
+      "line": 1077
     },
     {
-      "name": "createTextureFromSource",
+      "name": "_write_atlas_png",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1387
+      "file": "raster_pack.py",
+      "line": 1105
     },
     {
-      "name": "acquire",
+      "name": "_next_power_of_two",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1438
+      "file": "raster_pack.py",
+      "line": 1125
     },
     {
-      "name": "load",
+      "name": "_rects_intersect",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1464
+      "file": "raster_pack.py",
+      "line": 1131
     },
     {
-      "name": "promise",
+      "name": "_rect_contains",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1480
+      "file": "raster_pack.py",
+      "line": 1140
     },
     {
-      "name": "get",
+      "name": "_split_free_rect",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1505
+      "file": "raster_pack.py",
+      "line": 1149
     },
     {
-      "name": "has",
+      "name": "_prune_free_rects",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1510
+      "file": "raster_pack.py",
+      "line": 1198
     },
     {
-      "name": "references",
+      "name": "_maxrects_score",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1515
+      "file": "raster_pack.py",
+      "line": 1211
     },
     {
-      "name": "release",
+      "name": "_pack_maxrects",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1520
+      "file": "raster_pack.py",
+      "line": 1227
     },
     {
-      "name": "deleteTexture",
+      "name": "_render_compact_layout",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1535
+      "file": "raster_pack.py",
+      "line": 1368
     },
     {
-      "name": "clear",
+      "name": "_choose_maxrects_layout",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1546
+      "file": "raster_pack.py",
+      "line": 1409
     },
     {
-      "name": "dispose",
+      "name": "pack_compact_atlas",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1554
+      "file": "raster_pack.py",
+      "line": 1523
     },
     {
-      "name": "loadImageBitmapSource",
+      "name": "pack_uniform_atlas",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1587
+      "file": "raster_pack.py",
+      "line": 1667
     },
     {
-      "name": "preloadRuntimeAtlasPageTextures",
+      "name": "chunk",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1614
+      "file": "tests/test_asset_forge.py",
+      "line": 13
     },
     {
-      "name": "releaseRuntimeAtlasPageTextures",
+      "name": "write_png",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1671
+      "file": "tests/test_asset_forge.py",
+      "line": 22
     },
     {
-      "name": "createWebGL2RuntimeAtlasScene",
+      "name": "AssetForgeTests",
+      "kind": "class",
+      "file": "tests/test_asset_forge.py",
+      "line": 50
+    },
+    {
+      "name": "load_example",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 51
+    },
+    {
+      "name": "test_example_manifest_is_valid",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 54
+    },
+    {
+      "name": "test_pixel_art_rejects_non_nearest_interpolation",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 57
+    },
+    {
+      "name": "test_external_asset_requires_uri",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 65
+    },
+    {
+      "name": "test_incompatible_commercial_license_is_rejected",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 71
+    },
+    {
+      "name": "test_plan_routes_sprite_to_2d_pipeline",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 80
+    },
+    {
+      "name": "test_secondary_custom_asset_prompts_reuse_search",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 88
+    },
+    {
+      "name": "test_png_sprite_grid_validation_passes",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 97
+    },
+    {
+      "name": "test_png_sprite_grid_validation_rejects_bad_width",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 108
+    },
+    {
+      "name": "test_png_alpha_requirement",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1691
+      "file": "tests/test_asset_forge.py",
+      "line": 116
     },
     {
-      "name": "spriteInstanceBounds",
+      "name": "test_palette_transparency_and_max_colors",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1797
+      "file": "tests/test_asset_forge.py",
+      "line": 125
     },
     {
-      "name": "rotatedAabb",
+      "name": "test_power_of_two_atlas",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1835
+      "file": "tests/test_asset_forge.py",
+      "line": 137
     },
     {
-      "name": "cullSpriteInstances",
+      "name": "test_atlas_manifest_contains_frame_rectangles",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1891
+      "file": "tests/test_asset_forge.py",
+      "line": 148
     },
     {
-      "name": "stableSortSpriteInstances",
+      "name": "test_webp_raster_validation_supports_dimensions_and_alpha",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1964
+      "file": "tests/test_asset_forge.py",
+      "line": 162
     },
     {
-      "name": "prepareSpriteSceneInstances",
+      "name": "test_webp_max_colors_constraint_is_rejected",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 1995
+      "file": "tests/test_asset_forge.py",
+      "line": 193
     },
     {
-      "name": "resizeWebGL2Canvas",
+      "name": "test_raster_target_format_mismatch_is_reported",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2033
+      "file": "tests/test_asset_forge.py",
+      "line": 215
     },
     {
-      "name": "createWebGL2CanvasRuntime",
+      "name": "test_invalid_png_crc_is_rejected",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2079
+      "file": "tests/test_asset_forge.py",
+      "line": 226
+    },
+    {
+      "name": "RasterBackendTests",
+      "kind": "class",
+      "file": "tests/test_raster_backend.py",
+      "line": 10
     },
     {
-      "name": "assertActive",
+      "name": "test_backend_status_shape",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2152
+      "file": "tests/test_raster_backend.py",
+      "line": 11
     },
     {
-      "name": "resize",
+      "name": "test_missing_backend_returns_clear_error",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2158
+      "file": "tests/test_raster_backend.py",
+      "line": 18
     },
     {
-      "name": "clampRuntimeCamera",
+      "name": "test_real_webp_lossless_decode_to_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2166
+      "file": "tests/test_raster_backend.py",
+      "line": 39
     },
     {
-      "name": "pickRuntimeEntity",
+      "name": "test_pack_atlas_accepts_mixed_png_and_webp",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2179
+      "file": "tests/test_raster_backend.py",
+      "line": 60
     },
     {
-      "name": "recordRuntimeEdit",
+      "name": "test_animated_webp_is_rejected_for_atlas_decode",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2255
+      "file": "tests/test_raster_backend.py",
+      "line": 85
     },
     {
-      "name": "rebuildAfterContextRestore",
+      "name": "test_webp_encoder_validates_quality_and_method_without_backend",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2311
+      "file": "tests/test_raster_backend.py",
+      "line": 105
     },
     {
-      "name": "handleContextLost",
+      "name": "test_encode_webp_lossless_roundtrip",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2332
+      "file": "tests/test_raster_backend.py",
+      "line": 139
     },
     {
-      "name": "handleContextRestored",
+      "name": "webp_chunk",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2339
+      "file": "tests/test_raster_pack.py",
+      "line": 14
     },
     {
-      "name": "createSpriteEntityStore",
+      "name": "webp_file",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2803
+      "file": "tests/test_raster_pack.py",
+      "line": 19
     },
     {
-      "name": "normalizeId",
+      "name": "chunk",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2813
+      "file": "tests/test_raster_pack.py",
+      "line": 24
     },
     {
-      "name": "validateEntity",
+      "name": "adam7_extent",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2823
+      "file": "tests/test_raster_pack.py",
+      "line": 44
     },
     {
-      "name": "cloneEntity",
+      "name": "pack_indexed_samples",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2896
+      "file": "tests/test_raster_pack.py",
+      "line": 50
     },
     {
-      "name": "add",
+      "name": "adam7_raw",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2900
+      "file": "tests/test_raster_pack.py",
+      "line": 63
     },
     {
-      "name": "get",
+      "name": "write_rgba_png",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2915
+      "file": "tests/test_raster_pack.py",
+      "line": 83
+    },
+    {
+      "name": "RasterPackTests",
+      "kind": "class",
+      "file": "tests/test_raster_pack.py",
+      "line": 95
     },
     {
-      "name": "has",
+      "name": "test_pack_uniform_atlas_writes_png_and_metadata",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2920
+      "file": "tests/test_raster_pack.py",
+      "line": 96
     },
     {
-      "name": "update",
+      "name": "test_pack_rejects_mixed_frame_sizes",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2924
+      "file": "tests/test_raster_pack.py",
+      "line": 123
     },
     {
-      "name": "remove",
+      "name": "test_rgb_png_is_promoted_to_opaque_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2944
+      "file": "tests/test_raster_pack.py",
+      "line": 134
     },
     {
-      "name": "clear",
+      "name": "test_recompress_png_preserves_pixels",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2955
+      "file": "tests/test_raster_pack.py",
+      "line": 152
     },
     {
-      "name": "snapshot",
+      "name": "test_recompress_png_reports_sizes",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2965
+      "file": "tests/test_raster_pack.py",
+      "line": 169
     },
     {
-      "name": "instances",
+      "name": "test_grayscale_png_decodes_to_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2981
+      "file": "tests/test_raster_pack.py",
+      "line": 185
     },
     {
-      "name": "transact",
+      "name": "test_grayscale_alpha_png_decodes_to_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 2988
+      "file": "tests/test_raster_pack.py",
+      "line": 200
     },
     {
-      "name": "duplicateSpriteEntities",
+      "name": "test_indexed_png_with_transparency_decodes_to_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3037
+      "file": "tests/test_raster_pack.py",
+      "line": 214
     },
     {
-      "name": "copySpriteEntities",
+      "name": "test_rejects_invalid_ihdr_length",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3116
+      "file": "tests/test_raster_pack.py",
+      "line": 235
     },
     {
-      "name": "pasteSpriteEntities",
+      "name": "test_rejects_zero_dimensions",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3156
+      "file": "tests/test_raster_pack.py",
+      "line": 247
     },
     {
-      "name": "reparentSpriteEntity",
+      "name": "test_rejects_duplicate_ihdr",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3214
+      "file": "tests/test_raster_pack.py",
+      "line": 260
     },
     {
-      "name": "removeSpriteEntityHierarchy",
+      "name": "test_rejects_non_consecutive_idat",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3284
+      "file": "tests/test_raster_pack.py",
+      "line": 274
     },
     {
-      "name": "visit",
+      "name": "test_rejects_trailing_data_after_iend",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3313
+      "file": "tests/test_raster_pack.py",
+      "line": 291
     },
     {
-      "name": "createSpriteEntityHistory",
+      "name": "test_rejects_indexed_trns_longer_than_palette",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3331
+      "file": "tests/test_raster_pack.py",
+      "line": 299
     },
     {
-      "name": "capture",
+      "name": "test_rejects_trns_for_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3372
+      "file": "tests/test_raster_pack.py",
+      "line": 314
     },
     {
-      "name": "captureExtra",
+      "name": "test_truecolor_trns_is_applied",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3374
+      "file": "tests/test_raster_pack.py",
+      "line": 328
     },
     {
-      "name": "sameValue",
+      "name": "test_rejects_decompressed_data_larger_than_expected",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3376
+      "file": "tests/test_raster_pack.py",
+      "line": 344
     },
     {
-      "name": "restore",
+      "name": "test_hardened_inspector_reports_palette_and_transparency",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3380
+      "file": "tests/test_raster_pack.py",
+      "line": 358
     },
     {
-      "name": "push",
+      "name": "test_oversized_file_is_rejected_before_read",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3397
+      "file": "tests/test_raster_pack.py",
+      "line": 376
     },
     {
-      "name": "createSpriteAnimationSystem",
+      "name": "test_indexed_1bit_png_decodes_to_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3496
+      "file": "tests/test_raster_pack.py",
+      "line": 384
     },
     {
-      "name": "ensureEntity",
+      "name": "test_indexed_2bit_png_decodes_to_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3523
+      "file": "tests/test_raster_pack.py",
+      "line": 409
     },
     {
-      "name": "bind",
+      "name": "test_indexed_4bit_png_ignores_padding_nibble",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3531
+      "file": "tests/test_raster_pack.py",
+      "line": 440
     },
     {
-      "name": "get",
+      "name": "test_indexed_low_bit_depth_transparency_is_applied",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3634
+      "file": "tests/test_raster_pack.py",
+      "line": 465
     },
     {
-      "name": "unbind",
+      "name": "test_indexed_low_bit_depth_palette_limit_is_enforced",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3638
+      "file": "tests/test_raster_pack.py",
+      "line": 490
     },
     {
-      "name": "update",
+      "name": "test_grayscale_1bit_png_decodes_to_rgba",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3645
+      "file": "tests/test_raster_pack.py",
+      "line": 509
     },
     {
-      "name": "clear",
+      "name": "test_grayscale_2bit_png_scales_samples",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3672
+      "file": "tests/test_raster_pack.py",
+      "line": 530
     },
     {
-      "name": "_stableSceneCacheKey",
+      "name": "test_grayscale_4bit_png_ignores_padding_nibble",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3690
+      "file": "tests/test_raster_pack.py",
+      "line": 553
     },
     {
-      "name": "createSpriteEntityBatchCache",
+      "name": "test_grayscale_low_bit_depth_trns_is_applied_before_scaling",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3725
+      "file": "tests/test_raster_pack.py",
+      "line": 575
     },
     {
-      "name": "invalidate",
+      "name": "test_grayscale_trns_out_of_range_is_rejected",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3752
+      "file": "tests/test_raster_pack.py",
+      "line": 600
     },
     {
-      "name": "ensureVersion",
+      "name": "test_grayscale_16bit_png_decodes_to_rgba8",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3762
+      "file": "tests/test_raster_pack.py",
+      "line": 614
     },
     {
-      "name": "build",
+      "name": "test_truecolor_16bit_png_decodes_to_rgba8",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3768
+      "file": "tests/test_raster_pack.py",
+      "line": 636
     },
     {
-      "name": "clear",
+      "name": "test_grayscale_alpha_16bit_png_decodes_to_rgba8",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3808
+      "file": "tests/test_raster_pack.py",
+      "line": 651
     },
     {
-      "name": "resolveSpriteEntityHierarchy",
+      "name": "test_rgba_16bit_png_decodes_to_rgba8",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3833
+      "file": "tests/test_raster_pack.py",
+      "line": 666
     },
     {
-      "name": "resolve",
+      "name": "test_grayscale_16bit_trns_compares_original_sample",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3860
+      "file": "tests/test_raster_pack.py",
+      "line": 681
     },
     {
-      "name": "applyCameraToSpriteInstances",
+      "name": "test_truecolor_16bit_trns_compares_original_samples",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 3972
+      "file": "tests/test_raster_pack.py",
+      "line": 698
     },
     {
-      "name": "filterSpriteInstancesByLayer",
+      "name": "test_truecolor_8bit_trns_out_of_range_is_rejected",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4028
+      "file": "tests/test_raster_pack.py",
+      "line": 718
     },
     {
-      "name": "_splitEntityHierarchyOptions",
+      "name": "test_adam7_rgba8_reconstructs_full_image",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4080
+      "file": "tests/test_raster_pack.py",
+      "line": 732
     },
     {
-      "name": "buildSpriteEntityInstances",
+      "name": "pixel",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4107
+      "file": "tests/test_raster_pack.py",
+      "line": 738
     },
     {
-      "name": "clampCameraToWorldBounds",
+      "name": "test_adam7_indexed_1bit_reconstructs_checkerboard",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4137
+      "file": "tests/test_raster_pack.py",
+      "line": 754
     },
     {
-      "name": "clampAxis",
+      "name": "test_adam7_rgba16_reconstructs_and_downconverts",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4187
+      "file": "tests/test_raster_pack.py",
+      "line": 794
     },
     {
-      "name": "createCamera2DController",
+      "name": "pixel16",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4202
+      "file": "tests/test_raster_pack.py",
+      "line": 800
     },
     {
-      "name": "baseCamera",
+      "name": "test_adam7_expected_size_is_bounded_and_exact",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4229
+      "file": "tests/test_raster_pack.py",
+      "line": 829
     },
     {
-      "name": "shakenCamera",
+      "name": "test_webp_vp8x_dimensions_alpha_and_animation",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4233
+      "file": "tests/test_raster_pack.py",
+      "line": 844
     },
     {
-      "name": "update",
+      "name": "test_webp_vp8l_dimensions_and_alpha",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4247
+      "file": "tests/test_raster_pack.py",
+      "line": 859
     },
     {
-      "name": "setCamera",
+      "name": "test_webp_vp8_lossy_dimensions",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4285
+      "file": "tests/test_raster_pack.py",
+      "line": 870
     },
     {
-      "name": "shake",
+      "name": "test_webp_alpha_chunk_marks_alpha",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4296
+      "file": "tests/test_raster_pack.py",
+      "line": 886
     },
     {
-      "name": "clearShake",
+      "name": "test_webp_incomplete_vp8x_is_rejected",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4317
+      "file": "tests/test_raster_pack.py",
+      "line": 906
     },
     {
-      "name": "worldToScreenPoint",
+      "name": "test_webp_reserved_vp8x_bits_are_rejected",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4340
+      "file": "tests/test_raster_pack.py",
+      "line": 912
     },
     {
-      "name": "screenToWorldPoint",
+      "name": "test_webp_vp8x_dimension_mismatch_is_rejected",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4364
+      "file": "tests/test_raster_pack.py",
+      "line": 919
     },
     {
-      "name": "pointHitsSpriteInstance",
+      "name": "test_webp_lossy_alpha_flag_requires_alph_chunk",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4382
+      "file": "tests/test_raster_pack.py",
+      "line": 926
     },
     {
-      "name": "pickSpriteInstances",
+      "name": "test_webp_bad_riff_size_is_rejected",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4461
+      "file": "tests/test_raster_pack.py",
+      "line": 934
     },
     {
-      "name": "moveSpriteEntityByWorldDelta",
+      "name": "test_webp_file_inspection_reads_from_path",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4503
+      "file": "tests/test_raster_pack.py",
+      "line": 940
     },
     {
-      "name": "createSpritePointerInteractionController",
+      "name": "test_uniform_atlas_trim_records_source_offsets",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4611
+      "file": "tests/test_raster_pack.py",
+      "line": 951
     },
     {
-      "name": "validatePointer",
+      "name": "test_uniform_atlas_extrudes_edge_pixels",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4642
+      "file": "tests/test_raster_pack.py",
+      "line": 981
     },
     {
-      "name": "pickedEntity",
+      "name": "test_compact_atlas_packs_variable_size_frames",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4654
+      "file": "tests/test_raster_pack.py",
+      "line": 1005
     },
     {
-      "name": "makeEvent",
+      "name": "test_compact_atlas_rejects_frame_wider_than_budget",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4658
+      "file": "tests/test_raster_pack.py",
+      "line": 1039
     },
     {
-      "name": "updateHover",
+      "name": "test_recompress_png_keeps_original_when_candidate_is_larger",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4675
+      "file": "tests/test_raster_pack.py",
+      "line": 1052
     },
     {
-      "name": "move",
+      "name": "test_uniform_atlas_width_budget_is_enforced",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4700
+      "file": "tests/test_raster_pack.py",
+      "line": 1073
     },
     {
-      "name": "down",
+      "name": "test_uniform_atlas_pixel_budget_is_enforced",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4764
+      "file": "tests/test_raster_pack.py",
+      "line": 1088
     },
     {
-      "name": "up",
+      "name": "test_compact_atlas_height_budget_is_enforced",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4786
+      "file": "tests/test_raster_pack.py",
+      "line": 1100
     },
     {
-      "name": "cancel",
+      "name": "test_atlas_byte_budget_preserves_existing_output",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4831
+      "file": "tests/test_raster_pack.py",
+      "line": 1116
     },
     {
-      "name": "clear",
+      "name": "test_compact_atlas_reports_occupancy_metrics",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4850
+      "file": "tests/test_raster_pack.py",
+      "line": 1135
     },
     {
-      "name": "createSpriteClipboardController",
+      "name": "test_compact_atlas_regions_do_not_overlap",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4876
+      "file": "tests/test_raster_pack.py",
+      "line": 1161
     },
     {
-      "name": "selectionTransformHandleGeometry",
+      "name": "test_maxrects_compacts_better_than_simple_shelf_case",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 4994
+      "file": "tests/test_raster_pack.py",
+      "line": 1198
     },
     {
-      "name": "applySelectionTransformHandleDrag",
+      "name": "test_compact_atlas_reports_wasted_pixels",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 5042
+      "file": "tests/test_raster_pack.py",
+      "line": 1218
     },
     {
-      "name": "transformSelectedSpriteEntities",
+      "name": "test_compact_atlas_minimum_occupancy_can_fail_build",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 5109
+      "file": "tests/test_raster_pack.py",
+      "line": 1238
     },
     {
-      "name": "moveSelectedSpriteEntitiesByWorldDelta",
+      "name": "test_compact_atlas_rejects_invalid_occupancy_threshold",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 5207
+      "file": "tests/test_raster_pack.py",
+      "line": 1256
     },
     {
-      "name": "createSpriteSelectionModel",
+      "name": "test_compact_atlas_auto_selects_best_evaluated_heuristic",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 5296
+      "file": "tests/test_raster_pack.py",
+      "line": 1270
     },
     {
-      "name": "emit",
+      "name": "test_compact_atlas_auto_skips_heuristic_outside_byte_budget",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 5302
+      "file": "tests/test_raster_pack.py",
+      "line": 1305
     },
     {
-      "name": "select",
+      "name": "test_compact_atlas_forced_heuristic_is_respected",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 5308
+      "file": "tests/test_raster_pack.py",
+      "line": 1343
     },
     {
-      "name": "set",
+      "name": "test_compact_atlas_rejects_unknown_heuristic",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 5329
+      "file": "tests/test_raster_pack.py",
+      "line": 1363
     },
     {
-      "name": "clear",
+      "name": "test_compact_atlas_rotation_can_fit_frame_that_is_too_wide",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 5339
+      "file": "tests/test_raster_pack.py",
+      "line": 1377
     },
     {
-      "name": "remove",
+      "name": "test_compact_atlas_rotation_is_disabled_by_default",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 5345
+      "file": "tests/test_raster_pack.py",
+      "line": 1420
     },
     {
-      "name": "selectSpriteInstancesInRect",
+      "name": "test_compact_atlas_rotation_metadata_counts_rotated_frames",
       "kind": "function",
-      "file": "web/runtime_atlas.mjs",
-      "line": 5380
+      "file": "tests/test_raster_pack.py",
+      "line": 1433
     }
   ],
   "selected_tests": [
-    "tests/runtime_atlas_web.test.mjs",
-    "tests/test_runtime_atlas.py"
+    "tests/test_asset_forge.py",
+    "tests/test_raster_backend.py",
+    "tests/test_raster_pack.py"
   ]
 }

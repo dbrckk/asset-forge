@@ -96,16 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T15:59:25Z
+Generated: 2026-09-19T16:01:20Z
 
 ### Git
 - Branch: `main`
-- Head: `dbe0a766d9bc`
-- Commit date: 2026-09-19T17:59:11+02:00
-- Commit: feat: auto-record retained editor history
+- Head: `63ba29825cd8`
+- Commit date: 2026-09-19T18:01:06+02:00
+- Commit: fix: restore raster validation suite
 - Tracked files: 209
 
 ### Recently changed files
+- `raster_pack.py`
+- `tests/test_asset_forge.py`
+- `tests/test_raster_pack.py`
 - `README.md`
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
