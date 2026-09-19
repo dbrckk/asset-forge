@@ -5,6 +5,7 @@ from pathlib import Path
 from production_executor import (
     ProductionExecutionError,
     execute_generated_raster_job,
+    execute_generated_vector_job,
 )
 
 
@@ -105,6 +106,80 @@ class ProductionExecutorTests(unittest.TestCase):
             self.assertFalse(report["success"])
             self.assertIsNone(report["artifact"])
             self.assertEqual(report["validation"]["errors"], ["frameCount mismatch"])
+
+    def test_generated_vector_is_sanitized_normalized_and_validated(self):
+        vector_job = job("svg")
+        vector_job["assetType"] = "icon"
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+
+            def generator(value, output_dir, **kwargs):
+                source = Path(output_dir) / "generated-source.svg"
+                source.write_text(
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64"/></svg>',
+                    encoding="utf-8",
+                )
+                return {"success": True, "sourcePath": str(source)}
+
+            def sanitizer(source, output):
+                output.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+                return {"output": str(output)}
+
+            def normalizer(source, output):
+                output.write_text(
+                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64"/></svg>',
+                    encoding="utf-8",
+                )
+                return {"output": str(output), "viewBox": "0 0 64 64"}
+
+            def profile_validator(path, profile):
+                self.assertEqual(profile, "icon")
+                return {"viewBox": "0 0 64 64"}, [], []
+
+            report = execute_generated_vector_job(
+                vector_job,
+                root,
+                sanitizer=sanitizer,
+                normalizer=normalizer,
+                profile_validator=profile_validator,
+                generic_validator=lambda p: self.fail("generic validator must not run"),
+                generator=generator,
+            )
+
+            self.assertTrue(report["success"])
+            self.assertEqual(report["artifact"], str(root / "hero-run.svg"))
+            self.assertEqual(report["validation"]["profile"], "icon")
+
+    def test_vector_validation_errors_block_promotion(self):
+        vector_job = job("svg")
+        vector_job["assetType"] = "logo"
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+
+            def generator(value, output_dir, **kwargs):
+                source = Path(output_dir) / "generated-source.svg"
+                source.write_text("<svg/>", encoding="utf-8")
+                return {"success": True, "sourcePath": str(source)}
+
+            def copy_step(source, output):
+                output.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+                return {"output": str(output)}
+
+            report = execute_generated_vector_job(
+                vector_job,
+                root,
+                sanitizer=copy_step,
+                normalizer=copy_step,
+                profile_validator=lambda p, profile: ({}, ["logo too complex"], []),
+                generic_validator=lambda p: ({}, [], []),
+                generator=generator,
+            )
+
+            self.assertFalse(report["success"])
+            self.assertIsNone(report["artifact"])
+            self.assertEqual(report["validation"]["errors"], ["logo too complex"])
 
     def test_non_raster_target_fails_closed(self):
         with tempfile.TemporaryDirectory() as td:
