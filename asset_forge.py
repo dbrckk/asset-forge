@@ -20,10 +20,10 @@ from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_3d_delivery import godot_3d_delivery_report
 from godot_handoff import prepare_godot_handoff, validate_godot_handoff
 from godot_export import write_spriteframes
-from generator_backends import execute_generated_asset, generator_backend_status
+from generator_backends import VECTOR_GENERATED_TYPES, execute_generated_asset, generator_backend_status
 from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png
 from production_contract import build_production_job, validate_production_request
-from production_executor import execute_generated_raster_job
+from production_executor import execute_generated_raster_job, execute_generated_vector_job
 from runtime_atlas import build_runtime_atlas, validate_runtime_atlas
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
 from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline
@@ -621,16 +621,29 @@ def main() -> int:
                 delivery = job.get("delivery") if isinstance(job, dict) else None
                 configured = delivery.get("outputDir") if isinstance(delivery, dict) else None
                 output_dir = Path(configured) if isinstance(configured, str) and configured.strip() else Path("build/asset-forge") / str(job.get("requestId") or "job")
-            result = execute_generated_raster_job(
-                job,
-                output_dir,
-                validator=validate_raster_file,
-                png_optimizer=recompress_png,
-                webp_encoder=encode_webp,
-                backend=args.backend,
-                model=args.model,
-                timeout_seconds=args.timeout,
-            )
+            if str(job.get("assetType") or "") in VECTOR_GENERATED_TYPES:
+                result = execute_generated_vector_job(
+                    job,
+                    output_dir,
+                    sanitizer=sanitize_svg,
+                    normalizer=normalize_viewbox,
+                    profile_validator=validate_svg_profile,
+                    generic_validator=inspect_svg,
+                    backend=args.backend,
+                    model=args.model,
+                    timeout_seconds=args.timeout,
+                )
+            else:
+                result = execute_generated_raster_job(
+                    job,
+                    output_dir,
+                    validator=validate_raster_file,
+                    png_optimizer=recompress_png,
+                    webp_encoder=encode_webp,
+                    backend=args.backend,
+                    model=args.model,
+                    timeout_seconds=args.timeout,
+                )
         except (OSError, ValueError, RuntimeError, json.JSONDecodeError, zlib.error) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
