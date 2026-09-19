@@ -1205,6 +1205,12 @@ onContextLost()
 onContextRestored()
 ⋮----
 preventDefault()
+⋮----
+entityRuntimeGlA.viewport = (...args)
+⋮----
+entityRuntimeGlB.viewport = (...args)
+⋮----
+suppliedRuntimeGl.viewport = (...args)
 ````
 
 ## File: tests/test_animation_infer.py
@@ -2617,8 +2623,36 @@ get restoring()
 ⋮----
 async waitForRestore()
 ⋮----
+buildEntityBatches(batchOptions =
 render(instancesOrBatches, batchOptions =
+renderEntities(batchOptions =
 async restore()
+⋮----
+export function createSpriteEntityStore(options =
+⋮----
+function normalizeId(id)
+⋮----
+function validateEntity(entity, label = "sprite entity")
+⋮----
+function cloneEntity(entity)
+⋮----
+function add(entity)
+⋮----
+function get(id)
+⋮----
+function has(id)
+⋮----
+function update(id, patch)
+⋮----
+function remove(id)
+⋮----
+function snapshot(options =
+⋮----
+function instances(options =
+⋮----
+function transact(callback)
+⋮----
+get version()
 ````
 
 ## File: .repo-standards.yml
@@ -5350,6 +5384,54 @@ runtime.render(sprites, {
 The wrapper registers `webglcontextlost` and `webglcontextrestored`. Context loss calls `preventDefault()`, marks rendering unavailable, and rejects render/build calls until restoration. On restore it reacquires WebGL2, recreates the atlas scene, recompiles shaders, recreates buffers/textures, reapplies canvas sizing, and only then exposes the restored scene.
 
 It provides `resize()`, `render()`, `buildBatches()`, `restore()`, `waitForRestore()`, and `dispose()`, plus live `gl`, `scene`, `contextLost`, `restoring`, and `disposed` state.
+
+
+### Persistent sprite entity store
+
+For retained-mode 2D scenes, the web runtime now provides `createSpriteEntityStore()`.
+
+```js
+const entities = createSpriteEntityStore();
+
+entities.add({
+  id: "hero",
+  page: "heroes",
+  frame: "idle_0",
+  x: 32,
+  y: 48,
+  z: 10,
+});
+
+entities.update("hero", { x: 40 });
+entities.remove("hero");
+```
+
+IDs may be explicit strings/numbers or auto-generated positive integers. The store preserves insertion order, exposes a monotonically increasing `version`, validates render-critical fields, and returns cloned values so callers cannot mutate stored state accidentally.
+
+`enabled: false` excludes an entity from normal `snapshot()` / `instances()` output without deleting it. Use `snapshot({ includeDisabled: true })` to inspect all entries.
+
+Atomic multi-step edits are supported with `transact()`; if the callback throws, entity contents, generated-ID state, and version are rolled back.
+
+```js
+entities.transact((tx) => {
+  tx.update("hero", { x: 64 });
+  tx.add({
+    id: "shadow",
+    page: "effects",
+    frame: "shadow",
+  });
+});
+```
+
+`createWebGL2CanvasRuntime()` now owns an entity store by default (or accepts `entityStore` in options) and exposes:
+
+```text
+runtime.entities
+runtime.buildEntityBatches(options)
+runtime.renderEntities(options)
+```
+
+The logical entity store is intentionally independent from GPU state. If WebGL2 context is lost and restored, shaders/buffers/textures are rebuilt while the same entity store survives unchanged.
 ````
 
 ## File: runtime_atlas.py

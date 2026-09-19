@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T09:14:46Z
+Generated: 2026-09-19T09:18:20Z
 
 ### Git
 - Branch: `main`
-- Head: `9522c14dd981`
-- Commit date: 2026-09-19T11:09:40+02:00
-- Commit: docs: record WebGL2 context recovery milestone
+- Head: `b4a283e3f518`
+- Commit date: 2026-09-19T11:18:08+02:00
+- Commit: docs: record persistent entity store milestone
 - Tracked files: 208
 
 ### Recently changed files
