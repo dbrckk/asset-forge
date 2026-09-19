@@ -20,6 +20,10 @@ import {
   buildTexturePageBatches,
   createInstancedSpriteRendererWebGL2,
   createWebGL2TextureCache,
+  loadImageBitmapSource,
+  preloadRuntimeAtlasPageTextures,
+  releaseRuntimeAtlasPageTextures,
+  createWebGL2RuntimeAtlasScene,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -1068,3 +1072,173 @@ disposedDuringLoadCache.dispose();
 finishDisposedLoad({ id: "late-source" });
 await assert.rejects(waitingLoad, /texture cache is disposed/);
 assert.equal(disposedDuringLoadCache.pendingCount, 0);
+
+
+const bitmapCalls = [];
+const fetchedUrls = [];
+const fakeFetch = async (url) => {
+  fetchedUrls.push(url);
+  return {
+    ok: true,
+    status: 200,
+    async blob() {
+      return { id: `blob:${url}` };
+    },
+  };
+};
+const fakeCreateImageBitmap = async (blob, options) => {
+  bitmapCalls.push([blob.id, options ?? null]);
+  return { id: `bitmap:${blob.id}` };
+};
+
+const loadedBitmap = await loadImageBitmapSource("hero.png", {
+  fetchImpl: fakeFetch,
+  createImageBitmapImpl: fakeCreateImageBitmap,
+  imageBitmapOptions: { premultiplyAlpha: "premultiply" },
+});
+assert.deepEqual(loadedBitmap, { id: "bitmap:blob:hero.png" });
+assert.deepEqual(fetchedUrls, ["hero.png"]);
+assert.deepEqual(bitmapCalls, [
+  ["blob:hero.png", { premultiplyAlpha: "premultiply" }],
+]);
+
+await assert.rejects(
+  loadImageBitmapSource("missing.png", {
+    fetchImpl: async () => ({ ok: false, status: 404 }),
+    createImageBitmapImpl: fakeCreateImageBitmap,
+  }),
+  /HTTP 404/,
+);
+
+const preloadGl = createMockWebGL2();
+const preloadCache = createWebGL2TextureCache(preloadGl);
+const sharedPages = createRuntimeAtlasPages([
+  { id: "hero-a", atlas: plainAtlas, texture: "shared.png" },
+  { id: "hero-b", atlas: plainAtlas, texture: "shared.png" },
+]);
+let sharedFetches = 0;
+const preloadResult = await preloadRuntimeAtlasPageTextures(
+  sharedPages,
+  preloadCache,
+  {
+    fetchImpl: async (url) => {
+      sharedFetches += 1;
+      return {
+        ok: true,
+        status: 200,
+        async blob() {
+          return { id: `blob:${url}` };
+        },
+      };
+    },
+    createImageBitmapImpl: async (blob) => ({ id: `bitmap:${blob.id}` }),
+  },
+);
+assert.equal(preloadResult.count, 2);
+assert.equal(sharedFetches, 1);
+assert.equal(preloadCache.size, 1);
+assert.equal(preloadCache.references("shared.png"), 2);
+assert.equal(preloadResult.pages[0].texture, preloadResult.pages[1].texture);
+
+const releaseResult = releaseRuntimeAtlasPageTextures(
+  preloadCache,
+  preloadResult,
+);
+assert.deepEqual(releaseResult, { released: 2, deleted: 1 });
+assert.equal(preloadCache.size, 0);
+
+const rollbackGl = createMockWebGL2();
+const rollbackCache = createWebGL2TextureCache(rollbackGl);
+const rollbackPages = createRuntimeAtlasPages([
+  { id: "ok", atlas: plainAtlas, texture: "ok.png" },
+  { id: "bad", atlas: atlasB, texture: "bad.png" },
+]);
+await assert.rejects(
+  preloadRuntimeAtlasPageTextures(rollbackPages, rollbackCache, {
+    fetchImpl: async (url) => ({
+      ok: url !== "bad.png",
+      status: url === "bad.png" ? 500 : 200,
+      async blob() {
+        return { id: `blob:${url}` };
+      },
+    }),
+    createImageBitmapImpl: async (blob) => ({ id: `bitmap:${blob.id}` }),
+  }),
+  /HTTP 500/,
+);
+assert.equal(rollbackCache.size, 0);
+
+const sceneGl = createMockWebGL2();
+const scene = await createWebGL2RuntimeAtlasScene(
+  sceneGl,
+  [
+    { id: "heroes", atlas: plainAtlas, texture: "heroes.png" },
+    { id: "enemies", atlas: atlasB, texture: "enemies.png" },
+  ],
+  {
+    loaderOptions: {
+      fetchImpl: async (url) => ({
+        ok: true,
+        status: 200,
+        async blob() {
+          return { id: `blob:${url}` };
+        },
+      }),
+      createImageBitmapImpl: async (blob) => ({
+        id: `bitmap:${blob.id}`,
+      }),
+    },
+  },
+);
+assert.equal(scene.textureCache.size, 2);
+const sceneBatches = scene.buildBatches([
+  { page: "heroes", frame: "plain", x: 1, y: 2 },
+  { page: "enemies", frame: "enemy", x: 3, y: 4 },
+]);
+assert.equal(sceneBatches.batchCount, 2);
+
+const sceneRender = scene.render(
+  [
+    { page: "heroes", frame: "plain", x: 1, y: 2 },
+    { page: "enemies", frame: "enemy", x: 3, y: 4 },
+  ],
+  640,
+  360,
+);
+assert.equal(sceneRender.drawCalls, 2);
+assert.equal(sceneRender.instances, 2);
+
+scene.dispose();
+assert.equal(scene.disposed, true);
+assert.equal(scene.textureCache.disposed, true);
+assert.throws(
+  () => scene.buildBatches([{ page: "heroes", frame: "plain" }]),
+  /scene is disposed/,
+);
+scene.dispose();
+
+const externalSceneGl = createMockWebGL2();
+const externalCache = createWebGL2TextureCache(externalSceneGl);
+const externalScene = await createWebGL2RuntimeAtlasScene(
+  externalSceneGl,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    textureCache: externalCache,
+    loaderOptions: {
+      fetchImpl: async (url) => ({
+        ok: true,
+        status: 200,
+        async blob() {
+          return { id: `blob:${url}` };
+        },
+      }),
+      createImageBitmapImpl: async (blob) => ({
+        id: `bitmap:${blob.id}`,
+      }),
+    },
+  },
+);
+externalScene.dispose();
+assert.equal(externalCache.disposed, false);
+assert.equal(externalCache.size, 0);
+externalCache.dispose();
