@@ -96,16 +96,17 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T07:31:16Z
+Generated: 2026-09-19T07:34:18Z
 
 ### Git
 - Branch: `main`
-- Head: `75d8c8a05d73`
-- Commit date: 2026-09-19T09:31:06+02:00
-- Commit: docs: record WebGL2 renderer integration milestone
-- Tracked files: 204
+- Head: `a49db11c0318`
+- Commit date: 2026-09-19T09:31:49+02:00
+- Commit: chore(ai): adopt repo standards v19
+- Tracked files: 205
 
 ### Recently changed files
+- `.repo-standards.yml`
 - `README.md`
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
