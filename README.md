@@ -941,3 +941,50 @@ Sorting is stable: sprites with equal depth retain their original relative order
 `scene.buildBatches()` returns normal texture-page batch data plus `scenePreparation`, including input/output counts, culling statistics, and the prepared instance order. `scene.render()` accepts the same preparation options when raw instances are passed.
 
 Scene sorting is disabled by default for backward compatibility. Enable it explicitly with `sort: true`. When blending/layering order matters, pair sorting with `preserveOrder: true`; otherwise texture-page grouping may intentionally reorder instances to reduce texture switches.
+
+
+### HiDPI canvas resize and WebGL2 context recovery
+
+The browser runtime now includes `resizeWebGL2Canvas()` and `createWebGL2CanvasRuntime()`.
+
+`resizeWebGL2Canvas(canvas, gl, options)` converts CSS dimensions into physical drawing-buffer dimensions using device pixel ratio, clamps DPR through `maxPixelRatio`, updates `canvas.width/height`, and calls `gl.viewport()`.
+
+```js
+resizeWebGL2Canvas(canvas, gl, {
+  pixelRatio: window.devicePixelRatio,
+  maxPixelRatio: 2,
+});
+```
+
+`createWebGL2CanvasRuntime()` wraps the integrated atlas scene and browser canvas lifecycle:
+
+```js
+const runtime = await createWebGL2CanvasRuntime(
+  canvas,
+  pageDefinitions,
+  {
+    resizeOptions: { maxPixelRatio: 2 },
+    onContextLost() {
+      pauseGame();
+    },
+    onContextRestored() {
+      resumeGame();
+    },
+  },
+);
+
+runtime.render(sprites, {
+  viewport: {
+    x: 0,
+    y: 0,
+    width: canvas.width,
+    height: canvas.height,
+  },
+  sort: true,
+  preserveOrder: true,
+});
+```
+
+The wrapper registers `webglcontextlost` and `webglcontextrestored`. Context loss calls `preventDefault()`, marks rendering unavailable, and rejects render/build calls until restoration. On restore it reacquires WebGL2, recreates the atlas scene, recompiles shaders, recreates buffers/textures, reapplies canvas sizing, and only then exposes the restored scene.
+
+It provides `resize()`, `render()`, `buildBatches()`, `restore()`, `waitForRestore()`, and `dispose()`, plus live `gl`, `scene`, `contextLost`, `restoring`, and `disposed` state.
