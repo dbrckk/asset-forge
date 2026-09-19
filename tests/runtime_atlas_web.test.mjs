@@ -28,6 +28,8 @@ import {
   cullSpriteInstances,
   stableSortSpriteInstances,
   prepareSpriteSceneInstances,
+  resizeWebGL2Canvas,
+  createWebGL2CanvasRuntime,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -1416,3 +1418,129 @@ const culledSceneRender = culledScene.render(
 );
 assert.equal(culledSceneRender.instances, 2);
 culledScene.dispose();
+
+
+function createMockCanvas() {
+  const listeners = new Map();
+  return {
+    width: 0,
+    height: 0,
+    clientWidth: 320,
+    clientHeight: 180,
+    addEventListener(type, handler) {
+      if (!listeners.has(type)) listeners.set(type, new Set());
+      listeners.get(type).add(handler);
+    },
+    removeEventListener(type, handler) {
+      listeners.get(type)?.delete(handler);
+    },
+    dispatch(type, event = {}) {
+      for (const handler of listeners.get(type) ?? []) {
+        handler(event);
+      }
+    },
+    getContext() {
+      return null;
+    },
+  };
+}
+
+const resizeGl = createMockWebGL2();
+resizeGl.viewport = (...args) => resizeGl.calls.push(["viewport", ...args]);
+const resizeCanvas = createMockCanvas();
+const resizeResult = resizeWebGL2Canvas(resizeCanvas, resizeGl, {
+  pixelRatio: 2,
+  maxPixelRatio: 1.5,
+});
+assert.deepEqual(resizeResult, {
+  resized: true,
+  cssWidth: 320,
+  cssHeight: 180,
+  pixelRatio: 1.5,
+  width: 480,
+  height: 270,
+});
+assert.equal(resizeCanvas.width, 480);
+assert.equal(resizeCanvas.height, 270);
+assert.deepEqual(resizeGl.calls.at(-1), ["viewport", 0, 0, 480, 270]);
+
+const contextGlA = createMockWebGL2();
+contextGlA.viewport = (...args) => contextGlA.calls.push(["viewport", ...args]);
+const contextGlB = createMockWebGL2();
+contextGlB.viewport = (...args) => contextGlB.calls.push(["viewport", ...args]);
+const runtimeCanvas = createMockCanvas();
+let contextIndex = 0;
+let lostCallbacks = 0;
+let restoredCallbacks = 0;
+
+const canvasRuntime = await createWebGL2CanvasRuntime(
+  runtimeCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    getContext() {
+      return contextIndex === 0 ? contextGlA : contextGlB;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+    onContextLost() {
+      lostCallbacks += 1;
+    },
+    onContextRestored() {
+      restoredCallbacks += 1;
+    },
+  },
+);
+
+assert.equal(canvasRuntime.contextLost, false);
+assert.equal(canvasRuntime.scene.textureCache.size, 1);
+const initialRender = canvasRuntime.render([
+  { page: "heroes", frame: "plain", x: 1, y: 2 },
+]);
+assert.equal(initialRender.drawCalls, 1);
+
+let prevented = false;
+runtimeCanvas.dispatch("webglcontextlost", {
+  preventDefault() {
+    prevented = true;
+  },
+});
+assert.equal(prevented, true);
+assert.equal(canvasRuntime.contextLost, true);
+assert.equal(lostCallbacks, 1);
+assert.throws(
+  () =>
+    canvasRuntime.render([
+      { page: "heroes", frame: "plain", x: 1, y: 2 },
+    ]),
+  /context is lost/,
+);
+
+contextIndex = 1;
+runtimeCanvas.dispatch("webglcontextrestored");
+await canvasRuntime.waitForRestore();
+assert.equal(canvasRuntime.contextLost, false);
+assert.equal(restoredCallbacks, 1);
+assert.equal(canvasRuntime.gl, contextGlB);
+assert.equal(canvasRuntime.scene.textureCache.size, 1);
+const restoredRender = canvasRuntime.render([
+  { page: "heroes", frame: "plain", x: 1, y: 2 },
+]);
+assert.equal(restoredRender.drawCalls, 1);
+
+canvasRuntime.dispose();
+assert.equal(canvasRuntime.disposed, true);
+assert.throws(() => canvasRuntime.resize(), /runtime is disposed/);
+canvasRuntime.dispose();
