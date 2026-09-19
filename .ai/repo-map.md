@@ -2656,6 +2656,9 @@ export function cullSpriteInstances(
   options = {},
 )
 ⋮----
+// Most scene sprites are not rotated. Avoid constructing full logical +
+// visible bounds objects for this hot culling path.
+⋮----
 export function stableSortSpriteInstances(instances, options =
 ⋮----
 export function prepareSpriteSceneInstances(

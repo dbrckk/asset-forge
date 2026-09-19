@@ -1,14 +1,14 @@
 # CI status
 
-Summary: 0 success / 3 failure / 1 active
+Summary: 2 success / 1 failure / 1 active
 
-- Validate asset-forge: in_progress / pending (dd46ce74)
-- Validate asset-forge: completed / failure (e1c34810)
-- Validate asset-forge: completed / failure (cc8c25f9)
-- Validate asset-forge: completed / failure (5d0be817)
+- Validate asset-forge: in_progress / pending (0fdaff2d)
+- Validate asset-forge: completed / failure (a3a8fce9)
+- Validate asset-forge: completed / success (c6731bc9)
+- Validate asset-forge: completed / success (dd46ce74)
 
 ## Latest failed run structure
 - Job: test
-  - Failed step: Smoke-test star-list bridge
+  - Failed step: Smoke-test web runtime atlas consumer
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.

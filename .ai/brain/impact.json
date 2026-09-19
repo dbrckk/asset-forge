@@ -1,22 +1,34 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "e1c348107f1d18e2c8153767c7547dc87f9e2a0a",
-  "head": "dd46ce74bef4b895915a7e786dbc16d6ac3b4310",
+  "base": "dd46ce74bef4b895915a7e786dbc16d6ac3b4310",
+  "head": "0fdaff2d4029a4b232334d1d1125c85063df1895",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "starlist_bridge.py",
+      "path": "benchmarks/runtime_atlas_web.bench.mjs",
+      "status": "M"
+    },
+    {
+      "path": "tests/runtime_atlas_web.test.mjs",
+      "status": "M"
+    },
+    {
+      "path": "web/runtime_atlas.mjs",
       "status": "M"
     }
   ],
   "changed_source_files": [
-    "starlist_bridge.py"
+    "benchmarks/runtime_atlas_web.bench.mjs",
+    "tests/runtime_atlas_web.test.mjs",
+    "web/runtime_atlas.mjs"
   ],
   "impacted_files": [
     "asset_forge.py",
-    "starlist_bridge.py",
-    "tests/test_starlist_bridge.py"
+    "benchmarks/runtime_atlas_web.bench.mjs",
+    "tests/runtime_atlas_web.test.mjs",
+    "tests/test_runtime_atlas.py",
+    "web/runtime_atlas.mjs"
   ],
   "impacted_symbols": [
     {
@@ -110,49 +122,986 @@
       "line": 543
     },
     {
-      "name": "run_starlist_recommender",
+      "name": "createMockWebGL2",
       "kind": "function",
-      "file": "starlist_bridge.py",
-      "line": 9
+      "file": "tests/runtime_atlas_web.test.mjs",
+      "line": 733
     },
     {
-      "name": "build_visual_discovery_report",
+      "name": "object",
       "kind": "function",
-      "file": "starlist_bridge.py",
-      "line": 66
+      "file": "tests/runtime_atlas_web.test.mjs",
+      "line": 738
     },
     {
-      "name": "StarListBridgeTests",
+      "name": "fakeFetch",
+      "kind": "function",
+      "file": "tests/runtime_atlas_web.test.mjs",
+      "line": 1165
+    },
+    {
+      "name": "fakeCreateImageBitmap",
+      "kind": "function",
+      "file": "tests/runtime_atlas_web.test.mjs",
+      "line": 1175
+    },
+    {
+      "name": "createMockCanvas",
+      "kind": "function",
+      "file": "tests/runtime_atlas_web.test.mjs",
+      "line": 1544
+    },
+    {
+      "name": "RuntimeAtlasTests",
       "kind": "class",
-      "file": "tests/test_starlist_bridge.py",
-      "line": 33
+      "file": "tests/test_runtime_atlas.py",
+      "line": 6
     },
     {
-      "name": "make_fake_star_list",
+      "name": "test_exports_trim_and_rotation_semantics",
       "kind": "function",
-      "file": "tests/test_starlist_bridge.py",
-      "line": 34
+      "file": "tests/test_runtime_atlas.py",
+      "line": 7
     },
     {
-      "name": "test_run_recommender_parses_json",
+      "name": "test_defaults_non_rotated_source_region",
       "kind": "function",
-      "file": "tests/test_starlist_bridge.py",
-      "line": 39
+      "file": "tests/test_runtime_atlas.py",
+      "line": 56
     },
     {
-      "name": "test_full_report_runs_visual_queries",
+      "name": "test_rejects_rotation_dimension_mismatch",
       "kind": "function",
-      "file": "tests/test_starlist_bridge.py",
-      "line": 48
+      "file": "tests/test_runtime_atlas.py",
+      "line": 69
     },
     {
-      "name": "test_missing_recommender_is_rejected",
+      "name": "test_rejects_source_trim_out_of_bounds",
       "kind": "function",
-      "file": "tests/test_starlist_bridge.py",
-      "line": 61
+      "file": "tests/test_runtime_atlas.py",
+      "line": 90
+    },
+    {
+      "name": "test_rejects_duplicate_indices",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 110
+    },
+    {
+      "name": "test_validator_accepts_generated_runtime_atlas",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 123
+    },
+    {
+      "name": "test_validator_detects_uv_drift",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 133
+    },
+    {
+      "name": "test_validator_detects_frame_count_mismatch",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 145
+    },
+    {
+      "name": "test_validator_rejects_unknown_fields",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 157
+    },
+    {
+      "name": "test_validator_rejects_boolean_integer_fields",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 169
+    },
+    {
+      "name": "test_validator_rejects_unknown_nested_fields",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 181
+    },
+    {
+      "name": "test_build_runtime_atlas_normalizes_animations",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 195
+    },
+    {
+      "name": "test_build_runtime_atlas_rejects_missing_animation_frame",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 233
+    },
+    {
+      "name": "test_validator_rejects_animation_frame_reference_drift",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 253
+    },
+    {
+      "name": "test_validator_rejects_duplicate_animation_names",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 275
+    },
+    {
+      "name": "test_build_runtime_atlas_normalizes_animation_events",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 300
+    },
+    {
+      "name": "test_build_runtime_atlas_rejects_event_at_animation_end",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 335
+    },
+    {
+      "name": "test_validator_rejects_unsorted_animation_events",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 356
+    },
+    {
+      "name": "indexRuntimeAtlas",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1
+    },
+    {
+      "name": "frameQuad",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 57
+    },
+    {
+      "name": "drawFrameCanvas2D",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 74
+    },
+    {
+      "name": "sourceOrientedUVs",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 142
+    },
+    {
+      "name": "animationFrameAtTime",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 167
+    },
+    {
+      "name": "animationDurationSeconds",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 226
+    },
+    {
+      "name": "animationEventsBetween",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 241
+    },
+    {
+      "name": "includeOccurrence",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 260
+    },
+    {
+      "name": "createAnimationPlayer",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 314
+    },
+    {
+      "name": "emit",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 335
+    },
+    {
+      "name": "sample",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 352
+    },
+    {
+      "name": "drawAnimationPlayerCanvas2D",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 433
+    },
+    {
+      "name": "buildSpriteBatch",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 454
+    },
+    {
+      "name": "drawSpriteBatchCanvas2D",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 577
+    },
+    {
+      "name": "buildInstancedSpriteBatch",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 605
+    },
+    {
+      "name": "instancedSpriteUV",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 763
+    },
+    {
+      "name": "instancedSpriteWebGL2Shaders",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 794
+    },
+    {
+      "name": "instancedSpriteAttributeViews",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 874
+    },
+    {
+      "name": "createRuntimeAtlasPages",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 925
+    },
+    {
+      "name": "buildTexturePageBatches",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 976
+    },
+    {
+      "name": "_compileWebGL2Shader",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1100
+    },
+    {
+      "name": "_linkWebGL2Program",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1116
+    },
+    {
+      "name": "createInstancedSpriteRendererWebGL2",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1140
+    },
+    {
+      "name": "assertActive",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1233
+    },
+    {
+      "name": "renderBatch",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1239
+    },
+    {
+      "name": "renderPageBatches",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1291
+    },
+    {
+      "name": "dispose",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1327
+    },
+    {
+      "name": "createWebGL2TextureCache",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1358
+    },
+    {
+      "name": "assertActive",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1377
+    },
+    {
+      "name": "createTextureFromSource",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1383
+    },
+    {
+      "name": "acquire",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1434
+    },
+    {
+      "name": "load",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1460
+    },
+    {
+      "name": "promise",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1476
+    },
+    {
+      "name": "get",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1501
+    },
+    {
+      "name": "has",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1506
+    },
+    {
+      "name": "references",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1511
+    },
+    {
+      "name": "release",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1516
+    },
+    {
+      "name": "deleteTexture",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1531
+    },
+    {
+      "name": "clear",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1542
+    },
+    {
+      "name": "dispose",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1550
+    },
+    {
+      "name": "loadImageBitmapSource",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1583
+    },
+    {
+      "name": "preloadRuntimeAtlasPageTextures",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1610
+    },
+    {
+      "name": "releaseRuntimeAtlasPageTextures",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1667
+    },
+    {
+      "name": "createWebGL2RuntimeAtlasScene",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1687
+    },
+    {
+      "name": "spriteInstanceBounds",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1793
+    },
+    {
+      "name": "rotatedAabb",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1834
+    },
+    {
+      "name": "cullSpriteInstances",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1888
+    },
+    {
+      "name": "stableSortSpriteInstances",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2005
+    },
+    {
+      "name": "prepareSpriteSceneInstances",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2036
+    },
+    {
+      "name": "resizeWebGL2Canvas",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2074
+    },
+    {
+      "name": "createWebGL2CanvasRuntime",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2120
+    },
+    {
+      "name": "assertActive",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2193
+    },
+    {
+      "name": "resize",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2199
+    },
+    {
+      "name": "clampRuntimeCamera",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2207
+    },
+    {
+      "name": "pickRuntimeEntity",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2220
+    },
+    {
+      "name": "recordRuntimeEdit",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2296
+    },
+    {
+      "name": "rebuildAfterContextRestore",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2352
+    },
+    {
+      "name": "handleContextLost",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2373
+    },
+    {
+      "name": "handleContextRestored",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2380
+    },
+    {
+      "name": "createSpriteEntityStore",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2843
+    },
+    {
+      "name": "normalizeId",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2853
+    },
+    {
+      "name": "validateEntity",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2863
+    },
+    {
+      "name": "cloneEntity",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2936
+    },
+    {
+      "name": "add",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2940
+    },
+    {
+      "name": "get",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2955
+    },
+    {
+      "name": "has",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2960
+    },
+    {
+      "name": "update",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2964
+    },
+    {
+      "name": "remove",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2984
+    },
+    {
+      "name": "clear",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 2995
+    },
+    {
+      "name": "snapshot",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3005
+    },
+    {
+      "name": "instances",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3021
+    },
+    {
+      "name": "transact",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3028
+    },
+    {
+      "name": "duplicateSpriteEntities",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3077
+    },
+    {
+      "name": "copySpriteEntities",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3156
+    },
+    {
+      "name": "pasteSpriteEntities",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3196
+    },
+    {
+      "name": "reparentSpriteEntity",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3254
+    },
+    {
+      "name": "removeSpriteEntityHierarchy",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3324
+    },
+    {
+      "name": "visit",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3353
+    },
+    {
+      "name": "createSpriteEntityHistory",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3371
+    },
+    {
+      "name": "capture",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3412
+    },
+    {
+      "name": "captureExtra",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3414
+    },
+    {
+      "name": "sameValue",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3416
+    },
+    {
+      "name": "restore",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3420
+    },
+    {
+      "name": "push",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3437
+    },
+    {
+      "name": "createSpriteAnimationSystem",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3536
+    },
+    {
+      "name": "ensureEntity",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3563
+    },
+    {
+      "name": "bind",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3571
+    },
+    {
+      "name": "get",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3674
+    },
+    {
+      "name": "unbind",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3678
+    },
+    {
+      "name": "update",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3685
+    },
+    {
+      "name": "clear",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3712
+    },
+    {
+      "name": "_stableSceneCacheKey",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3730
+    },
+    {
+      "name": "createSpriteEntityBatchCache",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3765
+    },
+    {
+      "name": "invalidate",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3792
+    },
+    {
+      "name": "ensureVersion",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3802
+    },
+    {
+      "name": "build",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3808
+    },
+    {
+      "name": "clear",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3848
+    },
+    {
+      "name": "resolveSpriteEntityHierarchy",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3873
+    },
+    {
+      "name": "resolve",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 3900
+    },
+    {
+      "name": "applyCameraToSpriteInstances",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4012
+    },
+    {
+      "name": "filterSpriteInstancesByLayer",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4068
+    },
+    {
+      "name": "_splitEntityHierarchyOptions",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4120
+    },
+    {
+      "name": "buildSpriteEntityInstances",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4147
+    },
+    {
+      "name": "clampCameraToWorldBounds",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4177
+    },
+    {
+      "name": "clampAxis",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4227
+    },
+    {
+      "name": "createCamera2DController",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4242
+    },
+    {
+      "name": "baseCamera",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4269
+    },
+    {
+      "name": "shakenCamera",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4273
+    },
+    {
+      "name": "update",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4287
+    },
+    {
+      "name": "setCamera",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4325
+    },
+    {
+      "name": "shake",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4336
+    },
+    {
+      "name": "clearShake",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4357
+    },
+    {
+      "name": "worldToScreenPoint",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4380
+    },
+    {
+      "name": "screenToWorldPoint",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4404
+    },
+    {
+      "name": "pointHitsSpriteInstance",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4422
+    },
+    {
+      "name": "pickSpriteInstances",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4501
+    },
+    {
+      "name": "moveSpriteEntityByWorldDelta",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4543
+    },
+    {
+      "name": "createSpritePointerInteractionController",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4651
+    },
+    {
+      "name": "validatePointer",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4682
+    },
+    {
+      "name": "pickedEntity",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4694
+    },
+    {
+      "name": "makeEvent",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4698
+    },
+    {
+      "name": "updateHover",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4715
+    },
+    {
+      "name": "move",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4740
+    },
+    {
+      "name": "down",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4804
+    },
+    {
+      "name": "up",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4826
+    },
+    {
+      "name": "cancel",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4871
+    },
+    {
+      "name": "clear",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4890
+    },
+    {
+      "name": "createSpriteClipboardController",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 4920
+    },
+    {
+      "name": "selectionTransformHandleGeometry",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 5038
+    },
+    {
+      "name": "applySelectionTransformHandleDrag",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 5086
+    },
+    {
+      "name": "transformSelectedSpriteEntities",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 5169
+    },
+    {
+      "name": "moveSelectedSpriteEntitiesByWorldDelta",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 5267
+    },
+    {
+      "name": "createSpriteSelectionModel",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 5356
+    },
+    {
+      "name": "emit",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 5362
+    },
+    {
+      "name": "select",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 5368
+    },
+    {
+      "name": "set",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 5389
+    },
+    {
+      "name": "clear",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 5399
+    },
+    {
+      "name": "remove",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 5405
+    },
+    {
+      "name": "selectSpriteInstancesInRect",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 5440
     }
   ],
   "selected_tests": [
-    "tests/test_starlist_bridge.py"
+    "tests/runtime_atlas_web.test.mjs",
+    "tests/test_runtime_atlas.py"
   ]
 }

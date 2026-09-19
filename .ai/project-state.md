@@ -96,21 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T17:34:39Z
+Generated: 2026-09-19T17:59:30Z
 
 ### Git
 - Branch: `main`
-- Head: `dd46ce74bef4`
-- Commit date: 2026-09-19T19:34:29+02:00
-- Commit: fix: resolve star-list bridge root before subprocess
-- Tracked files: 211
+- Head: `0fdaff2d4029`
+- Commit date: 2026-09-19T19:59:19+02:00
+- Commit: perf: enrich runtime atlas benchmark telemetry
+- Tracked files: 212
 
 ### Recently changed files
-- `starlist_bridge.py`
+- `benchmarks/runtime_atlas_web.bench.mjs`
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
-- `.github/workflows/validate.yml`
-- `benchmarks/runtime_atlas_web.bench.mjs`
+- `starlist_bridge.py`
 
 ### Project signals
 - No common build descriptor detected
