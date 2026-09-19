@@ -96,20 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T18:01:10Z
+Generated: 2026-09-19T20:36:51Z
 
 ### Git
 - Branch: `main`
-- Head: `a6dc63596c45`
-- Commit date: 2026-09-19T20:01:00+02:00
-- Commit: test: correct rotated culling fallback fixture
-- Tracked files: 213
+- Head: `d1d4a656c3be`
+- Commit date: 2026-09-19T22:36:38+02:00
+- Commit: test: simplify production contract fixtures
+- Tracked files: 217
 
 ### Recently changed files
-- `tests/runtime_atlas_web.test.mjs`
-- `benchmarks/runtime_atlas_web.bench.mjs`
-- `web/runtime_atlas.mjs`
-- `starlist_bridge.py`
+- `tests/test_production_contract.py`
+- `.github/workflows/validate.yml`
+- `examples/production-request.json`
+- `asset_forge.py`
 
 ### Project signals
 - No common build descriptor detected

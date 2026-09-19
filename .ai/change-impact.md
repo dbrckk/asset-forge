@@ -1,10 +1,10 @@
 # Change impact
 
-Base: 99979aee7e82d1ac1cab2a6cccd93a892d361e66
-Head: a6dc63596c45a9b1e1ed40aa4c750d636c0da878
+Base: 53cc0ad0c3ee016f5a3115908bedfc1689b12cb2
+Head: d1d4a656c3beb85ba67c90b470cb62003b71aee7
 
 ## Changed files
-- M tests/runtime_atlas_web.test.mjs
+- M tests/test_production_contract.py
 
 ## Affected areas
 - tests

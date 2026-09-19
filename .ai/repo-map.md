@@ -51,6 +51,7 @@ config/
 examples/
   asset-manifest.json
   godot-animations.json
+  production-request.json
   runtime-atlas.json
 pipelines/
   model-3d.json
@@ -73,6 +74,7 @@ schemas/
   3d-quality-profile.schema.json
   asset-manifest.schema.json
   godot4-handoff-profile.schema.json
+  production-request.schema.json
   runtime-atlas.schema.json
   vector-profile.schema.json
 tests/
@@ -89,6 +91,7 @@ tests/
   test_godot_3d_delivery.py
   test_godot_export.py
   test_godot_handoff.py
+  test_production_contract.py
   test_raster_backend.py
   test_raster_pack.py
   test_runtime_atlas.py
@@ -111,6 +114,7 @@ gltf_tools.py
 godot_3d_delivery.py
 godot_export.py
 godot_handoff.py
+production_contract.py
 raster_backend.py
 raster_pack.py
 README.md
@@ -222,6 +226,8 @@ jobs:
         run: python asset_forge.py validate examples/asset-manifest.json
       - name: Build example plan
         run: python asset_forge.py plan examples/asset-manifest.json
+      - name: Compile Production OS asset request
+        run: python asset_forge.py production-job examples/production-request.json --output build/production-job.json
       - name: Inspect 3D toolchain
         run: python asset_forge.py 3d-toolchain-status
       - name: Validate engine handoff profiles
@@ -397,6 +403,46 @@ jobs:
       ]
     }
   ]
+}
+````
+
+## File: examples/production-request.json
+````json
+{
+  "schema": "asset-forge/production-request/v1",
+  "requestId": "demo-player-sprite",
+  "instruction": "Create a production-ready player sprite sheet and prepare it for the target engine.",
+  "manifest": {
+    "id": "player",
+    "project": "demo-game",
+    "type": "sprite-sheet",
+    "importance": "primary",
+    "source": {
+      "mode": "generated"
+    },
+    "license": {
+      "id": "project-owned",
+      "commercialUse": true,
+      "derivatives": true,
+      "attributionRequired": false
+    },
+    "target": {
+      "engine": "godot4",
+      "format": "png",
+      "maxBytes": 8388608
+    },
+    "constraints": {
+      "pixelArt": true,
+      "interpolation": "nearest",
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "requiresAlpha": true
+    }
+  },
+  "delivery": {
+    "engine": "godot4",
+    "outputDir": "build/demo-player-sprite"
+  }
 }
 ````
 
@@ -901,6 +947,31 @@ jobs:
       "properties": {
         "preferEmbeddedOrProjectLocal": {"type": "boolean"},
         "remoteUrisAllowed": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+````
+
+## File: schemas/production-request.schema.json
+````json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-forge production request",
+  "type": "object",
+  "required": ["schema", "requestId", "instruction", "manifest"],
+  "properties": {
+    "schema": {"const": "asset-forge/production-request/v1"},
+    "requestId": {"type": "string", "minLength": 1},
+    "instruction": {"type": "string", "minLength": 1},
+    "manifest": {"$ref": "asset-manifest.schema.json"},
+    "delivery": {
+      "type": "object",
+      "properties": {
+        "engine": {"type": ["string", "null"], "minLength": 1},
+        "outputDir": {"type": ["string", "null"], "minLength": 1}
       },
       "additionalProperties": false
     }
@@ -1767,6 +1838,26 @@ result = validate_godot_handoff(project)
 @patch("godot_handoff.subprocess.run")
 @patch("godot_handoff.detect_godot")
     def test_available_godot_import_passes(self, detect, run)
+````
+
+## File: tests/test_production_contract.py
+````python
+class ProductionContractTests(unittest.TestCase)
+⋮----
+def request(self)
+⋮----
+manifest = asset_forge.load_json(Path(__file__).resolve().parents[1] / "examples/asset-manifest.json")
+⋮----
+def test_valid_request_builds_machine_readable_job(self)
+⋮----
+request = self.request()
+⋮----
+plan = asset_forge.build_plan(request["manifest"], Path(__file__).resolve().parents[1])
+job = build_production_job(request, plan)
+⋮----
+def test_invalid_request_is_rejected(self)
+⋮----
+errors = validate_production_request(request, asset_forge.validate_manifest)
 ````
 
 ## File: tests/test_raster_backend.py
@@ -3304,6 +3395,8 @@ validate = sub.add_parser("validate", help="validate an asset manifest")
 ⋮----
 plan = sub.add_parser("plan", help="build a deterministic asset production plan")
 ⋮----
+production_job = sub.add_parser("production-job", help="compile a Production OS/AI Dev Server asset request into an executable job")
+⋮----
 raster = sub.add_parser("validate-raster", help="validate a PNG or WebP against an asset manifest")
 ⋮----
 atlas = sub.add_parser("atlas-manifest", help="build uniform-grid atlas metadata from PNG or WebP")
@@ -3360,6 +3453,14 @@ def main() -> int
 ⋮----
 args = parser().parse_args()
 root = Path(__file__).resolve().parent
+⋮----
+request = load_json(args.request)
+errors = validate_production_request(request, validate_manifest)
+⋮----
+plan = build_plan(request["manifest"], root)
+job = build_production_job(request, plan)
+⋮----
+rendered = json.dumps(job, indent=2, sort_keys=True) + "\n"
 ⋮----
 metadata = pack_uniform_atlas(
 ⋮----
@@ -4239,6 +4340,35 @@ chosen = executable or detected["path"]
 ⋮----
 command = godot_import_command(chosen, project_dir)
 completed = subprocess.run(
+````
+
+## File: production_contract.py
+````python
+REQUEST_SCHEMA = "asset-forge/production-request/v1"
+JOB_SCHEMA = "asset-forge/production-job/v1"
+⋮----
+def validate_production_request(request: dict, validate_manifest: Callable[[dict], list[str]]) -> list[str]
+⋮----
+errors: list[str] = []
+⋮----
+request_id = request.get("requestId")
+⋮----
+instruction = request.get("instruction")
+⋮----
+manifest = request.get("manifest")
+⋮----
+delivery = request.get("delivery", {})
+⋮----
+output_dir = delivery.get("outputDir")
+⋮----
+engine = delivery.get("engine")
+⋮----
+manifest = request["manifest"]
+source_mode = manifest["source"]["mode"]
+delivery = request.get("delivery") or {}
+output_dir = delivery.get("outputDir") or str(Path(default_output_dir) / request["requestId"])
+⋮----
+requires_generator = source_mode == "generated"
 ````
 
 ## File: raster_backend.py
