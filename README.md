@@ -1311,3 +1311,75 @@ runtime.renderEntities({
 Layer filtering happens after hierarchy world-transform resolution but before culling, sorting, texture grouping, and GPU batching. Parent transforms therefore remain available to visible descendants even when parent and child use different layer masks.
 
 The version-aware entity batch cache includes `visibilityMask` in its stable cache key, so world/UI/effects views can coexist as separate cached batch variants without false cache hits.
+
+
+### 2D camera, zoom, and parallax
+
+Entity rendering can now apply a camera before culling and batching.
+
+```js
+const runtime = await createWebGL2CanvasRuntime(
+  canvas,
+  pageDefinitions,
+  {
+    camera: {
+      x: 0,
+      y: 0,
+      zoom: 1,
+    },
+  },
+);
+```
+
+The camera uses top-left world coordinates:
+
+```text
+screenX = (worldX - camera.x * parallaxX) * zoom
+screenY = (worldY - camera.y * parallaxY) * zoom
+```
+
+Sprite scale is multiplied by camera zoom. Rotation, tint, alpha, depth, and hierarchy world transforms remain intact.
+
+Entities may define:
+
+```js
+{
+  parallaxX: 0.25,
+  parallaxY: 0.25
+}
+```
+
+Defaults are `1`, so normal world sprites track the camera fully. Values below `1` move more slowly and are suitable for distant backgrounds. Parallax values must be finite and non-negative.
+
+Low-level helper:
+
+```js
+applyCameraToSpriteInstances(instances, camera)
+```
+
+The canvas runtime exposes:
+
+```js
+runtime.camera
+runtime.setCamera({ x, y, zoom })
+```
+
+Partial updates preserve unspecified fields:
+
+```js
+runtime.setCamera({ x: player.x - 320 });
+runtime.setCamera({ zoom: 1.5 });
+```
+
+A per-call camera overrides runtime camera state temporarily:
+
+```js
+runtime.renderEntities({
+  camera: { x: 0, y: 0, zoom: 1 },
+  visibilityMask: UI_LAYER,
+});
+```
+
+Camera transforms happen after hierarchy resolution and layer filtering but before viewport culling, stable depth sorting, texture grouping, and GPU batching.
+
+The version-aware entity batch cache includes the camera object in its stable options key, so different camera positions/zoom values produce distinct cached variants.
