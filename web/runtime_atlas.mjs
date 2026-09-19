@@ -1626,20 +1626,36 @@ export async function createWebGL2RuntimeAtlasScene(
       if (disposed) {
         throw new Error("runtime atlas scene is disposed");
       }
-      return buildTexturePageBatches(pages, instances, {
-        mode: "instanced",
-        ...batchOptions,
+      const {
+        viewport,
+        culling,
+        sort = false,
+        sortKey,
+        sortDirection,
+        ...textureBatchOptions
+      } = batchOptions;
+      const prepared = prepareSpriteSceneInstances(pages, instances, {
+        viewport,
+        culling,
+        sort,
+        sortKey,
+        sortDirection,
       });
+      const batches = buildTexturePageBatches(pages, prepared.instances, {
+        mode: "instanced",
+        ...textureBatchOptions,
+      });
+      return {
+        ...batches,
+        scenePreparation: prepared,
+      };
     },
     render(instancesOrBatches, viewportWidth, viewportHeight, batchOptions = {}) {
       if (disposed) {
         throw new Error("runtime atlas scene is disposed");
       }
       const batches = Array.isArray(instancesOrBatches)
-        ? buildTexturePageBatches(pages, instancesOrBatches, {
-            mode: "instanced",
-            ...batchOptions,
-          })
+        ? this.buildBatches(instancesOrBatches, batchOptions)
         : instancesOrBatches;
       return renderer.renderPageBatches(
         batches,
