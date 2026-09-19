@@ -1,16 +1,16 @@
 # Change impact
 
-Base: cd4383b3bc0e6c1f9b2bf5095c53ba9a80623bf5
-Head: 08a0a05b0eb5629c66f09c96cdf3d53ecf07fe5f
+Base: 586663045b8802ae8efbf5d45303a53b33123d9c
+Head: ae772a25f3fe2545d8ed8d9bfdf7e7e09b364e8a
 
 ## Changed files
-- A .github/workflows/live-generation.yml
+- M production_executor.py
 
 ## Affected areas
-- .github
+- (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_production_executor.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

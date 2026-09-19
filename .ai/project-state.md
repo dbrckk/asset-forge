@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T21:36:19Z
+Generated: 2026-09-19T21:37:54Z
 
 ### Git
 - Branch: `main`
-- Head: `08a0a05b0eb5`
-- Commit date: 2026-09-19T23:34:58+02:00
-- Commit: ci: add opt-in live generation smoke
+- Head: `ae772a25f3fe`
+- Commit date: 2026-09-19T23:37:43+02:00
+- Commit: feat: process provided external and custom asset sources
 - Tracked files: 238
 
 ### Recently changed files
+- `production_executor.py`
 - `.github/workflows/live-generation.yml`
 - `examples/production-request-live-vector.json`
 - `.github/workflows/release.yml`
 - `.github/dependabot.yml`
-- `SECURITY.md`
 
 ### Project signals
 - No common build descriptor detected

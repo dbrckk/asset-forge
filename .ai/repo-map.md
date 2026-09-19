@@ -5093,6 +5093,16 @@ source = Path(str(raw or ""))
 resolved_out = Path(output_dir).resolve()
 resolved_source = source.resolve()
 ⋮----
+def _stage_provided_source(source_path: Path, output_dir: Path, *, suffix: str) -> dict
+⋮----
+source = Path(source_path)
+⋮----
+size = source.stat().st_size
+⋮----
+out = Path(output_dir)
+⋮----
+staged = out / f"provided-source{suffix}"
+⋮----
 manifest = job.get("manifest")
 ⋮----
 target = manifest.get("target")
@@ -5101,10 +5111,11 @@ target_format = str(target.get("format") or "").lower()
 ⋮----
 asset_id = _safe_asset_id(job.get("assetId") or manifest.get("id"))
 ⋮----
-out = Path(output_dir)
-⋮----
 generation = generator(
 source = _trusted_generated_source(out, generation)
+⋮----
+generation = _stage_provided_source(
+source = _trusted_generated_source(out, generation, label="provided source")
 ⋮----
 final = out / f"{asset_id}.{target_format}"
 ⋮----
@@ -5117,6 +5128,8 @@ report_path = out / "production-report.json"
 ⋮----
 asset_type = str(job.get("assetType") or "")
 ⋮----
+generation = _stage_provided_source(source_path, out, suffix=".svg")
+⋮----
 sanitized = out / "generated-sanitized.svg"
 final = out / f"{asset_id}.svg"
 sanitize_result = sanitizer(source, sanitized)
@@ -5125,6 +5138,8 @@ normalize_result = normalizer(sanitized, final)
 profile = {
 ⋮----
 source = _trusted_generated_source(out, generation, label="3D generator")
+⋮----
+generation = _stage_provided_source(source_path, out, suffix=".glb")
 ⋮----
 final = out / f"{asset_id}.glb"
 ⋮----
