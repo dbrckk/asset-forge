@@ -4540,4 +4540,85 @@ assert.throws(
   /rotationSnap must be a finite value >= 0/,
 );
 
+
+const snappedScaleStore = createSpriteEntityStore();
+snappedScaleStore.add({
+  id: "snap-scale-a",
+  page: "heroes",
+  frame: "plain",
+  x: 0,
+  y: 0,
+});
+snappedScaleStore.add({
+  id: "snap-scale-b",
+  page: "heroes",
+  frame: "plain",
+  x: 20,
+  y: 10,
+});
+const snappedScaleSelection = createSpriteSelectionModel();
+snappedScaleSelection.set(["snap-scale-a", "snap-scale-b"]);
+applySelectionTransformHandleDrag(
+  snappedScaleStore,
+  snappedScaleSelection,
+  "se",
+  { x: 20, y: 10 },
+  { x: 23, y: 11.5 },
+  { scaleSnap: 0.25 },
+);
+let snappedScaleResolved = resolveSpriteEntityHierarchy(snappedScaleStore);
+assert.ok(Math.abs(snappedScaleResolved.byId.get("snap-scale-a").x + 2.5) < 1e-9);
+assert.ok(Math.abs(snappedScaleResolved.byId.get("snap-scale-a").y + 1.25) < 1e-9);
+assert.ok(Math.abs(snappedScaleResolved.byId.get("snap-scale-b").x - 22.5) < 1e-9);
+assert.ok(Math.abs(snappedScaleResolved.byId.get("snap-scale-b").y - 11.25) < 1e-9);
+assert.ok(Math.abs(snappedScaleStore.get("snap-scale-a").scaleX - 1.25) < 1e-9);
+assert.ok(Math.abs(snappedScaleStore.get("snap-scale-a").scaleY - 1.25) < 1e-9);
+assert.throws(
+  () => applySelectionTransformHandleDrag(
+    snappedScaleStore,
+    snappedScaleSelection,
+    "se",
+    { x: 20, y: 10 },
+    { x: 30, y: 15 },
+    { scaleSnap: -0.25 },
+  ),
+  /scaleSnap must be a finite value >= 0/,
+);
+
+const nestedTransformStore = createSpriteEntityStore();
+nestedTransformStore.add({
+  id: "nested-root",
+  page: "heroes",
+  frame: "plain",
+  x: 0,
+  y: 0,
+});
+nestedTransformStore.add({
+  id: "nested-child",
+  parent: "nested-root",
+  page: "heroes",
+  frame: "plain",
+  x: 10,
+  y: 0,
+});
+const nestedTransformSelection = createSpriteSelectionModel();
+nestedTransformSelection.set(["nested-root", "nested-child"]);
+const nestedTransformResult = transformSelectedSpriteEntities(
+  nestedTransformStore,
+  nestedTransformSelection,
+  { rotation: Math.PI / 2, pivotX: 0, pivotY: 0 },
+);
+assert.deepEqual(nestedTransformResult.transformedRootIds, ["nested-root"]);
+assert.equal(nestedTransformStore.get("nested-child").x, 10);
+assert.equal(nestedTransformStore.get("nested-child").y, 0);
+assert.equal(nestedTransformStore.get("nested-child").rotation, 0);
+const nestedResolvedAfter = resolveSpriteEntityHierarchy(nestedTransformStore);
+assert.ok(Math.abs(nestedResolvedAfter.byId.get("nested-child").x) < 1e-9);
+assert.ok(Math.abs(nestedResolvedAfter.byId.get("nested-child").y - 10) < 1e-9);
+assert.ok(
+  Math.abs(
+    nestedResolvedAfter.byId.get("nested-child").rotation - Math.PI / 2
+  ) < 1e-9,
+);
+
 console.log("runtime_atlas.mjs smoke test passed");
