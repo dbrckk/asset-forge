@@ -19,7 +19,93 @@ def _non_negative_int(value, field: str) -> int:
     return result
 
 
-def build_runtime_atlas(atlas_metadata: dict) -> dict:
+def _normalize_runtime_animations(
+    animations: list[dict] | None,
+    valid_indices: set[int],
+) -> list[dict] | None:
+    if animations is None:
+        return None
+    if not isinstance(animations, list) or not animations:
+        raise ValueError("animations must be a non-empty list")
+
+    normalized = []
+    seen_names: set[str] = set()
+
+    for position, animation in enumerate(animations):
+        if not isinstance(animation, dict):
+            raise ValueError(f"animation {position}: object required")
+
+        name = animation.get("name")
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError(f"animation {position}: non-empty name required")
+        if name in seen_names:
+            raise ValueError(f"duplicate animation name: {name}")
+        seen_names.add(name)
+
+        fps = animation.get("fps", 12.0)
+        if isinstance(fps, bool) or not isinstance(fps, (int, float)) or fps <= 0:
+            raise ValueError(f"animation {name}: fps must be > 0")
+
+        loop = animation.get("loop", True)
+        if not isinstance(loop, bool):
+            raise ValueError(f"animation {name}: loop must be boolean")
+
+        raw_frames = animation.get("frames")
+        if not isinstance(raw_frames, list) or not raw_frames:
+            raise ValueError(f"animation {name}: frames must be a non-empty list")
+
+        frames = []
+        for frame_position, raw in enumerate(raw_frames):
+            if isinstance(raw, bool):
+                raise ValueError(
+                    f"animation {name} frame {frame_position}: integer index or object required"
+                )
+            if isinstance(raw, int):
+                index = raw
+                duration = 1.0
+            elif isinstance(raw, dict):
+                index = raw.get("index")
+                duration = raw.get("duration", 1.0)
+                if isinstance(index, bool) or not isinstance(index, int):
+                    raise ValueError(
+                        f"animation {name} frame {frame_position}: integer index required"
+                    )
+                if (
+                    isinstance(duration, bool)
+                    or not isinstance(duration, (int, float))
+                    or duration <= 0
+                ):
+                    raise ValueError(
+                        f"animation {name} frame {frame_position}: duration must be > 0"
+                    )
+            else:
+                raise ValueError(
+                    f"animation {name} frame {frame_position}: integer index or object required"
+                )
+
+            if index not in valid_indices:
+                raise ValueError(
+                    f"animation {name} frame {frame_position}: index {index} not found"
+                )
+            frames.append({"index": index, "duration": float(duration)})
+
+        normalized.append(
+            {
+                "name": name,
+                "fps": float(fps),
+                "loop": loop,
+                "frames": frames,
+            }
+        )
+
+    return normalized
+
+
+def build_runtime_atlas(
+    atlas_metadata: dict,
+    *,
+    animations: list[dict] | None = None,
+) -> dict:
     if not isinstance(atlas_metadata, dict):
         raise ValueError("atlas metadata must be an object")
 
@@ -129,7 +215,7 @@ def build_runtime_atlas(atlas_metadata: dict) -> dict:
         )
 
     runtime_frames.sort(key=lambda item: item["index"])
-    return {
+    result = {
         "format": "asset-forge-runtime-atlas",
         "version": 1,
         "image": image,
@@ -144,6 +230,10 @@ def build_runtime_atlas(atlas_metadata: dict) -> dict:
         },
         "frames": runtime_frames,
     }
+    normalized_animations = _normalize_runtime_animations(animations, seen_indices)
+    if normalized_animations is not None:
+        result["animations"] = normalized_animations
+    return result
 
 
 
@@ -161,6 +251,7 @@ def validate_runtime_atlas(data: dict) -> list[str]:
         "frameCount",
         "capabilities",
         "frames",
+        "animations",
     }
     unknown_top = sorted(set(data) - allowed_top)
     for field in unknown_top:
@@ -373,5 +464,92 @@ def validate_runtime_atlas(data: dict) -> list[str]:
                 errors.append(f"frame {index_label}: sourceRegion exceeds sourceSize.width")
             if offset_y + source_region_height > source_height:
                 errors.append(f"frame {index_label}: sourceRegion exceeds sourceSize.height")
+
+    animations = data.get("animations")
+    if animations is not None:
+        if not isinstance(animations, list) or not animations:
+            errors.append("animations must be a non-empty array")
+        else:
+            seen_animation_names: set[str] = set()
+            valid_indices = set(seen_indices)
+            allowed_animation = {"name", "fps", "loop", "frames"}
+            allowed_animation_frame = {"index", "duration"}
+
+            for animation_position, animation in enumerate(animations):
+                if not isinstance(animation, dict):
+                    errors.append(f"animation {animation_position}: object required")
+                    continue
+                for field in sorted(set(animation) - allowed_animation):
+                    errors.append(
+                        f"animation {animation_position}: unknown field {field}"
+                    )
+
+                name = animation.get("name")
+                if not isinstance(name, str) or not name.strip():
+                    errors.append(
+                        f"animation {animation_position}.name must be a non-empty string"
+                    )
+                    name_label = animation_position
+                else:
+                    name_label = name
+                    if name in seen_animation_names:
+                        errors.append(f"duplicate animation name: {name}")
+                    seen_animation_names.add(name)
+
+                fps = animation.get("fps")
+                if (
+                    isinstance(fps, bool)
+                    or not isinstance(fps, (int, float))
+                    or fps <= 0
+                ):
+                    errors.append(f"animation {name_label}.fps must be > 0")
+
+                loop = animation.get("loop")
+                if not isinstance(loop, bool):
+                    errors.append(f"animation {name_label}.loop must be boolean")
+
+                animation_frames = animation.get("frames")
+                if not isinstance(animation_frames, list) or not animation_frames:
+                    errors.append(
+                        f"animation {name_label}.frames must be a non-empty array"
+                    )
+                    continue
+
+                for frame_position, animation_frame in enumerate(animation_frames):
+                    if not isinstance(animation_frame, dict):
+                        errors.append(
+                            f"animation {name_label} frame {frame_position}: object required"
+                        )
+                        continue
+                    for field in sorted(
+                        set(animation_frame) - allowed_animation_frame
+                    ):
+                        errors.append(
+                            f"animation {name_label} frame {frame_position}: unknown field {field}"
+                        )
+
+                    index = animation_frame.get("index")
+                    if (
+                        isinstance(index, bool)
+                        or not isinstance(index, int)
+                        or index < 0
+                    ):
+                        errors.append(
+                            f"animation {name_label} frame {frame_position}.index must be a non-negative integer"
+                        )
+                    elif index not in valid_indices:
+                        errors.append(
+                            f"animation {name_label} frame {frame_position}: index {index} not found"
+                        )
+
+                    duration = animation_frame.get("duration")
+                    if (
+                        isinstance(duration, bool)
+                        or not isinstance(duration, (int, float))
+                        or duration <= 0
+                    ):
+                        errors.append(
+                            f"animation {name_label} frame {frame_position}.duration must be > 0"
+                        )
 
     return errors
