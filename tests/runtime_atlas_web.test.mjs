@@ -1357,3 +1357,62 @@ assert.throws(
     ),
   /viewport width\/height must be >= 0/,
 );
+
+
+const culledSceneGl = createMockWebGL2();
+const culledScene = await createWebGL2RuntimeAtlasScene(
+  culledSceneGl,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    loaderOptions: {
+      fetchImpl: async (url) => ({
+        ok: true,
+        status: 200,
+        async blob() {
+          return { id: `blob:${url}` };
+        },
+      }),
+      createImageBitmapImpl: async (blob) => ({
+        id: `bitmap:${blob.id}`,
+      }),
+    },
+  },
+);
+
+const culledSceneBatches = culledScene.buildBatches(
+  [
+    { page: "heroes", frame: "plain", x: 100, y: 100, z: 9, id: "offscreen" },
+    { page: "heroes", frame: "plain", x: 10, y: 10, z: 2, id: "front" },
+    { page: "heroes", frame: "plain", x: 5, y: 5, z: 1, id: "back" },
+  ],
+  {
+    viewport: { x: 0, y: 0, width: 32, height: 32 },
+    sort: true,
+    sortKey: "z",
+    preserveOrder: true,
+  },
+);
+assert.equal(culledSceneBatches.instanceCount, 2);
+assert.equal(culledSceneBatches.scenePreparation.culledCount, 1);
+assert.deepEqual(
+  culledSceneBatches.scenePreparation.instances.map((instance) => instance.id),
+  ["back", "front"],
+);
+assert.deepEqual(culledSceneBatches.batches[0].inputIndices, [0, 1]);
+
+const culledSceneRender = culledScene.render(
+  [
+    { page: "heroes", frame: "plain", x: 100, y: 100, z: 9 },
+    { page: "heroes", frame: "plain", x: 10, y: 10, z: 2 },
+    { page: "heroes", frame: "plain", x: 5, y: 5, z: 1 },
+  ],
+  32,
+  32,
+  {
+    viewport: { x: 0, y: 0, width: 32, height: 32 },
+    sort: true,
+    preserveOrder: true,
+  },
+);
+assert.equal(culledSceneRender.instances, 2);
+culledScene.dispose();
