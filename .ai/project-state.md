@@ -96,20 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T21:03:35Z
+Generated: 2026-09-19T21:07:34Z
 
 ### Git
 - Branch: `main`
-- Head: `0cf3535a367b`
-- Commit date: 2026-09-19T23:03:25+02:00
-- Commit: ci: inspect asset generation backend readiness
-- Tracked files: 225
+- Head: `d69690a7639f`
+- Commit date: 2026-09-19T23:07:18+02:00
+- Commit: feat: route produce across raster and vector assets
+- Tracked files: 227
 
 ### Recently changed files
-- `.github/workflows/validate.yml`
 - `asset_forge.py`
 - `tests/test_production_executor.py`
 - `production_executor.py`
+- `tests/test_generator_backends.py`
+- `generator_backends.py`
 
 ### Project signals
 - No common build descriptor detected

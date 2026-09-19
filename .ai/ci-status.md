@@ -1,10 +1,10 @@
 # CI status
 
-Summary: 3 success / 0 failure / 1 active
+Summary: 4 success / 0 failure / 0 active
 
-- Validate asset-forge: in_progress / pending (0cf3535a)
-- Validate asset-forge: completed / success (3234d9ac)
-- Validate asset-forge: completed / success (fc1f8b64)
-- Validate asset-forge: completed / success (366060e1)
+- Validate asset-forge: completed / success (d69690a7)
+- Validate asset-forge: completed / success (4a1639f1)
+- Validate asset-forge: completed / success (df9c07c0)
+- Validate asset-forge: completed / success (e250a2fa)
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.

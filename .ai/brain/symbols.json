@@ -236,35 +236,35 @@
       "language": "python",
       "kind": "class",
       "name": "GenerationError",
-      "line": 14
+      "line": 17
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "generator_backend_status",
-      "line": 18
+      "line": 21
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "build_generation_prompt",
-      "line": 40
+      "line": 43
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "pollinations_command",
-      "line": 78
+      "line": 87
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "execute_generated_asset",
-      "line": 100
+      "line": 113
     },
     {
       "file": "gltf_binary_metrics.py",
@@ -580,6 +580,13 @@
       "kind": "function",
       "name": "execute_generated_raster_job",
       "line": 14
+    },
+    {
+      "file": "production_executor.py",
+      "language": "python",
+      "kind": "function",
+      "name": "execute_generated_vector_job",
+      "line": 95
     },
     {
       "file": "raster_backend.py",
@@ -1495,36 +1502,43 @@
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "test_backend_status_reports_auth_without_secret_value",
+      "name": "test_vector_generation_defaults_to_recraft_svg_model",
       "line": 52
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
+      "name": "test_backend_status_reports_auth_without_secret_value",
+      "line": 69
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
       "name": "test_execute_generated_asset_uses_bounded_subprocess_and_output",
-      "line": 61
+      "line": 78
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "runner",
-      "line": 64
+      "line": 81
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Result",
-      "line": 67
+      "line": 84
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_unsupported_generated_type_fails_closed",
-      "line": 87
+      "line": 104
     },
     {
       "file": "tests/test_gltf_binary_metrics.py",
@@ -2063,98 +2077,154 @@
       "language": "python",
       "kind": "function",
       "name": "job",
-      "line": 11
+      "line": 12
     },
     {
       "file": "tests/test_production_executor.py",
       "language": "python",
       "kind": "class",
       "name": "ProductionExecutorTests",
-      "line": 25
-    },
-    {
-      "file": "tests/test_production_executor.py",
-      "language": "python",
-      "kind": "function",
-      "name": "test_generated_png_flows_through_processing_validation_and_report",
       "line": 26
     },
     {
       "file": "tests/test_production_executor.py",
       "language": "python",
       "kind": "function",
+      "name": "test_generated_png_flows_through_processing_validation_and_report",
+      "line": 27
+    },
+    {
+      "file": "tests/test_production_executor.py",
+      "language": "python",
+      "kind": "function",
       "name": "generator",
-      "line": 30
+      "line": 31
     },
     {
       "file": "tests/test_production_executor.py",
       "language": "python",
       "kind": "function",
       "name": "optimizer",
-      "line": 35
+      "line": 36
     },
     {
       "file": "tests/test_production_executor.py",
       "language": "python",
       "kind": "function",
       "name": "validator",
-      "line": 39
+      "line": 40
     },
     {
       "file": "tests/test_production_executor.py",
       "language": "python",
       "kind": "function",
       "name": "test_webp_target_encodes_before_validation",
-      "line": 56
+      "line": 57
     },
     {
       "file": "tests/test_production_executor.py",
       "language": "python",
       "kind": "function",
       "name": "generator",
-      "line": 60
+      "line": 61
     },
     {
       "file": "tests/test_production_executor.py",
       "language": "python",
       "kind": "function",
       "name": "encode",
-      "line": 65
+      "line": 66
     },
     {
       "file": "tests/test_production_executor.py",
       "language": "python",
       "kind": "function",
       "name": "validator",
-      "line": 70
+      "line": 71
     },
     {
       "file": "tests/test_production_executor.py",
       "language": "python",
       "kind": "function",
       "name": "test_validation_errors_block_artifact_promotion",
-      "line": 84
+      "line": 85
     },
     {
       "file": "tests/test_production_executor.py",
       "language": "python",
       "kind": "function",
       "name": "generator",
-      "line": 88
+      "line": 89
     },
     {
       "file": "tests/test_production_executor.py",
       "language": "python",
       "kind": "function",
       "name": "optimizer",
-      "line": 93
+      "line": 94
+    },
+    {
+      "file": "tests/test_production_executor.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_generated_vector_is_sanitized_normalized_and_validated",
+      "line": 110
+    },
+    {
+      "file": "tests/test_production_executor.py",
+      "language": "python",
+      "kind": "function",
+      "name": "generator",
+      "line": 117
+    },
+    {
+      "file": "tests/test_production_executor.py",
+      "language": "python",
+      "kind": "function",
+      "name": "sanitizer",
+      "line": 125
+    },
+    {
+      "file": "tests/test_production_executor.py",
+      "language": "python",
+      "kind": "function",
+      "name": "normalizer",
+      "line": 129
+    },
+    {
+      "file": "tests/test_production_executor.py",
+      "language": "python",
+      "kind": "function",
+      "name": "profile_validator",
+      "line": 136
+    },
+    {
+      "file": "tests/test_production_executor.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_vector_validation_errors_block_promotion",
+      "line": 154
+    },
+    {
+      "file": "tests/test_production_executor.py",
+      "language": "python",
+      "kind": "function",
+      "name": "generator",
+      "line": 161
+    },
+    {
+      "file": "tests/test_production_executor.py",
+      "language": "python",
+      "kind": "function",
+      "name": "copy_step",
+      "line": 166
     },
     {
       "file": "tests/test_production_executor.py",
       "language": "python",
       "kind": "function",
       "name": "test_non_raster_target_fails_closed",
-      "line": 109
+      "line": 184
     },
     {
       "file": "tests/test_raster_backend.py",

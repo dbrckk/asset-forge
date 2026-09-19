@@ -586,7 +586,7 @@
       "source": {
         "file": "asset_forge.py",
         "start": 565,
-        "end": 1012
+        "end": 1025
       },
       "symbol_dependencies": [
         {
@@ -774,7 +774,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 100,
+              "line": 113,
               "kind": "function",
               "language": "python"
             }
@@ -794,11 +794,23 @@
           "relation": "imported_module"
         },
         {
+          "symbol": "execute_generated_vector_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 95,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
           "symbol": "generator_backend_status",
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 18,
+              "line": 21,
               "kind": "function",
               "language": "python"
             }
@@ -1068,21 +1080,105 @@
             }
           ],
           "relation": "imported_module"
-        },
+        }
+      ],
+      "dependency_count": 40
+    },
+    "GenerationError": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 17,
+        "end": 18
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "generator_backend_status": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 21,
+        "end": 40
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "build_generation_prompt": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 43,
+        "end": 84
+      },
+      "symbol_dependencies": [
         {
-          "symbol": "validate_gltf_profile",
+          "symbol": "GenerationError",
           "definitions": [
             {
-              "file": "gltf_tools.py",
-              "line": 314,
+              "file": "generator_backends.py",
+              "line": 17,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "pollinations_command": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 87,
+        "end": 110
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 43,
               "kind": "function",
               "language": "python"
             }
           ],
-          "relation": "imported_module"
+          "relation": "same_file"
         }
       ],
-      "dependency_count": 40
+      "dependency_count": 1
+    },
+    "execute_generated_asset": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 113,
+        "end": 181
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 17,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "pollinations_command",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 87,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
     },
     "ProductionExecutionError": {
       "source": {
@@ -1117,7 +1213,41 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 100,
+              "line": 113,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "execute_generated_vector_job": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 95,
+        "end": 192
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 10,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 113,
               "kind": "function",
               "language": "python"
             }
@@ -1129,18 +1259,600 @@
     },
     "job": {
       "source": {
-        "file": "tests/test_production_executor.py",
-        "start": 11,
-        "end": 22
+        "file": "tests/test_generator_backends.py",
+        "start": 15,
+        "end": 30
       },
       "symbol_dependencies": [],
       "dependency_count": 0
     },
+    "GeneratorBackendsTests": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 33,
+        "end": 108
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 17,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 84,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 43,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 113,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator_backend_status",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 21,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "pollinations_command",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 87,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 81,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_backend_status_reports_auth_without_secret_value",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 69,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_execute_generated_asset_uses_bounded_subprocess_and_output",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 78,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_pollinations_command_never_contains_api_key",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 40,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_prompt_preserves_hard_sprite_constraints",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 34,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_vector_generation_defaults_to_recraft_svg_model",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 52,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 14
+    },
+    "test_prompt_preserves_hard_sprite_constraints": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 34,
+        "end": 38
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 43,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_pollinations_command_never_contains_api_key": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 40,
+        "end": 50
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "pollinations_command",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 87,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_vector_generation_defaults_to_recraft_svg_model": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 52,
+        "end": 67
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 43,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "pollinations_command",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 87,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_backend_status_reports_auth_without_secret_value": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 69,
+        "end": 76
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "generator_backend_status",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 21,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_execute_generated_asset_uses_bounded_subprocess_and_output": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 78,
+        "end": 102
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 84,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 113,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 81,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "runner": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 81,
+        "end": 201
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 17,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 84,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 43,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 113,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 6
+    },
+    "Result": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 84,
+        "end": 204
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 17,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 43,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 113,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 81,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unsupported_generated_type_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 104,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 6
+    },
+    "test_unsupported_generated_type_fails_closed": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 104,
+        "end": 108
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 17,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "build_generation_prompt",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 43,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
     "ProductionExecutorTests": {
       "source": {
         "file": "tests/test_production_executor.py",
-        "start": 25,
-        "end": 119
+        "start": 26,
+        "end": 194
       },
       "symbol_dependencies": [
         {
@@ -1156,11 +1868,23 @@
           "relation": "imported_module"
         },
         {
+          "symbol": "copy_step",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 166,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
           "symbol": "encode",
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 65,
+              "line": 66,
               "kind": "function",
               "language": "python"
             }
@@ -1180,23 +1904,47 @@
           "relation": "imported_module"
         },
         {
+          "symbol": "execute_generated_vector_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 95,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
           "symbol": "generator",
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 30,
+              "line": 31,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 60,
+              "line": 61,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 88,
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
               "kind": "function",
               "language": "python"
             }
@@ -1208,7 +1956,19 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 11,
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 129,
               "kind": "function",
               "language": "python"
             }
@@ -1220,13 +1980,37 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 35,
+              "line": 36,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 93,
+              "line": 94,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "profile_validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sanitizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 125,
               "kind": "function",
               "language": "python"
             }
@@ -1238,7 +2022,19 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 26,
+              "line": 27,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_generated_vector_is_sanitized_normalized_and_validated",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 110,
               "kind": "function",
               "language": "python"
             }
@@ -1250,7 +2046,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 109,
+              "line": 184,
               "kind": "function",
               "language": "python"
             }
@@ -1262,7 +2058,19 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 84,
+              "line": 85,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_vector_validation_errors_block_promotion",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 154,
               "kind": "function",
               "language": "python"
             }
@@ -1274,7 +2082,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 56,
+              "line": 57,
               "kind": "function",
               "language": "python"
             }
@@ -1286,13 +2094,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 39,
+              "line": 40,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 70,
+              "line": 71,
               "kind": "function",
               "language": "python"
             }
@@ -1300,13 +2108,13 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 11
+      "dependency_count": 18
     },
     "test_generated_png_flows_through_processing_validation_and_report": {
       "source": {
         "file": "tests/test_production_executor.py",
-        "start": 26,
-        "end": 54
+        "start": 27,
+        "end": 55
       },
       "symbol_dependencies": [
         {
@@ -1326,19 +2134,31 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 30,
+              "line": 31,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 60,
+              "line": 61,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 88,
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
               "kind": "function",
               "language": "python"
             }
@@ -1350,7 +2170,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 11,
+              "line": 12,
               "kind": "function",
               "language": "python"
             }
@@ -1362,13 +2182,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 35,
+              "line": 36,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 93,
+              "line": 94,
               "kind": "function",
               "language": "python"
             }
@@ -1380,13 +2200,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 39,
+              "line": 40,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 70,
+              "line": 71,
               "kind": "function",
               "language": "python"
             }
@@ -1399,28 +2219,16 @@
     "generator": {
       "source": {
         "file": "tests/test_production_executor.py",
-        "start": 30,
-        "end": 150
+        "start": 31,
+        "end": 151
       },
       "symbol_dependencies": [
-        {
-          "symbol": "ProductionExecutionError",
-          "definitions": [
-            {
-              "file": "production_executor.py",
-              "line": 10,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
         {
           "symbol": "encode",
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 65,
+              "line": 66,
               "kind": "function",
               "language": "python"
             }
@@ -1440,11 +2248,35 @@
           "relation": "imported_module"
         },
         {
+          "symbol": "execute_generated_vector_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 95,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
           "symbol": "job",
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 11,
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 129,
               "kind": "function",
               "language": "python"
             }
@@ -1456,13 +2288,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 35,
+              "line": 36,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 93,
+              "line": 94,
               "kind": "function",
               "language": "python"
             }
@@ -1470,11 +2302,35 @@
           "relation": "same_file"
         },
         {
-          "symbol": "test_non_raster_target_fails_closed",
+          "symbol": "profile_validator",
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 109,
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sanitizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 125,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_generated_vector_is_sanitized_normalized_and_validated",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 110,
               "kind": "function",
               "language": "python"
             }
@@ -1486,7 +2342,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 84,
+              "line": 85,
               "kind": "function",
               "language": "python"
             }
@@ -1498,7 +2354,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 56,
+              "line": 57,
               "kind": "function",
               "language": "python"
             }
@@ -1510,13 +2366,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 39,
+              "line": 40,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 70,
+              "line": 71,
               "kind": "function",
               "language": "python"
             }
@@ -1524,33 +2380,21 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 9
+      "dependency_count": 12
     },
     "optimizer": {
       "source": {
         "file": "tests/test_production_executor.py",
-        "start": 35,
-        "end": 155
+        "start": 36,
+        "end": 156
       },
       "symbol_dependencies": [
-        {
-          "symbol": "ProductionExecutionError",
-          "definitions": [
-            {
-              "file": "production_executor.py",
-              "line": 10,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
         {
           "symbol": "encode",
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 65,
+              "line": 66,
               "kind": "function",
               "language": "python"
             }
@@ -1570,23 +2414,47 @@
           "relation": "imported_module"
         },
         {
+          "symbol": "execute_generated_vector_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 95,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
           "symbol": "generator",
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 30,
+              "line": 31,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 60,
+              "line": 61,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 88,
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
               "kind": "function",
               "language": "python"
             }
@@ -1598,7 +2466,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 11,
+              "line": 12,
               "kind": "function",
               "language": "python"
             }
@@ -1606,11 +2474,47 @@
           "relation": "same_file"
         },
         {
-          "symbol": "test_non_raster_target_fails_closed",
+          "symbol": "normalizer",
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 109,
+              "line": 129,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "profile_validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sanitizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 125,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_generated_vector_is_sanitized_normalized_and_validated",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 110,
               "kind": "function",
               "language": "python"
             }
@@ -1622,7 +2526,19 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 84,
+              "line": 85,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_vector_validation_errors_block_promotion",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 154,
               "kind": "function",
               "language": "python"
             }
@@ -1634,7 +2550,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 56,
+              "line": 57,
               "kind": "function",
               "language": "python"
             }
@@ -1646,13 +2562,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 39,
+              "line": 40,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 70,
+              "line": 71,
               "kind": "function",
               "language": "python"
             }
@@ -1660,33 +2576,21 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 9
+      "dependency_count": 13
     },
     "validator": {
       "source": {
         "file": "tests/test_production_executor.py",
-        "start": 39,
-        "end": 159
+        "start": 40,
+        "end": 160
       },
       "symbol_dependencies": [
-        {
-          "symbol": "ProductionExecutionError",
-          "definitions": [
-            {
-              "file": "production_executor.py",
-              "line": 10,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
         {
           "symbol": "encode",
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 65,
+              "line": 66,
               "kind": "function",
               "language": "python"
             }
@@ -1706,23 +2610,47 @@
           "relation": "imported_module"
         },
         {
+          "symbol": "execute_generated_vector_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 95,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
           "symbol": "generator",
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 30,
+              "line": 31,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 60,
+              "line": 61,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 88,
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
               "kind": "function",
               "language": "python"
             }
@@ -1734,7 +2662,19 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 11,
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 129,
               "kind": "function",
               "language": "python"
             }
@@ -1746,13 +2686,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 35,
+              "line": 36,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 93,
+              "line": 94,
               "kind": "function",
               "language": "python"
             }
@@ -1760,11 +2700,35 @@
           "relation": "same_file"
         },
         {
-          "symbol": "test_non_raster_target_fails_closed",
+          "symbol": "profile_validator",
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 109,
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sanitizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 125,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_generated_vector_is_sanitized_normalized_and_validated",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 110,
               "kind": "function",
               "language": "python"
             }
@@ -1776,7 +2740,19 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 84,
+              "line": 85,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_vector_validation_errors_block_promotion",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 154,
               "kind": "function",
               "language": "python"
             }
@@ -1788,7 +2764,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 56,
+              "line": 57,
               "kind": "function",
               "language": "python"
             }
@@ -1796,13 +2772,13 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 9
+      "dependency_count": 13
     },
     "test_webp_target_encodes_before_validation": {
       "source": {
         "file": "tests/test_production_executor.py",
-        "start": 56,
-        "end": 82
+        "start": 57,
+        "end": 83
       },
       "symbol_dependencies": [
         {
@@ -1810,7 +2786,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 65,
+              "line": 66,
               "kind": "function",
               "language": "python"
             }
@@ -1834,19 +2810,31 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 30,
+              "line": 31,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 60,
+              "line": 61,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 88,
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
               "kind": "function",
               "language": "python"
             }
@@ -1858,7 +2846,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 11,
+              "line": 12,
               "kind": "function",
               "language": "python"
             }
@@ -1870,13 +2858,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 35,
+              "line": 36,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 93,
+              "line": 94,
               "kind": "function",
               "language": "python"
             }
@@ -1888,13 +2876,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 39,
+              "line": 40,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 70,
+              "line": 71,
               "kind": "function",
               "language": "python"
             }
@@ -1907,8 +2895,8 @@
     "encode": {
       "source": {
         "file": "tests/test_production_executor.py",
-        "start": 65,
-        "end": 185
+        "start": 66,
+        "end": 186
       },
       "symbol_dependencies": [
         {
@@ -1924,6 +2912,18 @@
           "relation": "imported_module"
         },
         {
+          "symbol": "copy_step",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 166,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
           "symbol": "execute_generated_raster_job",
           "definitions": [
             {
@@ -1936,23 +2936,47 @@
           "relation": "imported_module"
         },
         {
+          "symbol": "execute_generated_vector_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 95,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
           "symbol": "generator",
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 30,
+              "line": 31,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 60,
+              "line": 61,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 88,
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
               "kind": "function",
               "language": "python"
             }
@@ -1964,7 +2988,19 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 11,
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 129,
               "kind": "function",
               "language": "python"
             }
@@ -1976,13 +3012,49 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 35,
+              "line": 36,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 93,
+              "line": 94,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "profile_validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sanitizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 125,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_generated_vector_is_sanitized_normalized_and_validated",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 110,
               "kind": "function",
               "language": "python"
             }
@@ -1994,7 +3066,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 109,
+              "line": 184,
               "kind": "function",
               "language": "python"
             }
@@ -2006,7 +3078,19 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 84,
+              "line": 85,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_vector_validation_errors_block_promotion",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 154,
               "kind": "function",
               "language": "python"
             }
@@ -2018,13 +3102,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 39,
+              "line": 40,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 70,
+              "line": 71,
               "kind": "function",
               "language": "python"
             }
@@ -2032,13 +3116,13 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 8
+      "dependency_count": 15
     },
     "test_validation_errors_block_artifact_promotion": {
       "source": {
         "file": "tests/test_production_executor.py",
-        "start": 84,
-        "end": 107
+        "start": 85,
+        "end": 108
       },
       "symbol_dependencies": [
         {
@@ -2058,19 +3142,31 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 30,
+              "line": 31,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 60,
+              "line": 61,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 88,
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
               "kind": "function",
               "language": "python"
             }
@@ -2082,7 +3178,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 11,
+              "line": 12,
               "kind": "function",
               "language": "python"
             }
@@ -2094,13 +3190,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 35,
+              "line": 36,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 93,
+              "line": 94,
               "kind": "function",
               "language": "python"
             }
@@ -2112,13 +3208,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 39,
+              "line": 40,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 70,
+              "line": 71,
               "kind": "function",
               "language": "python"
             }
@@ -2128,11 +3224,929 @@
       ],
       "dependency_count": 5
     },
+    "test_generated_vector_is_sanitized_normalized_and_validated": {
+      "source": {
+        "file": "tests/test_production_executor.py",
+        "start": 110,
+        "end": 152
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "execute_generated_vector_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 95,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 31,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 61,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 129,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "profile_validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sanitizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 125,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 40,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 71,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 7
+    },
+    "sanitizer": {
+      "source": {
+        "file": "tests/test_production_executor.py",
+        "start": 125,
+        "end": 245
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 10,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "copy_step",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 166,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_raster_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 14,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_vector_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 95,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 31,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 61,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 129,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "profile_validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_non_raster_target_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 184,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_vector_validation_errors_block_promotion",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 154,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 40,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 71,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 11
+    },
+    "normalizer": {
+      "source": {
+        "file": "tests/test_production_executor.py",
+        "start": 129,
+        "end": 249
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 10,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "copy_step",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 166,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_raster_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 14,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_vector_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 95,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 31,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 61,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "profile_validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sanitizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 125,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_non_raster_target_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 184,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_vector_validation_errors_block_promotion",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 154,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 40,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 71,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 11
+    },
+    "profile_validator": {
+      "source": {
+        "file": "tests/test_production_executor.py",
+        "start": 136,
+        "end": 256
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 10,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "copy_step",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 166,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_raster_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 14,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_vector_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 95,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 31,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 61,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 129,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sanitizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 125,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_non_raster_target_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 184,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_vector_validation_errors_block_promotion",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 154,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 40,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 71,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 11
+    },
+    "test_vector_validation_errors_block_promotion": {
+      "source": {
+        "file": "tests/test_production_executor.py",
+        "start": 154,
+        "end": 182
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "copy_step",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 166,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_vector_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 95,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 31,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 61,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 129,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "profile_validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sanitizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 125,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 7
+    },
+    "copy_step": {
+      "source": {
+        "file": "tests/test_production_executor.py",
+        "start": 166,
+        "end": 286
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 10,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_raster_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 14,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_vector_job",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 95,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 31,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 61,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "normalizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 129,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "profile_validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sanitizer",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 125,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_non_raster_target_fails_closed",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 184,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validator",
+          "definitions": [
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 40,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 71,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 10
+    },
     "test_non_raster_target_fails_closed": {
       "source": {
         "file": "tests/test_production_executor.py",
-        "start": 109,
-        "end": 119
+        "start": 184,
+        "end": 194
       },
       "symbol_dependencies": [
         {
@@ -2164,19 +4178,31 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 30,
+              "line": 31,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 60,
+              "line": 61,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 88,
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 117,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_production_executor.py",
+              "line": 161,
               "kind": "function",
               "language": "python"
             }
@@ -2188,7 +4214,7 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 11,
+              "line": 12,
               "kind": "function",
               "language": "python"
             }
@@ -2200,13 +4226,13 @@
           "definitions": [
             {
               "file": "tests/test_production_executor.py",
-              "line": 39,
+              "line": 40,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_production_executor.py",
-              "line": 70,
+              "line": 71,
               "kind": "function",
               "language": "python"
             }

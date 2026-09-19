@@ -1559,6 +1559,10 @@ def test_pollinations_command_never_contains_api_key(self)
 ⋮----
 command = pollinations_command(
 ⋮----
+def test_vector_generation_defaults_to_recraft_svg_model(self)
+⋮----
+vector_job = job()
+⋮----
 def test_backend_status_reports_auth_without_secret_value(self)
 ⋮----
 status = generator_backend_status(
@@ -1929,6 +1933,24 @@ def test_webp_target_encodes_before_validation(self)
 def encode(source, output, **kwargs)
 ⋮----
 def test_validation_errors_block_artifact_promotion(self)
+⋮----
+def test_generated_vector_is_sanitized_normalized_and_validated(self)
+⋮----
+vector_job = job("svg")
+⋮----
+source = Path(output_dir) / "generated-source.svg"
+⋮----
+def sanitizer(source, output)
+⋮----
+def normalizer(source, output)
+⋮----
+def profile_validator(path, profile)
+⋮----
+report = execute_generated_vector_job(
+⋮----
+def test_vector_validation_errors_block_promotion(self)
+⋮----
+def copy_step(source, output)
 ⋮----
 def test_non_raster_target_fails_closed(self)
 ````
@@ -3548,6 +3570,9 @@ output_dir = args.output_dir
 delivery = job.get("delivery") if isinstance(job, dict) else None
 configured = delivery.get("outputDir") if isinstance(delivery, dict) else None
 output_dir = Path(configured) if isinstance(configured, str) and configured.strip() else Path("build/asset-forge") / str(job.get("requestId") or "job")
+⋮----
+result = execute_generated_vector_job(
+⋮----
 result = execute_generated_raster_job(
 ⋮----
 metadata = pack_uniform_atlas(
@@ -3738,6 +3763,9 @@ valid = valid and not errors
 ## File: generator_backends.py
 ````python
 RASTER_GENERATED_TYPES = {"sprite", "sprite-sheet", "tileset", "pixel-art"}
+VECTOR_GENERATED_TYPES = {"vector", "svg", "icon", "ui-vector", "logo"}
+SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES
+DEFAULT_VECTOR_MODEL = "recraft/recraft-v4.1-vector"
 ⋮----
 class GenerationError(RuntimeError)
 ⋮----
@@ -3769,9 +3797,11 @@ frames = constraints.get("expectedFrames")
 prompt = " ".join(details)
 ⋮----
 prompt = build_generation_prompt(job)
-command = [
-⋮----
 asset_type = str(job.get("assetType") or "")
+effective_model = model
+⋮----
+effective_model = DEFAULT_VECTOR_MODEL
+command = [
 ⋮----
 executable = shutil.which("polli")
 ⋮----
@@ -3779,8 +3809,10 @@ timeout = float(timeout_seconds)
 ⋮----
 output_dir = Path(output_dir)
 ⋮----
-output = output_dir / "generated-source.png"
-command = pollinations_command(job, output, model=model, executable=executable)
+vector = asset_type in VECTOR_GENERATED_TYPES
+output = output_dir / ("generated-source.svg" if vector else "generated-source.png")
+effective_model = model or (DEFAULT_VECTOR_MODEL if vector else None)
+command = pollinations_command(job, output, model=effective_model, executable=executable)
 completed = runner(
 ⋮----
 stderr = str(completed.stderr or "").strip()
@@ -4542,6 +4574,15 @@ processing = webp_encoder(source, final, lossless=True)
 ⋮----
 report = {
 report_path = out / "production-report.json"
+⋮----
+asset_type = str(job.get("assetType") or "")
+⋮----
+sanitized = out / "generated-sanitized.svg"
+final = out / f"{asset_id}.svg"
+sanitize_result = sanitizer(source, sanitized)
+normalize_result = normalizer(sanitized, final)
+⋮----
+profile = {
 ````
 
 ## File: raster_backend.py

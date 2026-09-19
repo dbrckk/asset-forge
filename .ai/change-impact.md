@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 3234d9ac7790d3a1ddc33b1a42e32cdd64321a8c
-Head: 0cf3535a367b298bbf6f4970e1d406737ac0e285
+Base: 4a1639f13021c73137d756a9adf84fd84321b94d
+Head: d69690a7639fddd70e2961acf56dd37efb19e2dc
 
 ## Changed files
-- M .github/workflows/validate.yml
+- M asset_forge.py
 
 ## Affected areas
-- .github
+- (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_asset_forge.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.
