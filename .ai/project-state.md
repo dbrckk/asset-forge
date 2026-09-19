@@ -70,7 +70,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Consider additional engine adapters and higher-level scene systems; runtime-atlas now includes retained single/multi selection, primary selection tracking, additive/toggle selection, and camera-aware marquee rectangle selection with intersect/contain modes.
+- Harden and productize the retained 2D scene/editor runtime; multi-selection can now be dragged as one hierarchy-safe group with primary-anchored snapping and automatic avoidance of parent+child double movement.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -91,7 +91,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-19: latest GitHub source inspected after adding createSpriteSelectionModel(), primary/additive/toggle selection, selectSpriteInstancesInRect() with intersect/contain modes, and canvas-runtime selection/selectEntity()/clearSelection()/selectEntitiesInRect() integrated with camera/layer/hierarchy preparation.
+- 2026-09-19: latest GitHub source inspected after adding moveSelectedSpriteEntitiesByWorldDelta(), hierarchy-aware selected-root filtering, primary-anchored group snapping, runtime moveSelectionByWorldDelta(), and opt-in pointerOptions.dragSelection for automatic group dragging.
 
 <!-- AUTO:START -->
 ## Automatic repository state
