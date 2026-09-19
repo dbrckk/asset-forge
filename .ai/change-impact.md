@@ -1,13 +1,13 @@
 # Change impact
 
-Base: dea129eef18d7f316a9293d96af5e376441c8a68
-Head: bc9da6b75812eb693f197c926ff579d32cd78ec1
+Base: 1e8836d942b677db79fe8266be32292ae1c8231d
+Head: 8aa6e752200d79f0e397add1f04151cb7b67a59b
 
 ## Changed files
-- M tests/runtime_atlas_web.test.mjs
+- M README.md
 
 ## Affected areas
-- tests
+- (root)
 
 ## Related test candidates
 - No direct filename-based test match detected.

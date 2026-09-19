@@ -96,19 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T15:41:09Z
+Generated: 2026-09-19T15:46:46Z
 
 ### Git
 - Branch: `main`
-- Head: `bc9da6b75812`
-- Commit date: 2026-09-19T17:40:57+02:00
-- Commit: test: cover selection group rotation and scaling
+- Head: `fcbff034f9e8`
+- Commit date: 2026-09-19T17:46:43+02:00
+- Commit: docs: record duplicate copy paste milestone
 - Tracked files: 209
 
 ### Recently changed files
+- `README.md`
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
-- `README.md`
 
 ### Project signals
 - No common build descriptor detected
