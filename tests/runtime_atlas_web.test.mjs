@@ -10,6 +10,8 @@ import {
   drawAnimationPlayerCanvas2D,
   animationEventsBetween,
   animationDurationSeconds,
+  buildSpriteBatch,
+  drawSpriteBatchCanvas2D,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -325,4 +327,97 @@ assert.deepEqual(onceMarkerEvents, ["fire"]);
 assert.throws(
   () => animationEventsBetween(eventIndexed.animation("event-loop"), 1, 0),
   /invalid animation event interval/,
+);
+
+
+const rotatedBatch = buildSpriteBatch(indexed, [
+  { frame: "hero_0.png", x: 100, y: 200, scale: 2 },
+]);
+assert.equal(rotatedBatch.instanceCount, 1);
+assert.equal(rotatedBatch.vertexCount, 4);
+assert.equal(rotatedBatch.indexCount, 6);
+assert.equal(rotatedBatch.indexType, "uint16");
+assert.deepEqual(Array.from(rotatedBatch.indices), [0, 1, 2, 0, 2, 3]);
+assert.deepEqual(
+  Array.from(rotatedBatch.vertices),
+  [
+    104, 202, 10 / 64, 28 / 64,
+    120, 202, 10 / 64, 20 / 64,
+    120, 214, 16 / 64, 20 / 64,
+    104, 214, 16 / 64, 28 / 64,
+  ],
+);
+assert.deepEqual(rotatedBatch.bounds[0], {
+  x: 100,
+  y: 200,
+  width: 24,
+  height: 20,
+  visibleX: 104,
+  visibleY: 202,
+  visibleWidth: 16,
+  visibleHeight: 12,
+  frameIndex: 0,
+  frameName: "hero_0.png",
+});
+
+const plainBatch = buildSpriteBatch(indexRuntimeAtlas(plainAtlas), [
+  { frame: "plain", x: 10, y: 20, scaleX: 2, scaleY: 3 },
+]);
+assert.deepEqual(
+  Array.from(plainBatch.vertices),
+  [
+    12, 23, 1 / 16, 2 / 16,
+    20, 23, 5 / 16, 2 / 16,
+    20, 38, 5 / 16, 7 / 16,
+    12, 38, 1 / 16, 7 / 16,
+  ],
+);
+
+const canvasBatchCalls = [];
+const canvasBatchCtx = {
+  save() { canvasBatchCalls.push(["save"]); },
+  restore() { canvasBatchCalls.push(["restore"]); },
+  translate(...args) { canvasBatchCalls.push(["translate", ...args]); },
+  rotate(...args) { canvasBatchCalls.push(["rotate", ...args]); },
+  drawImage(...args) { canvasBatchCalls.push(["drawImage", ...args]); },
+};
+const canvasBatchBounds = drawSpriteBatchCanvas2D(
+  canvasBatchCtx,
+  image,
+  animated,
+  [
+    { frame: 0, x: 1, y: 2, scale: 1 },
+    { frame: 1, x: 20, y: 30, scale: 2 },
+  ],
+);
+assert.deepEqual(canvasBatchBounds, [
+  { x: 1, y: 2, width: 6, height: 7 },
+  { x: 20, y: 30, width: 12, height: 14 },
+]);
+assert.equal(
+  canvasBatchCalls.filter((entry) => entry[0] === "drawImage").length,
+  2,
+);
+
+assert.throws(
+  () => buildSpriteBatch(indexed, [{}]),
+  /frame not found/,
+);
+assert.throws(
+  () => buildSpriteBatch(indexed, [{ frame: 0, scale: 0 }]),
+  /scale must be > 0/,
+);
+assert.throws(
+  () => buildSpriteBatch(indexed, [{ frame: 0 }], { maxInstances: 0 }),
+  /maxInstances must be a positive integer/,
+);
+assert.throws(
+  () => buildSpriteBatch(indexed, [{ frame: 0 }, { frame: 0 }], { maxInstances: 1 }),
+  /exceeds maxInstances/,
+);
+assert.throws(
+  () => drawSpriteBatchCanvas2D(canvasBatchCtx, image, indexRuntimeAtlas(plainAtlas), [
+    { frame: "plain", scaleX: 1, scaleY: 2 },
+  ]),
+  /uniform scale/,
 );
