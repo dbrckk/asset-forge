@@ -1145,3 +1145,51 @@ Disabled state is inherited by descendants by default. Use `inheritDisabled: fal
 `buildSpriteEntityInstances()` is the shared bridge used by entity rendering and the version-aware entity batch cache. Hierarchy resolution is enabled by default for entity rendering; pass `hierarchy: false` for legacy local-space behavior.
 
 Because parent mutations increment `entityStore.version`, cached batches are invalidated automatically when a parent moves, scales, changes depth, or changes enabled state.
+
+
+### Sprite rotation and pivots
+
+Sprite entities and raw sprite instances now support:
+
+```text
+rotation   // radians, clockwise-positive in canvas pixel coordinates
+pivotX
+pivotY
+```
+
+`pivotX/pivotY` are expressed in the entity's unscaled logical source-space pixels. The world pivot is derived from entity position and scale.
+
+Parent-child hierarchy resolution now rotates a child's local offset by the parent's world rotation before adding it to the parent position. World rotation is additive across the hierarchy:
+
+```text
+childWorldRotation = parentWorldRotation + childLocalRotation
+```
+
+The instanced WebGL buffer contract has expanded from 12 to 16 floats per sprite:
+
+```text
+visibleX
+visibleY
+visibleWidth
+visibleHeight
+u0
+v0
+u1
+v1
+atlasRotationFlag
+sourceWidth
+sourceHeight
+spriteRotationRadians
+pivotWorldX
+pivotWorldY
+reserved0
+reserved1
+```
+
+This is a 64-byte instance record. The WebGL2 shader rotates each visible sprite quad around the world-space pivot while retaining the independent atlas-packing 90-degree UV rotation logic.
+
+`instancedSpriteAttributeViews()` now exposes a fourth instanced attribute at location 4 (`aPivotAndReserved`). Existing location 0-3 meanings are preserved.
+
+The classic CPU-generated quad batch also applies sprite rotation around the same pivot. `spriteInstanceBounds()` returns rotation-aware axis-aligned bounding boxes, so viewport culling remains correct for rotated sprites.
+
+Because rotations and pivots live in the entity store, changing any of them increments `entityStore.version` and naturally invalidates the version-aware batch cache.
