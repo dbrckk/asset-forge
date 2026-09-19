@@ -1786,3 +1786,65 @@ pointerOptions: {
 If `dragBounds` is omitted, the runtime automatically reuses `worldBounds` when available.
 
 This allows editors and games to constrain draggable entities to the playable map without maintaining a second bounds configuration.
+
+
+### Persistent selection and marquee rectangle selection
+
+The runtime now includes a retained selection model:
+
+```js
+const selection = createSpriteSelectionModel();
+selection.select("player");
+selection.select("enemy", { additive: true });
+selection.select("enemy", { toggle: true });
+selection.clear();
+```
+
+Selection state tracks:
+
+```text
+ids
+primaryId
+count
+```
+
+`primaryId` is the most recently selected entity and is useful for inspector panels, gizmo ownership, or primary transform handles.
+
+The low-level marquee helper:
+
+```js
+selectSpriteInstancesInRect(
+  atlasPages,
+  instances,
+  rect,
+  { mode: "intersect" },
+)
+```
+
+supports:
+
+```text
+intersect
+contain
+```
+
+Rectangle coordinates may be dragged in either direction; min/max normalization is automatic.
+
+The canvas runtime exposes:
+
+```js
+runtime.selection
+runtime.selectEntity(entityId, options)
+runtime.clearSelection()
+runtime.selectEntitiesInRect(rect, options)
+```
+
+Marquee selection reuses normal entity preparation, including hierarchy, visibility masks, camera, zoom, and parallax before testing sprite bounds.
+
+Additive marquee selection is supported with:
+
+```js
+runtime.selectEntitiesInRect(rect, {
+  additive: true,
+});
+```
