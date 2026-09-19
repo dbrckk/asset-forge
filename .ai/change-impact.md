@@ -1,13 +1,13 @@
 # Change impact
 
-Base: a3a8fce91cf43224760ca7172cf52d1500abfb07
-Head: 0fdaff2d4029a4b232334d1d1125c85063df1895
+Base: 99979aee7e82d1ac1cab2a6cccd93a892d361e66
+Head: a6dc63596c45a9b1e1ed40aa4c750d636c0da878
 
 ## Changed files
-- M benchmarks/runtime_atlas_web.bench.mjs
+- M tests/runtime_atlas_web.test.mjs
 
 ## Affected areas
-- benchmarks
+- tests
 
 ## Related test candidates
 - No direct filename-based test match detected.

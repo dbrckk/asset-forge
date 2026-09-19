@@ -96,18 +96,18 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T17:59:30Z
+Generated: 2026-09-19T18:01:10Z
 
 ### Git
 - Branch: `main`
-- Head: `0fdaff2d4029`
-- Commit date: 2026-09-19T19:59:19+02:00
-- Commit: perf: enrich runtime atlas benchmark telemetry
-- Tracked files: 212
+- Head: `a6dc63596c45`
+- Commit date: 2026-09-19T20:01:00+02:00
+- Commit: test: correct rotated culling fallback fixture
+- Tracked files: 213
 
 ### Recently changed files
-- `benchmarks/runtime_atlas_web.bench.mjs`
 - `tests/runtime_atlas_web.test.mjs`
+- `benchmarks/runtime_atlas_web.bench.mjs`
 - `web/runtime_atlas.mjs`
 - `starlist_bridge.py`
 
