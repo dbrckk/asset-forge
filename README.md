@@ -566,3 +566,34 @@ drawFrameCanvas2D(context, image, frame, 32, 48);
 For WebGL/custom renderers, `sourceOrientedUVs(frame)` returns UV coordinates in source-vertex order — top-left, top-right, bottom-right, bottom-left — with rotation already accounted for. `frameQuad(frame)` exposes the raw normalized UV rectangle plus source-size/trim/rotation metadata.
 
 The web helper is smoke-tested with Node 22 in CI against the versioned runtime atlas example.
+
+
+### Runtime animations
+
+Runtime atlas export can now include animations while keeping the base v1 format backward compatible.
+
+Infer groups from frame filenames:
+
+```bash
+python asset_forge.py export-runtime-atlas build/atlas.json build/runtime-atlas.json \
+  --infer-animations --fps 12
+```
+
+Or provide an explicit animation JSON file using the same `animations` structure already accepted by the Godot exporter:
+
+```bash
+python asset_forge.py export-runtime-atlas build/atlas.json build/runtime-atlas.json \
+  --animations animations.json
+```
+
+`--animations` and `--infer-animations` are mutually exclusive. Runtime animations contain `name`, `fps`, `loop`, and normalized frame entries with `index` plus a positive `duration` multiplier. Frame references are validated against the atlas.
+
+The web consumer indexes animations by name and exposes:
+
+```js
+const atlas = indexRuntimeAtlas(runtimeAtlas);
+const sample = animationFrameAtTime(atlas, "run", elapsedSeconds);
+drawFrameCanvas2D(ctx, image, sample.frame, x, y);
+```
+
+Looping animations wrap by total duration. Non-looping animations clamp to the final frame and return `finished: true`. Per-frame duration multipliers are interpreted in units of `1 / fps`.
