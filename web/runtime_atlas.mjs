@@ -8,6 +8,7 @@ export function indexRuntimeAtlas(atlas) {
 
   const byIndex = new Map();
   const byName = new Map();
+  const animations = new Map();
 
   for (const frame of atlas.frames) {
     if (byIndex.has(frame.index)) {
@@ -22,10 +23,18 @@ export function indexRuntimeAtlas(atlas) {
     }
   }
 
+  for (const animation of atlas.animations ?? []) {
+    if (animations.has(animation.name)) {
+      throw new Error(`duplicate runtime atlas animation name ${animation.name}`);
+    }
+    animations.set(animation.name, animation);
+  }
+
   return {
     atlas,
     byIndex,
     byName,
+    animations,
     frame(indexOrName) {
       const frame =
         typeof indexOrName === "number"
@@ -35,6 +44,13 @@ export function indexRuntimeAtlas(atlas) {
         throw new Error(`runtime atlas frame not found: ${indexOrName}`);
       }
       return frame;
+    },
+    animation(name) {
+      const animation = animations.get(name);
+      if (!animation) {
+        throw new Error(`runtime atlas animation not found: ${name}`);
+      }
+      return animation;
     },
   };
 }
@@ -147,4 +163,63 @@ export function sourceOrientedUVs(frame) {
     { u: u1, v: v0 },
     { u: u1, v: v1 },
   ];
+}
+
+
+export function animationFrameAtTime(indexedAtlas, animationOrName, timeSeconds) {
+  if (!Number.isFinite(timeSeconds)) {
+    throw new Error("timeSeconds must be finite");
+  }
+
+  const animation =
+    typeof animationOrName === "string"
+      ? indexedAtlas.animation(animationOrName)
+      : animationOrName;
+
+  if (!animation || !(animation.fps > 0) || !Array.isArray(animation.frames) || animation.frames.length === 0) {
+    throw new Error("invalid runtime atlas animation");
+  }
+
+  const frameUnits = animation.frames.map((entry) => {
+    if (!(entry.duration > 0)) {
+      throw new Error("animation frame duration must be > 0");
+    }
+    return entry.duration;
+  });
+  const totalUnits = frameUnits.reduce((sum, value) => sum + value, 0);
+  const durationSeconds = totalUnits / animation.fps;
+
+  let t = Math.max(0, timeSeconds);
+  if (animation.loop) {
+    t = durationSeconds > 0 ? t % durationSeconds : 0;
+  } else if (t >= durationSeconds) {
+    const last = animation.frames[animation.frames.length - 1];
+    return {
+      animation,
+      frame: indexedAtlas.frame(last.index),
+      frameIndex: animation.frames.length - 1,
+      localTimeSeconds: durationSeconds,
+      durationSeconds,
+      finished: true,
+    };
+  }
+
+  const unitPosition = t * animation.fps;
+  let accumulated = 0;
+  for (let i = 0; i < animation.frames.length; i += 1) {
+    accumulated += frameUnits[i];
+    if (unitPosition < accumulated || i === animation.frames.length - 1) {
+      const entry = animation.frames[i];
+      return {
+        animation,
+        frame: indexedAtlas.frame(entry.index),
+        frameIndex: i,
+        localTimeSeconds: t,
+        durationSeconds,
+        finished: false,
+      };
+    }
+  }
+
+  throw new Error("unable to resolve animation frame");
 }
