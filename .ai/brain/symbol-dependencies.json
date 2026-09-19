@@ -5,6 +5,937 @@
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
   "symbols": {
+    "_positive_int": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 4,
+        "end": 10
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_non_negative_int": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 13,
+        "end": 19
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_normalize_runtime_animations": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 22,
+        "end": 143
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "build_runtime_atlas": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 146,
+        "end": 278
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_non_negative_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 13,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_normalize_runtime_animations",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_positive_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 4,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "validate_runtime_atlas": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 282,
+        "end": 651
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_non_negative_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 13,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_positive_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 4,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "read_size",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 404,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "read_size": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 404,
+        "end": 524
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_non_negative_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 13,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_positive_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 4,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "RuntimeAtlasTests": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 6,
+        "end": 383
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_build_runtime_atlas_normalizes_animation_events",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 300,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_build_runtime_atlas_normalizes_animations",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 195,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_build_runtime_atlas_rejects_event_at_animation_end",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 335,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_build_runtime_atlas_rejects_missing_animation_frame",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 233,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_defaults_non_rotated_source_region",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 56,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_exports_trim_and_rotation_semantics",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 7,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_rejects_duplicate_indices",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 110,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_rejects_rotation_dimension_mismatch",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 69,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_rejects_source_trim_out_of_bounds",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 90,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_accepts_generated_runtime_atlas",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 123,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_detects_frame_count_mismatch",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 145,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_detects_uv_drift",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 133,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_animation_frame_reference_drift",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 253,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_boolean_integer_fields",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 169,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_duplicate_animation_names",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 275,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_unknown_fields",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 157,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_unknown_nested_fields",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 181,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_unsorted_animation_events",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 356,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 282,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 20
+    },
+    "test_exports_trim_and_rotation_semantics": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 7,
+        "end": 54
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_defaults_non_rotated_source_region": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 56,
+        "end": 67
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_rejects_rotation_dimension_mismatch": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 69,
+        "end": 88
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_rejects_source_trim_out_of_bounds": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 90,
+        "end": 108
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_rejects_duplicate_indices": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 110,
+        "end": 121
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_validator_accepts_generated_runtime_atlas": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 123,
+        "end": 131
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 282,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_detects_uv_drift": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 133,
+        "end": 143
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 282,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_detects_frame_count_mismatch": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 145,
+        "end": 155
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 282,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_rejects_unknown_fields": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 157,
+        "end": 167
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 282,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_rejects_boolean_integer_fields": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 169,
+        "end": 179
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 282,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_rejects_unknown_nested_fields": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 181,
+        "end": 193
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 282,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_build_runtime_atlas_normalizes_animations": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 195,
+        "end": 231
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 282,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_build_runtime_atlas_rejects_missing_animation_frame": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 233,
+        "end": 251
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_validator_rejects_animation_frame_reference_drift": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 253,
+        "end": 273
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 282,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_rejects_duplicate_animation_names": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 275,
+        "end": 298
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 282,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_build_runtime_atlas_normalizes_animation_events": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 300,
+        "end": 333
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 282,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_build_runtime_atlas_rejects_event_at_animation_end": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 335,
+        "end": 354
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_validator_rejects_unsorted_animation_events": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 356,
+        "end": 383
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 282,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
     "indexRuntimeAtlas": {
       "source": {
         "file": "web/runtime_atlas.mjs",
@@ -50,13 +981,126 @@
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "createAnimationPlayer": {
+    "animationDurationSeconds": {
       "source": {
         "file": "web/runtime_atlas.mjs",
         "start": 228,
-        "end": 328
+        "end": 240
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "animationEventsBetween": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 242,
+        "end": 313
       },
       "symbol_dependencies": [
+        {
+          "symbol": "animationDurationSeconds",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 226,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "includeOccurrence",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 260,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "includeOccurrence": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 260,
+        "end": 380
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "animationFrameAtTime",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 167,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "createAnimationPlayer",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 314,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "emit",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 335,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "sample",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 350,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "createAnimationPlayer": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 316,
+        "end": 430
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "animationEventsBetween",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 241,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
         {
           "symbol": "animationFrameAtTime",
           "definitions": [
@@ -74,7 +1118,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 246,
+              "line": 335,
               "kind": "function",
               "language": "javascript"
             }
@@ -86,7 +1130,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 261,
+              "line": 350,
               "kind": "function",
               "language": "javascript"
             }
@@ -94,15 +1138,27 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 3
+      "dependency_count": 4
     },
     "emit": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 246,
-        "end": 366
+        "start": 335,
+        "end": 455
       },
       "symbol_dependencies": [
+        {
+          "symbol": "animationEventsBetween",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 241,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
         {
           "symbol": "animationFrameAtTime",
           "definitions": [
@@ -120,7 +1176,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 329,
+              "line": 431,
               "kind": "function",
               "language": "javascript"
             }
@@ -144,7 +1200,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 261,
+              "line": 350,
               "kind": "function",
               "language": "javascript"
             }
@@ -152,15 +1208,27 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 4
+      "dependency_count": 5
     },
     "sample": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 261,
-        "end": 381
+        "start": 350,
+        "end": 470
       },
       "symbol_dependencies": [
+        {
+          "symbol": "animationEventsBetween",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 241,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
         {
           "symbol": "animationFrameAtTime",
           "definitions": [
@@ -178,7 +1246,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 329,
+              "line": 431,
               "kind": "function",
               "language": "javascript"
             }
@@ -202,7 +1270,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 246,
+              "line": 335,
               "kind": "function",
               "language": "javascript"
             }
@@ -210,13 +1278,13 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 4
+      "dependency_count": 5
     },
     "drawAnimationPlayerCanvas2D": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 331,
-        "end": 349
+        "start": 433,
+        "end": 451
       },
       "symbol_dependencies": [
         {
@@ -236,7 +1304,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 261,
+              "line": 350,
               "kind": "function",
               "language": "javascript"
             }

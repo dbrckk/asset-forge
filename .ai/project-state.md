@@ -96,19 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T06:58:50Z
+Generated: 2026-09-19T07:02:53Z
 
 ### Git
 - Branch: `main`
-- Head: `e42fdaad2b22`
-- Commit date: 2026-09-19T08:58:42+02:00
-- Commit: docs: record runtime animation player milestone
-- Tracked files: 198
+- Head: `46504b8dafee`
+- Commit date: 2026-09-19T09:02:43+02:00
+- Commit: docs: record runtime animation event marker milestone
+- Tracked files: 201
 
 ### Recently changed files
 - `README.md`
+- `examples/runtime-atlas.json`
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
+- `tests/test_runtime_atlas.py`
 
 ### Project signals
 - No common build descriptor detected

@@ -450,6 +450,15 @@ jobs:
           "index": 0,
           "duration": 1
         }
+      ],
+      "events": [
+        {
+          "name": "footstep",
+          "timeSeconds": 0.05,
+          "payload": {
+            "foot": "left"
+          }
+        }
       ]
     }
   ]
@@ -946,6 +955,19 @@ jobs:
                 "duration": {"type": "number", "exclusiveMinimum": 0}
               }
             }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "timeSeconds"],
+              "additionalProperties": false,
+              "properties": {
+                "name": {"type": "string", "minLength": 1},
+                "timeSeconds": {"type": "number", "minimum": 0},
+                "payload": {"type": ["object", "null"]}
+              }
+            }
           }
         }
       }
@@ -1107,6 +1129,8 @@ onFrame(sample)
 onFinish(sample)
 ⋮----
 onLoop(event)
+⋮----
+onEvent(event)
 ````
 
 ## File: tests/test_animation_infer.py
@@ -2161,6 +2185,12 @@ def test_build_runtime_atlas_rejects_missing_animation_frame(self)
 def test_validator_rejects_animation_frame_reference_drift(self)
 ⋮----
 def test_validator_rejects_duplicate_animation_names(self)
+⋮----
+def test_build_runtime_atlas_normalizes_animation_events(self)
+⋮----
+def test_build_runtime_atlas_rejects_event_at_animation_end(self)
+⋮----
+def test_validator_rejects_unsorted_animation_events(self)
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -2338,6 +2368,12 @@ export function sourceOrientedUVs(frame)
 // top-left, top-right, bottom-right, bottom-left.
 ⋮----
 export function animationFrameAtTime(indexedAtlas, animationOrName, timeSeconds)
+⋮----
+export function animationDurationSeconds(animation)
+⋮----
+export function animationEventsBetween(animation, startTimeSeconds, endTimeSeconds)
+⋮----
+const includeOccurrence = (event, absoluteTimeSeconds, loopCount, eventIndex) =>
 ⋮----
 export function createAnimationPlayer(indexedAtlas, animationName, options =
 ⋮----
@@ -4726,6 +4762,44 @@ drawAnimationPlayerCanvas2D(ctx, image, player, x, y);
 The controller supports `play()`, `pause()`, `seek(seconds)`, `setPlaybackRate(rate)`, `sample()`, and `update(deltaSeconds)`. It never owns a timer or `requestAnimationFrame`, so timing remains deterministic and controlled by the host game loop.
 
 `onFrame` fires when the sampled frame changes, `onLoop` reports every crossed loop boundary even when a large delta spans multiple loops, and `onFinish` fires once when a non-looping animation completes. Playback rate must remain positive.
+
+
+### Animation event markers
+
+Runtime animations can attach named timeline markers:
+
+```json
+{
+  "name": "attack",
+  "fps": 12,
+  "loop": false,
+  "frames": [
+    {"index": 0, "duration": 1},
+    {"index": 1, "duration": 1}
+  ],
+  "events": [
+    {"name": "windup", "timeSeconds": 0.03},
+    {"name": "attack-hit", "timeSeconds": 0.11, "payload": {"damage": 8}}
+  ]
+}
+```
+
+Each marker requires a non-empty `name` and a `timeSeconds` value in the range `0 <= timeSeconds < animationDuration`. An optional `payload` object can carry gameplay/audio metadata. Markers are normalized into ascending timeline order.
+
+The web player accepts `onEvent`:
+
+```js
+const player = createAnimationPlayer(atlas, "attack", {
+  autoplay: true,
+  onEvent(event) {
+    if (event.name === "attack-hit") {
+      applyDamage(event.payload?.damage ?? 0);
+    }
+  },
+});
+```
+
+Events fire only when `update(deltaSeconds)` advances playback; `seek()` and `sample()` do not replay crossed markers. A marker at `timeSeconds: 0` fires on the first positive advance from the start and again at every loop boundary. Large updates emit every crossed marker in deterministic chronological order, including markers from multiple loops. Event dispatch is capped at 10,000 markers per update to guard against pathological deltas.
 ````
 
 ## File: runtime_atlas.py
@@ -4754,6 +4828,21 @@ duration = 1.0
 ⋮----
 index = raw.get("index")
 duration = raw.get("duration", 1.0)
+⋮----
+duration_seconds = sum(frame["duration"] for frame in frames) / float(fps)
+raw_events = animation.get("events", [])
+⋮----
+events = []
+⋮----
+event_name = event.get("name")
+⋮----
+time_seconds = event.get("timeSeconds")
+⋮----
+payload = event.get("payload")
+⋮----
+normalized_event = {
+⋮----
+normalized_animation = {
 ⋮----
 frames = atlas_metadata.get("frames")
 ⋮----
@@ -4864,8 +4953,9 @@ animations = data.get("animations")
 ⋮----
 seen_animation_names: set[str] = set()
 valid_indices = set(seen_indices)
-allowed_animation = {"name", "fps", "loop", "frames"}
+allowed_animation = {"name", "fps", "loop", "frames", "events"}
 allowed_animation_frame = {"index", "duration"}
+allowed_animation_event = {"name", "timeSeconds", "payload"}
 ⋮----
 name_label = animation_position
 ⋮----
@@ -4877,9 +4967,25 @@ loop = animation.get("loop")
 ⋮----
 animation_frames = animation.get("frames")
 ⋮----
+normalized_duration_units = 0.0
+⋮----
 index = animation_frame.get("index")
 ⋮----
 duration = animation_frame.get("duration")
+⋮----
+animation_duration = None
+⋮----
+animation_duration = normalized_duration_units / float(fps)
+⋮----
+animation_events = animation.get("events", [])
+⋮----
+previous_time = -1.0
+⋮----
+event_time = event.get("timeSeconds")
+⋮----
+event_time = float(event_time)
+⋮----
+previous_time = event_time
 ````
 
 ## File: starlist_bridge.py

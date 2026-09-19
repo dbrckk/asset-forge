@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "4af3df5495ae37af3c77115f983f89ba9e0932be",
-  "head": "e42fdaad2b2253d6fd9591536b418cad048d5f3e",
+  "base": "e42fdaad2b2253d6fd9591536b418cad048d5f3e",
+  "head": "46504b8dafee94c1a1c9965b5501c3f7c70c5d89",
   "index_mode": "incremental",
   "changed_files": [
     {
@@ -10,7 +10,23 @@
       "status": "M"
     },
     {
+      "path": "examples/runtime-atlas.json",
+      "status": "M"
+    },
+    {
+      "path": "runtime_atlas.py",
+      "status": "M"
+    },
+    {
+      "path": "schemas/runtime-atlas.schema.json",
+      "status": "M"
+    },
+    {
       "path": "tests/runtime_atlas_web.test.mjs",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_runtime_atlas.py",
       "status": "M"
     },
     {
@@ -19,11 +35,14 @@
     }
   ],
   "changed_source_files": [
+    "runtime_atlas.py",
     "tests/runtime_atlas_web.test.mjs",
+    "tests/test_runtime_atlas.py",
     "web/runtime_atlas.mjs"
   ],
   "impacted_files": [
     "asset_forge.py",
+    "runtime_atlas.py",
     "tests/runtime_atlas_web.test.mjs",
     "tests/test_runtime_atlas.py",
     "web/runtime_atlas.mjs"
@@ -118,6 +137,42 @@
       "kind": "function",
       "file": "asset_forge.py",
       "line": 543
+    },
+    {
+      "name": "_positive_int",
+      "kind": "function",
+      "file": "runtime_atlas.py",
+      "line": 4
+    },
+    {
+      "name": "_non_negative_int",
+      "kind": "function",
+      "file": "runtime_atlas.py",
+      "line": 13
+    },
+    {
+      "name": "_normalize_runtime_animations",
+      "kind": "function",
+      "file": "runtime_atlas.py",
+      "line": 22
+    },
+    {
+      "name": "build_runtime_atlas",
+      "kind": "function",
+      "file": "runtime_atlas.py",
+      "line": 146
+    },
+    {
+      "name": "validate_runtime_atlas",
+      "kind": "function",
+      "file": "runtime_atlas.py",
+      "line": 282
+    },
+    {
+      "name": "read_size",
+      "kind": "function",
+      "file": "runtime_atlas.py",
+      "line": 404
     },
     {
       "name": "RuntimeAtlasTests",
@@ -216,6 +271,24 @@
       "line": 275
     },
     {
+      "name": "test_build_runtime_atlas_normalizes_animation_events",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 300
+    },
+    {
+      "name": "test_build_runtime_atlas_rejects_event_at_animation_end",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 335
+    },
+    {
+      "name": "test_validator_rejects_unsorted_animation_events",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 356
+    },
+    {
       "name": "indexRuntimeAtlas",
       "kind": "function",
       "file": "web/runtime_atlas.mjs",
@@ -246,28 +319,46 @@
       "line": 167
     },
     {
-      "name": "createAnimationPlayer",
+      "name": "animationDurationSeconds",
       "kind": "function",
       "file": "web/runtime_atlas.mjs",
       "line": 226
     },
     {
+      "name": "animationEventsBetween",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 241
+    },
+    {
+      "name": "includeOccurrence",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 260
+    },
+    {
+      "name": "createAnimationPlayer",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 314
+    },
+    {
       "name": "emit",
       "kind": "function",
       "file": "web/runtime_atlas.mjs",
-      "line": 246
+      "line": 335
     },
     {
       "name": "sample",
       "kind": "function",
       "file": "web/runtime_atlas.mjs",
-      "line": 261
+      "line": 350
     },
     {
       "name": "drawAnimationPlayerCanvas2D",
       "kind": "function",
       "file": "web/runtime_atlas.mjs",
-      "line": 329
+      "line": 431
     }
   ],
   "selected_tests": [
