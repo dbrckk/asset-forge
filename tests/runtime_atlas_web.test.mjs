@@ -35,6 +35,7 @@ import {
   resolveSpriteEntityHierarchy,
   buildSpriteEntityInstances,
   createSpriteEntityBatchCache,
+  filterSpriteInstancesByLayer,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -2454,5 +2455,203 @@ assert.throws(
   }),
   /alphaBlending must be boolean/,
 );
+
+
+
+const layerInstances = [
+  { id: "world", layerMask: 0b0001 },
+  { id: "effects", layerMask: 0b0010 },
+  { id: "ui", layerMask: 0b0100 },
+  { id: "world-ui", layerMask: 0b0101 },
+  { id: "hidden", layerMask: 0 },
+  { id: "default-layer" },
+];
+
+const worldLayerFilter = filterSpriteInstancesByLayer(
+  layerInstances,
+  0b0001,
+);
+assert.deepEqual(
+  worldLayerFilter.instances.map((instance) => instance.id),
+  ["world", "world-ui", "default-layer"],
+);
+assert.equal(worldLayerFilter.filteredCount, 3);
+assert.deepEqual(worldLayerFilter.filteredIndices, [1, 2, 4]);
+
+const uiLayerFilter = filterSpriteInstancesByLayer(
+  layerInstances,
+  0b0100,
+);
+assert.deepEqual(
+  uiLayerFilter.instances.map((instance) => instance.id),
+  ["ui", "world-ui"],
+);
+
+const allLayerFilter = filterSpriteInstancesByLayer(layerInstances);
+assert.equal(allLayerFilter.visibleCount, 5);
+assert.equal(allLayerFilter.filteredCount, 1);
+
+assert.throws(
+  () => filterSpriteInstancesByLayer(layerInstances, -1),
+  /visibilityMask must be an unsigned 32-bit integer/,
+);
+assert.throws(
+  () => filterSpriteInstancesByLayer(
+    [{ id: "bad", layerMask: 0x100000000 }],
+  ),
+  /layerMask must be an unsigned 32-bit integer/,
+);
+
+const layerStore = createSpriteEntityStore();
+layerStore.add({
+  id: "world",
+  page: "heroes",
+  frame: "plain",
+  layerMask: 0b0001,
+});
+layerStore.add({
+  id: "fx",
+  page: "heroes",
+  frame: "plain",
+  layerMask: 0b0010,
+});
+layerStore.add({
+  id: "ui",
+  page: "heroes",
+  frame: "plain",
+  layerMask: 0b0100,
+});
+layerStore.add({
+  id: "child-ui",
+  parent: "world",
+  page: "heroes",
+  frame: "plain",
+  layerMask: 0b0100,
+});
+
+const worldEntityInstances = buildSpriteEntityInstances(layerStore, {
+  visibilityMask: 0b0001,
+});
+assert.deepEqual(
+  worldEntityInstances.instances.map((instance) => instance.id),
+  ["world"],
+);
+assert.equal(worldEntityInstances.layerFiltering.filteredCount, 3);
+
+const uiEntityInstances = buildSpriteEntityInstances(layerStore, {
+  visibilityMask: 0b0100,
+});
+assert.deepEqual(
+  uiEntityInstances.instances.map((instance) => instance.id),
+  ["ui", "child-ui"],
+);
+
+assert.throws(
+  () =>
+    layerStore.add({
+      id: "bad-layer",
+      page: "heroes",
+      frame: "plain",
+      layerMask: -1,
+    }),
+  /layerMask must be an unsigned 32-bit integer/,
+);
+
+const layerSceneGl = createMockWebGL2();
+const layerScene = await createWebGL2RuntimeAtlasScene(
+  layerSceneGl,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    loaderOptions: {
+      fetchImpl: async (url) => ({
+        ok: true,
+        status: 200,
+        async blob() {
+          return { id: `blob:${url}` };
+        },
+      }),
+      createImageBitmapImpl: async (blob) => ({
+        id: `bitmap:${blob.id}`,
+      }),
+    },
+  },
+);
+const layerCache = createSpriteEntityBatchCache(layerScene, layerStore);
+const layerCacheWorld = layerCache.build({
+  visibilityMask: 0b0001,
+  preserveOrder: true,
+});
+const layerCacheWorldAgain = layerCache.build({
+  visibilityMask: 0b0001,
+  preserveOrder: true,
+});
+const layerCacheUi = layerCache.build({
+  visibilityMask: 0b0100,
+  preserveOrder: true,
+});
+assert.equal(layerCacheWorld.cacheHit, false);
+assert.equal(layerCacheWorldAgain.cacheHit, true);
+assert.equal(layerCacheUi.cacheHit, false);
+assert.notEqual(layerCacheWorld.cacheKey, layerCacheUi.cacheKey);
+assert.equal(layerCacheWorld.batches.instanceCount, 1);
+assert.equal(layerCacheUi.batches.instanceCount, 2);
+layerScene.dispose();
+
+const layerRuntimeGl = createMockWebGL2();
+layerRuntimeGl.viewport = (...args) =>
+  layerRuntimeGl.calls.push(["viewport", ...args]);
+const layerRuntimeCanvas = createMockCanvas();
+const layerRuntime = await createWebGL2CanvasRuntime(
+  layerRuntimeCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    visibilityMask: 0b0001,
+    getContext() {
+      return layerRuntimeGl;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+layerRuntime.entities.add({
+  id: "runtime-world",
+  page: "heroes",
+  frame: "plain",
+  layerMask: 0b0001,
+});
+layerRuntime.entities.add({
+  id: "runtime-ui",
+  page: "heroes",
+  frame: "plain",
+  layerMask: 0b0100,
+});
+
+assert.equal(layerRuntime.visibilityMask, 0b0001);
+assert.equal(layerRuntime.renderEntities().instances, 1);
+layerRuntime.setVisibilityMask(0b0100);
+assert.equal(layerRuntime.visibilityMask, 0b0100);
+assert.equal(layerRuntime.renderEntities().instances, 1);
+assert.equal(
+  layerRuntime.renderEntities({ visibilityMask: 0b0101 }).instances,
+  2,
+);
+assert.throws(
+  () => layerRuntime.setVisibilityMask(0x100000000),
+  /visibilityMask must be an unsigned 32-bit integer/,
+);
+layerRuntime.dispose();
 
 console.log("runtime_atlas.mjs smoke test passed");
