@@ -1250,6 +1250,8 @@ pointerRuntimeGl.viewport = (...args)
 autoDragGl.viewport = (...args)
 ⋮----
 createImageBitmapImpl: async () => (
+⋮----
+constrainedDragGl.viewport = (...args)
 ````
 
 ## File: tests/test_animation_infer.py
@@ -6340,6 +6342,55 @@ event.totalDy
 Automatic dragging is disabled by default, so existing pointer-interaction users keep their previous behavior.
 
 Each drag update goes through `entityStore.update()`, incrementing `entityStore.version`. Version-aware entity batch caches therefore invalidate naturally after movement.
+
+
+### Drag snapping and movement bounds
+
+World-space entity movement now supports snapping and positional bounds:
+
+```js
+moveSpriteEntityByWorldDelta(
+  entityStore,
+  "crate",
+  dx,
+  dy,
+  {
+    gridSize: 16,
+    bounds: {
+      x: 0,
+      y: 0,
+      width: 1024,
+      height: 768,
+    },
+  },
+);
+```
+
+`gridSize: 0` disables snapping. Positive values snap the entity's resulting world position to the nearest grid intersection.
+
+Bounds clamp the resulting world position to the supplied rectangle. Snapping and clamping happen in world-space before the delta is converted back into local coordinates for parented entities.
+
+This preserves predictable visual movement even under parent rotation and non-uniform scale.
+
+Pointer auto-drag accepts:
+
+```js
+pointerOptions: {
+  autoDragEntities: true,
+  dragAxis: "both",
+  dragGridSize: 16,
+  dragBounds: {
+    x: 0,
+    y: 0,
+    width: 2048,
+    height: 2048,
+  },
+}
+```
+
+If `dragBounds` is omitted, the runtime automatically reuses `worldBounds` when available.
+
+This allows editors and games to constrain draggable entities to the playable map without maintaining a second bounds configuration.
 ````
 
 ## File: runtime_atlas.py
