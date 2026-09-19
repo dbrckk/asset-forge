@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T12:34:45Z
+Generated: 2026-09-19T12:41:43Z
 
 ### Git
 - Branch: `main`
-- Head: `4f2479fd9b7d`
-- Commit date: 2026-09-19T14:34:39+02:00
-- Commit: docs: record sprite layer visibility milestone
+- Head: `b9f96a955126`
+- Commit date: 2026-09-19T14:41:40+02:00
+- Commit: docs: record 2D camera and parallax milestone
 - Tracked files: 209
 
 ### Recently changed files
