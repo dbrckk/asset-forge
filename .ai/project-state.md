@@ -96,18 +96,18 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T16:09:12Z
+Generated: 2026-09-19T16:10:26Z
 
 ### Git
 - Branch: `main`
-- Head: `8eea6b3aa512`
-- Commit date: 2026-09-19T18:08:55+02:00
-- Commit: fix: count only active pointer presses
+- Head: `0e0ea5678917`
+- Commit date: 2026-09-19T18:10:15+02:00
+- Commit: test: correct hierarchical grid snap expectation
 - Tracked files: 209
 
 ### Recently changed files
-- `web/runtime_atlas.mjs`
 - `tests/runtime_atlas_web.test.mjs`
+- `web/runtime_atlas.mjs`
 
 ### Project signals
 - No common build descriptor detected
