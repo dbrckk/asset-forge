@@ -1639,3 +1639,128 @@ assert.throws(
 assert.equal(entityStore.remove("missing"), null);
 assert.equal(entityStore.clear(), 1);
 assert.equal(entityStore.size, 0);
+
+
+const entityRuntimeGlA = createMockWebGL2();
+entityRuntimeGlA.viewport = (...args) => entityRuntimeGlA.calls.push(["viewport", ...args]);
+const entityRuntimeGlB = createMockWebGL2();
+entityRuntimeGlB.viewport = (...args) => entityRuntimeGlB.calls.push(["viewport", ...args]);
+const entityRuntimeCanvas = createMockCanvas();
+let entityRuntimeContextIndex = 0;
+
+const entityRuntime = await createWebGL2CanvasRuntime(
+  entityRuntimeCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    getContext() {
+      return entityRuntimeContextIndex === 0
+        ? entityRuntimeGlA
+        : entityRuntimeGlB;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+
+entityRuntime.entities.add({
+  id: "hero",
+  page: "heroes",
+  frame: "plain",
+  x: 10,
+  y: 10,
+  z: 1,
+});
+entityRuntime.entities.add({
+  id: "offscreen",
+  page: "heroes",
+  frame: "plain",
+  x: 1000,
+  y: 1000,
+  z: 2,
+});
+
+const entityBatches = entityRuntime.buildEntityBatches({
+  viewport: { x: 0, y: 0, width: 64, height: 64 },
+  sort: true,
+  preserveOrder: true,
+});
+assert.equal(entityBatches.instanceCount, 1);
+assert.equal(entityBatches.scenePreparation.culledCount, 1);
+
+const entityRender = entityRuntime.renderEntities({
+  viewport: { x: 0, y: 0, width: 64, height: 64 },
+  sort: true,
+  preserveOrder: true,
+});
+assert.equal(entityRender.instances, 1);
+
+entityRuntimeCanvas.dispatch("webglcontextlost", {
+  preventDefault() {},
+});
+entityRuntimeContextIndex = 1;
+entityRuntimeCanvas.dispatch("webglcontextrestored");
+await entityRuntime.waitForRestore();
+
+assert.equal(entityRuntime.entities.size, 2);
+assert.equal(entityRuntime.entities.get("hero").x, 10);
+const entityRenderAfterRestore = entityRuntime.renderEntities({
+  viewport: { x: 0, y: 0, width: 64, height: 64 },
+  preserveOrder: true,
+});
+assert.equal(entityRenderAfterRestore.instances, 1);
+
+entityRuntime.entities.update("hero", { x: 20 });
+assert.equal(entityRuntime.entities.get("hero").x, 20);
+entityRuntime.dispose();
+
+const suppliedStore = createSpriteEntityStore();
+suppliedStore.add({
+  id: "supplied",
+  page: "heroes",
+  frame: "plain",
+});
+const suppliedRuntimeGl = createMockWebGL2();
+suppliedRuntimeGl.viewport = (...args) => suppliedRuntimeGl.calls.push(["viewport", ...args]);
+const suppliedCanvas = createMockCanvas();
+const suppliedRuntime = await createWebGL2CanvasRuntime(
+  suppliedCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    entityStore: suppliedStore,
+    getContext() {
+      return suppliedRuntimeGl;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+assert.equal(suppliedRuntime.entities, suppliedStore);
+assert.equal(suppliedRuntime.renderEntities().instances, 1);
+suppliedRuntime.dispose();
+assert.equal(suppliedStore.size, 1);
