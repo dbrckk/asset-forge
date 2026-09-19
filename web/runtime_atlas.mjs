@@ -1931,11 +1931,55 @@ export function cullSpriteInstances(
 
   for (let index = 0; index < instances.length; index += 1) {
     const instance = instances[index];
-    const bounds = spriteInstanceBounds(atlasPages, instance);
-    const bx = useVisibleBounds ? bounds.visibleX : bounds.x;
-    const by = useVisibleBounds ? bounds.visibleY : bounds.y;
-    const bw = useVisibleBounds ? bounds.visibleWidth : bounds.width;
-    const bh = useVisibleBounds ? bounds.visibleHeight : bounds.height;
+    let bx;
+    let by;
+    let bw;
+    let bh;
+
+    // Most scene sprites are not rotated. Avoid constructing full logical +
+    // visible bounds objects for this hot culling path.
+    const rotation = instance?.rotation ?? 0;
+    if (rotation === 0) {
+      const page = atlasPages.page(instance.page);
+      const frame = page.atlas.frame(instance.frame);
+      const instanceX = instance.x ?? 0;
+      const instanceY = instance.y ?? 0;
+      const scaleX = instance.scaleX ?? instance.scale ?? 1;
+      const scaleY = instance.scaleY ?? instance.scale ?? 1;
+
+      for (const [name, value] of Object.entries({
+        x: instanceX,
+        y: instanceY,
+        scaleX,
+        scaleY,
+      })) {
+        if (!Number.isFinite(value)) {
+          throw new Error(`sprite instance ${name} must be finite`);
+        }
+      }
+      if (scaleX <= 0 || scaleY <= 0) {
+        throw new Error("sprite instance scale must be > 0");
+      }
+
+      if (useVisibleBounds) {
+        bx = instanceX + frame.trimOffset.x * scaleX;
+        by = instanceY + frame.trimOffset.y * scaleY;
+        bw = frame.sourceRegion.width * scaleX;
+        bh = frame.sourceRegion.height * scaleY;
+      } else {
+        bx = instanceX;
+        by = instanceY;
+        bw = frame.sourceSize.width * scaleX;
+        bh = frame.sourceSize.height * scaleY;
+      }
+    } else {
+      const bounds = spriteInstanceBounds(atlasPages, instance);
+      bx = useVisibleBounds ? bounds.visibleX : bounds.x;
+      by = useVisibleBounds ? bounds.visibleY : bounds.y;
+      bw = useVisibleBounds ? bounds.visibleWidth : bounds.width;
+      bh = useVisibleBounds ? bounds.visibleHeight : bounds.height;
+    }
+
     const intersects =
       bx + bw > left &&
       by + bh > top &&
