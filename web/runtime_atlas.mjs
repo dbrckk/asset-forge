@@ -449,3 +449,130 @@ export function drawAnimationPlayerCanvas2D(
   );
   return { ...sample, bounds };
 }
+
+
+export function buildSpriteBatch(indexedAtlas, instances, options = {}) {
+  if (!Array.isArray(instances)) {
+    throw new Error("sprite batch instances must be an array");
+  }
+  const maxInstances = options.maxInstances ?? 100000;
+  if (!Number.isInteger(maxInstances) || maxInstances <= 0) {
+    throw new Error("maxInstances must be a positive integer");
+  }
+  if (instances.length > maxInstances) {
+    throw new Error(
+      `sprite batch instance count ${instances.length} exceeds maxInstances ${maxInstances}`,
+    );
+  }
+
+  const vertexCount = instances.length * 4;
+  const indexCount = instances.length * 6;
+  const vertices = new Float32Array(vertexCount * 4);
+  const IndexArray = vertexCount <= 65535 ? Uint16Array : Uint32Array;
+  const indices = new IndexArray(indexCount);
+  const bounds = new Array(instances.length);
+
+  for (let instanceIndex = 0; instanceIndex < instances.length; instanceIndex += 1) {
+    const instance = instances[instanceIndex];
+    if (!instance || typeof instance !== "object") {
+      throw new Error(`sprite batch instance ${instanceIndex} must be an object`);
+    }
+
+    const frame = indexedAtlas.frame(instance.frame);
+    const x = instance.x ?? 0;
+    const y = instance.y ?? 0;
+    const scaleX = instance.scaleX ?? instance.scale ?? 1;
+    const scaleY = instance.scaleY ?? instance.scale ?? 1;
+
+    for (const [name, value] of Object.entries({ x, y, scaleX, scaleY })) {
+      if (!Number.isFinite(value)) {
+        throw new Error(`sprite batch instance ${instanceIndex} ${name} must be finite`);
+      }
+    }
+    if (scaleX <= 0 || scaleY <= 0) {
+      throw new Error(`sprite batch instance ${instanceIndex} scale must be > 0`);
+    }
+
+    const left = x + frame.trimOffset.x * scaleX;
+    const top = y + frame.trimOffset.y * scaleY;
+    const right = left + frame.sourceRegion.width * scaleX;
+    const bottom = top + frame.sourceRegion.height * scaleY;
+    const uvs = sourceOrientedUVs(frame);
+    const positions = [
+      [left, top],
+      [right, top],
+      [right, bottom],
+      [left, bottom],
+    ];
+
+    const vertexBase = instanceIndex * 4;
+    for (let corner = 0; corner < 4; corner += 1) {
+      const write = (vertexBase + corner) * 4;
+      vertices[write] = positions[corner][0];
+      vertices[write + 1] = positions[corner][1];
+      vertices[write + 2] = uvs[corner].u;
+      vertices[write + 3] = uvs[corner].v;
+    }
+
+    const indexBase = instanceIndex * 6;
+    indices[indexBase] = vertexBase;
+    indices[indexBase + 1] = vertexBase + 1;
+    indices[indexBase + 2] = vertexBase + 2;
+    indices[indexBase + 3] = vertexBase;
+    indices[indexBase + 4] = vertexBase + 2;
+    indices[indexBase + 5] = vertexBase + 3;
+
+    bounds[instanceIndex] = {
+      x,
+      y,
+      width: frame.sourceSize.width * scaleX,
+      height: frame.sourceSize.height * scaleY,
+      visibleX: left,
+      visibleY: top,
+      visibleWidth: frame.sourceRegion.width * scaleX,
+      visibleHeight: frame.sourceRegion.height * scaleY,
+      frameIndex: frame.index,
+      frameName: frame.name ?? null,
+    };
+  }
+
+  return {
+    instanceCount: instances.length,
+    vertexCount,
+    indexCount,
+    vertexStrideFloats: 4,
+    vertexLayout: ["x", "y", "u", "v"],
+    vertices,
+    indices,
+    indexType: indices instanceof Uint16Array ? "uint16" : "uint32",
+    bounds,
+  };
+}
+
+export function drawSpriteBatchCanvas2D(ctx, image, indexedAtlas, instances) {
+  if (!Array.isArray(instances)) {
+    throw new Error("sprite batch instances must be an array");
+  }
+
+  const bounds = [];
+  for (let instanceIndex = 0; instanceIndex < instances.length; instanceIndex += 1) {
+    const instance = instances[instanceIndex];
+    if (!instance || typeof instance !== "object") {
+      throw new Error(`sprite batch instance ${instanceIndex} must be an object`);
+    }
+    const frame = indexedAtlas.frame(instance.frame);
+    const x = instance.x ?? 0;
+    const y = instance.y ?? 0;
+    const scaleX = instance.scaleX ?? instance.scale ?? 1;
+    const scaleY = instance.scaleY ?? instance.scale ?? 1;
+    if (scaleX !== scaleY) {
+      throw new Error(
+        "Canvas2D sprite batch currently requires uniform scale per instance",
+      );
+    }
+    bounds.push(
+      drawFrameCanvas2D(ctx, image, frame, x, y, { scale: scaleX }),
+    );
+  }
+  return bounds;
+}
