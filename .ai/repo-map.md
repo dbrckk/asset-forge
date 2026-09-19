@@ -1131,6 +1131,43 @@ onFinish(sample)
 onLoop(event)
 ⋮----
 onEvent(event)
+⋮----
+function createMockWebGL2()
+⋮----
+const object = (type) => (
+⋮----
+createShader(type)
+shaderSource(shader, source)
+compileShader(shader)
+getShaderParameter(shader, parameter)
+getShaderInfoLog()
+deleteShader(shader)
+createProgram()
+attachShader(program, shader)
+linkProgram(program)
+getProgramParameter(program, parameter)
+getProgramInfoLog()
+deleteProgram(program)
+createVertexArray()
+deleteVertexArray(vao)
+createBuffer()
+deleteBuffer(buffer)
+bindVertexArray(vao)
+bindBuffer(target, buffer)
+bufferData(target, data, usage)
+bufferSubData(target, offset, data)
+enableVertexAttribArray(location)
+vertexAttribPointer(location, size, type, normalized, stride, offset)
+vertexAttribDivisor(location, divisor)
+getUniformLocation(program, name)
+useProgram(program)
+uniform2f(location, x, y)
+activeTexture(texture)
+bindTexture(target, texture)
+uniform1i(location, value)
+drawElementsInstanced(mode, count, type, offset, instances)
+⋮----
+resolveTexture(textureKey, entry)
 ````
 
 ## File: tests/test_animation_infer.py
@@ -2438,6 +2475,25 @@ export function buildTexturePageBatches(
   instances,
   options = {},
 )
+⋮----
+function _compileWebGL2Shader(gl, type, source)
+⋮----
+function _linkWebGL2Program(gl, vertexSource, fragmentSource)
+⋮----
+export function createInstancedSpriteRendererWebGL2(gl, options =
+⋮----
+frame()
+⋮----
+function assertActive()
+⋮----
+function renderBatch(batch, texture, viewportWidth, viewportHeight)
+⋮----
+function renderPageBatches(pageBatches, viewportWidth, viewportHeight)
+⋮----
+function dispose()
+⋮----
+get disposed()
+get uploadedCapacityBytes()
 ````
 
 ## File: .repo-standards.yml
@@ -4944,6 +5000,49 @@ When visual layering or blending requires strict submission order, use:
 In that mode, the runtime emits one batch per contiguous texture-page run instead of merging separated runs. For an input page sequence `A, B, A`, strict-order output remains `A | B | A`; optimized output may become `A,A | B`.
 
 Both `classic` and `instanced` page-batch modes are supported. Page IDs must be unique, and a page may provide either raw runtime-atlas JSON or an already indexed atlas.
+
+
+### WebGL2 instanced renderer helper
+
+The web runtime now includes `createInstancedSpriteRendererWebGL2(gl, options)`, a dependency-free renderer built on the existing instanced sprite contract.
+
+It creates and owns:
+
+```text
+shader program
+VAO
+static unit-quad vertex buffer
+static unit-quad index buffer
+dynamic instance buffer
+```
+
+Example:
+
+```js
+const renderer = createInstancedSpriteRendererWebGL2(gl, {
+  resolveTexture(textureKey, pageBatch) {
+    return gpuTextures.get(textureKey);
+  },
+});
+
+const pageBatches = buildTexturePageBatches(pages, instances, {
+  mode: "instanced",
+});
+
+renderer.renderPageBatches(
+  pageBatches,
+  canvas.width,
+  canvas.height,
+);
+```
+
+The renderer uploads a larger instance buffer with `bufferData(..., DYNAMIC_DRAW)` only when capacity must grow. Subsequent uploads that fit reuse the allocation through `bufferSubData`.
+
+`renderBatch()` performs one `drawElementsInstanced` call. `renderPageBatches()` performs one draw call per texture-page batch and reports draw calls, rendered instance count, uploaded bytes, and texture switches.
+
+Texture-page catalogues may store actual `WebGLTexture` objects or arbitrary asset keys. The optional `resolveTexture(texture, entry)` callback resolves those keys at render time, keeping GPU resource management separate from atlas metadata.
+
+Call `dispose()` to release the VAO, buffers, and program. Rendering after disposal is rejected explicitly.
 ````
 
 ## File: runtime_atlas.py

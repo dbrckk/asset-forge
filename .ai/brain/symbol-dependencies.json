@@ -5,6 +5,50 @@
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
   "symbols": {
+    "createMockWebGL2": {
+      "source": {
+        "file": "tests/runtime_atlas_web.test.mjs",
+        "start": 666,
+        "end": 775
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "object",
+          "definitions": [
+            {
+              "file": "tests/runtime_atlas_web.test.mjs",
+              "line": 669,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "object": {
+      "source": {
+        "file": "tests/runtime_atlas_web.test.mjs",
+        "start": 669,
+        "end": 789
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "createMockWebGL2",
+          "definitions": [
+            {
+              "file": "tests/runtime_atlas_web.test.mjs",
+              "line": 664,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
     "indexRuntimeAtlas": {
       "source": {
         "file": "web/runtime_atlas.mjs",
@@ -534,6 +578,315 @@
             {
               "file": "web/runtime_atlas.mjs",
               "line": 452,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "_compileWebGL2Shader": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 1094,
+        "end": 1107
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_linkWebGL2Program": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 1109,
+        "end": 1131
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_compileWebGL2Shader",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1092,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "createInstancedSpriteRendererWebGL2": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 1133,
+        "end": 1338
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_linkWebGL2Program",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1108,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "assertActive",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1221,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "buildInstancedSpriteBatch",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 579,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "dispose",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1311,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "instancedSpriteAttributeViews",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 786,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "instancedSpriteWebGL2Shaders",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 725,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "renderBatch",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1227,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "renderPageBatches",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1275,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 8
+    },
+    "assertActive": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 1221,
+        "end": 1341
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "dispose",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1311,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "renderBatch",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1227,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "renderPageBatches",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1275,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "renderBatch": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 1227,
+        "end": 1347
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "assertActive",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1221,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "dispose",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1311,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "renderPageBatches",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1275,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "renderPageBatches": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 1275,
+        "end": 1395
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "assertActive",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1221,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "dispose",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1311,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "renderBatch",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1227,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "dispose": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 1311,
+        "end": 1431
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "renderBatch",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1227,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "renderPageBatches",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1275,
               "kind": "function",
               "language": "javascript"
             }
