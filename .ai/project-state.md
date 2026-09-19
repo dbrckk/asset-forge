@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T12:27:19Z
+Generated: 2026-09-19T12:34:45Z
 
 ### Git
 - Branch: `main`
-- Head: `c77a5c1f2082`
-- Commit date: 2026-09-19T14:27:12+02:00
-- Commit: docs: record per-sprite tint and alpha milestone
+- Head: `4f2479fd9b7d`
+- Commit date: 2026-09-19T14:34:39+02:00
+- Commit: docs: record sprite layer visibility milestone
 - Tracked files: 209
 
 ### Recently changed files
