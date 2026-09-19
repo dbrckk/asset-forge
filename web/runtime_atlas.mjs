@@ -2446,7 +2446,6 @@ export async function createWebGL2CanvasRuntime(
         frequency,
       );
       camera = clampRuntimeCamera(nextCamera);
-      cameraController.setCamera(camera);
       return { ...camera };
     },
     clearCameraShake() {
