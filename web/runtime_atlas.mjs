@@ -622,9 +622,9 @@ export function buildInstancedSpriteBatch(indexedAtlas, instances, options = {})
   // visibleX, visibleY, visibleWidth, visibleHeight,
   // u0, v0, u1, v1,
   // atlasRotationFlag, sourceWidth, sourceHeight, spriteRotationRadians,
-  // pivotWorldX, pivotWorldY, reserved0, reserved1,
+  // pivotWorldX, pivotWorldY,
   // tintR, tintG, tintB, alpha
-  const strideFloats = 20;
+  const strideFloats = 18;
   const data = new Float32Array(instances.length * strideFloats);
   const bounds = new Array(instances.length);
 
@@ -700,12 +700,10 @@ export function buildInstancedSpriteBatch(indexedAtlas, instances, options = {})
     data[write + 11] = spriteRotation;
     data[write + 12] = x + pivotX * scaleX;
     data[write + 13] = y + pivotY * scaleY;
-    data[write + 14] = 0;
-    data[write + 15] = 0;
-    data[write + 16] = tintR;
-    data[write + 17] = tintG;
-    data[write + 18] = tintB;
-    data[write + 19] = alpha;
+    data[write + 14] = tintR;
+    data[write + 15] = tintG;
+    data[write + 16] = tintB;
+    data[write + 17] = alpha;
 
     bounds[instanceIndex] = {
       x,
@@ -744,8 +742,6 @@ export function buildInstancedSpriteBatch(indexedAtlas, instances, options = {})
       "spriteRotationRadians",
       "pivotWorldX",
       "pivotWorldY",
-      "reserved0",
-      "reserved1",
       "tintR",
       "tintG",
       "tintB",
@@ -804,7 +800,7 @@ export function instancedSpriteWebGL2Shaders() {
       aVisibleRect: { location: 1, components: 4, divisor: 1 },
       aUvRect: { location: 2, components: 4, divisor: 1 },
       aRotationAndSource: { location: 3, components: 4, divisor: 1 },
-      aPivotAndReserved: { location: 4, components: 4, divisor: 1 },
+      aPivotAndReserved: { location: 4, components: 2, divisor: 1 },
       aTint: { location: 5, components: 4, divisor: 1 },
     },
     uniforms: {
@@ -880,7 +876,7 @@ export function instancedSpriteAttributeViews(batch) {
   if (!batch || !(batch.instances instanceof Float32Array)) {
     throw new Error("invalid instanced sprite batch");
   }
-  if (batch.instanceStrideFloats !== 20) {
+  if (batch.instanceStrideFloats !== 18) {
     throw new Error("unsupported instanced sprite stride");
   }
 
@@ -912,7 +908,7 @@ export function instancedSpriteAttributeViews(batch) {
       {
         name: "aPivotAndReserved",
         location: 4,
-        size: 4,
+        size: 2,
         offsetBytes: 12 * Float32Array.BYTES_PER_ELEMENT,
         divisor: 1,
       },
@@ -920,7 +916,7 @@ export function instancedSpriteAttributeViews(batch) {
         name: "aTint",
         location: 5,
         size: 4,
-        offsetBytes: 16 * Float32Array.BYTES_PER_ELEMENT,
+        offsetBytes: 14 * Float32Array.BYTES_PER_ELEMENT,
         divisor: 1,
       },
     ],

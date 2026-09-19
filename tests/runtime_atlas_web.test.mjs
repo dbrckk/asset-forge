@@ -474,8 +474,8 @@ const instanced = buildInstancedSpriteBatch(indexed, [
   { frame: "hero_0.png", x: 100, y: 200, scale: 2 },
 ]);
 assert.equal(instanced.instanceCount, 1);
-assert.equal(instanced.instanceStrideFloats, 20);
-assert.equal(instanced.instanceStrideBytes, 80);
+assert.equal(instanced.instanceStrideFloats, 18);
+assert.equal(instanced.instanceStrideBytes, 72);
 assert.deepEqual(instanced.instanceLayout, [
   "visibleX",
   "visibleY",
@@ -491,8 +491,6 @@ assert.deepEqual(instanced.instanceLayout, [
   "spriteRotationRadians",
   "pivotWorldX",
   "pivotWorldY",
-  "reserved0",
-  "reserved1",
   "tintR",
   "tintG",
   "tintB",
@@ -515,8 +513,6 @@ assert.deepEqual(
     0,
     100,
     200,
-    0,
-    0,
     1,
     1,
     1,
@@ -565,7 +561,7 @@ const manyInstances = Array.from({ length: 1000 }, (_, index) => ({
 const classicMany = buildSpriteBatch(indexRuntimeAtlas(plainAtlas), manyInstances);
 const instancedMany = buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), manyInstances);
 assert.equal(classicMany.vertices.byteLength, 1000 * 4 * 4 * 4);
-assert.equal(instancedMany.instances.byteLength, 1000 * 20 * 4);
+assert.equal(instancedMany.instances.byteLength, 1000 * 18 * 4);
 assert.ok(
   instancedMany.instances.byteLength <
     classicMany.vertices.byteLength + classicMany.indices.byteLength,
@@ -621,7 +617,7 @@ assert.deepEqual(attributeViews.attributes, [
   {
     name: "aPivotAndReserved",
     location: 4,
-    size: 4,
+    size: 2,
     offsetBytes: 48,
     divisor: 1,
   },
@@ -629,7 +625,7 @@ assert.deepEqual(attributeViews.attributes, [
     name: "aTint",
     location: 5,
     size: 4,
-    offsetBytes: 64,
+    offsetBytes: 56,
     divisor: 1,
   },
 ]);
@@ -2387,9 +2383,9 @@ const tintedInstanced = buildInstancedSpriteBatch(
     },
   ],
 );
-assert.equal(tintedInstanced.instanceStrideFloats, 20);
-assert.equal(tintedInstanced.instanceStrideBytes, 80);
-assert.deepEqual(Array.from(tintedInstanced.instances.slice(16, 20)), [
+assert.equal(tintedInstanced.instanceStrideFloats, 18);
+assert.equal(tintedInstanced.instanceStrideBytes, 72);
+assert.deepEqual(Array.from(tintedInstanced.instances.slice(14, 18)), [
   0.5,
   0.25,
   0.75,
