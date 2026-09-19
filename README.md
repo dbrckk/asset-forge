@@ -627,3 +627,41 @@ drawAnimationPlayerCanvas2D(ctx, image, player, x, y);
 The controller supports `play()`, `pause()`, `seek(seconds)`, `setPlaybackRate(rate)`, `sample()`, and `update(deltaSeconds)`. It never owns a timer or `requestAnimationFrame`, so timing remains deterministic and controlled by the host game loop.
 
 `onFrame` fires when the sampled frame changes, `onLoop` reports every crossed loop boundary even when a large delta spans multiple loops, and `onFinish` fires once when a non-looping animation completes. Playback rate must remain positive.
+
+
+### Animation event markers
+
+Runtime animations can attach named timeline markers:
+
+```json
+{
+  "name": "attack",
+  "fps": 12,
+  "loop": false,
+  "frames": [
+    {"index": 0, "duration": 1},
+    {"index": 1, "duration": 1}
+  ],
+  "events": [
+    {"name": "windup", "timeSeconds": 0.03},
+    {"name": "attack-hit", "timeSeconds": 0.11, "payload": {"damage": 8}}
+  ]
+}
+```
+
+Each marker requires a non-empty `name` and a `timeSeconds` value in the range `0 <= timeSeconds < animationDuration`. An optional `payload` object can carry gameplay/audio metadata. Markers are normalized into ascending timeline order.
+
+The web player accepts `onEvent`:
+
+```js
+const player = createAnimationPlayer(atlas, "attack", {
+  autoplay: true,
+  onEvent(event) {
+    if (event.name === "attack-hit") {
+      applyDamage(event.payload?.damage ?? 0);
+    }
+  },
+});
+```
+
+Events fire only when `update(deltaSeconds)` advances playback; `seek()` and `sample()` do not replay crossed markers. A marker at `timeSeconds: 0` fires on the first positive advance from the start and again at every loop boundary. Large updates emit every crossed marker in deterministic chronological order, including markers from multiple loops. Event dispatch is capped at 10,000 markers per update to guard against pathological deltas.
