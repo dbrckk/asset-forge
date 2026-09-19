@@ -7,6 +7,7 @@ import {
   sourceOrientedUVs,
   animationFrameAtTime,
   createAnimationPlayer,
+  drawAnimationPlayerCanvas2D,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -198,3 +199,37 @@ assert.throws(
 );
 assert.throws(() => player.seek(-1), /seek time/);
 assert.throws(() => player.update(-1), /deltaSeconds/);
+
+
+const loopEvents = [];
+const loopPlayer = createAnimationPlayer(animated, "run", {
+  autoplay: true,
+  onLoop(event) {
+    loopEvents.push(event.loopCount);
+  },
+});
+loopPlayer.update(0.65);
+assert.deepEqual(loopEvents, [1, 2]);
+
+const animationDrawCalls = [];
+const animationCtx = {
+  save() { animationDrawCalls.push(["save"]); },
+  restore() { animationDrawCalls.push(["restore"]); },
+  translate(...args) { animationDrawCalls.push(["translate", ...args]); },
+  rotate(...args) { animationDrawCalls.push(["rotate", ...args]); },
+  drawImage(...args) { animationDrawCalls.push(["drawImage", ...args]); },
+};
+const drawPlayer = createAnimationPlayer(animated, "run");
+drawPlayer.seek(0.15);
+const drawn = drawAnimationPlayerCanvas2D(
+  animationCtx,
+  image,
+  drawPlayer,
+  3,
+  4,
+  { scale: 2 },
+);
+assert.equal(drawn.frame.index, 1);
+assert.deepEqual(drawn.bounds, { x: 3, y: 4, width: 12, height: 14 });
+assert.equal(animationDrawCalls[0][0], "save");
+assert.equal(animationDrawCalls.at(-1)[0], "restore");
