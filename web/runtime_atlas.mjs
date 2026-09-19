@@ -576,3 +576,149 @@ export function drawSpriteBatchCanvas2D(ctx, image, indexedAtlas, instances) {
   }
   return bounds;
 }
+
+
+export function buildInstancedSpriteBatch(indexedAtlas, instances, options = {}) {
+  if (!Array.isArray(instances)) {
+    throw new Error("instanced sprite batch instances must be an array");
+  }
+  const maxInstances = options.maxInstances ?? 100000;
+  if (!Number.isInteger(maxInstances) || maxInstances <= 0) {
+    throw new Error("maxInstances must be a positive integer");
+  }
+  if (instances.length > maxInstances) {
+    throw new Error(
+      `instanced sprite batch count ${instances.length} exceeds maxInstances ${maxInstances}`,
+    );
+  }
+
+  // Per instance:
+  // visibleX, visibleY, visibleWidth, visibleHeight,
+  // u0, v0, u1, v1,
+  // rotationFlag, sourceWidth, sourceHeight, reserved
+  const strideFloats = 12;
+  const data = new Float32Array(instances.length * strideFloats);
+  const bounds = new Array(instances.length);
+
+  for (let instanceIndex = 0; instanceIndex < instances.length; instanceIndex += 1) {
+    const instance = instances[instanceIndex];
+    if (!instance || typeof instance !== "object") {
+      throw new Error(`instanced sprite batch instance ${instanceIndex} must be an object`);
+    }
+
+    const frame = indexedAtlas.frame(instance.frame);
+    const x = instance.x ?? 0;
+    const y = instance.y ?? 0;
+    const scaleX = instance.scaleX ?? instance.scale ?? 1;
+    const scaleY = instance.scaleY ?? instance.scale ?? 1;
+
+    for (const [name, value] of Object.entries({ x, y, scaleX, scaleY })) {
+      if (!Number.isFinite(value)) {
+        throw new Error(
+          `instanced sprite batch instance ${instanceIndex} ${name} must be finite`,
+        );
+      }
+    }
+    if (scaleX <= 0 || scaleY <= 0) {
+      throw new Error(
+        `instanced sprite batch instance ${instanceIndex} scale must be > 0`,
+      );
+    }
+
+    const visibleX = x + frame.trimOffset.x * scaleX;
+    const visibleY = y + frame.trimOffset.y * scaleY;
+    const visibleWidth = frame.sourceRegion.width * scaleX;
+    const visibleHeight = frame.sourceRegion.height * scaleY;
+    const write = instanceIndex * strideFloats;
+    const { u0, v0, u1, v1 } = frame.uv;
+
+    data[write] = visibleX;
+    data[write + 1] = visibleY;
+    data[write + 2] = visibleWidth;
+    data[write + 3] = visibleHeight;
+    data[write + 4] = u0;
+    data[write + 5] = v0;
+    data[write + 6] = u1;
+    data[write + 7] = v1;
+    data[write + 8] = frame.rotation.rotated ? 1 : 0;
+    data[write + 9] = frame.sourceSize.width * scaleX;
+    data[write + 10] = frame.sourceSize.height * scaleY;
+    data[write + 11] = 0;
+
+    bounds[instanceIndex] = {
+      x,
+      y,
+      width: frame.sourceSize.width * scaleX,
+      height: frame.sourceSize.height * scaleY,
+      visibleX,
+      visibleY,
+      visibleWidth,
+      visibleHeight,
+      frameIndex: frame.index,
+      frameName: frame.name ?? null,
+      rotated: frame.rotation.rotated,
+    };
+  }
+
+  return {
+    instanceCount: instances.length,
+    instanceStrideFloats: strideFloats,
+    instanceStrideBytes: strideFloats * Float32Array.BYTES_PER_ELEMENT,
+    instanceLayout: [
+      "visibleX",
+      "visibleY",
+      "visibleWidth",
+      "visibleHeight",
+      "u0",
+      "v0",
+      "u1",
+      "v1",
+      "rotationFlag",
+      "sourceWidth",
+      "sourceHeight",
+      "reserved",
+    ],
+    instances: data,
+    bounds,
+    unitQuad: {
+      vertices: new Float32Array([
+        0, 0,
+        1, 0,
+        1, 1,
+        0, 1,
+      ]),
+      indices: new Uint16Array([0, 1, 2, 0, 2, 3]),
+    },
+  };
+}
+
+export function instancedSpriteUV(
+  u0,
+  v0,
+  u1,
+  v1,
+  rotationFlag,
+  unitX,
+  unitY,
+) {
+  if (![u0, v0, u1, v1, rotationFlag, unitX, unitY].every(Number.isFinite)) {
+    throw new Error("instanced sprite UV arguments must be finite");
+  }
+  if (rotationFlag !== 0 && rotationFlag !== 1) {
+    throw new Error("rotationFlag must be 0 or 1");
+  }
+
+  if (rotationFlag === 0) {
+    return {
+      u: u0 + (u1 - u0) * unitX,
+      v: v0 + (v1 - v0) * unitY,
+    };
+  }
+
+  // Packed texture is 90° clockwise. Convert source-oriented unit coords
+  // to stored atlas UV coordinates.
+  return {
+    u: u0 + (u1 - u0) * unitY,
+    v: v1 - (v1 - v0) * unitX,
+  };
+}
