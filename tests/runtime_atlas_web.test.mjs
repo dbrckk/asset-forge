@@ -6,6 +6,7 @@ import {
   indexRuntimeAtlas,
   sourceOrientedUVs,
   animationFrameAtTime,
+  createAnimationPlayer,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -155,3 +156,45 @@ const onceFinished = animationFrameAtTime(animated, "once", 5);
 assert.equal(onceFinished.frame.index, 1);
 assert.equal(onceFinished.finished, true);
 assert.equal(onceFinished.durationSeconds, 1);
+
+
+const events = [];
+const player = createAnimationPlayer(animated, "once", {
+  autoplay: true,
+  playbackRate: 2,
+  onFrame(sample) {
+    events.push(["frame", sample.frame.index]);
+  },
+  onFinish(sample) {
+    events.push(["finish", sample.frame.index]);
+  },
+});
+
+assert.equal(player.playing, true);
+assert.equal(player.playbackRate, 2);
+assert.equal(player.update(0).frame.index, 0);
+assert.equal(player.update(0.30).frame.index, 1);
+assert.equal(player.update(0.30).finished, true);
+assert.equal(player.playing, false);
+assert.deepEqual(events, [
+  ["frame", 0],
+  ["frame", 1],
+  ["finish", 1],
+]);
+
+player.seek(0);
+assert.equal(player.sample().frame.index, 0);
+player.setPlaybackRate(0.5);
+assert.equal(player.playbackRate, 0.5);
+player.play();
+player.pause();
+const pausedTime = player.timeSeconds;
+player.update(1);
+assert.equal(player.timeSeconds, pausedTime);
+
+assert.throws(
+  () => createAnimationPlayer(animated, "run", { playbackRate: 0 }),
+  /playbackRate must be > 0/,
+);
+assert.throws(() => player.seek(-1), /seek time/);
+assert.throws(() => player.update(-1), /deltaSeconds/);
