@@ -36,6 +36,8 @@ jobs:
         with:
           repository: dbrckk/star-list
           path: star-list
+      - name: Validate runtime atlas example
+        run: python asset_forge.py validate-runtime-atlas examples/runtime-atlas.json
       - name: Smoke-test star-list bridge
         run: python asset_forge.py discover-tools star-list "pixel art sprites atlas" --top 3
 
