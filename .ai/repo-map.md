@@ -2499,7 +2499,8 @@ export function buildInstancedSpriteBatch(indexedAtlas, instances, options =
 // visibleX, visibleY, visibleWidth, visibleHeight,
 // u0, v0, u1, v1,
 // atlasRotationFlag, sourceWidth, sourceHeight, spriteRotationRadians,
-// pivotWorldX, pivotWorldY, reserved0, reserved1
+// pivotWorldX, pivotWorldY, reserved0, reserved1,
+// tintR, tintG, tintB, alpha
 ⋮----
 export function instancedSpriteUV(
   u0,

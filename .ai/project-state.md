@@ -96,19 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T12:04:52Z
+Generated: 2026-09-19T12:25:44Z
 
 ### Git
 - Branch: `main`
-- Head: `f89e75951773`
-- Commit date: 2026-09-19T14:04:49+02:00
-- Commit: docs: record sprite rotation and pivot milestone
+- Head: `094407105162`
+- Commit date: 2026-09-19T14:25:33+02:00
+- Commit: test: cover per-sprite tint alpha inheritance and shader modulation
 - Tracked files: 209
 
 ### Recently changed files
-- `README.md`
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
+- `README.md`
 
 ### Project signals
 - No common build descriptor detected
