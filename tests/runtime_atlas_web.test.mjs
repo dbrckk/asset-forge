@@ -3795,4 +3795,178 @@ assert.throws(
   /autoDragEntities must be boolean/,
 );
 
+
+
+const snapStore = createSpriteEntityStore();
+snapStore.add({
+  id: "snap-root",
+  page: "heroes",
+  frame: "plain",
+  x: 13,
+  y: 17,
+});
+moveSpriteEntityByWorldDelta(
+  snapStore,
+  "snap-root",
+  6,
+  7,
+  { gridSize: 10 },
+);
+assert.deepEqual(
+  {
+    x: snapStore.get("snap-root").x,
+    y: snapStore.get("snap-root").y,
+  },
+  { x: 20, y: 20 },
+);
+
+moveSpriteEntityByWorldDelta(
+  snapStore,
+  "snap-root",
+  1000,
+  -1000,
+  {
+    bounds: {
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 80,
+    },
+  },
+);
+assert.deepEqual(
+  {
+    x: snapStore.get("snap-root").x,
+    y: snapStore.get("snap-root").y,
+  },
+  { x: 100, y: 0 },
+);
+
+snapStore.add({
+  id: "snap-parent",
+  page: "heroes",
+  frame: "plain",
+  x: 100,
+  y: 100,
+  rotation: Math.PI / 2,
+  scaleX: 2,
+  scaleY: 2,
+});
+snapStore.add({
+  id: "snap-child",
+  parent: "snap-parent",
+  page: "heroes",
+  frame: "plain",
+  x: 5,
+  y: 0,
+});
+moveSpriteEntityByWorldDelta(
+  snapStore,
+  "snap-child",
+  13,
+  7,
+  { gridSize: 10 },
+);
+const snappedChildWorld =
+  resolveSpriteEntityHierarchy(snapStore).byId.get("snap-child");
+assert.ok(Math.abs(snappedChildWorld.x - 110) < 1e-6);
+assert.ok(Math.abs(snappedChildWorld.y - 110) < 1e-6);
+
+assert.throws(
+  () =>
+    moveSpriteEntityByWorldDelta(
+      snapStore,
+      "snap-root",
+      1,
+      1,
+      { gridSize: -1 },
+    ),
+  /gridSize must be a finite value >= 0/,
+);
+assert.throws(
+  () =>
+    moveSpriteEntityByWorldDelta(
+      snapStore,
+      "snap-root",
+      1,
+      1,
+      {
+        bounds: {
+          x: 0,
+          y: 0,
+          width: -1,
+          height: 10,
+        },
+      },
+    ),
+  /drag bounds width\/height must be >= 0/,
+);
+
+const constrainedDragGl = createMockWebGL2();
+constrainedDragGl.viewport = (...args) =>
+  constrainedDragGl.calls.push(["viewport", ...args]);
+const constrainedDragCanvas = createMockCanvas();
+
+const constrainedDragRuntime = await createWebGL2CanvasRuntime(
+  constrainedDragCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    camera: { x: 0, y: 0, zoom: 2 },
+    worldBounds: { x: 0, y: 0, width: 100, height: 100 },
+    pointerOptions: {
+      dragThreshold: 1,
+      autoDragEntities: true,
+      dragGridSize: 10,
+    },
+    getContext() {
+      return constrainedDragGl;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+
+constrainedDragRuntime.entities.add({
+  id: "snap-drag",
+  page: "heroes",
+  frame: "plain",
+  x: 20,
+  y: 20,
+  z: 10,
+});
+
+constrainedDragRuntime.pointerDown("snap-touch", 42, 42);
+constrainedDragRuntime.pointerMove("snap-touch", 59, 59);
+assert.deepEqual(
+  {
+    x: constrainedDragRuntime.entities.get("snap-drag").x,
+    y: constrainedDragRuntime.entities.get("snap-drag").y,
+  },
+  { x: 30, y: 30 },
+);
+
+constrainedDragRuntime.pointerMove("snap-touch", 999, 999);
+assert.deepEqual(
+  {
+    x: constrainedDragRuntime.entities.get("snap-drag").x,
+    y: constrainedDragRuntime.entities.get("snap-drag").y,
+  },
+  { x: 100, y: 100 },
+);
+constrainedDragRuntime.pointerUp("snap-touch", 999, 999);
+constrainedDragRuntime.dispose();
+
 console.log("runtime_atlas.mjs smoke test passed");
