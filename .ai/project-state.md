@@ -12,7 +12,7 @@ Status: active
 - Godot SpriteFrames export now maps trim metadata to AtlasTexture.margin and validates atlas bounds/source-offset consistency before emitting resources.
 - A versioned engine-neutral runtime atlas exporter preserves atlas region, normalized UVs, pre-rotation source region, source canvas size, trim offsets, and explicit clockwise rotation metadata; its JSON contract is defined by schemas/runtime-atlas.schema.json.
 - Runtime atlas JSON has a dependency-free strict validator with semantic checks for frame count, duplicate indices, UV-region consistency, source/trim bounds, rotation dimensions, unknown fields, and strict integer typing; CI smoke-validates examples/runtime-atlas.json.
-- A dependency-free ES module web/runtime_atlas.mjs indexes frames by index/name, draws trim+rotation-correct sprites to Canvas2D, exposes source-oriented UVs for WebGL/custom renderers, indexes animations, samples animation frames deterministically by elapsed seconds, and provides a host-driven play/pause/seek/rate controller with frame/loop/finish/event callbacks plus Canvas2D drawing; event markers remain deterministic across skipped frames and multiple crossed loops. It builds both classic interleaved WebGL sprite batches and compact instanced batches, with a reference WebGL2 shader/attribute contract for drawElementsInstanced, groups instances across multiple texture pages, includes a WebGL2 renderer helper, a centralized reference-counted WebGL2 texture cache with configurable upload settings and deduplicated asynchronous loads, browser fetch/createImageBitmap loading helpers, preload rollback, and a high-level WebGL2 runtime scene that wires loading/cache/batching/rendering/lifecycle together.
+- A dependency-free ES module web/runtime_atlas.mjs indexes frames by index/name, draws trim+rotation-correct sprites to Canvas2D, exposes source-oriented UVs for WebGL/custom renderers, indexes animations, samples animation frames deterministically by elapsed seconds, and provides a host-driven play/pause/seek/rate controller with frame/loop/finish/event callbacks plus Canvas2D drawing; event markers remain deterministic across skipped frames and multiple crossed loops. It builds both classic interleaved WebGL sprite batches and compact instanced batches, with a reference WebGL2 shader/attribute contract for drawElementsInstanced, groups instances across multiple texture pages, includes a WebGL2 renderer helper, a centralized reference-counted WebGL2 texture cache with configurable upload settings and deduplicated asynchronous loads, browser fetch/createImageBitmap loading helpers, preload rollback, and a high-level WebGL2 runtime scene that wires loading/cache/batching/rendering/lifecycle together. Scene preparation now supports atlas-aware logical/visible bounds, viewport culling with padding, and stable configurable depth sorting before batching.
 - Runtime atlas v1 optionally embeds validated animations (name/fps/loop/frame index/duration) plus sorted timeline event markers with optional payload objects. export-runtime-atlas can infer animations from filenames or consume an explicit animation config without changing non-animation outputs.
 - PNG recompression is no-growth: the original bytes are retained whenever the adaptive candidate is not smaller, including in-place output.
 - Indexed PNG decoding supports 1/2/4/8-bit palette indices with packed scanline layout, PNG filtering, row-padding handling, and tRNS palette alpha.
@@ -70,7 +70,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Consider additional engine adapters, scene culling/sorting, and optional browser convenience around canvas resize/context loss; runtime-atlas now includes an integrated browser WebGL2 scene spanning image loading, texture lifetime, multi-atlas batching, and instanced rendering.
+- Consider additional engine adapters and browser convenience around canvas resize/context loss; runtime-atlas now includes integrated atlas-aware viewport culling and stable depth sorting before multi-atlas batching.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -91,7 +91,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-19: latest GitHub source inspected after adding browser fetch/createImageBitmap loading, page-texture preload/release with rollback, shared texture-key deduplication, and createWebGL2RuntimeAtlasScene() for integrated loading/cache/batching/rendering with owned or external texture-cache lifecycle.
+- 2026-09-19: latest GitHub source inspected after adding sprite logical/visible bounds, viewport culling with padding, stable depth sorting, scene preparation statistics, and direct integration into buildBatches()/render() with sorting opt-in for backward compatibility.
 
 <!-- AUTO:START -->
 ## Automatic repository state
