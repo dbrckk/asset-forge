@@ -1,16 +1,16 @@
 # CI status
 
-Summary: 0 success / 2 failure / 2 active
+Summary: 0 success / 3 failure / 1 active
 
-- Validate asset-forge: in_progress / pending (63a00af1)
-- Validate asset-forge: queued / pending (f1b1794a)
-- Validate asset-forge: completed / failure (0e46234d)
-- Validate asset-forge: completed / failure (261f2e1a)
+- Validate asset-forge: in_progress / pending (4fbfe031)
+- Validate asset-forge: completed / failure (53f1e745)
+- Validate asset-forge: completed / failure (85181534)
+- Validate asset-forge: completed / failure (dae5911e)
 
 ## Latest failed run structure
-- Job: test
-  - Failed step: Unit tests
 - Job: webp-backend
   - Failed step: WebP backend tests
+- Job: test
+  - Failed step: Unit tests
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.

@@ -8,16 +8,28 @@
     "createMockWebGL2": {
       "source": {
         "file": "tests/runtime_atlas_web.test.mjs",
-        "start": 671,
-        "end": 820
+        "start": 675,
+        "end": 824
       },
       "symbol_dependencies": [
+        {
+          "symbol": "deleteTexture",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1418,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "imported_module"
+        },
         {
           "symbol": "object",
           "definitions": [
             {
               "file": "tests/runtime_atlas_web.test.mjs",
-              "line": 674,
+              "line": 678,
               "kind": "function",
               "language": "javascript"
             }
@@ -25,22 +37,35 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 1
+      "dependency_count": 2
     },
     "object": {
       "source": {
         "file": "tests/runtime_atlas_web.test.mjs",
-        "start": 674,
-        "end": 794
+        "start": 678,
+        "end": 798
       },
-      "symbol_dependencies": [],
-      "dependency_count": 0
+      "symbol_dependencies": [
+        {
+          "symbol": "deleteTexture",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1418,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
     },
     "fakeFetch": {
       "source": {
         "file": "tests/runtime_atlas_web.test.mjs",
-        "start": 1079,
-        "end": 1088
+        "start": 1083,
+        "end": 1092
       },
       "symbol_dependencies": [],
       "dependency_count": 0
@@ -48,8 +73,8 @@
     "fakeCreateImageBitmap": {
       "source": {
         "file": "tests/runtime_atlas_web.test.mjs",
-        "start": 1089,
-        "end": 1092
+        "start": 1093,
+        "end": 1096
       },
       "symbol_dependencies": [],
       "dependency_count": 0
@@ -3007,7 +3032,7 @@
       "source": {
         "file": "web/runtime_atlas.mjs",
         "start": 1575,
-        "end": 1663
+        "end": 1679
       },
       "symbol_dependencies": [
         {
@@ -3101,6 +3126,18 @@
           "relation": "same_file"
         },
         {
+          "symbol": "prepareSpriteSceneInstances",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1820,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
           "symbol": "releaseRuntimeAtlasPageTextures",
           "definitions": [
             {
@@ -3125,7 +3162,81 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 9
+      "dependency_count": 10
+    },
+    "spriteInstanceBounds": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 1682,
+        "end": 1715
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "cullSpriteInstances": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 1717,
+        "end": 1788
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "spriteInstanceBounds",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1680,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "stableSortSpriteInstances": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 1790,
+        "end": 1819
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "prepareSpriteSceneInstances": {
+      "source": {
+        "file": "web/runtime_atlas.mjs",
+        "start": 1821,
+        "end": 1857
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "cullSpriteInstances",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1716,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "stableSortSpriteInstances",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1789,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
     }
   }
 }

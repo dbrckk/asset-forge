@@ -2558,6 +2558,23 @@ resolveTexture(textureKey)
 buildBatches(instances, batchOptions =
 render(instancesOrBatches, viewportWidth, viewportHeight, batchOptions =
 dispose()
+⋮----
+export function spriteInstanceBounds(atlasPages, instance)
+⋮----
+export function cullSpriteInstances(
+  atlasPages,
+  instances,
+  viewport,
+  options = {},
+)
+⋮----
+export function stableSortSpriteInstances(instances, options =
+⋮----
+export function prepareSpriteSceneInstances(
+  atlasPages,
+  instances,
+  options = {},
+)
 ````
 
 ## File: .repo-standards.yml
@@ -5199,6 +5216,49 @@ scene.dispose()
 ```
 
 An internally created texture cache is disposed with the scene. An externally supplied cache remains alive; only references acquired by the scene are released. This allows several scenes to share GPU textures safely.
+
+
+### Scene culling and stable depth sorting
+
+The runtime scene can now remove off-screen sprites before batching and apply deterministic stable depth sorting.
+
+Low-level helpers:
+
+```js
+spriteInstanceBounds(pages, instance)
+cullSpriteInstances(pages, instances, viewport, options)
+stableSortSpriteInstances(instances, options)
+prepareSpriteSceneInstances(pages, instances, options)
+```
+
+Example:
+
+```js
+const batches = scene.buildBatches(sprites, {
+  viewport: {
+    x: 0,
+    y: 0,
+    width: canvas.width,
+    height: canvas.height,
+  },
+  culling: {
+    padding: 32,
+    useVisibleBounds: true,
+  },
+  sort: true,
+  sortKey: "z",
+  sortDirection: "ascending",
+  preserveOrder: true,
+});
+```
+
+Culling uses the runtime atlas frame metadata, including source size, trim offsets, source region, and per-instance scale. By default it tests visible trimmed bounds; `useVisibleBounds: false` switches to full logical source bounds. Optional positive padding expands the viewport to reduce edge pop-in.
+
+Sorting is stable: sprites with equal depth retain their original relative order. Missing sort values default to zero.
+
+`scene.buildBatches()` returns normal texture-page batch data plus `scenePreparation`, including input/output counts, culling statistics, and the prepared instance order. `scene.render()` accepts the same preparation options when raw instances are passed.
+
+Scene sorting is disabled by default for backward compatibility. Enable it explicitly with `sort: true`. When blending/layering order matters, pair sorting with `preserveOrder: true`; otherwise texture-page grouping may intentionally reorder instances to reduce texture switches.
 ````
 
 ## File: runtime_atlas.py

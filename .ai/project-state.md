@@ -96,20 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T08:59:58Z
+Generated: 2026-09-19T09:05:06Z
 
 ### Git
 - Branch: `main`
-- Head: `63a00af186af`
-- Commit date: 2026-09-19T10:59:48+02:00
-- Commit: docs: record integrated browser runtime scene milestone
+- Head: `4fbfe031eade`
+- Commit date: 2026-09-19T11:04:52+02:00
+- Commit: docs: record scene culling and sorting milestone
 - Tracked files: 205
 
 ### Recently changed files
 - `README.md`
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
-- `.repo-standards.yml`
 
 ### Project signals
 - No common build descriptor detected

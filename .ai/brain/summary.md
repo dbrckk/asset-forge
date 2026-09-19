@@ -3,8 +3,8 @@
 - Index mode: incremental
 - Files indexed: 38
 - Files reparsed this run: 2
-- Symbols: 473
-- Internal import edges: 52
+- Symbols: 477
+- Internal import edges: 54
 - Impacted files: 4
 - Selected tests: 2
 
@@ -15,7 +15,7 @@
 ## Highest-density symbol files
 - tests/test_raster_pack.py: 82 symbols
 - raster_pack.py: 51 symbols
-- web/runtime_atlas.mjs: 44 symbols
+- web/runtime_atlas.mjs: 48 symbols
 - tests/test_svg_tools.py: 22 symbols
 - tests/test_asset_forge.py: 20 symbols
 - tests/test_runtime_atlas.py: 19 symbols
@@ -45,7 +45,7 @@
 - AST index mode: incremental
 - AST files reparsed this run: 2
 - outline files retained: 38
-- top-level items retained: 530
+- top-level items retained: 545
 - direct members retained: 235
 - symbol shards: 25
 - route named symbols via ast-routing.json, then fetch one ast-symbols/<initial>.json shard
