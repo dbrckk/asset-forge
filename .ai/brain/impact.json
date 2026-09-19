@@ -1,16 +1,12 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "f43a335e86f341523dccc413f7e9aa8580942ccd",
-  "head": "0288881648c99ec03f804b687beb667707e668e6",
+  "base": "0288881648c99ec03f804b687beb667707e668e6",
+  "head": "1eeeb06cce0718cb54b7f22ccdb357fe6ec7559d",
   "index_mode": "incremental",
   "changed_files": [
     {
       "path": ".github/workflows/validate.yml",
-      "status": "M"
-    },
-    {
-      "path": ".repo-standards.yml",
       "status": "M"
     },
     {
@@ -22,16 +18,16 @@
       "status": "M"
     },
     {
-      "path": "runtime_atlas.py",
+      "path": "examples/runtime-atlas.json",
       "status": "A"
     },
     {
-      "path": "schemas/runtime-atlas.schema.json",
-      "status": "A"
+      "path": "runtime_atlas.py",
+      "status": "M"
     },
     {
       "path": "tests/test_runtime_atlas.py",
-      "status": "A"
+      "status": "M"
     }
   ],
   "changed_source_files": [
@@ -134,7 +130,7 @@
       "name": "main",
       "kind": "function",
       "file": "asset_forge.py",
-      "line": 536
+      "line": 539
     },
     {
       "name": "_positive_int",
@@ -146,13 +142,25 @@
       "name": "_non_negative_int",
       "kind": "function",
       "file": "runtime_atlas.py",
-      "line": 14
+      "line": 13
     },
     {
       "name": "build_runtime_atlas",
       "kind": "function",
       "file": "runtime_atlas.py",
-      "line": 24
+      "line": 22
+    },
+    {
+      "name": "validate_runtime_atlas",
+      "kind": "function",
+      "file": "runtime_atlas.py",
+      "line": 150
+    },
+    {
+      "name": "read_size",
+      "kind": "function",
+      "file": "runtime_atlas.py",
+      "line": 271
     },
     {
       "name": "chunk",
@@ -309,6 +317,42 @@
       "kind": "function",
       "file": "tests/test_runtime_atlas.py",
       "line": 110
+    },
+    {
+      "name": "test_validator_accepts_generated_runtime_atlas",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 123
+    },
+    {
+      "name": "test_validator_detects_uv_drift",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 133
+    },
+    {
+      "name": "test_validator_detects_frame_count_mismatch",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 145
+    },
+    {
+      "name": "test_validator_rejects_unknown_fields",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 157
+    },
+    {
+      "name": "test_validator_rejects_boolean_integer_fields",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 169
+    },
+    {
+      "name": "test_validator_rejects_unknown_nested_fields",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 181
     }
   ],
   "selected_tests": [

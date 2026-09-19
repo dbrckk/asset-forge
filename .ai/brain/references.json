@@ -39,37 +39,43 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 629,
-          "preview": "source = load_json(args.metadata)",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 643,
-          "preview": "metadata = load_json(args.metadata)",
+          "line": 632,
+          "preview": "data = load_json(args.input)",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
           "line": 646,
-          "preview": "animation_config = load_json(args.animations)",
+          "preview": "source = load_json(args.metadata)",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 689,
+          "line": 660,
           "preview": "metadata = load_json(args.metadata)",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 780,
+          "line": 663,
+          "preview": "animation_config = load_json(args.animations)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 706,
+          "preview": "metadata = load_json(args.metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 797,
           "preview": "delivery = load_json(args.delivery_report) if args.delivery_report else None",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 781,
+          "line": 798,
           "preview": "asset_manifest = load_json(args.asset_manifest) if args.asset_manifest else None",
           "definition_candidate": false
         },
@@ -80,7 +86,7 @@
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 11
+      "occurrence_count": 12
     },
     "validate_manifest": {
       "definition": {
@@ -104,7 +110,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 783,
+          "line": 800,
           "preview": "manifest_errors = validate_manifest(asset_manifest)",
           "definition_candidate": false
         },
@@ -408,7 +414,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 541,
+          "line": 544,
           "preview": "return cmd_validate(args.manifest)",
           "definition_candidate": false
         }
@@ -431,7 +437,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 546,
+          "line": 549,
           "preview": "return cmd_plan(args.manifest, root)",
           "definition_candidate": false
         }
@@ -454,7 +460,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 548,
+          "line": 551,
           "preview": "return cmd_validate_raster(args.manifest, args.asset)",
           "definition_candidate": false
         }
@@ -477,7 +483,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 550,
+          "line": 553,
           "preview": "return cmd_atlas_manifest(args.manifest, args.asset, args.output)",
           "definition_candidate": false
         }
@@ -500,7 +506,7 @@
         },
         {
           "file": "asset_forge.py",
-          "line": 537,
+          "line": 540,
           "preview": "args = parser().parse_args()",
           "definition_candidate": false
         },
@@ -522,20 +528,20 @@
     "main": {
       "definition": {
         "file": "asset_forge.py",
-        "line": 536,
+        "line": 539,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "asset_forge.py",
-          "line": 536,
+          "line": 539,
           "preview": "def main() -> int:",
           "definition_candidate": true
         },
         {
           "file": "asset_forge.py",
-          "line": 897,
+          "line": 914,
           "preview": "raise SystemExit(main())",
           "definition_candidate": false
         },
@@ -625,7 +631,7 @@
         },
         {
           "file": "tests/test_runtime_atlas.py",
-          "line": 125,
+          "line": 197,
           "preview": "unittest.main()",
           "definition_candidate": false
         },
@@ -666,106 +672,166 @@
         },
         {
           "file": "runtime_atlas.py",
-          "line": 36,
+          "line": 34,
           "preview": "atlas_width = _positive_int(atlas_metadata.get(\"imageWidth\"), \"imageWidth\")",
           "definition_candidate": false
         },
         {
           "file": "runtime_atlas.py",
-          "line": 37,
+          "line": 35,
           "preview": "atlas_height = _positive_int(atlas_metadata.get(\"imageHeight\"), \"imageHeight\")",
           "definition_candidate": false
         },
         {
           "file": "runtime_atlas.py",
-          "line": 53,
+          "line": 51,
           "preview": "width = _positive_int(frame.get(\"width\"), f\"frame {index}.width\")",
           "definition_candidate": false
         },
         {
           "file": "runtime_atlas.py",
-          "line": 54,
+          "line": 52,
           "preview": "height = _positive_int(frame.get(\"height\"), f\"frame {index}.height\")",
           "definition_candidate": false
         },
         {
           "file": "runtime_atlas.py",
-          "line": 66,
+          "line": 64,
           "preview": "source_region_width = _positive_int(",
           "definition_candidate": false
         },
         {
           "file": "runtime_atlas.py",
-          "line": 70,
+          "line": 68,
           "preview": "source_region_height = _positive_int(",
           "definition_candidate": false
         },
         {
           "file": "runtime_atlas.py",
-          "line": 82,
+          "line": 80,
           "preview": "source_width = _positive_int(",
           "definition_candidate": false
         },
         {
           "file": "runtime_atlas.py",
-          "line": 86,
+          "line": 84,
           "preview": "source_height = _positive_int(",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 186,
+          "preview": "atlas_width = _positive_int(image_size.get(\"width\"), \"imageSize.width\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 187,
+          "preview": "atlas_height = _positive_int(image_size.get(\"height\"), \"imageSize.height\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 260,
+          "preview": "width = _positive_int(atlas_region.get(\"width\"), f\"frame {index_label}.atlasRegion.width\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 261,
+          "preview": "height = _positive_int(atlas_region.get(\"height\"), f\"frame {index_label}.atlasRegion.height\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 280,
+          "preview": "_positive_int(obj.get(\"width\"), f\"frame {index_label}.{field_name}.width\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 281,
+          "preview": "_positive_int(obj.get(\"height\"), f\"frame {index_label}.{field_name}.height\"),",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 9
+      "occurrence_count": 15
     },
     "_non_negative_int": {
       "definition": {
         "file": "runtime_atlas.py",
-        "line": 14,
+        "line": 13,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "runtime_atlas.py",
-          "line": 14,
+          "line": 13,
           "preview": "def _non_negative_int(value, field: str) -> int:",
           "definition_candidate": true
         },
         {
           "file": "runtime_atlas.py",
-          "line": 46,
+          "line": 44,
           "preview": "index = _non_negative_int(frame.get(\"index\", fallback_index), f\"frame {fallback_index}.index\")",
           "definition_candidate": false
         },
         {
           "file": "runtime_atlas.py",
-          "line": 51,
+          "line": 49,
           "preview": "x = _non_negative_int(frame.get(\"x\"), f\"frame {index}.x\")",
           "definition_candidate": false
         },
         {
           "file": "runtime_atlas.py",
-          "line": 52,
+          "line": 50,
           "preview": "y = _non_negative_int(frame.get(\"y\"), f\"frame {index}.y\")",
           "definition_candidate": false
         },
         {
           "file": "runtime_atlas.py",
-          "line": 90,
+          "line": 88,
           "preview": "offset_x = _non_negative_int(frame.get(\"offsetX\", 0), f\"frame {index}.offsetX\")",
           "definition_candidate": false
         },
         {
           "file": "runtime_atlas.py",
-          "line": 91,
+          "line": 89,
           "preview": "offset_y = _non_negative_int(frame.get(\"offsetY\", 0), f\"frame {index}.offsetY\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 258,
+          "preview": "x = _non_negative_int(atlas_region.get(\"x\"), f\"frame {index_label}.atlasRegion.x\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 259,
+          "preview": "y = _non_negative_int(atlas_region.get(\"y\"), f\"frame {index_label}.atlasRegion.y\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 299,
+          "preview": "_non_negative_int(trim_offset.get(\"x\"), f\"frame {index_label}.trimOffset.x\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 300,
+          "preview": "_non_negative_int(trim_offset.get(\"y\"), f\"frame {index_label}.trimOffset.y\"),",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 6
+      "occurrence_count": 10
     },
     "build_runtime_atlas": {
       "definition": {
         "file": "runtime_atlas.py",
-        "line": 24,
+        "line": 22,
         "kind": "function",
         "language": "python"
       },
@@ -773,25 +839,25 @@
         {
           "file": "asset_forge.py",
           "line": 24,
-          "preview": "from runtime_atlas import build_runtime_atlas",
+          "preview": "from runtime_atlas import build_runtime_atlas, validate_runtime_atlas",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 630,
+          "line": 647,
           "preview": "runtime = build_runtime_atlas(source)",
           "definition_candidate": false
         },
         {
           "file": "runtime_atlas.py",
-          "line": 24,
+          "line": 22,
           "preview": "def build_runtime_atlas(atlas_metadata: dict) -> dict:",
           "definition_candidate": true
         },
         {
           "file": "tests/test_runtime_atlas.py",
           "line": 3,
-          "preview": "from runtime_atlas import build_runtime_atlas",
+          "preview": "from runtime_atlas import build_runtime_atlas, validate_runtime_atlas",
           "definition_candidate": false
         },
         {
@@ -823,9 +889,145 @@
           "line": 121,
           "preview": "build_runtime_atlas(metadata)",
           "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 130,
+          "preview": "runtime = build_runtime_atlas(source)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 140,
+          "preview": "runtime = build_runtime_atlas(source)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 152,
+          "preview": "runtime = build_runtime_atlas(source)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 164,
+          "preview": "runtime = build_runtime_atlas(source)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 176,
+          "preview": "runtime = build_runtime_atlas(source)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 188,
+          "preview": "runtime = build_runtime_atlas(source)",
+          "definition_candidate": false
         }
       ],
-      "occurrence_count": 9
+      "occurrence_count": 15
+    },
+    "validate_runtime_atlas": {
+      "definition": {
+        "file": "runtime_atlas.py",
+        "line": 150,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 24,
+          "preview": "from runtime_atlas import build_runtime_atlas, validate_runtime_atlas",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 636,
+          "preview": "errors = validate_runtime_atlas(data)",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 150,
+          "preview": "def validate_runtime_atlas(data: dict) -> list[str]:",
+          "definition_candidate": true
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 3,
+          "preview": "from runtime_atlas import build_runtime_atlas, validate_runtime_atlas",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 131,
+          "preview": "self.assertEqual(validate_runtime_atlas(runtime), [])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 142,
+          "preview": "errors = validate_runtime_atlas(runtime)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 154,
+          "preview": "errors = validate_runtime_atlas(runtime)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 166,
+          "preview": "errors = validate_runtime_atlas(runtime)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 178,
+          "preview": "errors = validate_runtime_atlas(runtime)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 191,
+          "preview": "errors = validate_runtime_atlas(runtime)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 10
+    },
+    "read_size": {
+      "definition": {
+        "file": "runtime_atlas.py",
+        "line": 271,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "runtime_atlas.py",
+          "line": 271,
+          "preview": "def read_size(field_name: str):",
+          "definition_candidate": true
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 287,
+          "preview": "source_region = read_size(\"sourceRegion\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 288,
+          "preview": "source_size = read_size(\"sourceSize\")",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 3
     },
     "RuntimeAtlasTests": {
       "definition": {
@@ -924,6 +1126,108 @@
           "file": "tests/test_runtime_atlas.py",
           "line": 110,
           "preview": "def test_rejects_duplicate_indices(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_validator_accepts_generated_runtime_atlas": {
+      "definition": {
+        "file": "tests/test_runtime_atlas.py",
+        "line": 123,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 123,
+          "preview": "def test_validator_accepts_generated_runtime_atlas(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_validator_detects_uv_drift": {
+      "definition": {
+        "file": "tests/test_runtime_atlas.py",
+        "line": 133,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 133,
+          "preview": "def test_validator_detects_uv_drift(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_validator_detects_frame_count_mismatch": {
+      "definition": {
+        "file": "tests/test_runtime_atlas.py",
+        "line": 145,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 145,
+          "preview": "def test_validator_detects_frame_count_mismatch(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_validator_rejects_unknown_fields": {
+      "definition": {
+        "file": "tests/test_runtime_atlas.py",
+        "line": 157,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 157,
+          "preview": "def test_validator_rejects_unknown_fields(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_validator_rejects_boolean_integer_fields": {
+      "definition": {
+        "file": "tests/test_runtime_atlas.py",
+        "line": 169,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 169,
+          "preview": "def test_validator_rejects_boolean_integer_fields(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_validator_rejects_unknown_nested_fields": {
+      "definition": {
+        "file": "tests/test_runtime_atlas.py",
+        "line": 181,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 181,
+          "preview": "def test_validator_rejects_unknown_nested_fields(self):",
           "definition_candidate": true
         }
       ],

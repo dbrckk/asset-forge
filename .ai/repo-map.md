@@ -49,6 +49,7 @@ config/
 examples/
   asset-manifest.json
   godot-animations.json
+  runtime-atlas.json
 pipelines/
   model-3d.json
   sprite-2d.json
@@ -227,6 +228,8 @@ jobs:
         with:
           repository: dbrckk/star-list
           path: star-list
+      - name: Validate runtime atlas example
+        run: python asset_forge.py validate-runtime-atlas examples/runtime-atlas.json
       - name: Smoke-test star-list bridge
         run: python asset_forge.py discover-tools star-list "pixel art sprites atlas" --top 3
 
@@ -375,6 +378,58 @@ jobs:
         {"index": 7, "duration": 1.0},
         {"index": 8, "duration": 1.25}
       ]
+    }
+  ]
+}
+````
+
+## File: examples/runtime-atlas.json
+````json
+{
+  "format": "asset-forge-runtime-atlas",
+  "version": 1,
+  "image": "atlas.png",
+  "imageSize": {
+    "width": 64,
+    "height": 64
+  },
+  "frameCount": 1,
+  "capabilities": {
+    "trimOffsets": true,
+    "clockwise90Rotation": true
+  },
+  "frames": [
+    {
+      "index": 0,
+      "name": "hero_0.png",
+      "atlasRegion": {
+        "x": 10,
+        "y": 20,
+        "width": 6,
+        "height": 8
+      },
+      "uv": {
+        "u0": 0.15625,
+        "v0": 0.3125,
+        "u1": 0.25,
+        "v1": 0.4375
+      },
+      "sourceRegion": {
+        "width": 8,
+        "height": 6
+      },
+      "sourceSize": {
+        "width": 12,
+        "height": 10
+      },
+      "trimOffset": {
+        "x": 2,
+        "y": 1
+      },
+      "rotation": {
+        "rotated": true,
+        "degreesClockwise": 90
+      }
     }
   ]
 }
@@ -2014,6 +2069,23 @@ def test_rejects_rotation_dimension_mismatch(self)
 def test_rejects_source_trim_out_of_bounds(self)
 ⋮----
 def test_rejects_duplicate_indices(self)
+⋮----
+def test_validator_accepts_generated_runtime_atlas(self)
+⋮----
+source = {
+runtime = build_runtime_atlas(source)
+⋮----
+def test_validator_detects_uv_drift(self)
+⋮----
+errors = validate_runtime_atlas(runtime)
+⋮----
+def test_validator_detects_frame_count_mismatch(self)
+⋮----
+def test_validator_rejects_unknown_fields(self)
+⋮----
+def test_validator_rejects_boolean_integer_fields(self)
+⋮----
+def test_validator_rejects_unknown_nested_fields(self)
 ````
 
 ## File: tests/test_starlist_bridge.py
@@ -2435,6 +2507,8 @@ optimize = sub.add_parser("optimize-png", help="losslessly recompress a supporte
 ⋮----
 webp_encode = sub.add_parser("encode-webp", help="encode PNG or WebP input as WebP via optional Pillow/libwebp")
 ⋮----
+runtime_validate = sub.add_parser("validate-runtime-atlas", help="validate normalized runtime atlas JSON")
+⋮----
 runtime = sub.add_parser("export-runtime-atlas", help="export normalized rotation-aware runtime atlas JSON")
 ⋮----
 godot = sub.add_parser("export-godot", help="export Godot 4 SpriteFrames .tres from atlas metadata")
@@ -2487,6 +2561,10 @@ metadata = pack_compact_atlas(
 result = recompress_png(args.input, args.output)
 ⋮----
 result = encode_webp(
+⋮----
+data = load_json(args.input)
+⋮----
+errors = validate_runtime_atlas(data)
 ⋮----
 source = load_json(args.metadata)
 runtime = build_runtime_atlas(source)
@@ -4408,13 +4486,26 @@ rotation
 For a rotated frame, `atlasRegion` describes the stored 90°-rotated rectangle, `sourceRegion` describes the pre-rotation trimmed sprite, and `rotation.degreesClockwise=90` tells the consumer how to restore orientation. Normalized `u0/v0/u1/v1` coordinates are included for direct texture sampling.
 
 The top-level `capabilities` object declares support for trim offsets and clockwise 90° rotation. The contract is documented in `schemas/runtime-atlas.schema.json`. This export is the rotation-aware alternative to the Godot SpriteFrames exporter, which intentionally rejects rotated regions.
+
+
+### Runtime atlas validation
+
+Normalized runtime atlas files can be validated independently:
+
+```bash
+python asset_forge.py validate-runtime-atlas examples/runtime-atlas.json
+```
+
+The dependency-free validator checks the versioned contract plus semantic relationships that JSON Schema alone does not express conveniently, including frame-count consistency, duplicate indices, UVs matching atlas regions, source/trim bounds, and rotation dimensions. Validation is strict about unknown fields and integer types, so booleans are not accepted as integers.
+
+CI validates `examples/runtime-atlas.json` as a smoke test. The example is a rotated + trimmed frame and can be used as a reference implementation for runtime consumers.
 ````
 
 ## File: runtime_atlas.py
 ````python
 def _positive_int(value, field: str) -> int
 ⋮----
-result = int(value)
+result = value
 ⋮----
 def _non_negative_int(value, field: str) -> int
 ⋮----
@@ -4450,6 +4541,79 @@ source_width = _positive_int(
 source_height = _positive_int(
 offset_x = _non_negative_int(frame.get("offsetX", 0), f"frame {index}.offsetX")
 offset_y = _non_negative_int(frame.get("offsetY", 0), f"frame {index}.offsetY")
+⋮----
+def validate_runtime_atlas(data: dict) -> list[str]
+⋮----
+errors: list[str] = []
+⋮----
+allowed_top = {
+unknown_top = sorted(set(data) - allowed_top)
+⋮----
+image = data.get("image")
+⋮----
+image_size = data.get("imageSize")
+⋮----
+atlas_width = atlas_height = None
+⋮----
+atlas_width = _positive_int(image_size.get("width"), "imageSize.width")
+atlas_height = _positive_int(image_size.get("height"), "imageSize.height")
+⋮----
+capabilities = data.get("capabilities")
+⋮----
+frames = data.get("frames")
+⋮----
+frames = []
+⋮----
+frame_count = data.get("frameCount")
+⋮----
+allowed_frame = {
+⋮----
+index = frame.get("index")
+⋮----
+index_label = position
+⋮----
+index_label = index
+⋮----
+name = frame.get("name")
+⋮----
+atlas_region = frame.get("atlasRegion")
+⋮----
+region = None
+⋮----
+x = _non_negative_int(atlas_region.get("x"), f"frame {index_label}.atlasRegion.x")
+y = _non_negative_int(atlas_region.get("y"), f"frame {index_label}.atlasRegion.y")
+width = _positive_int(atlas_region.get("width"), f"frame {index_label}.atlasRegion.width")
+height = _positive_int(atlas_region.get("height"), f"frame {index_label}.atlasRegion.height")
+region = (x, y, width, height)
+⋮----
+def read_size(field_name: str)
+⋮----
+obj = frame.get(field_name)
+⋮----
+source_region = read_size("sourceRegion")
+source_size = read_size("sourceSize")
+⋮----
+trim_offset = frame.get("trimOffset")
+⋮----
+offset = None
+⋮----
+offset = (
+⋮----
+rotation = frame.get("rotation")
+⋮----
+rotated = None
+degrees = None
+⋮----
+rotated = rotation.get("rotated")
+degrees = rotation.get("degreesClockwise")
+⋮----
+uv = frame.get("uv")
+⋮----
+values = []
+⋮----
+value = uv.get(key)
+⋮----
+expected = (
 ````
 
 ## File: starlist_bridge.py

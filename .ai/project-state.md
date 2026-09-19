@@ -94,21 +94,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-18T21:04:19Z
+Generated: 2026-09-19T06:33:38Z
 
 ### Git
 - Branch: `main`
-- Head: `0288881648c9`
-- Commit date: 2026-09-18T22:59:38+02:00
-- Commit: docs: record runtime atlas consumer milestone
-- Tracked files: 191
+- Head: `1eeeb06cce07`
+- Commit date: 2026-09-19T08:33:26+02:00
+- Commit: docs: record runtime atlas validation milestone
+- Tracked files: 192
 
 ### Recently changed files
 - `README.md`
-- `.repo-standards.yml`
 - `tests/test_runtime_atlas.py`
-- `schemas/runtime-atlas.schema.json`
 - `runtime_atlas.py`
+- `.github/workflows/validate.yml`
 
 ### Project signals
 - No common build descriptor detected

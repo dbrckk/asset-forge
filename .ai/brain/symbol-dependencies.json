@@ -338,7 +338,7 @@
       "source": {
         "file": "asset_forge.py",
         "start": 364,
-        "end": 533
+        "end": 536
       },
       "symbol_dependencies": [],
       "dependency_count": 0
@@ -346,8 +346,8 @@
     "main": {
       "source": {
         "file": "asset_forge.py",
-        "start": 536,
-        "end": 893
+        "start": 539,
+        "end": 910
       },
       "symbol_dependencies": [
         {
@@ -379,7 +379,7 @@
           "definitions": [
             {
               "file": "runtime_atlas.py",
-              "line": 24,
+              "line": 22,
               "kind": "function",
               "language": "python"
             }
@@ -759,6 +759,18 @@
           "relation": "same_file"
         },
         {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 150,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
           "symbol": "validate_svg_profile",
           "definitions": [
             {
@@ -807,13 +819,13 @@
           "relation": "imported_module"
         }
       ],
-      "dependency_count": 38
+      "dependency_count": 39
     },
     "_positive_int": {
       "source": {
         "file": "runtime_atlas.py",
         "start": 4,
-        "end": 11
+        "end": 10
       },
       "symbol_dependencies": [],
       "dependency_count": 0
@@ -821,8 +833,8 @@
     "_non_negative_int": {
       "source": {
         "file": "runtime_atlas.py",
-        "start": 14,
-        "end": 21
+        "start": 13,
+        "end": 19
       },
       "symbol_dependencies": [],
       "dependency_count": 0
@@ -830,8 +842,8 @@
     "build_runtime_atlas": {
       "source": {
         "file": "runtime_atlas.py",
-        "start": 24,
-        "end": 148
+        "start": 22,
+        "end": 146
       },
       "symbol_dependencies": [
         {
@@ -839,7 +851,87 @@
           "definitions": [
             {
               "file": "runtime_atlas.py",
-              "line": 14,
+              "line": 13,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_positive_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 4,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "validate_runtime_atlas": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 150,
+        "end": 377
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_non_negative_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 13,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_positive_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 4,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "read_size",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 271,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "read_size": {
+      "source": {
+        "file": "runtime_atlas.py",
+        "start": 271,
+        "end": 391
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_non_negative_int",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 13,
               "kind": "function",
               "language": "python"
             }
@@ -865,7 +957,7 @@
       "source": {
         "file": "tests/test_runtime_atlas.py",
         "start": 6,
-        "end": 121
+        "end": 193
       },
       "symbol_dependencies": [
         {
@@ -873,7 +965,7 @@
           "definitions": [
             {
               "file": "runtime_atlas.py",
-              "line": 24,
+              "line": 22,
               "kind": "function",
               "language": "python"
             }
@@ -939,9 +1031,93 @@
             }
           ],
           "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_accepts_generated_runtime_atlas",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 123,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_detects_frame_count_mismatch",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 145,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_detects_uv_drift",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 133,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_boolean_integer_fields",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 169,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_unknown_fields",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 157,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_validator_rejects_unknown_nested_fields",
+          "definitions": [
+            {
+              "file": "tests/test_runtime_atlas.py",
+              "line": 181,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 150,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
         }
       ],
-      "dependency_count": 6
+      "dependency_count": 13
     },
     "test_exports_trim_and_rotation_semantics": {
       "source": {
@@ -955,7 +1131,7 @@
           "definitions": [
             {
               "file": "runtime_atlas.py",
-              "line": 24,
+              "line": 22,
               "kind": "function",
               "language": "python"
             }
@@ -977,7 +1153,7 @@
           "definitions": [
             {
               "file": "runtime_atlas.py",
-              "line": 24,
+              "line": 22,
               "kind": "function",
               "language": "python"
             }
@@ -999,7 +1175,7 @@
           "definitions": [
             {
               "file": "runtime_atlas.py",
-              "line": 24,
+              "line": 22,
               "kind": "function",
               "language": "python"
             }
@@ -1021,7 +1197,7 @@
           "definitions": [
             {
               "file": "runtime_atlas.py",
-              "line": 24,
+              "line": 22,
               "kind": "function",
               "language": "python"
             }
@@ -1043,7 +1219,7 @@
           "definitions": [
             {
               "file": "runtime_atlas.py",
-              "line": 24,
+              "line": 22,
               "kind": "function",
               "language": "python"
             }
@@ -1052,6 +1228,210 @@
         }
       ],
       "dependency_count": 1
+    },
+    "test_validator_accepts_generated_runtime_atlas": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 123,
+        "end": 131
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 150,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_detects_uv_drift": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 133,
+        "end": 143
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 150,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_detects_frame_count_mismatch": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 145,
+        "end": 155
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 150,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_rejects_unknown_fields": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 157,
+        "end": 167
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 150,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_rejects_boolean_integer_fields": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 169,
+        "end": 179
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 150,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_validator_rejects_unknown_nested_fields": {
+      "source": {
+        "file": "tests/test_runtime_atlas.py",
+        "start": 181,
+        "end": 193
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 22,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "validate_runtime_atlas",
+          "definitions": [
+            {
+              "file": "runtime_atlas.py",
+              "line": 150,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 2
     }
   }
 }

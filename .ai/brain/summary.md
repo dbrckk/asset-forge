@@ -3,7 +3,7 @@
 - Index mode: incremental
 - Files indexed: 36
 - Files reparsed this run: 3
-- Symbols: 409
+- Symbols: 417
 - Internal import edges: 50
 - Impacted files: 4
 - Selected tests: 2
@@ -19,6 +19,7 @@
 - asset_forge.py: 15 symbols
 - tests/test_godot_export.py: 14 symbols
 - tests/test_godot_handoff.py: 13 symbols
+- tests/test_runtime_atlas.py: 12 symbols
 - gltf_binary_metrics.py: 11 symbols
 - svg_tools.py: 11 symbols
 - tests/test_gltf_tools.py: 11 symbols
@@ -31,7 +32,6 @@
 - tests/test_gltf_binary_metrics.py: 8 symbols
 - tests/test_gltf_diagnostics.py: 8 symbols
 - tests/test_godot_3d_delivery.py: 8 symbols
-- tests/test_raster_backend.py: 8 symbols
 
 ## Agent routing
 - Read impact.json first after project/change context.
@@ -44,8 +44,8 @@
 - AST index mode: incremental
 - AST files reparsed this run: 3
 - outline files retained: 36
-- top-level items retained: 398
-- direct members retained: 222
+- top-level items retained: 399
+- direct members retained: 228
 - symbol shards: 24
 - route named symbols via ast-routing.json, then fetch one ast-symbols/<initial>.json shard
 
