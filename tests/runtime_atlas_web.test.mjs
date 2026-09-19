@@ -12,6 +12,8 @@ import {
   animationDurationSeconds,
   buildSpriteBatch,
   drawSpriteBatchCanvas2D,
+  buildInstancedSpriteBatch,
+  instancedSpriteUV,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -420,4 +422,100 @@ assert.throws(
     { frame: "plain", scaleX: 1, scaleY: 2 },
   ]),
   /uniform scale/,
+);
+
+
+const instanced = buildInstancedSpriteBatch(indexed, [
+  { frame: "hero_0.png", x: 100, y: 200, scale: 2 },
+]);
+assert.equal(instanced.instanceCount, 1);
+assert.equal(instanced.instanceStrideFloats, 12);
+assert.equal(instanced.instanceStrideBytes, 48);
+assert.deepEqual(instanced.instanceLayout, [
+  "visibleX",
+  "visibleY",
+  "visibleWidth",
+  "visibleHeight",
+  "u0",
+  "v0",
+  "u1",
+  "v1",
+  "rotationFlag",
+  "sourceWidth",
+  "sourceHeight",
+  "reserved",
+]);
+assert.deepEqual(
+  Array.from(instanced.instances),
+  [
+    104,
+    202,
+    16,
+    12,
+    10 / 64,
+    20 / 64,
+    16 / 64,
+    28 / 64,
+    1,
+    24,
+    20,
+    0,
+  ],
+);
+assert.deepEqual(Array.from(instanced.unitQuad.vertices), [
+  0, 0,
+  1, 0,
+  1, 1,
+  0, 1,
+]);
+assert.deepEqual(Array.from(instanced.unitQuad.indices), [0, 1, 2, 0, 2, 3]);
+
+assert.deepEqual(
+  instancedSpriteUV(10 / 64, 20 / 64, 16 / 64, 28 / 64, 1, 0, 0),
+  { u: 10 / 64, v: 28 / 64 },
+);
+assert.deepEqual(
+  instancedSpriteUV(10 / 64, 20 / 64, 16 / 64, 28 / 64, 1, 1, 0),
+  { u: 10 / 64, v: 20 / 64 },
+);
+assert.deepEqual(
+  instancedSpriteUV(10 / 64, 20 / 64, 16 / 64, 28 / 64, 1, 1, 1),
+  { u: 16 / 64, v: 20 / 64 },
+);
+assert.deepEqual(
+  instancedSpriteUV(10 / 64, 20 / 64, 16 / 64, 28 / 64, 1, 0, 1),
+  { u: 16 / 64, v: 28 / 64 },
+);
+
+const plainInstanced = buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), [
+  { frame: "plain", x: 10, y: 20, scaleX: 2, scaleY: 3 },
+]);
+assert.equal(plainInstanced.instances[8], 0);
+assert.deepEqual(
+  instancedSpriteUV(1 / 16, 2 / 16, 5 / 16, 7 / 16, 0, 1, 1),
+  { u: 5 / 16, v: 7 / 16 },
+);
+
+const manyInstances = Array.from({ length: 1000 }, (_, index) => ({
+  frame: "plain",
+  x: index,
+  y: index,
+}));
+const classicMany = buildSpriteBatch(indexRuntimeAtlas(plainAtlas), manyInstances);
+const instancedMany = buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), manyInstances);
+assert.equal(classicMany.vertices.byteLength, 1000 * 4 * 4 * 4);
+assert.equal(instancedMany.instances.byteLength, 1000 * 12 * 4);
+assert.ok(instancedMany.instances.byteLength < classicMany.vertices.byteLength);
+
+assert.throws(
+  () => buildInstancedSpriteBatch(indexed, [{ frame: 0, scale: 0 }]),
+  /scale must be > 0/,
+);
+assert.throws(
+  () => buildInstancedSpriteBatch(indexed, [{ frame: 0 }, { frame: 0 }], { maxInstances: 1 }),
+  /exceeds maxInstances/,
+);
+assert.throws(
+  () => instancedSpriteUV(0, 0, 1, 1, 2, 0, 0),
+  /rotationFlag must be 0 or 1/,
 );
