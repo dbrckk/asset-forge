@@ -90,9 +90,11 @@ def _generation_dimensions(job: dict) -> tuple[int, int] | None:
         return None
     width, height, _, _ = geometry
     shortest = max(1, min(width, height))
-    scale = max(1.0, 512.0 / shortest)
-    request_width = min(2048, max(64, math.ceil(width * scale / 64) * 64))
-    request_height = min(2048, max(64, math.ceil(height * scale / 64) * 64))
+    longest = max(width, height)
+    desired_scale = max(1.0, 512.0 / shortest)
+    scale = min(desired_scale, 2048.0 / max(1, longest))
+    request_width = min(2048, max(64, int(round(width * scale))))
+    request_height = min(2048, max(64, int(round(height * scale))))
     return request_width, request_height
 
 
