@@ -32,6 +32,9 @@ import {
   createWebGL2CanvasRuntime,
   createSpriteEntityStore,
   createSpriteAnimationSystem,
+  resolveSpriteEntityHierarchy,
+  buildSpriteEntityInstances,
+  createSpriteEntityBatchCache,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -1971,5 +1974,214 @@ assert.equal(animatedRuntime.entities.get("runtime-hero").page, "heroes");
 animatedRuntime.updateAnimations(0.10);
 assert.equal(animatedRuntime.renderEntities().instances, 1);
 animatedRuntime.dispose();
+
+
+
+const hierarchyStore = createSpriteEntityStore();
+hierarchyStore.add({
+  id: "root",
+  page: "heroes",
+  frame: "plain",
+  x: 100,
+  y: 50,
+  z: 10,
+  scaleX: 2,
+  scaleY: 3,
+});
+hierarchyStore.add({
+  id: "child",
+  parent: "root",
+  page: "heroes",
+  frame: "plain",
+  x: 5,
+  y: 4,
+  z: 2,
+  scaleX: 0.5,
+  scaleY: 2,
+});
+hierarchyStore.add({
+  id: "grandchild",
+  parent: "child",
+  page: "heroes",
+  frame: "plain",
+  x: 8,
+  y: 2,
+  z: -1,
+});
+
+const hierarchyResolved = resolveSpriteEntityHierarchy(hierarchyStore);
+assert.equal(hierarchyResolved.count, 3);
+assert.deepEqual(
+  hierarchyResolved.instances.map((instance) => [
+    instance.id,
+    instance.x,
+    instance.y,
+    instance.z,
+    instance.scaleX,
+    instance.scaleY,
+  ]),
+  [
+    ["root", 100, 50, 10, 2, 3],
+    ["child", 110, 62, 12, 1, 6],
+    ["grandchild", 118, 74, 11, 1, 6],
+  ],
+);
+
+const builtHierarchyInstances = buildSpriteEntityInstances(hierarchyStore, {
+  hierarchy: true,
+  sort: true,
+  preserveOrder: true,
+});
+assert.equal(builtHierarchyInstances.instances[1].x, 110);
+assert.deepEqual(builtHierarchyInstances.sceneBatchOptions, {
+  sort: true,
+  preserveOrder: true,
+});
+
+hierarchyStore.update("root", { enabled: false });
+const hiddenHierarchy = resolveSpriteEntityHierarchy(hierarchyStore);
+assert.equal(hiddenHierarchy.count, 0);
+const visibleDisabledHierarchy = resolveSpriteEntityHierarchy(hierarchyStore, {
+  includeDisabled: true,
+});
+assert.equal(visibleDisabledHierarchy.count, 3);
+
+hierarchyStore.update("root", { enabled: true });
+hierarchyStore.add({
+  id: "missing-parent-child",
+  parent: "missing",
+  page: "heroes",
+  frame: "plain",
+});
+assert.throws(
+  () => resolveSpriteEntityHierarchy(hierarchyStore),
+  /parent not found/,
+);
+assert.equal(
+  resolveSpriteEntityHierarchy(hierarchyStore, {
+    allowMissingParents: true,
+  }).count,
+  4,
+);
+hierarchyStore.remove("missing-parent-child");
+
+hierarchyStore.add({
+  id: "cycle-a",
+  parent: "cycle-b",
+  page: "heroes",
+  frame: "plain",
+});
+hierarchyStore.add({
+  id: "cycle-b",
+  parent: "cycle-a",
+  page: "heroes",
+  frame: "plain",
+});
+assert.throws(
+  () => resolveSpriteEntityHierarchy(hierarchyStore),
+  /hierarchy cycle detected/,
+);
+hierarchyStore.remove("cycle-a");
+hierarchyStore.remove("cycle-b");
+
+const hierarchySceneGl = createMockWebGL2();
+const hierarchyScene = await createWebGL2RuntimeAtlasScene(
+  hierarchySceneGl,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    loaderOptions: {
+      fetchImpl: async (url) => ({
+        ok: true,
+        status: 200,
+        async blob() {
+          return { id: `blob:${url}` };
+        },
+      }),
+      createImageBitmapImpl: async (blob) => ({
+        id: `bitmap:${blob.id}`,
+      }),
+    },
+  },
+);
+const hierarchyCache = createSpriteEntityBatchCache(
+  hierarchyScene,
+  hierarchyStore,
+);
+const hierarchyCacheFirst = hierarchyCache.build({
+  hierarchy: true,
+  preserveOrder: true,
+});
+assert.equal(hierarchyCacheFirst.cacheHit, false);
+const hierarchyCacheSecond = hierarchyCache.build({
+  hierarchy: true,
+  preserveOrder: true,
+});
+assert.equal(hierarchyCacheSecond.cacheHit, true);
+hierarchyStore.update("root", { x: 200 });
+const hierarchyCacheAfterParentMove = hierarchyCache.build({
+  hierarchy: true,
+  preserveOrder: true,
+});
+assert.equal(hierarchyCacheAfterParentMove.cacheHit, false);
+assert.ok(hierarchyCache.stats.invalidations >= 1);
+hierarchyScene.dispose();
+
+const hierarchyRuntimeGl = createMockWebGL2();
+hierarchyRuntimeGl.viewport = (...args) =>
+  hierarchyRuntimeGl.calls.push(["viewport", ...args]);
+const hierarchyRuntimeCanvas = createMockCanvas();
+const hierarchyRuntime = await createWebGL2CanvasRuntime(
+  hierarchyRuntimeCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    getContext() {
+      return hierarchyRuntimeGl;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+hierarchyRuntime.entities.add({
+  id: "runtime-parent",
+  page: "heroes",
+  frame: "plain",
+  x: 10,
+  y: 20,
+  scale: 2,
+});
+hierarchyRuntime.entities.add({
+  id: "runtime-child",
+  parent: "runtime-parent",
+  page: "heroes",
+  frame: "plain",
+  x: 5,
+  y: 3,
+});
+const runtimeHierarchyBatches = hierarchyRuntime.buildEntityBatches({
+  hierarchy: true,
+  preserveOrder: true,
+});
+assert.equal(runtimeHierarchyBatches.instanceCount, 2);
+assert.equal(runtimeHierarchyBatches.batches[0].batch.bounds[1].x, 20);
+assert.equal(runtimeHierarchyBatches.batches[0].batch.bounds[1].y, 26);
+const runtimeHierarchyRender = hierarchyRuntime.renderEntities({
+  hierarchy: true,
+  preserveOrder: true,
+});
+assert.equal(runtimeHierarchyRender.instances, 2);
+hierarchyRuntime.dispose();
 
 console.log("runtime_atlas.mjs smoke test passed");
