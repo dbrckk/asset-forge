@@ -12,7 +12,7 @@ Status: active
 - Godot SpriteFrames export now maps trim metadata to AtlasTexture.margin and validates atlas bounds/source-offset consistency before emitting resources.
 - A versioned engine-neutral runtime atlas exporter preserves atlas region, normalized UVs, pre-rotation source region, source canvas size, trim offsets, and explicit clockwise rotation metadata; its JSON contract is defined by schemas/runtime-atlas.schema.json.
 - Runtime atlas JSON has a dependency-free strict validator with semantic checks for frame count, duplicate indices, UV-region consistency, source/trim bounds, rotation dimensions, unknown fields, and strict integer typing; CI smoke-validates examples/runtime-atlas.json.
-- A dependency-free ES module web/runtime_atlas.mjs indexes frames by index/name, draws trim+rotation-correct sprites to Canvas2D, exposes source-oriented UVs for WebGL/custom renderers, indexes animations, samples animation frames deterministically by elapsed seconds, and provides a host-driven play/pause/seek/rate controller with frame/loop/finish/event callbacks plus Canvas2D drawing; event markers remain deterministic across skipped frames and multiple crossed loops. It builds both classic interleaved WebGL sprite batches and compact instanced batches, with a reference WebGL2 shader/attribute contract for drawElementsInstanced, and can group instances across multiple runtime-atlas texture pages while preserving input-index provenance.
+- A dependency-free ES module web/runtime_atlas.mjs indexes frames by index/name, draws trim+rotation-correct sprites to Canvas2D, exposes source-oriented UVs for WebGL/custom renderers, indexes animations, samples animation frames deterministically by elapsed seconds, and provides a host-driven play/pause/seek/rate controller with frame/loop/finish/event callbacks plus Canvas2D drawing; event markers remain deterministic across skipped frames and multiple crossed loops. It builds both classic interleaved WebGL sprite batches and compact instanced batches, with a reference WebGL2 shader/attribute contract for drawElementsInstanced, groups instances across multiple texture pages, and now includes a WebGL2 renderer helper that owns program/VAO/buffers, reuses instance-buffer capacity, resolves page texture keys at render time, and draws one instanced call per page batch.
 - Runtime atlas v1 optionally embeds validated animations (name/fps/loop/frame index/duration) plus sorted timeline event markers with optional payload objects. export-runtime-atlas can infer animations from filenames or consume an explicit animation config without changing non-animation outputs.
 - PNG recompression is no-growth: the original bytes are retained whenever the adaptive candidate is not smaller, including in-place output.
 - Indexed PNG decoding supports 1/2/4/8-bit palette indices with packed scanline layout, PNG filtering, row-padding handling, and tRNS palette alpha.
@@ -70,7 +70,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Consider additional engine adapters and higher-level renderer integration; runtime-atlas now supports deterministic multi-atlas texture-page batching with both optimized grouping and strict-order contiguous-run modes.
+- Consider additional engine adapters, texture loading/lifetime helpers, and higher-level scene integration; runtime-atlas now includes deterministic multi-atlas batching plus a functional WebGL2 instanced renderer.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -91,7 +91,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-19: latest GitHub source inspected after adding multi-atlas texture-page catalogues and classic/instanced page batching, texture-switch metrics, input-index provenance, and strict draw-order preserving contiguous-run batching.
+- 2026-09-19: latest GitHub source inspected after adding a WebGL2 instanced renderer with shader compilation/linking, VAO/VBO setup, dynamic instance-buffer reuse, deferred texture resolution, multi-page rendering, lifecycle cleanup, tests, and documentation.
 
 <!-- AUTO:START -->
 ## Automatic repository state
