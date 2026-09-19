@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 from typing import Callable
 
-from generator_backends import VECTOR_GENERATED_TYPES, execute_generated_asset
+from generator_backends import THREE_D_GENERATED_TYPES, VECTOR_GENERATED_TYPES, execute_generated_3d_asset, execute_generated_asset
 
 
 class ProductionExecutionError(RuntimeError):
@@ -182,6 +183,137 @@ def execute_generated_vector_job(
             "warnings": warnings,
         },
         "artifact": str(final) if not errors else None,
+    }
+    report_path = out / "production-report.json"
+    report_path.write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    report["reportPath"] = str(report_path)
+    return report
+
+
+def execute_generated_3d_job(
+    job: dict,
+    output_dir: Path,
+    *,
+    structural_validator: Callable,
+    profile_validator: Callable,
+    quality_reporter: Callable,
+    godot_delivery_reporter: Callable,
+    generator: Callable = execute_generated_3d_asset,
+    model: str = "microsoft/trellis-2",
+    resolution: str = "low",
+    timeout_seconds: float = 600.0,
+) -> dict:
+    if job.get("schema") != "asset-forge/production-job/v1":
+        raise ProductionExecutionError("unsupported production job schema")
+    if job.get("requiresGenerator") is not True:
+        raise ProductionExecutionError("production job does not require generation")
+
+    manifest = job.get("manifest")
+    if not isinstance(manifest, dict):
+        raise ProductionExecutionError("production job manifest missing")
+    target = manifest.get("target")
+    if not isinstance(target, dict):
+        raise ProductionExecutionError("production job target missing")
+    target_format = str(target.get("format") or "").lower()
+    if target_format not in {"glb", "gltf"}:
+        raise ProductionExecutionError(
+            f"generated 3D production requires target format glb/gltf, got: {target_format or '<missing>'}"
+        )
+
+    asset_type = str(job.get("assetType") or "")
+    if asset_type not in THREE_D_GENERATED_TYPES:
+        raise ProductionExecutionError(
+            f"generated 3D production does not support asset type: {asset_type or '<missing>'}"
+        )
+    if target_format != "glb":
+        raise ProductionExecutionError(
+            "generated 3D production currently emits self-contained GLB only"
+        )
+
+    asset_id = str(job.get("assetId") or manifest.get("id") or "").strip()
+    if not asset_id:
+        raise ProductionExecutionError("production job asset id missing")
+
+    out = Path(output_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    generation = generator(
+        job,
+        out,
+        model=model,
+        resolution=resolution,
+        timeout_seconds=timeout_seconds,
+    )
+    source = Path(str(generation.get("sourcePath") or ""))
+    if not source.is_file():
+        raise ProductionExecutionError("3D generator result source file missing")
+
+    final = out / f"{asset_id}.glb"
+    if source.resolve() != final.resolve():
+        shutil.copyfile(source, final)
+
+    profile = {
+        "prop": "prop",
+        "environment": "environment",
+        "character-3d": "character",
+    }.get(asset_type)
+
+    try:
+        if profile is None:
+            info, errors, warnings = structural_validator(final)
+        else:
+            info, errors, warnings = profile_validator(final, profile)
+        quality = quality_reporter(final, profile)
+    except (OSError, ValueError) as exc:
+        raise ProductionExecutionError(f"generated 3D validation failed: {exc}") from exc
+
+    evaluation = quality.get("evaluation") if isinstance(quality, dict) else None
+    quality_errors = []
+    quality_warnings = []
+    if isinstance(evaluation, dict):
+        quality_errors = list(evaluation.get("errors") or [])
+        quality_warnings = list(evaluation.get("warnings") or [])
+
+    engine = str(target.get("engine") or "").lower()
+    godot_delivery = None
+    if engine in {"godot", "godot4", "godot-4"}:
+        try:
+            godot_delivery = godot_delivery_reporter(
+                final,
+                profile or "prop",
+            )
+        except (OSError, ValueError) as exc:
+            raise ProductionExecutionError(
+                f"generated 3D Godot delivery validation failed: {exc}"
+            ) from exc
+
+    combined_errors = list(errors) + quality_errors
+    combined_warnings = list(warnings) + quality_warnings
+    if isinstance(godot_delivery, dict):
+        combined_errors.extend(list(godot_delivery.get("errors") or []))
+        combined_warnings.extend(list(godot_delivery.get("warnings") or []))
+        if godot_delivery.get("ready") is not True and not godot_delivery.get("errors"):
+            combined_errors.append("Godot delivery report is not ready")
+
+    report = {
+        "schema": "asset-forge/production-report/v1",
+        "requestId": job.get("requestId"),
+        "assetId": asset_id,
+        "assetType": asset_type,
+        "success": not combined_errors,
+        "generation": generation,
+        "validation": {
+            "file": str(final),
+            "profile": profile,
+            "info": info,
+            "errors": combined_errors,
+            "warnings": combined_warnings,
+            "quality": quality,
+            "godot": godot_delivery,
+        },
+        "artifact": str(final) if not combined_errors else None,
     }
     report_path = out / "production-report.json"
     report_path.write_text(
