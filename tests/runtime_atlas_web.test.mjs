@@ -3780,8 +3780,8 @@ assert.deepEqual(
 
 autoDragRuntime.dispose();
 
-assert.throws(
-  async () =>
+await assert.rejects(
+  () =>
     createWebGL2CanvasRuntime(
       createMockCanvas(),
       [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
