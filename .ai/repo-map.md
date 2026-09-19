@@ -44,6 +44,8 @@ The content is organized as follows:
     repo-standards.yml
     semantic-refresh.yml
     validate.yml
+benchmarks/
+  runtime_atlas_web.bench.mjs
 config/
   tooling.json
 examples/
@@ -238,6 +240,8 @@ jobs:
           node-version: "22"
       - name: Smoke-test web runtime atlas consumer
         run: node tests/runtime_atlas_web.test.mjs
+      - name: Stress-test WebGL2 runtime atlas pipeline
+        run: node benchmarks/runtime_atlas_web.bench.mjs
       - name: Smoke-test star-list bridge
         run: python asset_forge.py discover-tools star-list "pixel art sprites atlas" --top 3
 
@@ -254,6 +258,11 @@ jobs:
         run: python asset_forge.py raster-backend-status
       - name: WebP backend tests
         run: python -m unittest discover -s tests -p "test_raster_backend.py" -v
+````
+
+## File: benchmarks/runtime_atlas_web.bench.mjs
+````javascript
+
 ````
 
 ## File: config/tooling.json

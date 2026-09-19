@@ -96,18 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T16:27:04Z
+Generated: 2026-09-19T17:33:41Z
 
 ### Git
 - Branch: `main`
-- Head: `7183d9ca5a71`
-- Commit date: 2026-09-19T18:26:52+02:00
-- Commit: test: harden gizmo scale and nested transforms
-- Tracked files: 209
+- Head: `e1c348107f1d`
+- Commit date: 2026-09-19T19:33:27+02:00
+- Commit: test: accept implicit zero child rotation
+- Tracked files: 210
 
 ### Recently changed files
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
+- `.github/workflows/validate.yml`
+- `benchmarks/runtime_atlas_web.bench.mjs`
 
 ### Project signals
 - No common build descriptor detected
