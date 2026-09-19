@@ -2474,3 +2474,142 @@ export function createSpriteAnimationSystem(
     },
   };
 }
+
+
+function _stableSceneCacheKey(value, seen = new Set()) {
+  if (value === null) return "null";
+  const type = typeof value;
+  if (type === "string") return JSON.stringify(value);
+  if (type === "number" || type === "boolean") {
+    if (type === "number" && !Number.isFinite(value)) {
+      throw new Error("scene cache options must contain only finite numbers");
+    }
+    return JSON.stringify(value);
+  }
+  if (type === "undefined") return "undefined";
+  if (type !== "object") {
+    throw new Error("scene cache options must be JSON-like data");
+  }
+  if (seen.has(value)) {
+    throw new Error("scene cache options must not be circular");
+  }
+  seen.add(value);
+  try {
+    if (Array.isArray(value)) {
+      return `[${value.map((entry) => _stableSceneCacheKey(entry, seen)).join(",")}]`;
+    }
+    const keys = Object.keys(value).sort();
+    return `{${keys
+      .map(
+        (key) =>
+          `${JSON.stringify(key)}:${_stableSceneCacheKey(value[key], seen)}`,
+      )
+      .join(",")}}`;
+  } finally {
+    seen.delete(value);
+  }
+}
+
+export function createSpriteEntityBatchCache(
+  runtimeScene,
+  entityStore,
+  options = {},
+) {
+  if (!runtimeScene || typeof runtimeScene.buildBatches !== "function") {
+    throw new Error("runtime atlas scene with buildBatches() required");
+  }
+  if (
+    !entityStore ||
+    typeof entityStore.instances !== "function" ||
+    !Number.isInteger(entityStore.version)
+  ) {
+    throw new Error("sprite entity store with version required");
+  }
+
+  const maxEntries = options.maxEntries ?? 8;
+  if (!Number.isInteger(maxEntries) || maxEntries <= 0) {
+    throw new Error("maxEntries must be a positive integer");
+  }
+
+  const entries = new Map();
+  let cachedVersion = entityStore.version;
+  let hits = 0;
+  let misses = 0;
+  let invalidations = 0;
+
+  function invalidate() {
+    const removed = entries.size;
+    entries.clear();
+    cachedVersion = entityStore.version;
+    if (removed > 0) {
+      invalidations += 1;
+    }
+    return removed;
+  }
+
+  function ensureVersion() {
+    if (cachedVersion !== entityStore.version) {
+      invalidate();
+    }
+  }
+
+  function build(batchOptions = {}) {
+    ensureVersion();
+    const key = _stableSceneCacheKey(batchOptions);
+    const existing = entries.get(key);
+    if (existing) {
+      entries.delete(key);
+      entries.set(key, existing);
+      hits += 1;
+      return {
+        batches: existing,
+        cacheHit: true,
+        entityVersion: cachedVersion,
+        cacheKey: key,
+      };
+    }
+
+    misses += 1;
+    const batches = runtimeScene.buildBatches(
+      entityStore.instances(),
+      batchOptions,
+    );
+    entries.set(key, batches);
+
+    while (entries.size > maxEntries) {
+      const oldestKey = entries.keys().next().value;
+      entries.delete(oldestKey);
+    }
+
+    return {
+      batches,
+      cacheHit: false,
+      entityVersion: cachedVersion,
+      cacheKey: key,
+    };
+  }
+
+  function clear() {
+    return invalidate();
+  }
+
+  return {
+    build,
+    invalidate: clear,
+    get size() {
+      ensureVersion();
+      return entries.size;
+    },
+    get stats() {
+      ensureVersion();
+      return {
+        hits,
+        misses,
+        invalidations,
+        entries: entries.size,
+        entityVersion: cachedVersion,
+        maxEntries,
+      };
+    },
+  };
+}
