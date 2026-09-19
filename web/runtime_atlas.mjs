@@ -5067,10 +5067,18 @@ export function applySelectionTransformHandleDrag(
   if (handle === "rotate") {
     const a0 = Math.atan2(startPoint.y - pivot.y, startPoint.x - pivot.x);
     const a1 = Math.atan2(currentPoint.y - pivot.y, currentPoint.x - pivot.x);
+    const rotationSnap = options.rotationSnap ?? 0;
+    if (!Number.isFinite(rotationSnap) || rotationSnap < 0) {
+      throw new Error("selection transform rotationSnap must be a finite value >= 0");
+    }
+    let rotation = a1 - a0;
+    if (rotationSnap > 0) {
+      rotation = Math.round(rotation / rotationSnap) * rotationSnap;
+    }
     return transformSelectedSpriteEntities(entityStore, selectionModel, {
       pivotX: pivot.x,
       pivotY: pivot.y,
-      rotation: a1 - a0,
+      rotation,
     });
   }
 
