@@ -76,5 +76,97 @@ class FulfillCommandTests(unittest.TestCase):
         self.assertEqual(execute.call_args.kwargs["timeout_seconds"], 30)
 
 
+    def test_godot_sprite_sheet_gets_engine_handoff(self):
+        job = {
+            "assetId": "hero",
+            "assetType": "sprite-sheet",
+            "manifest": {
+                "id": "hero",
+                "target": {"engine": "godot4", "format": "png"},
+                "constraints": {"frameWidth": 32, "frameHeight": 32},
+            },
+        }
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            artifact = out / "hero.png"
+            artifact.write_bytes(b"PNG")
+            report = out / "production-report.json"
+            report.write_text("{}\n", encoding="utf-8")
+            result = {
+                "success": True,
+                "artifact": str(artifact),
+                "reportPath": str(report),
+            }
+            atlas = {
+                "assetId": "hero",
+                "image": "hero.png",
+                "imageWidth": 32,
+                "imageHeight": 32,
+                "columns": 1,
+                "rows": 1,
+                "frameCount": 1,
+                "frames": [
+                    {"index": 0, "x": 0, "y": 0, "width": 32, "height": 32}
+                ],
+            }
+
+            with patch("asset_forge.build_atlas_manifest", return_value=atlas), \
+                 patch("asset_forge.write_spriteframes") as write:
+                enriched = asset_forge._enrich_engine_handoff(job, result, out)
+
+            self.assertTrue(enriched["engineHandoff"]["ready"])
+            self.assertEqual(enriched["engineHandoff"]["type"], "spriteframes")
+            self.assertTrue((out / "atlas-metadata.json").is_file())
+            write.assert_called_once()
+            persisted = json.loads(report.read_text(encoding="utf-8"))
+            self.assertEqual(persisted["engineHandoff"]["engine"], "godot4")
+
+    def test_godot_3d_gets_handoff_and_import_validation(self):
+        job = {
+            "assetId": "crate",
+            "assetType": "prop",
+            "manifest": {
+                "id": "crate",
+                "project": "demo",
+                "type": "prop",
+                "importance": "primary",
+                "source": {"mode": "generated"},
+                "license": {
+                    "id": "project-owned",
+                    "commercialUse": True,
+                    "derivatives": True,
+                },
+                "target": {"engine": "godot4", "format": "glb"},
+            },
+        }
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            artifact = out / "crate.glb"
+            artifact.write_bytes(b"glTF")
+            report = out / "production-report.json"
+            report.write_text("{}\n", encoding="utf-8")
+            result = {
+                "success": True,
+                "artifact": str(artifact),
+                "reportPath": str(report),
+                "validation": {"godot": {"ready": True}},
+            }
+            handoff = {"projectDir": str(out / "godot-handoff")}
+
+            with patch(
+                "asset_forge.prepare_godot_handoff",
+                return_value=handoff,
+            ) as prepare, patch(
+                "asset_forge.validate_godot_handoff",
+                return_value={"available": False, "passed": None},
+            ) as validate:
+                enriched = asset_forge._enrich_engine_handoff(job, result, out)
+
+            self.assertTrue(enriched["success"])
+            self.assertTrue(enriched["engineHandoff"]["ready"])
+            self.assertEqual(enriched["engineHandoff"]["type"], "3d-project")
+            prepare.assert_called_once()
+            validate.assert_called_once()
+
 if __name__ == "__main__":
     unittest.main()
