@@ -485,8 +485,13 @@ export function buildSpriteBatch(indexedAtlas, instances, options = {}) {
     const y = instance.y ?? 0;
     const scaleX = instance.scaleX ?? instance.scale ?? 1;
     const scaleY = instance.scaleY ?? instance.scale ?? 1;
+    const spriteRotation = instance.rotation ?? 0;
+    const pivotX = instance.pivotX ?? 0;
+    const pivotY = instance.pivotY ?? 0;
 
-    for (const [name, value] of Object.entries({ x, y, scaleX, scaleY })) {
+    for (const [name, value] of Object.entries({
+      x, y, scaleX, scaleY, spriteRotation, pivotX, pivotY,
+    })) {
       if (!Number.isFinite(value)) {
         throw new Error(`sprite batch instance ${instanceIndex} ${name} must be finite`);
       }
@@ -597,8 +602,9 @@ export function buildInstancedSpriteBatch(indexedAtlas, instances, options = {})
   // Per instance:
   // visibleX, visibleY, visibleWidth, visibleHeight,
   // u0, v0, u1, v1,
-  // rotationFlag, sourceWidth, sourceHeight, reserved
-  const strideFloats = 12;
+  // atlasRotationFlag, sourceWidth, sourceHeight, spriteRotationRadians,
+  // pivotWorldX, pivotWorldY, reserved0, reserved1
+  const strideFloats = 16;
   const data = new Float32Array(instances.length * strideFloats);
   const bounds = new Array(instances.length);
 
@@ -645,7 +651,11 @@ export function buildInstancedSpriteBatch(indexedAtlas, instances, options = {})
     data[write + 8] = frame.rotation.rotated ? 1 : 0;
     data[write + 9] = frame.sourceSize.width * scaleX;
     data[write + 10] = frame.sourceSize.height * scaleY;
-    data[write + 11] = 0;
+    data[write + 11] = spriteRotation;
+    data[write + 12] = x + pivotX * scaleX;
+    data[write + 13] = y + pivotY * scaleY;
+    data[write + 14] = 0;
+    data[write + 15] = 0;
 
     bounds[instanceIndex] = {
       x,
@@ -659,6 +669,9 @@ export function buildInstancedSpriteBatch(indexedAtlas, instances, options = {})
       frameIndex: frame.index,
       frameName: frame.name ?? null,
       rotated: frame.rotation.rotated,
+      rotation: spriteRotation,
+      pivotWorldX: x + pivotX * scaleX,
+      pivotWorldY: y + pivotY * scaleY,
     };
   }
 
@@ -675,10 +688,14 @@ export function buildInstancedSpriteBatch(indexedAtlas, instances, options = {})
       "v0",
       "u1",
       "v1",
-      "rotationFlag",
+      "atlasRotationFlag",
       "sourceWidth",
       "sourceHeight",
-      "reserved",
+      "spriteRotationRadians",
+      "pivotWorldX",
+      "pivotWorldY",
+      "reserved0",
+      "reserved1",
     ],
     instances: data,
     bounds,
@@ -733,6 +750,7 @@ export function instancedSpriteWebGL2Shaders() {
       aVisibleRect: { location: 1, components: 4, divisor: 1 },
       aUvRect: { location: 2, components: 4, divisor: 1 },
       aRotationAndSource: { location: 3, components: 4, divisor: 1 },
+      aPivotAndReserved: { location: 4, components: 4, divisor: 1 },
     },
     uniforms: {
       uViewportSize: "vec2",
@@ -745,6 +763,7 @@ layout(location = 0) in vec2 aUnitPosition;
 layout(location = 1) in vec4 aVisibleRect;
 layout(location = 2) in vec4 aUvRect;
 layout(location = 3) in vec4 aRotationAndSource;
+layout(location = 4) in vec4 aPivotAndReserved;
 
 uniform vec2 uViewportSize;
 
@@ -753,6 +772,18 @@ out vec2 vUv;
 void main() {
   vec2 pixelPosition =
     aVisibleRect.xy + aUnitPosition * aVisibleRect.zw;
+
+  float spriteRotation = aRotationAndSource.w;
+  if (spriteRotation != 0.0) {
+    vec2 pivot = aPivotAndReserved.xy;
+    vec2 delta = pixelPosition - pivot;
+    float c = cos(spriteRotation);
+    float s = sin(spriteRotation);
+    pixelPosition = pivot + vec2(
+      delta.x * c - delta.y * s,
+      delta.x * s + delta.y * c
+    );
+  }
 
   vec2 clip = vec2(
     pixelPosition.x / uViewportSize.x * 2.0 - 1.0,
@@ -790,7 +821,7 @@ export function instancedSpriteAttributeViews(batch) {
   if (!batch || !(batch.instances instanceof Float32Array)) {
     throw new Error("invalid instanced sprite batch");
   }
-  if (batch.instanceStrideFloats !== 12) {
+  if (batch.instanceStrideFloats !== 16) {
     throw new Error("unsupported instanced sprite stride");
   }
 
@@ -817,6 +848,13 @@ export function instancedSpriteAttributeViews(batch) {
         location: 3,
         size: 4,
         offsetBytes: 8 * Float32Array.BYTES_PER_ELEMENT,
+        divisor: 1,
+      },
+      {
+        name: "aPivotAndReserved",
+        location: 4,
+        size: 4,
+        offsetBytes: 12 * Float32Array.BYTES_PER_ELEMENT,
         divisor: 1,
       },
     ],
@@ -1694,8 +1732,13 @@ export function spriteInstanceBounds(atlasPages, instance) {
   const y = instance.y ?? 0;
   const scaleX = instance.scaleX ?? instance.scale ?? 1;
   const scaleY = instance.scaleY ?? instance.scale ?? 1;
+  const rotation = instance.rotation ?? 0;
+  const pivotX = instance.pivotX ?? 0;
+  const pivotY = instance.pivotY ?? 0;
 
-  for (const [name, value] of Object.entries({ x, y, scaleX, scaleY })) {
+  for (const [name, value] of Object.entries({
+    x, y, scaleX, scaleY, rotation, pivotX, pivotY,
+  })) {
     if (!Number.isFinite(value)) {
       throw new Error(`sprite instance ${name} must be finite`);
     }
@@ -1704,15 +1747,68 @@ export function spriteInstanceBounds(atlasPages, instance) {
     throw new Error("sprite instance scale must be > 0");
   }
 
+  const logicalWidth = frame.sourceSize.width * scaleX;
+  const logicalHeight = frame.sourceSize.height * scaleY;
+  const visibleX = x + frame.trimOffset.x * scaleX;
+  const visibleY = y + frame.trimOffset.y * scaleY;
+  const visibleWidth = frame.sourceRegion.width * scaleX;
+  const visibleHeight = frame.sourceRegion.height * scaleY;
+  const pivotWorldX = x + pivotX * scaleX;
+  const pivotWorldY = y + pivotY * scaleY;
+
+  function rotatedAabb(rx, ry, rw, rh) {
+    if (rotation === 0) {
+      return { x: rx, y: ry, width: rw, height: rh };
+    }
+    const cos = Math.cos(rotation);
+    const sin = Math.sin(rotation);
+    const corners = [
+      [rx, ry],
+      [rx + rw, ry],
+      [rx + rw, ry + rh],
+      [rx, ry + rh],
+    ].map(([cx, cy]) => {
+      const dx = cx - pivotWorldX;
+      const dy = cy - pivotWorldY;
+      return [
+        pivotWorldX + dx * cos - dy * sin,
+        pivotWorldY + dx * sin + dy * cos,
+      ];
+    });
+    const xs = corners.map(([cx]) => cx);
+    const ys = corners.map(([, cy]) => cy);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    return {
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
+    };
+  }
+
+  const logical = rotatedAabb(x, y, logicalWidth, logicalHeight);
+  const visible = rotatedAabb(
+    visibleX,
+    visibleY,
+    visibleWidth,
+    visibleHeight,
+  );
+
   return {
-    x,
-    y,
-    width: frame.sourceSize.width * scaleX,
-    height: frame.sourceSize.height * scaleY,
-    visibleX: x + frame.trimOffset.x * scaleX,
-    visibleY: y + frame.trimOffset.y * scaleY,
-    visibleWidth: frame.sourceRegion.width * scaleX,
-    visibleHeight: frame.sourceRegion.height * scaleY,
+    x: logical.x,
+    y: logical.y,
+    width: logical.width,
+    height: logical.height,
+    visibleX: visible.x,
+    visibleY: visible.y,
+    visibleWidth: visible.width,
+    visibleHeight: visible.height,
+    rotation,
+    pivotWorldX,
+    pivotWorldY,
   };
 }
 
@@ -2144,7 +2240,17 @@ export function createSpriteEntityStore(options = {}) {
       throw new Error(`${label}.parent must not be an empty string`);
     }
 
-    for (const field of ["x", "y", "z", "scale", "scaleX", "scaleY"]) {
+    for (const field of [
+      "x",
+      "y",
+      "z",
+      "scale",
+      "scaleX",
+      "scaleY",
+      "rotation",
+      "pivotX",
+      "pivotY",
+    ]) {
       if (entity[field] != null && !Number.isFinite(entity[field])) {
         throw new Error(`${label}.${field} must be finite`);
       }
@@ -2675,12 +2781,14 @@ export function resolveSpriteEntityHierarchy(entityStore, options = {}) {
     const localX = entity.x ?? 0;
     const localY = entity.y ?? 0;
     const localZ = entity.z ?? 0;
+    const localRotation = entity.rotation ?? 0;
 
     let worldX = localX;
     let worldY = localY;
     let worldZ = localZ;
     let worldScaleX = localScaleX;
     let worldScaleY = localScaleY;
+    let worldRotation = localRotation;
     let inheritedDisabled = false;
 
     if (entity.parent != null) {
@@ -2696,8 +2804,20 @@ export function resolveSpriteEntityHierarchy(entityStore, options = {}) {
         const parentWorld = resolve(parent);
         worldScaleX = parentWorld.scaleX * localScaleX;
         worldScaleY = parentWorld.scaleY * localScaleY;
-        worldX = parentWorld.x + localX * parentWorld.scaleX;
-        worldY = parentWorld.y + localY * parentWorld.scaleY;
+        worldRotation = parentWorld.rotation + localRotation;
+        const parentRotation = parentWorld.rotation;
+        const scaledLocalX = localX * parentWorld.scaleX;
+        const scaledLocalY = localY * parentWorld.scaleY;
+        const cosParent = Math.cos(parentRotation);
+        const sinParent = Math.sin(parentRotation);
+        worldX =
+          parentWorld.x +
+          scaledLocalX * cosParent -
+          scaledLocalY * sinParent;
+        worldY =
+          parentWorld.y +
+          scaledLocalX * sinParent +
+          scaledLocalY * cosParent;
         worldZ = parentWorld.z + localZ;
         inheritedDisabled =
           inheritDisabled &&
@@ -2712,6 +2832,7 @@ export function resolveSpriteEntityHierarchy(entityStore, options = {}) {
       z: worldZ,
       scaleX: worldScaleX,
       scaleY: worldScaleY,
+      rotation: worldRotation,
       disabled: entity.enabled === false || inheritedDisabled,
     };
     delete world.scale;
