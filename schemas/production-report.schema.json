@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-forge production report",
+  "type": "object",
+  "required": [
+    "schema",
+    "requestId",
+    "assetId",
+    "assetType",
+    "success",
+    "generation",
+    "validation",
+    "artifact"
+  ],
+  "properties": {
+    "schema": {"const": "asset-forge/production-report/v1"},
+    "requestId": {"type": "string", "minLength": 1},
+    "assetId": {"type": "string", "minLength": 1},
+    "assetType": {"type": "string", "minLength": 1},
+    "success": {"type": "boolean"},
+    "generation": {"type": "object"},
+    "processing": {"type": "object"},
+    "validation": {
+      "type": "object",
+      "required": ["errors"],
+      "properties": {
+        "errors": {"type": "array"}
+      },
+      "additionalProperties": true
+    },
+    "artifact": {"type": ["string", "null"]},
+    "engineHandoff": {"type": "object"}
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {"properties": {"success": {"const": true}}},
+      "then": {"properties": {"artifact": {"type": "string", "minLength": 1}}}
+    },
+    {
+      "if": {"properties": {"success": {"const": false}}},
+      "then": {"properties": {"artifact": {"type": "null"}}}
+    }
+  ]
+}
