@@ -1231,6 +1231,21 @@ followRuntimeGl.viewport = (...args)
 boundedRuntimeGl.viewport = (...args)
 ⋮----
 pickingRuntimeGl.viewport = (...args)
+⋮----
+pick(x, y)
+toWorld(x, y)
+onEnter(event)
+onLeave(event)
+onDown(event)
+onClick(event)
+onDragStart(event)
+onDrag(event)
+onDragEnd(event)
+onUp(event)
+⋮----
+pick()
+⋮----
+pointerRuntimeGl.viewport = (...args)
 ````
 
 ## File: tests/test_animation_infer.py
@@ -2637,6 +2652,10 @@ function resize(resizeOptions =
 ⋮----
 function clampRuntimeCamera(nextCamera)
 ⋮----
+function pickRuntimeEntity(x, y, pickOptions =
+⋮----
+toWorld: (x, y)
+⋮----
 async function rebuildAfterContextRestore()
 ⋮----
 function handleContextLost(event)
@@ -2668,6 +2687,11 @@ renderEntities(batchOptions =
 screenToWorld(x, y)
 worldToScreen(x, y, parallax =
 pickEntity(x, y, pickOptions =
+⋮----
+pointerMove(pointerId, x, y, pickOptions =
+pointerDown(pointerId, x, y, pickOptions =
+pointerUp(pointerId, x, y, pickOptions =
+pointerCancel(pointerId)
 async restore()
 ⋮----
 export function createSpriteEntityStore(options =
@@ -2800,6 +2824,28 @@ export function pickSpriteInstances(
   pointY,
   options = {},
 )
+⋮----
+export function createSpritePointerInteractionController(options =
+⋮----
+function validatePointer(pointerId, x, y)
+⋮----
+function pickedEntity(hit)
+⋮----
+function makeEvent(type, state, hit, x, y, extra =
+⋮----
+function updateHover(state, hit, x, y)
+⋮----
+function move(pointerId, x, y, pickOptions =
+⋮----
+function down(pointerId, x, y, pickOptions =
+⋮----
+function up(pointerId, x, y, pickOptions =
+⋮----
+function cancel(pointerId)
+⋮----
+get hoverEntityId()
+get activePointerCount()
+pointerState(pointerId)
 ````
 
 ## File: .repo-standards.yml
@@ -6115,6 +6161,96 @@ runtime.pickEntity(screenX, screenY, { all: true })
 `pickEntity()` reuses the normal entity preparation pipeline, so hierarchy transforms, layer visibility, runtime/per-call camera transforms, zoom, and parallax are applied before hit testing.
 
 This makes pointer/touch interaction possible directly against the same transformed geometry used for rendering.
+
+
+### Pointer, touch, hover, click, and drag interaction
+
+The runtime now provides a retained pointer interaction controller on top of entity picking.
+
+Low-level API:
+
+```js
+const pointer = createSpritePointerInteractionController({
+  pick(x, y) {
+    return pickSpriteInstances(...);
+  },
+  toWorld(x, y) {
+    return screenToWorldPoint(x, y, camera);
+  },
+  dragThreshold: 4,
+  onEnter(event) {},
+  onLeave(event) {},
+  onDown(event) {},
+  onUp(event) {},
+  onClick(event) {},
+  onDragStart(event) {},
+  onDrag(event) {},
+  onDragEnd(event) {},
+  onCancel(event) {},
+});
+```
+
+The controller is DOM-independent. Pointer IDs may be strings or numbers, making it usable with mouse, pen, and multi-touch input.
+
+It tracks:
+
+```text
+hover entity
+pointer down state
+captured entity id
+drag threshold
+dragging state
+screen delta
+total drag delta
+world coordinates
+```
+
+Clicks are emitted only when pointer-down and pointer-up occur on the same entity without crossing the drag threshold.
+
+When dragging starts, the entity selected on pointer-down remains available through `capturedEntityId` even if the pointer moves away from its visual bounds.
+
+The canvas runtime exposes the controller directly:
+
+```js
+runtime.pointerInteractions
+runtime.pointerMove(pointerId, x, y)
+runtime.pointerDown(pointerId, x, y)
+runtime.pointerUp(pointerId, x, y)
+runtime.pointerCancel(pointerId)
+```
+
+Example DOM wiring:
+
+```js
+canvas.addEventListener("pointerdown", (event) => {
+  canvas.setPointerCapture(event.pointerId);
+  runtime.pointerDown(
+    event.pointerId,
+    event.offsetX,
+    event.offsetY,
+  );
+});
+
+canvas.addEventListener("pointermove", (event) => {
+  runtime.pointerMove(
+    event.pointerId,
+    event.offsetX,
+    event.offsetY,
+  );
+});
+
+canvas.addEventListener("pointerup", (event) => {
+  runtime.pointerUp(
+    event.pointerId,
+    event.offsetX,
+    event.offsetY,
+  );
+});
+```
+
+Runtime pointer callbacks receive both screen and world coordinates. World coordinates use the current runtime camera and zoom. Entity selection reuses the normal hierarchy/layer/camera/parallax picking pipeline.
+
+Multiple pointer IDs are tracked independently. `clear()` or runtime disposal cancels active pointer state.
 ````
 
 ## File: runtime_atlas.py
