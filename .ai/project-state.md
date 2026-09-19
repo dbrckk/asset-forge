@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T15:15:34Z
+Generated: 2026-09-19T15:21:10Z
 
 ### Git
 - Branch: `main`
-- Head: `d0b2a6a00be6`
-- Commit date: 2026-09-19T17:15:27+02:00
-- Commit: docs: record multi-selection drag milestone
+- Head: `739d63d9d1f2`
+- Commit date: 2026-09-19T17:20:55+02:00
+- Commit: docs: record entity undo redo milestone
 - Tracked files: 209
 
 ### Recently changed files

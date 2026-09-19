@@ -1258,6 +1258,8 @@ onChange(event)
 selectionRuntimeGl.viewport = (...args)
 ⋮----
 groupDragGl.viewport = (...args)
+⋮----
+historyRuntimeGl.viewport = (...args)
 ````
 
 ## File: tests/test_animation_infer.py
@@ -2703,6 +2705,8 @@ pickEntity(x, y, pickOptions =
 ⋮----
 selectEntity(entityId, selectOptions =
 clearSelection()
+undo()
+redo()
 selectEntitiesInRect(rect, selectOptions =
 moveEntityByWorldDelta(entityId, deltaX, deltaY, moveOptions =
 moveSelectionByWorldDelta(deltaX, deltaY, moveOptions =
@@ -2737,6 +2741,31 @@ function instances(options =
 function transact(callback)
 ⋮----
 get version()
+⋮----
+export function createSpriteEntityHistory(
+  entityStore,
+  options = {},
+)
+⋮----
+const capture = () => entityStore.snapshot(
+⋮----
+function sameSnapshot(a, b)
+⋮----
+function restore(snapshot)
+⋮----
+function push(entry)
+⋮----
+begin(label = "edit")
+commit()
+cancel()
+record(label, callback)
+⋮----
+clear()
+get canUndo()
+get canRedo()
+get undoCount()
+get redoCount()
+get active()
 ⋮----
 export function createSpriteAnimationSystem(
   atlasPages,
@@ -6518,6 +6547,30 @@ pointerOptions: {
 ```
 
 When the captured entity belongs to a multi-selection, the complete selection moves together. Otherwise the existing single-entity drag behavior is preserved.
+
+
+### Transactional entity undo/redo
+
+The retained entity runtime now provides bounded synchronous edit history:
+
+```js
+runtime.history.record("move selection", () => {
+  runtime.moveSelectionByWorldDelta(16, 0);
+});
+
+runtime.undo();
+runtime.redo();
+```
+
+For interactive gestures, an edit can span multiple updates:
+
+```js
+runtime.history.begin("drag");
+// many entity updates...
+runtime.history.commit();
+```
+
+`cancel()` restores the pre-edit snapshot. History restores additions, removals, and property changes transactionally, clears redo entries after a new committed edit, and rejects asynchronous callbacks so rollback semantics remain deterministic.
 ````
 
 ## File: runtime_atlas.py
