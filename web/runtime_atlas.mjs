@@ -1336,3 +1336,181 @@ export function createInstancedSpriteRendererWebGL2(gl, options = {}) {
     },
   };
 }
+
+
+export function createWebGL2TextureCache(gl, options = {}) {
+  if (!gl || typeof gl.createTexture !== "function") {
+    throw new Error("WebGL2 texture-capable context required");
+  }
+
+  const entries = new Map();
+  let disposed = false;
+
+  const defaults = {
+    minFilter: options.minFilter ?? gl.LINEAR,
+    magFilter: options.magFilter ?? gl.LINEAR,
+    wrapS: options.wrapS ?? gl.CLAMP_TO_EDGE,
+    wrapT: options.wrapT ?? gl.CLAMP_TO_EDGE,
+    generateMipmap: options.generateMipmap ?? false,
+    premultiplyAlpha: options.premultiplyAlpha ?? false,
+  };
+
+  function assertActive() {
+    if (disposed) {
+      throw new Error("WebGL2 texture cache is disposed");
+    }
+  }
+
+  function createTextureFromSource(source, textureOptions = {}) {
+    assertActive();
+    if (!source) {
+      throw new Error("texture source is required");
+    }
+
+    const texture = gl.createTexture();
+    if (!texture) {
+      throw new Error("WebGL2 texture allocation failed");
+    }
+
+    const minFilter = textureOptions.minFilter ?? defaults.minFilter;
+    const magFilter = textureOptions.magFilter ?? defaults.magFilter;
+    const wrapS = textureOptions.wrapS ?? defaults.wrapS;
+    const wrapT = textureOptions.wrapT ?? defaults.wrapT;
+    const generateMipmap =
+      textureOptions.generateMipmap ?? defaults.generateMipmap;
+    const premultiplyAlpha =
+      textureOptions.premultiplyAlpha ?? defaults.premultiplyAlpha;
+
+    try {
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.pixelStorei(
+        gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,
+        premultiplyAlpha ? 1 : 0,
+      );
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, minFilter);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, magFilter);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapS);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrapT);
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        source,
+      );
+      if (generateMipmap) {
+        gl.generateMipmap(gl.TEXTURE_2D);
+      }
+    } catch (error) {
+      gl.deleteTexture(texture);
+      throw error;
+    } finally {
+      gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+
+    return texture;
+  }
+
+  function acquire(key, source, textureOptions = {}) {
+    assertActive();
+    if (
+      (typeof key !== "string" && typeof key !== "number") ||
+      key === ""
+    ) {
+      throw new Error("texture cache key must be a non-empty string or number");
+    }
+
+    const existing = entries.get(key);
+    if (existing) {
+      existing.references += 1;
+      return existing.texture;
+    }
+
+    const texture = createTextureFromSource(source, textureOptions);
+    entries.set(key, {
+      key,
+      texture,
+      references: 1,
+      source,
+      options: { ...textureOptions },
+    });
+    return texture;
+  }
+
+  function get(key) {
+    assertActive();
+    return entries.get(key)?.texture ?? null;
+  }
+
+  function has(key) {
+    assertActive();
+    return entries.has(key);
+  }
+
+  function references(key) {
+    assertActive();
+    return entries.get(key)?.references ?? 0;
+  }
+
+  function release(key) {
+    assertActive();
+    const entry = entries.get(key);
+    if (!entry) {
+      return false;
+    }
+    entry.references -= 1;
+    if (entry.references <= 0) {
+      gl.deleteTexture(entry.texture);
+      entries.delete(key);
+      return true;
+    }
+    return false;
+  }
+
+  function deleteTexture(key) {
+    assertActive();
+    const entry = entries.get(key);
+    if (!entry) {
+      return false;
+    }
+    gl.deleteTexture(entry.texture);
+    entries.delete(key);
+    return true;
+  }
+
+  function clear() {
+    assertActive();
+    for (const entry of entries.values()) {
+      gl.deleteTexture(entry.texture);
+    }
+    entries.clear();
+  }
+
+  function dispose() {
+    if (disposed) return;
+    for (const entry of entries.values()) {
+      gl.deleteTexture(entry.texture);
+    }
+    entries.clear();
+    disposed = true;
+  }
+
+  return {
+    acquire,
+    get,
+    has,
+    references,
+    release,
+    delete: deleteTexture,
+    clear,
+    dispose,
+    get size() {
+      return entries.size;
+    },
+    get disposed() {
+      return disposed;
+    },
+    defaults: { ...defaults },
+  };
+}
