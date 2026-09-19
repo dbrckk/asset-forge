@@ -53,6 +53,7 @@ class ProductionExecutorTests(unittest.TestCase):
 
             self.assertTrue(report["success"])
             self.assertEqual(report["artifact"], str(root / "hero-run.png"))
+            self.assertEqual(report["provenance"]["source"]["mode"], None)
             self.assertTrue((root / "production-report.json").is_file())
 
     def test_webp_target_encodes_before_validation(self):
@@ -293,6 +294,7 @@ class ProductionExecutorTests(unittest.TestCase):
 
             self.assertTrue(report["success"])
             self.assertEqual(report["generation"]["backend"], "provided")
+            self.assertIn("provenance", report)
             self.assertTrue((root / "provided-source.png").is_file())
             self.assertEqual(report["artifact"], str(root / "hero-run.png"))
 
