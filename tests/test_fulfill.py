@@ -27,6 +27,17 @@ class FulfillCommandTests(unittest.TestCase):
         self.assertEqual(args.output_dir, Path("build/visual-job"))
         self.assertEqual(args.timeout, 45.0)
 
+    def test_parser_accepts_provided_source(self):
+        args = asset_forge.parser().parse_args(
+            [
+                "fulfill",
+                "examples/production-request.json",
+                "--source",
+                "downloads/icon.svg",
+            ]
+        )
+        self.assertEqual(args.source, Path("downloads/icon.svg"))
+
     def test_production_inputs_are_persisted_for_handoff_and_audit(self):
         request = asset_forge.load_json(ROOT / "examples/production-request.json")
         plan = asset_forge.build_plan(request["manifest"], ROOT)
@@ -74,6 +85,32 @@ class FulfillCommandTests(unittest.TestCase):
         self.assertEqual(execute.call_args.kwargs["backend"], "pollinations")
         self.assertEqual(execute.call_args.kwargs["model"], "flux")
         self.assertEqual(execute.call_args.kwargs["timeout_seconds"], 30)
+
+
+    def test_compiled_job_forwards_provided_source(self):
+        job = {
+            "schema": "asset-forge/production-job/v1",
+            "requestId": "icon-job",
+            "assetId": "icon",
+            "assetType": "icon",
+            "requiresGenerator": False,
+            "manifest": {"target": {"format": "svg"}},
+        }
+        source = Path("downloads/icon.svg")
+        expected = {"success": True, "artifact": "icon.svg"}
+
+        with patch(
+            "asset_forge.execute_generated_vector_job",
+            return_value=expected,
+        ) as execute:
+            result = asset_forge.execute_compiled_production_job(
+                job,
+                Path("build/job"),
+                source_path=source,
+            )
+
+        self.assertEqual(result, expected)
+        self.assertEqual(execute.call_args.kwargs["source_path"], source)
 
 
     def test_godot_sprite_sheet_gets_engine_handoff(self):
