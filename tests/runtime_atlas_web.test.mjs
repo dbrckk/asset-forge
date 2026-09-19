@@ -31,6 +31,7 @@ import {
   resizeWebGL2Canvas,
   createWebGL2CanvasRuntime,
   createSpriteEntityStore,
+  createSpriteEntityHistory,
   createSpriteAnimationSystem,
   resolveSpriteEntityHierarchy,
   buildSpriteEntityInstances,
@@ -4210,5 +4211,71 @@ groupDragRuntime.moveSelectionByWorldDelta(5, 0);
 assert.equal(groupDragRuntime.entities.get("drag-a").x, 20);
 assert.equal(groupDragRuntime.entities.get("drag-b").x, 40);
 groupDragRuntime.dispose();
+
+
+
+const historyStore = createSpriteEntityStore();
+historyStore.add({ id: "history-a", page: "heroes", frame: "plain", x: 10, y: 20 });
+const history = createSpriteEntityHistory(historyStore, { maxEntries: 3 });
+history.record("move a", () => historyStore.update("history-a", { x: 30 }));
+assert.equal(historyStore.get("history-a").x, 30);
+assert.equal(history.canUndo, true);
+assert.equal(history.undo().label, "move a");
+assert.equal(historyStore.get("history-a").x, 10);
+assert.equal(history.canRedo, true);
+assert.equal(history.redo().label, "move a");
+assert.equal(historyStore.get("history-a").x, 30);
+
+history.begin("compound");
+historyStore.update("history-a", { y: 99 });
+historyStore.add({ id: "history-b", page: "heroes", frame: "plain", x: 5, y: 6 });
+assert.equal(history.commit(), true);
+history.undo();
+assert.equal(historyStore.get("history-a").y, 20);
+assert.equal(historyStore.get("history-b"), null);
+history.redo();
+assert.equal(historyStore.get("history-a").y, 99);
+assert.ok(historyStore.get("history-b"));
+
+history.begin("cancelled");
+historyStore.remove("history-a");
+assert.equal(history.cancel(), true);
+assert.ok(historyStore.get("history-a"));
+
+assert.throws(
+  () => history.record("async", () => Promise.resolve()),
+  /history callbacks must be synchronous/,
+);
+
+const historyRuntimeGl = createMockWebGL2();
+historyRuntimeGl.viewport = (...args) => historyRuntimeGl.calls.push(["viewport", ...args]);
+const historyRuntime = await createWebGL2CanvasRuntime(
+  createMockCanvas(),
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    getContext() { return historyRuntimeGl; },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() { return { id: `blob:${url}` }; },
+        }),
+        createImageBitmapImpl: async (blob) => ({ id: `bitmap:${blob.id}` }),
+      },
+    },
+  },
+);
+historyRuntime.entities.add({ id: "runtime-history", page: "heroes", frame: "plain", x: 1, y: 2 });
+historyRuntime.history.record("runtime move", () => {
+  historyRuntime.moveEntityByWorldDelta("runtime-history", 10, 0);
+});
+assert.equal(historyRuntime.entities.get("runtime-history").x, 11);
+historyRuntime.undo();
+assert.equal(historyRuntime.entities.get("runtime-history").x, 1);
+historyRuntime.redo();
+assert.equal(historyRuntime.entities.get("runtime-history").x, 11);
+historyRuntime.dispose();
 
 console.log("runtime_atlas.mjs smoke test passed");
