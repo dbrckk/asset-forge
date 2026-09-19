@@ -2658,6 +2658,14 @@ export async function createWebGL2CanvasRuntime(
         moveOptions,
       );
     },
+    transformSelection(transformOptions = {}) {
+      assertActive();
+      return transformSelectedSpriteEntities(
+        entityStore,
+        selection,
+        transformOptions,
+      );
+    },
     moveSelectionByWorldDelta(deltaX, deltaY, moveOptions = {}) {
       assertActive();
       return moveSelectedSpriteEntitiesByWorldDelta(
@@ -4729,6 +4737,104 @@ export function createSpritePointerInteractionController(options = {}) {
       const state = pointers.get(pointerId);
       return state ? { ...state } : null;
     },
+  };
+}
+
+
+export function transformSelectedSpriteEntities(
+  entityStore,
+  selectionModel,
+  transform = {},
+) {
+  if (!selectionModel || typeof selectionModel.snapshot !== "function") {
+    throw new Error("sprite selection model required");
+  }
+  const snapshot = selectionModel.snapshot();
+  const ids = snapshot.ids ?? [];
+  if (ids.length === 0) {
+    return { ids: [], count: 0, entities: [] };
+  }
+  const rotationDelta = transform.rotation ?? 0;
+  const scaleX = transform.scaleX ?? transform.scale ?? 1;
+  const scaleY = transform.scaleY ?? transform.scale ?? 1;
+  for (const [name, value] of Object.entries({ rotationDelta, scaleX, scaleY })) {
+    if (!Number.isFinite(value)) {
+      throw new Error(`selection transform ${name} must be finite`);
+    }
+  }
+  if (!(scaleX > 0) || !(scaleY > 0)) {
+    throw new Error("selection transform scale must be > 0");
+  }
+
+  const resolved = resolveSpriteEntityHierarchy(entityStore, {
+    includeDisabled: true,
+  });
+  const selectedSet = new Set(ids);
+  const roots = ids.filter((id) => {
+    let current = resolved.byId.get(id);
+    if (!current) throw new Error(`sprite entity not found: ${id}`);
+    while (current.parent != null) {
+      if (selectedSet.has(current.parent)) return false;
+      current = resolved.byId.get(current.parent);
+      if (!current) break;
+    }
+    return true;
+  });
+
+  let pivotX = transform.pivotX;
+  let pivotY = transform.pivotY;
+  if (pivotX == null || pivotY == null) {
+    const worlds = roots.map((id) => resolved.byId.get(id));
+    pivotX = worlds.reduce((sum, entity) => sum + entity.x, 0) / worlds.length;
+    pivotY = worlds.reduce((sum, entity) => sum + entity.y, 0) / worlds.length;
+  }
+  if (!Number.isFinite(pivotX) || !Number.isFinite(pivotY)) {
+    throw new Error("selection transform pivot must be finite");
+  }
+
+  const cos = Math.cos(rotationDelta);
+  const sin = Math.sin(rotationDelta);
+  const entities = [];
+
+  entityStore.transact(() => {
+    for (const id of roots) {
+      const world = resolved.byId.get(id);
+      const dx = (world.x - pivotX) * scaleX;
+      const dy = (world.y - pivotY) * scaleY;
+      const targetX = pivotX + dx * cos - dy * sin;
+      const targetY = pivotY + dx * sin + dy * cos;
+
+      moveSpriteEntityByWorldDelta(
+        entityStore,
+        id,
+        targetX - world.x,
+        targetY - world.y,
+      );
+
+      const current = entityStore.get(id);
+      const parentWorld =
+        current.parent == null ? null : resolved.byId.get(current.parent);
+      const parentRotation = parentWorld?.rotation ?? 0;
+      const parentScaleX = parentWorld?.scaleX ?? 1;
+      const parentScaleY = parentWorld?.scaleY ?? 1;
+      const targetWorldRotation = world.rotation + rotationDelta;
+      const targetWorldScaleX = world.scaleX * scaleX;
+      const targetWorldScaleY = world.scaleY * scaleY;
+      entities.push(entityStore.update(id, {
+        rotation: targetWorldRotation - parentRotation,
+        scaleX: targetWorldScaleX / parentScaleX,
+        scaleY: targetWorldScaleY / parentScaleY,
+      }));
+    }
+  });
+
+  return {
+    ids: [...ids],
+    transformedRootIds: roots,
+    entities,
+    count: ids.length,
+    pivotX,
+    pivotY,
   };
 }
 
