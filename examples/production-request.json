@@ -1,0 +1,36 @@
+{
+  "schema": "asset-forge/production-request/v1",
+  "requestId": "demo-player-sprite",
+  "instruction": "Create a production-ready player sprite sheet and prepare it for the target engine.",
+  "manifest": {
+    "id": "player",
+    "project": "demo-game",
+    "type": "sprite-sheet",
+    "importance": "primary",
+    "source": {
+      "mode": "generated"
+    },
+    "license": {
+      "id": "project-owned",
+      "commercialUse": true,
+      "derivatives": true,
+      "attributionRequired": false
+    },
+    "target": {
+      "engine": "godot4",
+      "format": "png",
+      "maxBytes": 8388608
+    },
+    "constraints": {
+      "pixelArt": true,
+      "interpolation": "nearest",
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "requiresAlpha": true
+    }
+  },
+  "delivery": {
+    "engine": "godot4",
+    "outputDir": "build/demo-player-sprite"
+  }
+}
