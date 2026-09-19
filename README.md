@@ -56,6 +56,14 @@ asset-forge production-job examples/production-request.json --output build/produ
 asset-forge produce build/production-job.json --output-dir build/visual-job
 ```
 
+For licensed external assets or project-authored source files, Asset Forge intentionally does **not** fetch arbitrary manifest URLs. The orchestrator should acquire the approved file, preserve its provenance/license fields in the manifest, then pass the local file explicitly:
+
+```bash
+asset-forge fulfill request.json --source ./downloads/licensed-icon.svg
+```
+
+The provided source is copied into the job output sandbox before processing. Symlinks, empty files, oversized files, incompatible source extensions, and path escapes are rejected. This keeps network acquisition separate from trusted validation/optimization while still supporting the reuse-first policy.
+
 Validate a PNG or WebP sprite sheet against its manifest:
 
 ```bash
