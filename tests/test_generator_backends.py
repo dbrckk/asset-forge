@@ -48,6 +48,10 @@ class GeneratorBackendsTests(unittest.TestCase):
         self.assertEqual(command[0:3], ["/usr/bin/polli", "gen", "image"])
         self.assertIn("--json", command)
         self.assertIn("--model", command)
+        self.assertIn("--width", command)
+        self.assertIn("--height", command)
+        self.assertEqual(command[command.index("--width") + 1], "512")
+        self.assertEqual(command[command.index("--height") + 1], "512")
         self.assertFalse(any("POLLINATIONS_API_KEY" in item for item in command))
 
     def test_vector_generation_defaults_to_recraft_svg_model(self):
@@ -100,9 +104,20 @@ class GeneratorBackendsTests(unittest.TestCase):
                     out,
                     timeout_seconds=30,
                     runner=runner,
+                    raster_normalizer=lambda raw, output, value: (
+                        output.write_bytes(raw.read_bytes())
+                        and {
+                            "width": 64,
+                            "height": 64,
+                            "columns": 2,
+                            "rows": 2,
+                        }
+                    ),
                 )
             self.assertTrue(result["success"])
             self.assertEqual(result["sourceBytes"], 3)
+            self.assertEqual(result["normalization"]["columns"], 2)
+            self.assertEqual(result["normalization"]["rows"], 2)
             self.assertEqual(result["metadata"], {"ok": True})
 
     def test_3d_prompt_is_reference_image_oriented(self):
