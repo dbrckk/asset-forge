@@ -54,6 +54,8 @@ import {
   createSpriteSelectionModel,
   moveSelectedSpriteEntitiesByWorldDelta,
   transformSelectedSpriteEntities,
+  selectionTransformHandleGeometry,
+  applySelectionTransformHandleDrag,
   selectSpriteInstancesInRect,
 } from "../web/runtime_atlas.mjs";
 
@@ -4396,5 +4398,40 @@ assert.ok(Math.abs(groupTransformStore.get("transform-a").y + 15) < 1e-6);
 assert.ok(Math.abs(groupTransformStore.get("transform-b").y - 15) < 1e-6);
 assert.ok(Math.abs(groupTransformStore.get("transform-a").scaleX - 2) < 1e-6);
 assert.ok(Math.abs(groupTransformStore.get("transform-a").scaleY - 3) < 1e-6);
+
+
+
+const gizmoStore = createSpriteEntityStore();
+gizmoStore.add({ id: "gizmo-a", page: "heroes", frame: "plain", x: 0, y: 0 });
+gizmoStore.add({ id: "gizmo-b", page: "heroes", frame: "plain", x: 20, y: 10 });
+const gizmoSelection = createSpriteSelectionModel();
+gizmoSelection.set(["gizmo-a", "gizmo-b"]);
+const gizmo = selectionTransformHandleGeometry(gizmoStore, gizmoSelection, { handleDistance: 10 });
+assert.deepEqual(gizmo.bounds, { x: 0, y: 0, width: 20, height: 10 });
+assert.deepEqual(gizmo.pivot, { x: 10, y: 5 });
+assert.deepEqual(gizmo.handles.rotate, { x: 10, y: -10 });
+
+applySelectionTransformHandleDrag(
+  gizmoStore,
+  gizmoSelection,
+  "se",
+  { x: 20, y: 10 },
+  { x: 30, y: 15 },
+);
+let gizmoResolved = resolveSpriteEntityHierarchy(gizmoStore);
+assert.ok(Math.abs(gizmoResolved.byId.get("gizmo-a").x + 10) < 1e-6);
+assert.ok(Math.abs(gizmoResolved.byId.get("gizmo-b").x - 30) < 1e-6);
+
+const rotateGeometry = selectionTransformHandleGeometry(gizmoStore, gizmoSelection);
+applySelectionTransformHandleDrag(
+  gizmoStore,
+  gizmoSelection,
+  "rotate",
+  { x: rotateGeometry.pivot.x + 10, y: rotateGeometry.pivot.y },
+  { x: rotateGeometry.pivot.x, y: rotateGeometry.pivot.y + 10 },
+);
+gizmoResolved = resolveSpriteEntityHierarchy(gizmoStore);
+assert.ok(Math.abs(gizmoResolved.byId.get("gizmo-a").rotation - Math.PI / 2) < 1e-6);
+assert.ok(Math.abs(gizmoResolved.byId.get("gizmo-b").rotation - Math.PI / 2) < 1e-6);
 
 console.log("runtime_atlas.mjs smoke test passed");
