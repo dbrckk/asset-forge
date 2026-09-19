@@ -2531,6 +2531,34 @@ export async function createWebGL2CanvasRuntime(
       assertActive();
       return selection.clear();
     },
+    duplicateSelection(duplicateOptions = {}) {
+      assertActive();
+      const result = duplicateSpriteEntities(
+        entityStore,
+        selection.snapshot().ids,
+        duplicateOptions,
+      );
+      selection.set(result.ids);
+      return result;
+    },
+    copySelection(copyOptions = {}) {
+      assertActive();
+      return copySpriteEntities(
+        entityStore,
+        selection.snapshot().ids,
+        copyOptions,
+      );
+    },
+    pasteEntities(clipboard, pasteOptions = {}) {
+      assertActive();
+      const result = pasteSpriteEntities(
+        entityStore,
+        clipboard,
+        pasteOptions,
+      );
+      selection.set(result.ids);
+      return result;
+    },
     reparentEntity(entityId, parentId = null, reparentOptions = {}) {
       assertActive();
       return reparentSpriteEntity(
@@ -2910,6 +2938,183 @@ export function createSpriteEntityStore(options = {}) {
     get version() {
       return version;
     },
+  };
+}
+
+
+export function duplicateSpriteEntities(
+  entityStore,
+  entityIds,
+  options = {},
+) {
+  if (!Array.isArray(entityIds)) {
+    throw new Error("duplicate entity ids must be an array");
+  }
+  const offsetX = options.offsetX ?? 16;
+  const offsetY = options.offsetY ?? 16;
+  if (!Number.isFinite(offsetX) || !Number.isFinite(offsetY)) {
+    throw new Error("duplicate offsets must be finite");
+  }
+  const includeDescendants = options.includeDescendants ?? false;
+  if (typeof includeDescendants !== "boolean") {
+    throw new Error("includeDescendants must be boolean");
+  }
+
+  const snapshot = entityStore.snapshot({ includeDisabled: true });
+  const byId = new Map(snapshot.map((entity) => [entity.id, entity]));
+  const selected = new Set(entityIds);
+  for (const id of selected) {
+    if (!byId.has(id)) throw new Error(`sprite entity not found: ${id}`);
+  }
+
+  if (includeDescendants) {
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const entity of snapshot) {
+        if (
+          entity.parent != null &&
+          selected.has(entity.parent) &&
+          !selected.has(entity.id)
+        ) {
+          selected.add(entity.id);
+          changed = true;
+        }
+      }
+    }
+  }
+
+  const ordered = snapshot.filter((entity) => selected.has(entity.id));
+  const idMap = new Map();
+  const created = [];
+
+  entityStore.transact(({ add }) => {
+    for (const source of ordered) {
+      const copy = { ...source };
+      delete copy.id;
+      const parentWasCopied =
+        source.parent != null && selected.has(source.parent);
+      if (!parentWasCopied) {
+        copy.x = (copy.x ?? 0) + offsetX;
+        copy.y = (copy.y ?? 0) + offsetY;
+      }
+      const createdEntity = add(copy);
+      idMap.set(source.id, createdEntity.id);
+      created.push(createdEntity);
+    }
+    for (let index = 0; index < ordered.length; index += 1) {
+      const source = ordered[index];
+      if (source.parent != null && idMap.has(source.parent)) {
+        created[index] = entityStore.update(created[index].id, {
+          parent: idMap.get(source.parent),
+        });
+      }
+    }
+  });
+
+  return {
+    entities: created,
+    ids: created.map((entity) => entity.id),
+    idMap,
+    count: created.length,
+  };
+}
+
+export function copySpriteEntities(
+  entityStore,
+  entityIds,
+  options = {},
+) {
+  if (!Array.isArray(entityIds)) {
+    throw new Error("copy entity ids must be an array");
+  }
+  const includeDescendants = options.includeDescendants ?? false;
+  if (typeof includeDescendants !== "boolean") {
+    throw new Error("includeDescendants must be boolean");
+  }
+  const snapshot = entityStore.snapshot({ includeDisabled: true });
+  const byId = new Map(snapshot.map((entity) => [entity.id, entity]));
+  const selected = new Set(entityIds);
+  for (const id of selected) {
+    if (!byId.has(id)) throw new Error(`sprite entity not found: ${id}`);
+  }
+  if (includeDescendants) {
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const entity of snapshot) {
+        if (entity.parent != null && selected.has(entity.parent) && !selected.has(entity.id)) {
+          selected.add(entity.id);
+          changed = true;
+        }
+      }
+    }
+  }
+  const entities = snapshot
+    .filter((entity) => selected.has(entity.id))
+    .map((entity) => ({ ...entity }));
+  return {
+    format: "asset-forge-sprite-clipboard",
+    version: 1,
+    entities,
+  };
+}
+
+export function pasteSpriteEntities(
+  entityStore,
+  clipboard,
+  options = {},
+) {
+  if (
+    !clipboard ||
+    clipboard.format !== "asset-forge-sprite-clipboard" ||
+    clipboard.version !== 1 ||
+    !Array.isArray(clipboard.entities)
+  ) {
+    throw new Error("invalid sprite entity clipboard");
+  }
+  const offsetX = options.offsetX ?? 16;
+  const offsetY = options.offsetY ?? 16;
+  if (!Number.isFinite(offsetX) || !Number.isFinite(offsetY)) {
+    throw new Error("paste offsets must be finite");
+  }
+  const sourceIds = new Set(clipboard.entities.map((entity) => entity.id));
+  const idMap = new Map();
+  const created = [];
+  entityStore.transact(({ add }) => {
+    for (const source of clipboard.entities) {
+      const copy = { ...source };
+      delete copy.id;
+      const parentIsInternal =
+        source.parent != null && sourceIds.has(source.parent);
+      if (!parentIsInternal) {
+        copy.parent =
+          source.parent != null && entityStore.has(source.parent)
+            ? source.parent
+            : null;
+        copy.x = (copy.x ?? 0) + offsetX;
+        copy.y = (copy.y ?? 0) + offsetY;
+      } else {
+        copy.parent = null;
+      }
+      const entity = add(copy);
+      idMap.set(source.id, entity.id);
+      created.push(entity);
+    }
+    for (let index = 0; index < clipboard.entities.length; index += 1) {
+      const source = clipboard.entities[index];
+      if (source.parent != null && idMap.has(source.parent)) {
+        created[index] = entityStore.update(created[index].id, {
+          parent: idMap.get(source.parent),
+        });
+      }
+    }
+  });
+  return {
+    entities: created,
+    ids: created.map((entity) => entity.id),
+    idMap,
+    count: created.length,
   };
 }
 
