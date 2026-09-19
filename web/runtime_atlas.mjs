@@ -2197,10 +2197,46 @@ export async function createWebGL2CanvasRuntime(
     );
   }
 
+  const pointerOptions = options.pointerOptions ?? {};
+  const autoDragEntities = pointerOptions.autoDragEntities ?? false;
+  if (typeof autoDragEntities !== "boolean") {
+    throw new Error("autoDragEntities must be boolean");
+  }
+  const dragAxis = pointerOptions.dragAxis ?? "both";
+  if (!["both", "x", "y"].includes(dragAxis)) {
+    throw new Error("dragAxis must be both, x, or y");
+  }
+  const userOnDrag =
+    typeof pointerOptions.onDrag === "function"
+      ? pointerOptions.onDrag
+      : null;
+  const {
+    autoDragEntities: _autoDragEntities,
+    dragAxis: _dragAxis,
+    onDrag: _onDrag,
+    ...pointerControllerOptions
+  } = pointerOptions;
+
   const pointerInteractions = createSpritePointerInteractionController({
-    ...(options.pointerOptions ?? {}),
+    ...pointerControllerOptions,
     pick: pickRuntimeEntity,
     toWorld: (x, y) => screenToWorldPoint(x, y, camera),
+    onDrag(event) {
+      if (
+        autoDragEntities &&
+        event.capturedEntityId != null
+      ) {
+        const zoom = camera.zoom;
+        event.draggedEntity = moveSpriteEntityByWorldDelta(
+          entityStore,
+          event.capturedEntityId,
+          event.dx / zoom,
+          event.dy / zoom,
+          { axis: dragAxis },
+        );
+      }
+      userOnDrag?.(event);
+    },
   });
 
   async function rebuildAfterContextRestore() {
@@ -2441,6 +2477,16 @@ export async function createWebGL2CanvasRuntime(
       return pickRuntimeEntity(x, y, pickOptions);
     },
     pointerInteractions,
+    moveEntityByWorldDelta(entityId, deltaX, deltaY, moveOptions = {}) {
+      assertActive();
+      return moveSpriteEntityByWorldDelta(
+        entityStore,
+        entityId,
+        deltaX,
+        deltaY,
+        moveOptions,
+      );
+    },
     pointerMove(pointerId, x, y, pickOptions = {}) {
       assertActive();
       return pointerInteractions.move(pointerId, x, y, pickOptions);
@@ -3721,6 +3767,64 @@ export function pickSpriteInstances(
   return all ? hits : (hits[0] ?? null);
 }
 
+
+export function moveSpriteEntityByWorldDelta(
+  entityStore,
+  entityId,
+  deltaX,
+  deltaY,
+  options = {},
+) {
+  if (
+    !entityStore ||
+    typeof entityStore.get !== "function" ||
+    typeof entityStore.update !== "function"
+  ) {
+    throw new Error("sprite entity store required");
+  }
+  if (!Number.isFinite(deltaX) || !Number.isFinite(deltaY)) {
+    throw new Error("entity drag delta must be finite");
+  }
+
+  const axis = options.axis ?? "both";
+  if (!["both", "x", "y"].includes(axis)) {
+    throw new Error("drag axis must be both, x, or y");
+  }
+  if (axis === "x") deltaY = 0;
+  if (axis === "y") deltaX = 0;
+
+  const entity = entityStore.get(entityId);
+  if (!entity) {
+    throw new Error(`sprite entity not found: ${entityId}`);
+  }
+
+  let localDeltaX = deltaX;
+  let localDeltaY = deltaY;
+
+  if (entity.parent != null) {
+    const resolved = resolveSpriteEntityHierarchy(entityStore, {
+      includeDisabled: true,
+    });
+    const parent = resolved.byId.get(entity.parent);
+    if (!parent) {
+      throw new Error(
+        `sprite entity parent not found: ${entity.parent} for ${entityId}`,
+      );
+    }
+
+    const cos = Math.cos(-parent.rotation);
+    const sin = Math.sin(-parent.rotation);
+    const rotatedX = deltaX * cos - deltaY * sin;
+    const rotatedY = deltaX * sin + deltaY * cos;
+    localDeltaX = rotatedX / parent.scaleX;
+    localDeltaY = rotatedY / parent.scaleY;
+  }
+
+  return entityStore.update(entityId, {
+    x: (entity.x ?? 0) + localDeltaX,
+    y: (entity.y ?? 0) + localDeltaY,
+  });
+}
 
 export function createSpritePointerInteractionController(options = {}) {
   if (typeof options.pick !== "function") {
