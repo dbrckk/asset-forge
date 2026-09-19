@@ -43,6 +43,7 @@ import {
   screenToWorldPoint,
   pointHitsSpriteInstance,
   pickSpriteInstances,
+  createSpritePointerInteractionController,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -3408,5 +3409,185 @@ assert.equal(
   null,
 );
 pickingRuntime.dispose();
+
+
+
+const pointerEvents = [];
+const pointerController = createSpritePointerInteractionController({
+  dragThreshold: 5,
+  pick(x, y) {
+    if (x >= 0 && x <= 20 && y >= 0 && y <= 20) {
+      return {
+        instance: { id: "button", z: 1 },
+      };
+    }
+    return null;
+  },
+  toWorld(x, y) {
+    return { x: x + 100, y: y + 200 };
+  },
+  onEnter(event) {
+    pointerEvents.push(["enter", event.entity?.id ?? event.entityId]);
+  },
+  onLeave(event) {
+    pointerEvents.push(["leave", event.entityId]);
+  },
+  onDown(event) {
+    pointerEvents.push(["down", event.entity?.id ?? null]);
+  },
+  onClick(event) {
+    pointerEvents.push(["click", event.entity?.id ?? null]);
+  },
+  onDragStart(event) {
+    pointerEvents.push(["dragstart", event.capturedEntityId]);
+  },
+  onDrag(event) {
+    pointerEvents.push(["drag", event.totalDx, event.totalDy]);
+  },
+  onDragEnd(event) {
+    pointerEvents.push(["dragend", event.cancelled ?? false]);
+  },
+  onUp(event) {
+    pointerEvents.push(["up", event.entity?.id ?? null]);
+  },
+});
+
+const mouseMoveEvent = pointerController.move("mouse", 10, 10);
+assert.equal(mouseMoveEvent.entity.id, "button");
+assert.equal(mouseMoveEvent.worldX, 110);
+assert.equal(mouseMoveEvent.worldY, 210);
+assert.equal(pointerController.hoverEntityId, "button");
+
+pointerController.down("mouse", 10, 10);
+pointerController.up("mouse", 12, 12);
+assert.ok(pointerEvents.some((entry) => entry[0] === "click"));
+
+pointerController.down("mouse", 10, 10);
+pointerController.move("mouse", 20, 20);
+assert.equal(pointerController.pointerState("mouse").dragging, true);
+pointerController.up("mouse", 25, 25);
+assert.equal(pointerController.pointerState("mouse"), null);
+assert.ok(pointerEvents.some((entry) => entry[0] === "dragstart"));
+assert.ok(pointerEvents.some((entry) => entry[0] === "drag"));
+assert.ok(pointerEvents.some((entry) => entry[0] === "dragend"));
+
+pointerController.move("mouse", 50, 50);
+assert.equal(pointerController.hoverEntityId, null);
+assert.ok(pointerEvents.some((entry) => entry[0] === "leave"));
+
+pointerController.down(1, 10, 10);
+pointerController.down(2, 10, 10);
+assert.equal(pointerController.activePointerCount, 2);
+const cancelledPointer = pointerController.cancel(1);
+assert.equal(cancelledPointer.type, "cancel");
+assert.equal(pointerController.activePointerCount, 1);
+pointerController.clear();
+assert.equal(pointerController.activePointerCount, 0);
+
+assert.throws(
+  () =>
+    createSpritePointerInteractionController({
+      pick() {
+        return null;
+      },
+      dragThreshold: -1,
+    }),
+  /dragThreshold must be a finite value >= 0/,
+);
+
+const pointerRuntimeGl = createMockWebGL2();
+pointerRuntimeGl.viewport = (...args) =>
+  pointerRuntimeGl.calls.push(["viewport", ...args]);
+const pointerRuntimeCanvas = createMockCanvas();
+const runtimePointerEvents = [];
+
+const pointerRuntime = await createWebGL2CanvasRuntime(
+  pointerRuntimeCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    camera: { x: 100, y: 40, zoom: 2 },
+    pointerOptions: {
+      dragThreshold: 4,
+      onDown(event) {
+        runtimePointerEvents.push(["down", event.entity?.id ?? null]);
+      },
+      onClick(event) {
+        runtimePointerEvents.push(["click", event.entity?.id ?? null]);
+      },
+      onDragStart(event) {
+        runtimePointerEvents.push(["dragstart", event.capturedEntityId]);
+      },
+      onDrag(event) {
+        runtimePointerEvents.push([
+          "drag",
+          event.worldX,
+          event.worldY,
+        ]);
+      },
+    },
+    getContext() {
+      return pointerRuntimeGl;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+
+pointerRuntime.entities.add({
+  id: "runtime-button",
+  page: "heroes",
+  frame: "plain",
+  x: 120,
+  y: 80,
+  z: 10,
+});
+
+const runtimePointerDown = pointerRuntime.pointerDown("mouse", 42, 82);
+assert.equal(runtimePointerDown.entity.id, "runtime-button");
+assert.equal(runtimePointerDown.worldX, 121);
+assert.equal(runtimePointerDown.worldY, 81);
+
+pointerRuntime.pointerUp("mouse", 43, 83);
+assert.deepEqual(runtimePointerEvents.slice(0, 2), [
+  ["down", "runtime-button"],
+  ["click", "runtime-button"],
+]);
+
+pointerRuntime.pointerDown("touch-1", 42, 82);
+pointerRuntime.pointerMove("touch-1", 52, 92);
+assert.equal(
+  pointerRuntime.pointerInteractions.pointerState("touch-1").dragging,
+  true,
+);
+assert.ok(
+  runtimePointerEvents.some((entry) => entry[0] === "dragstart"),
+);
+assert.ok(
+  runtimePointerEvents.some(
+    (entry) =>
+      entry[0] === "drag" &&
+      Math.abs(entry[1] - 126) < 1e-6 &&
+      Math.abs(entry[2] - 86) < 1e-6,
+  ),
+);
+pointerRuntime.pointerUp("touch-1", 52, 92);
+assert.equal(pointerRuntime.pointerInteractions.activePointerCount, 0);
+
+pointerRuntime.pointerDown("touch-2", 42, 82);
+pointerRuntime.dispose();
+assert.equal(pointerRuntime.pointerInteractions.activePointerCount, 0);
 
 console.log("runtime_atlas.mjs smoke test passed");
