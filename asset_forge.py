@@ -431,6 +431,10 @@ def parser() -> argparse.ArgumentParser:
     runtime = sub.add_parser("export-runtime-atlas", help="export normalized rotation-aware runtime atlas JSON")
     runtime.add_argument("metadata", type=Path)
     runtime.add_argument("output", type=Path)
+    runtime.add_argument("--infer-animations", action="store_true")
+    runtime.add_argument("--animations", type=Path)
+    runtime.add_argument("--fps", type=float, default=12.0)
+    runtime.add_argument("--no-loop", action="store_true")
 
     godot = sub.add_parser("export-godot", help="export Godot 4 SpriteFrames .tres from atlas metadata")
     godot.add_argument("metadata", type=Path)
@@ -644,7 +648,20 @@ def main() -> int:
     if args.command == "export-runtime-atlas":
         try:
             source = load_json(args.metadata)
-            runtime = build_runtime_atlas(source)
+            animations = None
+            if args.animations and args.infer_animations:
+                raise ValueError("--animations and --infer-animations are mutually exclusive")
+            if args.animations:
+                animation_config = load_json(args.animations)
+                animations = animation_config.get("animations")
+            elif args.infer_animations:
+                inferred = infer_animations(
+                    source,
+                    default_fps=args.fps,
+                    default_loop=not args.no_loop,
+                )
+                animations = inferred.get("animations")
+            runtime = build_runtime_atlas(source, animations=animations)
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
