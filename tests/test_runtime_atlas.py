@@ -166,6 +166,32 @@ class RuntimeAtlasTests(unittest.TestCase):
         errors = validate_runtime_atlas(runtime)
         self.assertIn("unknown top-level field: extra", errors)
 
+    def test_validator_rejects_boolean_integer_fields(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [{"x": 0, "y": 0, "width": 4, "height": 4}],
+        }
+        runtime = build_runtime_atlas(source)
+        runtime["imageSize"]["width"] = True
+        errors = validate_runtime_atlas(runtime)
+        self.assertIn("imageSize.width: integer required", errors)
+
+    def test_validator_rejects_unknown_nested_fields(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [{"x": 0, "y": 0, "width": 4, "height": 4}],
+        }
+        runtime = build_runtime_atlas(source)
+        runtime["frames"][0]["uv"]["extra"] = 1
+        runtime["frames"][0]["rotation"]["extra"] = 1
+        errors = validate_runtime_atlas(runtime)
+        self.assertIn("frame 0: unknown uv field extra", errors)
+        self.assertIn("frame 0: unknown rotation field extra", errors)
+
 
 if __name__ == "__main__":
     unittest.main()
