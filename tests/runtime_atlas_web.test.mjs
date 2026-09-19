@@ -38,6 +38,7 @@ import {
   filterSpriteInstancesByLayer,
   applyCameraToSpriteInstances,
   createCamera2DController,
+  clampCameraToWorldBounds,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -3012,5 +3013,173 @@ assert.deepEqual(followRuntime.camera, {
   zoom: 1,
 });
 followRuntime.dispose();
+
+
+
+assert.deepEqual(
+  clampCameraToWorldBounds(
+    { x: -50, y: -20, zoom: 1 },
+    { x: 0, y: 0, width: 1000, height: 500 },
+    320,
+    180,
+  ),
+  { x: 0, y: 0, zoom: 1 },
+);
+
+assert.deepEqual(
+  clampCameraToWorldBounds(
+    { x: 900, y: 450, zoom: 1 },
+    { x: 0, y: 0, width: 1000, height: 500 },
+    320,
+    180,
+  ),
+  { x: 680, y: 320, zoom: 1 },
+);
+
+assert.deepEqual(
+  clampCameraToWorldBounds(
+    { x: 900, y: 450, zoom: 2 },
+    { x: 0, y: 0, width: 1000, height: 500 },
+    320,
+    180,
+  ),
+  { x: 840, y: 410, zoom: 2 },
+);
+
+assert.deepEqual(
+  clampCameraToWorldBounds(
+    { x: 0, y: 0, zoom: 1 },
+    { x: 100, y: 200, width: 100, height: 80 },
+    320,
+    180,
+  ),
+  { x: -10, y: 150, zoom: 1 },
+);
+
+assert.throws(
+  () =>
+    clampCameraToWorldBounds(
+      { x: 0, y: 0, zoom: 1 },
+      { x: 0, y: 0, width: -1, height: 100 },
+      320,
+      180,
+    ),
+  /world bounds width\/height must be >= 0/,
+);
+
+const boundedRuntimeGl = createMockWebGL2();
+boundedRuntimeGl.viewport = (...args) =>
+  boundedRuntimeGl.calls.push(["viewport", ...args]);
+const boundedRuntimeCanvas = createMockCanvas();
+boundedRuntimeCanvas.clientWidth = 320;
+boundedRuntimeCanvas.clientHeight = 180;
+
+const boundedRuntime = await createWebGL2CanvasRuntime(
+  boundedRuntimeCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    camera: { x: 900, y: 450, zoom: 1 },
+    worldBounds: { x: 0, y: 0, width: 1000, height: 500 },
+    cameraControllerOptions: {
+      deadZoneWidth: 0,
+      deadZoneHeight: 0,
+      smoothing: 0,
+    },
+    getContext() {
+      return boundedRuntimeGl;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+
+boundedRuntime.setCamera({ x: 900, y: 450 });
+assert.deepEqual(boundedRuntime.camera, {
+  x: 680,
+  y: 320,
+  zoom: 1,
+});
+
+boundedRuntime.entities.add({
+  id: "follow-parent",
+  page: "heroes",
+  frame: "plain",
+  x: 100,
+  y: 50,
+});
+boundedRuntime.entities.add({
+  id: "follow-child",
+  parent: "follow-parent",
+  page: "heroes",
+  frame: "plain",
+  x: 30,
+  y: 20,
+});
+
+const entityFollowCamera = boundedRuntime.updateCameraFollowEntity(
+  "follow-child",
+  0.016,
+  { offsetX: 10, offsetY: 5 },
+);
+assert.deepEqual(entityFollowCamera, {
+  x: 140,
+  y: 75,
+  zoom: 1,
+});
+
+boundedRuntime.setCamera({ x: 680, y: 320 });
+const boundedShake = boundedRuntime.shakeCamera(50, 1, 12);
+assert.ok(boundedShake.x <= 680);
+assert.ok(boundedShake.y <= 320);
+assert.ok(boundedShake.x >= 0);
+assert.ok(boundedShake.y >= 0);
+
+boundedRuntime.setWorldBounds({
+  x: 100,
+  y: 100,
+  width: 500,
+  height: 300,
+});
+assert.deepEqual(boundedRuntime.worldBounds, {
+  x: 100,
+  y: 100,
+  width: 500,
+  height: 300,
+});
+assert.ok(boundedRuntime.camera.x >= 100);
+assert.ok(boundedRuntime.camera.y >= 100);
+
+assert.equal(boundedRuntime.setWorldBounds(null), null);
+assert.equal(boundedRuntime.worldBounds, null);
+boundedRuntime.setCamera({ x: -500, y: -500 });
+assert.deepEqual(boundedRuntime.camera, {
+  x: -500,
+  y: -500,
+  zoom: 1,
+});
+
+assert.throws(
+  () =>
+    boundedRuntime.updateCameraFollowEntity(
+      "missing-follow-target",
+      0.016,
+    ),
+  /sprite entity not found/,
+);
+
+boundedRuntime.dispose();
 
 console.log("runtime_atlas.mjs smoke test passed");
