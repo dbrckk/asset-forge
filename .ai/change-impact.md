@@ -1,7 +1,7 @@
 # Change impact
 
-Base: bb8db8b2dde79e805d47be3cbd58c9447784c6c2
-Head: 807e1e7af398ea57b6be24effdb762c06263fe43
+Base: 20ce234f06472dcc14e7bf0b55a1a36efe5d61d7
+Head: 82f59c83f779a1620b3a852e1be7d0cfb0fbe360
 
 ## Changed files
 - M README.md

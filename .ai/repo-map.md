@@ -2706,6 +2706,8 @@ pickEntity(x, y, pickOptions =
 selectEntity(entityId, selectOptions =
 clearSelection()
 duplicateSelection(duplicateOptions =
+cutSelection(cutOptions =
+pasteClipboard(pasteOptions =
 copySelection(copyOptions =
 pasteEntities(clipboard, pasteOptions =
 reparentEntity(entityId, parentId = null, reparentOptions =
@@ -2948,6 +2950,21 @@ function cancel(pointerId)
 get hoverEntityId()
 get activePointerCount()
 pointerState(pointerId)
+⋮----
+export function createSpriteClipboardController(
+  entityStore,
+  selectionModel,
+  options = {},
+)
+⋮----
+copy(copyOptions =
+cut(cutOptions =
+paste(pasteOptions =
+duplicate(duplicateOptions =
+set(value)
+get()
+⋮----
+get hasData()
 ⋮----
 export function selectionTransformHandleGeometry(
   entityStore,
@@ -6738,6 +6755,22 @@ runtime.dragSelectionHandle("rotate", startWorld, currentWorld);
 ```
 
 Corner handles perform non-uniform scaling around the selection pivot; `uniform: true` forces uniform scale. The rotation handle derives an angular delta around the same pivot. These primitives are renderer-independent so a game/editor UI can draw the gizmo with Canvas, WebGL, DOM, or another frontend.
+
+
+### Retained clipboard workflow
+
+The runtime now includes a retained sprite clipboard controller:
+
+```js
+runtime.clipboard.copy();
+runtime.cutSelection();
+runtime.pasteClipboard();
+runtime.duplicateSelection();
+```
+
+Clipboard data uses the versioned `asset-forge-sprite-clipboard` format. Paste and duplicate operations select the newly created entities automatically. Cut stores the selected hierarchy payload before applying the configured hierarchy deletion policy.
+
+The controller can also import/export clipboard payloads with `get()` and `set()`, making browser/system clipboard adapters possible without coupling the runtime to DOM clipboard APIs.
 ````
 
 ## File: runtime_atlas.py
