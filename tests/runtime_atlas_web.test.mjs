@@ -1,0 +1,95 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import {
+  drawFrameCanvas2D,
+  frameQuad,
+  indexRuntimeAtlas,
+} from "../web/runtime_atlas.mjs";
+
+const atlas = JSON.parse(
+  await readFile(new URL("../examples/runtime-atlas.json", import.meta.url), "utf8"),
+);
+const indexed = indexRuntimeAtlas(atlas);
+const frame = indexed.frame(0);
+
+assert.equal(indexed.frame("hero_0.png"), frame);
+assert.equal(frameQuad(frame).rotated, true);
+assert.deepEqual(frameQuad(frame).sourceRegion, { width: 8, height: 6 });
+
+const calls = [];
+const ctx = {
+  save() {
+    calls.push(["save"]);
+  },
+  restore() {
+    calls.push(["restore"]);
+  },
+  translate(x, y) {
+    calls.push(["translate", x, y]);
+  },
+  rotate(angle) {
+    calls.push(["rotate", angle]);
+  },
+  drawImage(...args) {
+    calls.push(["drawImage", ...args]);
+  },
+};
+
+const image = { id: "atlas-image" };
+const bounds = drawFrameCanvas2D(ctx, image, frame, 100, 200, { scale: 2 });
+
+assert.deepEqual(bounds, { x: 100, y: 200, width: 24, height: 20 });
+assert.deepEqual(calls[0], ["save"]);
+assert.deepEqual(calls[1], ["translate", 104, 214]);
+assert.equal(calls[2][0], "rotate");
+assert.equal(calls[2][1], -Math.PI / 2);
+assert.deepEqual(calls[3], [
+  "drawImage",
+  image,
+  10,
+  20,
+  6,
+  8,
+  0,
+  0,
+  12,
+  16,
+]);
+assert.deepEqual(calls[4], ["restore"]);
+
+const plainAtlas = {
+  format: "asset-forge-runtime-atlas",
+  version: 1,
+  image: "atlas.png",
+  imageSize: { width: 16, height: 16 },
+  frameCount: 1,
+  capabilities: { trimOffsets: true, clockwise90Rotation: true },
+  frames: [
+    {
+      index: 0,
+      name: "plain",
+      atlasRegion: { x: 1, y: 2, width: 4, height: 5 },
+      uv: { u0: 1 / 16, v0: 2 / 16, u1: 5 / 16, v1: 7 / 16 },
+      sourceRegion: { width: 4, height: 5 },
+      sourceSize: { width: 6, height: 7 },
+      trimOffset: { x: 1, y: 1 },
+      rotation: { rotated: false, degreesClockwise: 0 },
+    },
+  ],
+};
+const plainCalls = [];
+const plainCtx = {
+  save() { plainCalls.push(["save"]); },
+  restore() { plainCalls.push(["restore"]); },
+  translate(...args) { plainCalls.push(["translate", ...args]); },
+  rotate(...args) { plainCalls.push(["rotate", ...args]); },
+  drawImage(...args) { plainCalls.push(["drawImage", ...args]); },
+};
+drawFrameCanvas2D(plainCtx, image, indexRuntimeAtlas(plainAtlas).frame("plain"), 10, 20);
+assert.deepEqual(plainCalls, [
+  ["save"],
+  ["drawImage", image, 1, 2, 4, 5, 11, 21, 4, 5],
+  ["restore"],
+]);
+
+console.log("runtime_atlas.mjs smoke test passed");
