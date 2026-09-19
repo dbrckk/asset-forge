@@ -524,3 +524,16 @@ rotation
 For a rotated frame, `atlasRegion` describes the stored 90°-rotated rectangle, `sourceRegion` describes the pre-rotation trimmed sprite, and `rotation.degreesClockwise=90` tells the consumer how to restore orientation. Normalized `u0/v0/u1/v1` coordinates are included for direct texture sampling.
 
 The top-level `capabilities` object declares support for trim offsets and clockwise 90° rotation. The contract is documented in `schemas/runtime-atlas.schema.json`. This export is the rotation-aware alternative to the Godot SpriteFrames exporter, which intentionally rejects rotated regions.
+
+
+### Runtime atlas validation
+
+Normalized runtime atlas files can be validated independently:
+
+```bash
+python asset_forge.py validate-runtime-atlas examples/runtime-atlas.json
+```
+
+The dependency-free validator checks the versioned contract plus semantic relationships that JSON Schema alone does not express conveniently, including frame-count consistency, duplicate indices, UVs matching atlas regions, source/trim bounds, and rotation dimensions. Validation is strict about unknown fields and integer types, so booleans are not accepted as integers.
+
+CI validates `examples/runtime-atlas.json` as a smoke test. The example is a rotated + trimmed frame and can be used as a reference implementation for runtime consumers.
