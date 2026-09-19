@@ -846,3 +846,41 @@ assert.throws(
   () => createInstancedSpriteRendererWebGL2({}),
   /drawElementsInstanced is required/,
 );
+
+
+const resolvingGl = createMockWebGL2();
+const resolvedTextures = [];
+const resolvingRenderer = createInstancedSpriteRendererWebGL2(resolvingGl, {
+  resolveTexture(textureKey, entry) {
+    resolvedTextures.push([textureKey, entry.pageId]);
+    return { id: `gpu-${entry.pageId}` };
+  },
+});
+const keyPages = createRuntimeAtlasPages([
+  { id: "a", atlas: plainAtlas, texture: "hero-texture-key" },
+  { id: "b", atlas: atlasB, texture: "enemy-texture-key" },
+]);
+const keyPageBatches = buildTexturePageBatches(
+  keyPages,
+  [
+    { page: "a", frame: "plain" },
+    { page: "b", frame: "enemy" },
+  ],
+  { mode: "instanced" },
+);
+resolvingRenderer.renderPageBatches(keyPageBatches, 320, 240);
+assert.deepEqual(resolvedTextures, [
+  ["hero-texture-key", "a"],
+  ["enemy-texture-key", "b"],
+]);
+assert.ok(
+  resolvingGl.calls.some(
+    (call) => call[0] === "bindTexture" && call[2] === "gpu-a",
+  ),
+);
+assert.ok(
+  resolvingGl.calls.some(
+    (call) => call[0] === "bindTexture" && call[2] === "gpu-b",
+  ),
+);
+resolvingRenderer.dispose();
