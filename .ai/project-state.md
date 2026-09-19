@@ -96,19 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T09:33:28Z
+Generated: 2026-09-19T11:46:54Z
 
 ### Git
 - Branch: `main`
-- Head: `c430f4faa677`
-- Commit date: 2026-09-19T11:33:16+02:00
-- Commit: feat: add version-aware entity batch cache
+- Head: `78ab2b1dafe5`
+- Commit date: 2026-09-19T13:46:49+02:00
+- Commit: docs: record sprite entity hierarchy milestone
 - Tracked files: 209
 
 ### Recently changed files
-- `web/runtime_atlas.mjs`
 - `README.md`
 - `tests/runtime_atlas_web.test.mjs`
+- `web/runtime_atlas.mjs`
 
 ### Project signals
 - No common build descriptor detected
