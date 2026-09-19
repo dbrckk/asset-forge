@@ -21,56 +21,62 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 24,
+          "line": 26,
           "preview": "const indexed = indexRuntimeAtlas(atlas);",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 106,
+          "line": 108,
           "preview": "const plainFrame = indexRuntimeAtlas(plainAtlas).frame(\"plain\");",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 158,
+          "line": 160,
           "preview": "const animated = indexRuntimeAtlas(animatedAtlas);",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 278,
+          "line": 280,
           "preview": "const eventIndexed = indexRuntimeAtlas(eventAtlas);",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 367,
+          "line": 369,
           "preview": "const plainBatch = buildSpriteBatch(indexRuntimeAtlas(plainAtlas), [",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 423,
+          "line": 425,
           "preview": "() => drawSpriteBatchCanvas2D(canvasBatchCtx, image, indexRuntimeAtlas(plainAtlas), [",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 492,
+          "line": 494,
           "preview": "const plainInstanced = buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), [",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 506,
+          "line": 508,
           "preview": "const classicMany = buildSpriteBatch(indexRuntimeAtlas(plainAtlas), manyInstances);",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 507,
+          "line": 509,
           "preview": "const instancedMany = buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), manyInstances);",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 583,
+          "preview": "{ id: \"heroes\", atlas: indexRuntimeAtlas(plainAtlas), texture: { id: \"tex-a\" } },",
           "definition_candidate": false
         },
         {
@@ -78,9 +84,15 @@
           "line": 1,
           "preview": "export function indexRuntimeAtlas(atlas) {",
           "definition_candidate": true
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 849,
+          "preview": ": indexRuntimeAtlas(page.atlas);",
+          "definition_candidate": false
         }
       ],
-      "occurrence_count": 11
+      "occurrence_count": 13
     },
     "frameQuad": {
       "definition": {
@@ -98,13 +110,13 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 28,
+          "line": 30,
           "preview": "assert.equal(frameQuad(frame).rotated, true);",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 29,
+          "line": 31,
           "preview": "assert.deepEqual(frameQuad(frame).sourceRegion, { width: 8, height: 6 });",
           "definition_candidate": false
         },
@@ -133,13 +145,13 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 57,
+          "line": 59,
           "preview": "const bounds = drawFrameCanvas2D(ctx, image, frame, 100, 200, { scale: 2 });",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 113,
+          "line": 115,
           "preview": "drawFrameCanvas2D(plainCtx, image, plainFrame, 10, 20);",
           "definition_candidate": false
         },
@@ -180,13 +192,13 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 30,
+          "line": 32,
           "preview": "assert.deepEqual(sourceOrientedUVs(frame), [",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 107,
+          "line": 109,
           "preview": "assert.deepEqual(sourceOrientedUVs(plainFrame), [",
           "definition_candidate": false
         },
@@ -221,25 +233,25 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 160,
+          "line": 162,
           "preview": "assert.equal(animationFrameAtTime(animated, \"run\", 0.05).frame.index, 0);",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 161,
+          "line": 163,
           "preview": "assert.equal(animationFrameAtTime(animated, \"run\", 0.15).frame.index, 1);",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 162,
+          "line": 164,
           "preview": "assert.equal(animationFrameAtTime(animated, \"run\", 0.35).frame.index, 0);",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 164,
+          "line": 166,
           "preview": "const onceFinished = animationFrameAtTime(animated, \"once\", 5);",
           "definition_candidate": false
         },
@@ -286,7 +298,7 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 279,
+          "line": 281,
           "preview": "assert.equal(animationDurationSeconds(eventIndexed.animation(\"event-loop\")), 0.2);",
           "definition_candidate": false
         },
@@ -321,13 +333,13 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 281,
+          "line": 283,
           "preview": "animationEventsBetween(eventIndexed.animation(\"event-loop\"), 0, 0.46).map(",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 332,
+          "line": 334,
           "preview": "() => animationEventsBetween(eventIndexed.animation(\"event-loop\"), 1, 0),",
           "definition_candidate": false
         },
@@ -391,37 +403,37 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 171,
+          "line": 173,
           "preview": "const player = createAnimationPlayer(animated, \"once\", {",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 205,
+          "line": 207,
           "preview": "() => createAnimationPlayer(animated, \"run\", { playbackRate: 0 }),",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 213,
+          "line": 215,
           "preview": "const loopPlayer = createAnimationPlayer(animated, \"run\", {",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 230,
+          "line": 232,
           "preview": "const drawPlayer = createAnimationPlayer(animated, \"run\");",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 297,
+          "line": 299,
           "preview": "const markerPlayer = createAnimationPlayer(eventIndexed, \"event-loop\", {",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 321,
+          "line": 323,
           "preview": "const onceMarkerPlayer = createAnimationPlayer(eventIndexed, \"event-once\", {",
           "definition_candidate": false
         },
@@ -503,31 +515,31 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 174,
+          "line": 176,
           "preview": "onFrame(sample) {",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 175,
+          "line": 177,
           "preview": "events.push([\"frame\", sample.frame.index]);",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 177,
+          "line": 179,
           "preview": "onFinish(sample) {",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 178,
+          "line": 180,
           "preview": "events.push([\"finish\", sample.frame.index]);",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 195,
+          "line": 197,
           "preview": "assert.equal(player.sample().frame.index, 0);",
           "definition_candidate": false
         },
@@ -700,7 +712,7 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 232,
+          "line": 234,
           "preview": "const drawn = drawAnimationPlayerCanvas2D(",
           "definition_candidate": false
         },
@@ -729,43 +741,43 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 337,
+          "line": 339,
           "preview": "const rotatedBatch = buildSpriteBatch(indexed, [",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 367,
+          "line": 369,
           "preview": "const plainBatch = buildSpriteBatch(indexRuntimeAtlas(plainAtlas), [",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 407,
+          "line": 409,
           "preview": "() => buildSpriteBatch(indexed, [{}]),",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 411,
+          "line": 413,
           "preview": "() => buildSpriteBatch(indexed, [{ frame: 0, scale: 0 }]),",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 415,
+          "line": 417,
           "preview": "() => buildSpriteBatch(indexed, [{ frame: 0 }], { maxInstances: 0 }),",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 419,
+          "line": 421,
           "preview": "() => buildSpriteBatch(indexed, [{ frame: 0 }, { frame: 0 }], { maxInstances: 1 }),",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 506,
+          "line": 508,
           "preview": "const classicMany = buildSpriteBatch(indexRuntimeAtlas(plainAtlas), manyInstances);",
           "definition_candidate": false
         },
@@ -774,9 +786,21 @@
           "line": 454,
           "preview": "export function buildSpriteBatch(indexedAtlas, instances, options = {}) {",
           "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 967,
+          "preview": ": buildSpriteBatch(group.page.atlas, group.instances, options);",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 1064,
+          "preview": ": buildSpriteBatch(group.page.atlas, normalizedInstances, options);",
+          "definition_candidate": false
         }
       ],
-      "occurrence_count": 9
+      "occurrence_count": 11
     },
     "drawSpriteBatchCanvas2D": {
       "definition": {
@@ -794,13 +818,13 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 388,
+          "line": 390,
           "preview": "const canvasBatchBounds = drawSpriteBatchCanvas2D(",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 423,
+          "line": 425,
           "preview": "() => drawSpriteBatchCanvas2D(canvasBatchCtx, image, indexRuntimeAtlas(plainAtlas), [",
           "definition_candidate": false
         },
@@ -829,31 +853,31 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 430,
+          "line": 432,
           "preview": "const instanced = buildInstancedSpriteBatch(indexed, [",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 492,
+          "line": 494,
           "preview": "const plainInstanced = buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), [",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 507,
+          "line": 509,
           "preview": "const instancedMany = buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), manyInstances);",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 513,
+          "line": 515,
           "preview": "() => buildInstancedSpriteBatch(indexed, [{ frame: 0, scale: 0 }]),",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 517,
+          "line": 519,
           "preview": "() => buildInstancedSpriteBatch(indexed, [{ frame: 0 }, { frame: 0 }], { maxInstances: 1 }),",
           "definition_candidate": false
         },
@@ -862,9 +886,21 @@
           "line": 581,
           "preview": "export function buildInstancedSpriteBatch(indexedAtlas, instances, options = {}) {",
           "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 966,
+          "preview": "? buildInstancedSpriteBatch(group.page.atlas, group.instances, options)",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 1063,
+          "preview": "? buildInstancedSpriteBatch(group.page.atlas, normalizedInstances, options)",
+          "definition_candidate": false
         }
       ],
-      "occurrence_count": 7
+      "occurrence_count": 9
     },
     "instancedSpriteUV": {
       "definition": {
@@ -882,37 +918,37 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 476,
+          "line": 478,
           "preview": "instancedSpriteUV(10 / 64, 20 / 64, 16 / 64, 28 / 64, 1, 0, 0),",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 480,
+          "line": 482,
           "preview": "instancedSpriteUV(10 / 64, 20 / 64, 16 / 64, 28 / 64, 1, 1, 0),",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 484,
+          "line": 486,
           "preview": "instancedSpriteUV(10 / 64, 20 / 64, 16 / 64, 28 / 64, 1, 1, 1),",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 488,
+          "line": 490,
           "preview": "instancedSpriteUV(10 / 64, 20 / 64, 16 / 64, 28 / 64, 1, 0, 1),",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 497,
+          "line": 499,
           "preview": "instancedSpriteUV(1 / 16, 2 / 16, 5 / 16, 7 / 16, 0, 1, 1),",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 521,
+          "line": 523,
           "preview": "() => instancedSpriteUV(0, 0, 1, 1, 2, 0, 0),",
           "definition_candidate": false
         },
@@ -941,7 +977,7 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 526,
+          "line": 528,
           "preview": "const shaderContract = instancedSpriteWebGL2Shaders();",
           "definition_candidate": false
         },
@@ -970,13 +1006,13 @@
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 534,
+          "line": 536,
           "preview": "const attributeViews = instancedSpriteAttributeViews(instanced);",
           "definition_candidate": false
         },
         {
           "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 561,
+          "line": 563,
           "preview": "() => instancedSpriteAttributeViews({ instances: new Float32Array(), instanceStrideFloats: 8 }),",
           "definition_candidate": false
         },
@@ -988,6 +1024,88 @@
         }
       ],
       "occurrence_count": 4
+    },
+    "createRuntimeAtlasPages": {
+      "definition": {
+        "file": "web/runtime_atlas.mjs",
+        "line": 823,
+        "kind": "function",
+        "language": "javascript"
+      },
+      "occurrences": [
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 19,
+          "preview": "createRuntimeAtlasPages,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 582,
+          "preview": "const pages = createRuntimeAtlasPages([",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 649,
+          "preview": "() => createRuntimeAtlasPages([",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 825,
+          "preview": "export function createRuntimeAtlasPages(pages) {",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 4
+    },
+    "buildTexturePageBatches": {
+      "definition": {
+        "file": "web/runtime_atlas.mjs",
+        "line": 874,
+        "kind": "function",
+        "language": "javascript"
+      },
+      "occurrences": [
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 20,
+          "preview": "buildTexturePageBatches,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 590,
+          "preview": "const paged = buildTexturePageBatches(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 622,
+          "preview": "const pagedClassic = buildTexturePageBatches(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 656,
+          "preview": "() => buildTexturePageBatches(pages, [{ page: \"missing\", frame: \"plain\" }]),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 660,
+          "preview": "() => buildTexturePageBatches(pages, [], { mode: \"unknown\" }),",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 875,
+          "preview": "export function buildTexturePageBatches(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 6
     }
   }
 }

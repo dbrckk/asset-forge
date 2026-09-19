@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T07:18:46Z
+Generated: 2026-09-19T07:21:16Z
 
 ### Git
 - Branch: `main`
-- Head: `9e0b1195a492`
-- Commit date: 2026-09-19T09:18:39+02:00
-- Commit: docs: record instanced WebGL sprite milestone
+- Head: `a28a0aae8e3b`
+- Commit date: 2026-09-19T09:20:58+02:00
+- Commit: docs: record multi-atlas batching milestone
 - Tracked files: 204
 
 ### Recently changed files
