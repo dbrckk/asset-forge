@@ -5097,12 +5097,20 @@ export function applySelectionTransformHandleDrag(
   if (typeof uniform !== "boolean") {
     throw new Error("selection transform uniform must be boolean");
   }
+  const scaleSnap = options.scaleSnap ?? 0;
+  if (!Number.isFinite(scaleSnap) || scaleSnap < 0) {
+    throw new Error("selection transform scaleSnap must be a finite value >= 0");
+  }
   let scaleX = Math.abs(startDx) < 1e-9 ? 1 : Math.abs(currentDx / startDx);
   let scaleY = Math.abs(startDy) < 1e-9 ? 1 : Math.abs(currentDy / startDy);
   if (uniform) {
     const scale = Math.max(scaleX, scaleY);
     scaleX = scale;
     scaleY = scale;
+  }
+  if (scaleSnap > 0) {
+    scaleX = Math.round(scaleX / scaleSnap) * scaleSnap;
+    scaleY = Math.round(scaleY / scaleSnap) * scaleSnap;
   }
   scaleX = Math.max(scaleX, 1e-6);
   scaleY = Math.max(scaleY, 1e-6);
