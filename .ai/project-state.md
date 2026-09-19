@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T21:28:55Z
+Generated: 2026-09-19T21:36:19Z
 
 ### Git
 - Branch: `main`
-- Head: `f0bf62392662`
-- Commit date: 2026-09-19T23:28:40+02:00
-- Commit: test: prevent credential leakage in generator metadata
-- Tracked files: 232
+- Head: `08a0a05b0eb5`
+- Commit date: 2026-09-19T23:34:58+02:00
+- Commit: ci: add opt-in live generation smoke
+- Tracked files: 238
 
 ### Recently changed files
-- `tests/test_generator_backends.py`
-- `generator_backends.py`
-- `README.md`
-- `tests/test_fulfill.py`
-- `asset_forge.py`
+- `.github/workflows/live-generation.yml`
+- `examples/production-request-live-vector.json`
+- `.github/workflows/release.yml`
+- `.github/dependabot.yml`
+- `SECURITY.md`
 
 ### Project signals
 - No common build descriptor detected

@@ -41,9 +41,12 @@ The content is organized as follows:
 .github/
   workflows/
     ai-repo-map.yml
+    live-generation.yml
+    release.yml
     repo-standards.yml
     semantic-refresh.yml
     validate.yml
+  dependabot.yml
 benchmarks/
   runtime_atlas_web.bench.mjs
 config/
@@ -51,6 +54,7 @@ config/
 examples/
   asset-manifest.json
   godot-animations.json
+  production-request-live-vector.json
   production-request.json
   runtime-atlas.json
 pipelines/
@@ -74,6 +78,7 @@ schemas/
   3d-quality-profile.schema.json
   asset-manifest.schema.json
   godot4-handoff-profile.schema.json
+  production-report.schema.json
   production-request.schema.json
   runtime-atlas.schema.json
   vector-profile.schema.json
@@ -155,6 +160,110 @@ concurrency:
 jobs:
   repository-standards:
     uses: dbrckk/repo-standards/.github/workflows/reusable-unified.yml@main
+````
+
+## File: .github/workflows/live-generation.yml
+````yaml
+name: Live generation smoke
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-vector:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Require explicit backend credential
+        env:
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+        run: |
+          test -n "$POLLINATIONS_API_KEY" || {
+            echo "POLLINATIONS_API_KEY repository secret is required for this manual smoke." >&2
+            exit 2
+          }
+      - name: Install Pollinations CLI
+        run: npm install --global @pollinations/cli@0.1.15
+      - name: Check Asset Forge readiness
+        env:
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+        run: python asset_forge.py operational-status
+      - name: Generate and validate a real vector asset
+        env:
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+        run: |
+          python asset_forge.py fulfill examples/production-request-live-vector.json
+          python asset_forge.py validate-production-report build/live-vector-smoke/production-report.json
+      - name: Upload validated smoke artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: asset-forge-live-vector-smoke
+          path: build/live-vector-smoke/
+          if-no-files-found: error
+          retention-days: 7
+````
+
+## File: .github/workflows/release.yml
+````yaml
+name: Release Asset Forge
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate source
+        run: |
+          python -m compileall -q \
+            asset_forge.py animation_infer.py asset_profile_validation.py \
+            blender_adapter.py engine_profile_validation.py generator_backends.py \
+            gltf_binary_metrics.py gltf_diagnostics.py gltf_quality.py gltf_tools.py \
+            godot_3d_delivery.py godot_export.py godot_handoff.py operational_status.py \
+            production_contract.py production_executor.py raster_backend.py raster_pack.py \
+            runtime_atlas.py starlist_bridge.py svg_tools.py toolchain_3d.py tests
+          python -m unittest discover -s tests -v
+          python asset_forge.py validate-engine-profiles
+          python asset_forge.py validate-asset-profiles
+      - name: Build source bundle
+        run: |
+          mkdir -p dist
+          git archive \
+            --format=tar.gz \
+            --prefix="asset-forge-${GITHUB_REF_NAME}/" \
+            -o "dist/asset-forge-${GITHUB_REF_NAME}.tar.gz" \
+            HEAD
+          sha256sum "dist/asset-forge-${GITHUB_REF_NAME}.tar.gz" \
+            > "dist/asset-forge-${GITHUB_REF_NAME}.tar.gz.sha256"
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/asset-forge-${GITHUB_REF_NAME}.tar.gz" \
+            "dist/asset-forge-${GITHUB_REF_NAME}.tar.gz.sha256" \
+            --verify-tag \
+            --generate-notes
 ````
 
 ## File: .github/workflows/repo-standards.yml
@@ -275,6 +384,17 @@ jobs:
         run: python asset_forge.py raster-backend-status
       - name: WebP backend tests
         run: python -m unittest discover -s tests -p "test_raster_backend.py" -v
+````
+
+## File: .github/dependabot.yml
+````yaml
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
 ````
 
 ## File: benchmarks/runtime_atlas_web.bench.mjs
@@ -414,6 +534,38 @@ jobs:
       ]
     }
   ]
+}
+````
+
+## File: examples/production-request-live-vector.json
+````json
+{
+  "schema": "asset-forge/production-request/v1",
+  "requestId": "live-vector-smoke",
+  "instruction": "Create a clean simple geometric game UI icon with no text, no watermark, and a transparent or empty background.",
+  "manifest": {
+    "id": "live-vector-icon",
+    "project": "asset-forge-live-smoke",
+    "type": "icon",
+    "importance": "primary",
+    "source": {"mode": "generated"},
+    "license": {
+      "id": "project-owned",
+      "commercialUse": true,
+      "derivatives": true,
+      "attributionRequired": false
+    },
+    "target": {
+      "engine": null,
+      "format": "svg",
+      "maxBytes": 1048576
+    },
+    "constraints": {}
+  },
+  "delivery": {
+    "engine": null,
+    "outputDir": "build/live-vector-smoke"
+  }
 }
 ````
 
@@ -963,6 +1115,55 @@ jobs:
     }
   },
   "additionalProperties": false
+}
+````
+
+## File: schemas/production-report.schema.json
+````json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "asset-forge production report",
+  "type": "object",
+  "required": [
+    "schema",
+    "requestId",
+    "assetId",
+    "assetType",
+    "success",
+    "generation",
+    "validation",
+    "artifact"
+  ],
+  "properties": {
+    "schema": {"const": "asset-forge/production-report/v1"},
+    "requestId": {"type": "string", "minLength": 1},
+    "assetId": {"type": "string", "minLength": 1},
+    "assetType": {"type": "string", "minLength": 1},
+    "success": {"type": "boolean"},
+    "generation": {"type": "object"},
+    "processing": {"type": "object"},
+    "validation": {
+      "type": "object",
+      "required": ["errors"],
+      "properties": {
+        "errors": {"type": "array"}
+      },
+      "additionalProperties": true
+    },
+    "artifact": {"type": ["string", "null"]},
+    "engineHandoff": {"type": "object"}
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {"properties": {"success": {"const": true}}},
+      "then": {"properties": {"artifact": {"type": "string", "minLength": 1}}}
+    },
+    {
+      "if": {"properties": {"success": {"const": false}}},
+      "then": {"properties": {"artifact": {"type": "null"}}}
+    }
+  ]
 }
 ````
 
@@ -1578,6 +1779,25 @@ job = {
 expected = {"success": True, "artifact": "hero.png"}
 ⋮----
 result = asset_forge.execute_compiled_production_job(
+⋮----
+def test_godot_sprite_sheet_gets_engine_handoff(self)
+⋮----
+artifact = out / "hero.png"
+⋮----
+report = out / "production-report.json"
+⋮----
+result = {
+atlas = {
+⋮----
+enriched = asset_forge._enrich_engine_handoff(job, result, out)
+⋮----
+persisted = json.loads(report.read_text(encoding="utf-8"))
+⋮----
+def test_godot_3d_gets_handoff_and_import_validation(self)
+⋮----
+artifact = out / "crate.glb"
+⋮----
+handoff = {"projectDir": str(out / "godot-handoff")}
 ````
 
 ## File: tests/test_generator_backends.py
@@ -2002,6 +2222,12 @@ request = self.request()
 ⋮----
 plan = asset_forge.build_plan(request["manifest"], Path(__file__).resolve().parents[1])
 job = build_production_job(request, plan)
+⋮----
+def test_valid_production_report_contract(self)
+⋮----
+report = {
+⋮----
+def test_failed_report_cannot_claim_an_artifact(self)
 ⋮----
 def test_invalid_request_is_rejected(self)
 ⋮----
@@ -3609,6 +3835,36 @@ def _write_production_inputs(output_dir: Path, job: dict) -> None
 ⋮----
 payloads = {
 ⋮----
+def _persist_enriched_production_report(result: dict) -> None
+⋮----
+report_path = result.get("reportPath")
+⋮----
+path = Path(report_path)
+payload = dict(result)
+⋮----
+def _enrich_engine_handoff(job: dict, result: dict, output_dir: Path) -> dict
+⋮----
+manifest = job.get("manifest")
+⋮----
+engine = str(target.get("engine") or "").lower() if isinstance(target, dict) else ""
+⋮----
+artifact = result.get("artifact")
+⋮----
+output_dir = Path(output_dir)
+⋮----
+profile = {
+delivery = result.get("validation", {}).get("godot")
+⋮----
+handoff = prepare_godot_handoff(
+import_validation = validate_godot_handoff(Path(handoff["projectDir"]))
+⋮----
+constraints = manifest.get("constraints")
+⋮----
+atlas = build_atlas_manifest(Path(artifact), manifest)
+atlas_path = output_dir / "atlas-metadata.json"
+⋮----
+spriteframes = output_dir / f"{job.get('assetId') or manifest.get('id')}.tres"
+⋮----
 def parser() -> argparse.ArgumentParser
 ⋮----
 result = argparse.ArgumentParser(prog="asset-forge")
@@ -3619,6 +3875,8 @@ validate = sub.add_parser("validate", help="validate an asset manifest")
 plan = sub.add_parser("plan", help="build a deterministic asset production plan")
 ⋮----
 production_job = sub.add_parser("production-job", help="compile a Production OS/AI Dev Server asset request into an executable job")
+⋮----
+production_report = sub.add_parser("validate-production-report", help="validate a machine-readable production report")
 ⋮----
 generator_status = sub.add_parser("generator-backend-status", help="inspect available generation backends")
 operational_status = sub.add_parser("operational-status", help="report machine-readable production readiness")
@@ -3685,6 +3943,10 @@ def main() -> int
 args = parser().parse_args()
 root = Path(__file__).resolve().parent
 ⋮----
+report = load_json(args.report)
+⋮----
+errors = validate_production_report(report)
+⋮----
 request = load_json(args.request)
 errors = validate_production_request(request, validate_manifest)
 ⋮----
@@ -3702,6 +3964,8 @@ delivery = job.get("delivery") if isinstance(job, dict) else None
 configured = delivery.get("outputDir") if isinstance(delivery, dict) else None
 output_dir = Path(configured) if isinstance(configured, str) and configured.strip() else Path("build/asset-forge") / str(job.get("requestId") or "job")
 result = execute_compiled_production_job(
+result = _enrich_engine_handoff(job, result, output_dir)
+contract_errors = validate_production_report(result)
 ⋮----
 configured = job.get("delivery", {}).get("outputDir")
 ⋮----
@@ -4768,6 +5032,7 @@ blockers = []
 ````python
 REQUEST_SCHEMA = "asset-forge/production-request/v1"
 JOB_SCHEMA = "asset-forge/production-job/v1"
+REPORT_SCHEMA = "asset-forge/production-report/v1"
 SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$")
 ⋮----
 def validate_production_request(request: dict, validate_manifest: Callable[[dict], list[str]]) -> list[str]
@@ -4794,6 +5059,22 @@ delivery = request.get("delivery") or {}
 output_dir = delivery.get("outputDir") or str(Path(default_output_dir) / request["requestId"])
 ⋮----
 requires_generator = source_mode == "generated"
+⋮----
+def validate_production_report(report: dict) -> list[str]
+⋮----
+value = report.get(field)
+⋮----
+success = report.get("success")
+⋮----
+generation = report.get("generation")
+⋮----
+validation = report.get("validation")
+⋮----
+validation_errors = validation.get("errors")
+⋮----
+artifact = report.get("artifact")
+⋮----
+handoff = report.get("engineHandoff")
 ````
 
 ## File: production_executor.py
