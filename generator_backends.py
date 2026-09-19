@@ -348,7 +348,7 @@ def execute_generated_3d_asset(
         "resolution": resolution,
         "assetType": asset_type,
         "referencePath": str(reference_path),
-        "referenceUrl": image_url,
+        "referenceUpload": {"temporaryPublic": True},
         "sourcePath": str(output),
         "sourceBytes": len(raw),
     }
