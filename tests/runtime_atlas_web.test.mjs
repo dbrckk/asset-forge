@@ -1406,7 +1406,7 @@ const rotatedCullFallback = cullSpriteInstances(
   [{
     page: "heroes",
     frame: "plain",
-    x: 66,
+    x: 64,
     y: 24,
     rotation: Math.PI / 4,
     pivotX: 3,
