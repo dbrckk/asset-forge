@@ -1,19 +1,16 @@
 # Change impact
 
-Base: 3eabd13c2e628706da4ec71c3f2772eeaa5e3ee5
-Head: 63ba29825cd81de3f3be3ec89311dc8f9c8b8288
+Base: 991e24ba5d95e5360dfd75f39bba907343980af2
+Head: a510b9219870e39daa1820b78e10fd7ab51b17b5
 
 ## Changed files
-- M raster_pack.py
-- M tests/test_asset_forge.py
-- M tests/test_raster_pack.py
+- M tests/runtime_atlas_web.test.mjs
 
 ## Affected areas
-- (root)
 - tests
 
 ## Related test candidates
-- tests/test_raster_pack.py
+- No direct filename-based test match detected.
 
 ## Agent guidance
 - Read this file before broad repository exploration.

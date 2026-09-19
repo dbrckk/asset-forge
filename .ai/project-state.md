@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T16:01:20Z
+Generated: 2026-09-19T16:03:29Z
 
 ### Git
 - Branch: `main`
-- Head: `63ba29825cd8`
-- Commit date: 2026-09-19T18:01:06+02:00
-- Commit: fix: restore raster validation suite
+- Head: `a510b9219870`
+- Commit date: 2026-09-19T18:03:14+02:00
+- Commit: test: align sprite bounds with rotation metadata
 - Tracked files: 209
 
 ### Recently changed files
+- `tests/runtime_atlas_web.test.mjs`
 - `raster_pack.py`
 - `tests/test_asset_forge.py`
 - `tests/test_raster_pack.py`
 - `README.md`
-- `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
 
 ### Project signals

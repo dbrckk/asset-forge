@@ -5,3897 +5,936 @@
   "semantic": false,
   "note": "Occurrences are lexical word matches; verify source/LSP/compiler data before relying on them.",
   "symbols": {
-    "_read_webp_bytes": {
+    "createMockWebGL2": {
       "definition": {
-        "file": "raster_pack.py",
-        "line": 20,
+        "file": "tests/runtime_atlas_web.test.mjs",
+        "line": 737,
         "kind": "function",
-        "language": "python"
+        "language": "javascript"
       },
       "occurrences": [
         {
-          "file": "raster_pack.py",
-          "line": 20,
-          "preview": "def _read_webp_bytes(path: Path) -> bytes:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 185,
-          "preview": "return inspect_webp_bytes(_read_webp_bytes(path))",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_webp_chunks": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 27,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 27,
-          "preview": "def _webp_chunks(data: bytes) -> list[tuple[bytes, bytes]]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 119,
-          "preview": "chunks = _webp_chunks(data)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_webp_vp8x_info": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 60,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 60,
-          "preview": "def _webp_vp8x_info(payload: bytes) -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 129,
-          "preview": "info = _webp_vp8x_info(by_kind[b\"VP8X\"][0])",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_webp_vp8l_info": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 79,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 79,
-          "preview": "def _webp_vp8l_info(payload: bytes) -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 133,
-          "preview": "info = _webp_vp8l_info(by_kind[b\"VP8L\"][0])",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 155,
-          "preview": "else _webp_vp8l_info(by_kind[image_kind][0])",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_webp_vp8_info": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 96,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 96,
-          "preview": "def _webp_vp8_info(payload: bytes) -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 137,
-          "preview": "info = _webp_vp8_info(by_kind[b\"VP8 \"][0])",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 153,
-          "preview": "_webp_vp8_info(by_kind[image_kind][0])",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "inspect_webp_bytes": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 118,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "gltf_binary_metrics.py",
-          "line": 9,
-          "preview": "from raster_pack import inspect_webp_bytes",
-          "definition_candidate": false
-        },
-        {
-          "file": "gltf_binary_metrics.py",
-          "line": 157,
-          "preview": "info = inspect_webp_bytes(data)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 118,
-          "preview": "def inspect_webp_bytes(data: bytes) -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 185,
-          "preview": "return inspect_webp_bytes(_read_webp_bytes(path))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 8,
-          "preview": "from raster_pack import decode_rgba, encode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 852,
-          "preview": "info = inspect_webp_bytes(data)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 864,
-          "preview": "info = inspect_webp_bytes(data)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 880,
-          "preview": "info = inspect_webp_bytes(data)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 901,
-          "preview": "info = inspect_webp_bytes(data)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 910,
-          "preview": "inspect_webp_bytes(data)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 917,
-          "preview": "inspect_webp_bytes(data)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 924,
-          "preview": "inspect_webp_bytes(data)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 932,
-          "preview": "inspect_webp_bytes(data)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 938,
-          "preview": "inspect_webp_bytes(bytes(data))",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 14
-    },
-    "inspect_webp": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 184,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 184,
-          "preview": "def inspect_webp(path: Path) -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 387,
-          "preview": "return inspect_webp(path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 692,
-          "preview": "info = inspect_webp(path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 703,
-          "preview": "info = inspect_webp(path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 890,
-          "preview": "info = inspect_webp(output_path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 7,
-          "preview": "from raster_pack import decode_raster_rgba, encode_rgba, encode_webp, inspect_webp, pack_uniform_atlas",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 151,
-          "preview": "info = inspect_webp(output)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 8,
-          "preview": "from raster_pack import decode_rgba, encode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 946,
-          "preview": "info = inspect_webp(path)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 9
-    },
-    "_read_png_bytes": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 188,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 188,
-          "preview": "def _read_png_bytes(path: Path) -> bytes:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 392,
-          "preview": "data = _read_png_bytes(path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 728,
-          "preview": "chunks = _chunks(_read_png_bytes(path))",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_chunks": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 195,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 195,
-          "preview": "def _chunks(data: bytes) -> list[tuple[bytes, bytes]]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 393,
-          "preview": "chunks = _chunks(data)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 728,
-          "preview": "chunks = _chunks(_read_png_bytes(path))",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_validate_ihdr": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 262,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 262,
-          "preview": "def _validate_ihdr(payload: bytes) -> tuple[int, int, int, int, int, int, int]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 394,
-          "preview": "width, height, bit_depth, color_type, compression, filtering, interlace = _validate_ihdr(",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 729,
-          "preview": "width, height, depth, color_type, compression, filtering, interlace = _validate_ihdr(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_validate_palette_transparency": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 286,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 286,
-          "preview": "def _validate_palette_transparency(",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 397,
-          "preview": "palette, transparency = _validate_palette_transparency(",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 737,
-          "preview": "palette, transparency = _validate_palette_transparency(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_decompress_idat": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 351,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 351,
-          "preview": "def _decompress_idat(data: bytes, expected_size: int) -> bytes:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 747,
-          "preview": "raw = _decompress_idat(compressed, expected_size)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 776,
-          "preview": "raw = _decompress_idat(compressed, expected_size)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "inspect_raster": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 380,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 23,
-          "preview": "from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 158,
-          "preview": "info = inspect_raster(path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 195,
-          "preview": "info = inspect_raster(path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 380,
-          "preview": "def inspect_raster(path: Path) -> dict:",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 4
-    },
-    "inspect_png": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 391,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 23,
-          "preview": "from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 383,
-          "preview": "info = inspect_png(path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 391,
-          "preview": "def inspect_png(path: Path) -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 234,
-          "preview": "asset_forge.inspect_png(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 8,
-          "preview": "from raster_pack import decode_rgba, encode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 370,
-          "preview": "info = inspect_png(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 382,
-          "preview": "inspect_png(image)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 7
-    },
-    "_paeth": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 419,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 419,
-          "preview": "def _paeth(a: int, b: int, c: int) -> int:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 460,
-          "preview": "reconstructed_value = (value + _paeth(left, above, upper_left)) & 255",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 814,
-          "preview": "predictor = _paeth(left, above, upper_left)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_unfilter_scanlines": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 431,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 431,
-          "preview": "def _unfilter_scanlines(raw: bytes, stride: int, height: int, filter_bpp: int) -> list[bytearray]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 656,
-          "preview": "rows = _unfilter_scanlines(",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 748,
-          "preview": "rows = _unfilter_scanlines(raw, stride, height, filter_bpp)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_scanline_layout": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 472,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 472,
-          "preview": "def _scanline_layout(width: int, depth: int, color_type: int) -> tuple[int, int]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 650,
-          "preview": "stride, filter_bpp = _scanline_layout(pass_width, depth, color_type)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 745,
-          "preview": "stride, filter_bpp = _scanline_layout(width, depth, color_type)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 773,
-          "preview": "stride, _ = _scanline_layout(pass_width, depth, color_type)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 4
-    },
-    "_unpack_packed_samples": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 480,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 480,
-          "preview": "def _unpack_packed_samples(row: bytes, width: int, depth: int) -> list[int]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 533,
-          "preview": "indexed_samples = _unpack_packed_samples(row, width, depth)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 544,
-          "preview": "samples = _unpack_packed_samples(row, width, depth)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_sample16_to_u8": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 500,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 500,
-          "preview": "def _sample16_to_u8(value: int) -> int:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 577,
-          "preview": "gray = _sample16_to_u8(gray16)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 582,
-          "preview": "red = _sample16_to_u8(red16)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 583,
-          "preview": "green = _sample16_to_u8(green16)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 584,
-          "preview": "blue = _sample16_to_u8(blue16)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 588,
-          "preview": "gray = _sample16_to_u8(gray16)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 590,
-          "preview": "alpha = _sample16_to_u8(alpha16)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 593,
-          "preview": "red = _sample16_to_u8(red16)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 594,
-          "preview": "green = _sample16_to_u8(green16)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 595,
-          "preview": "blue = _sample16_to_u8(blue16)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 596,
-          "preview": "alpha = _sample16_to_u8(alpha16)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 11
-    },
-    "_adam7_extent": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 515,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 515,
-          "preview": "def _adam7_extent(size: int, start: int, step: int) -> int:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 645,
-          "preview": "pass_width = _adam7_extent(width, x_start, x_step)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 646,
-          "preview": "pass_height = _adam7_extent(height, y_start, y_step)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 769,
-          "preview": "pass_width = _adam7_extent(width, x_start, x_step)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 770,
-          "preview": "pass_height = _adam7_extent(height, y_start, y_step)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 5
-    },
-    "_decode_row_to_rgba": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 521,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 521,
-          "preview": "def _decode_row_to_rgba(",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 665,
-          "preview": "row_rgba = _decode_row_to_rgba(",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 752,
-          "preview": "row_rgba = _decode_row_to_rgba(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_decode_adam7": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 632,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 632,
-          "preview": "def _decode_adam7(",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 777,
-          "preview": "pixels = _decode_adam7(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "decode_raster_rgba": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 687,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 687,
-          "preview": "def decode_raster_rgba(path: Path) -> tuple[int, int, bytes]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 878,
-          "preview": "width, height, pixels = decode_raster_rgba(input_path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1053,
-          "preview": "source_width, source_height, pixels = decode_raster_rgba(path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 7,
-          "preview": "from raster_pack import decode_raster_rgba, encode_rgba, encode_webp, inspect_webp, pack_uniform_atlas",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 48,
-          "preview": "width, height, pixels = decode_raster_rgba(path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 74,
-          "preview": "width, height, pixels = decode_raster_rgba(atlas)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 103,
-          "preview": "decode_raster_rgba(path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 150,
-          "preview": "width, height, decoded = decode_raster_rgba(output)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 8
-    },
-    "raster_backend_status": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 712,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 23,
-          "preview": "from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 550,
-          "preview": "print(json.dumps(raster_backend_status(), indent=2, sort_keys=True))",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 712,
-          "preview": "def raster_backend_status() -> dict:",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "decode_rgba": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 727,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 690,
-          "preview": "return decode_rgba(path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 701,
-          "preview": "return decode_rgba(path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 727,
-          "preview": "def decode_rgba(path: Path) -> tuple[int, int, bytes]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 912,
-          "preview": "width, height, pixels = decode_rgba(input_path)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 8,
-          "preview": "from raster_pack import decode_rgba, encode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 114,
-          "preview": "width, height, pixels = decode_rgba(atlas)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 147,
-          "preview": "width, height, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 159,
-          "preview": "before = decode_rgba(source)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 161,
-          "preview": "after = decode_rgba(optimized)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 195,
-          "preview": "width, height, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 210,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 228,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 245,
-          "preview": "decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 258,
-          "preview": "decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 272,
-          "preview": "decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 289,
-          "preview": "decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 297,
-          "preview": "decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 312,
-          "preview": "decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 326,
-          "preview": "decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 340,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 356,
-          "preview": "decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 398,
-          "preview": "width, height, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 428,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 454,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 480,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 507,
-          "preview": "decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 520,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 541,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 564,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 588,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 612,
-          "preview": "decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 625,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 647,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 662,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 677,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 693,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 710,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 730,
-          "preview": "decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 748,
-          "preview": "w, h, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 783,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 816,
-          "preview": "_, _, pixels = decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 842,
-          "preview": "decode_rgba(image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 994,
-          "preview": "width, height, pixels = decode_rgba(atlas)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1024,
-          "preview": "width, height, pixels = decode_rgba(atlas)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1402,
-          "preview": "width, height, packed = decode_rgba(atlas)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 45
-    },
-    "_chunk": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 789,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 789,
-          "preview": "def _chunk(kind: bytes, payload: bytes) -> bytes:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 853,
-          "preview": "+ _chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 854,
-          "preview": "+ _chunk(b\"IDAT\", zlib.compress(b\"\".join(rows), 9))",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 855,
-          "preview": "+ _chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 4
-    },
-    "_filter_row": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 798,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 798,
-          "preview": "def _filter_row(row: bytes, previous: bytes, bpp: int, filter_type: int) -> bytes:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 839,
-          "preview": "(_filter_row(row, previous, 4, filter_type), filter_type)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_filter_score": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 822,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 822,
-          "preview": "def _filter_score(filtered: bytes) -> int:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 842,
-          "preview": "filtered, filter_type = min(candidates, key=lambda item: _filter_score(item[0]))",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_png_bytes_rgba": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 826,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 826,
-          "preview": "def _png_bytes_rgba(width: int, height: int, pixels: bytes, adaptive: bool = True) -> bytes:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 867,
-          "preview": "path.write_bytes(_png_bytes_rgba(width, height, pixels, adaptive=adaptive))",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 913,
-          "preview": "candidate = _png_bytes_rgba(width, height, pixels, adaptive=True)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1112,
-          "preview": "candidate = _png_bytes_rgba(width, height, pixels, adaptive=True)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1443,
-          "preview": "png_bytes = _png_bytes_rgba(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1061,
-          "preview": "\"raster_pack._png_bytes_rgba\",",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 6
-    },
-    "encode_rgba": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 859,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 859,
-          "preview": "def encode_rgba(",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 7,
-          "preview": "from raster_pack import decode_raster_rgba, encode_rgba, encode_webp, inspect_webp, pack_uniform_atlas",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 69,
-          "preview": "encode_rgba(png, 1, 1, bytes([255, 0, 0, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 148,
-          "preview": "encode_rgba(source, 2, 1, pixels)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 8,
-          "preview": "from raster_pack import decode_rgba, encode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 963,
-          "preview": "from raster_pack import encode_rgba",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 964,
-          "preview": "encode_rgba(first, 4, 4, bytes(pixels))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 965,
-          "preview": "encode_rgba(second, 4, 4, bytes(pixels))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1392,
-          "preview": "encode_rgba(source, 4, 2, pixels)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 9
-    },
-    "encode_webp": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 870,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 23,
-          "preview": "from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 622,
-          "preview": "result = encode_webp(",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 870,
-          "preview": "def encode_webp(",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 7,
-          "preview": "from raster_pack import decode_raster_rgba, encode_rgba, encode_webp, inspect_webp, pack_uniform_atlas",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 149,
-          "preview": "report = encode_webp(source, output, lossless=True, quality=100, method=6)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 5
-    },
-    "recompress_png": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 909,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 23,
-          "preview": "from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 614,
-          "preview": "result = recompress_png(args.input, args.output)",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 909,
-          "preview": "def recompress_png(input_path: Path, output_path: Path) -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 8,
-          "preview": "from raster_pack import decode_rgba, encode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 160,
-          "preview": "report = recompress_png(source, optimized)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 176,
-          "preview": "report = recompress_png(source, optimized)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1064,
-          "preview": "report = recompress_png(source, output)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 7
-    },
-    "_alpha_bounds": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 934,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 934,
-          "preview": "def _alpha_bounds(width: int, height: int, pixels: bytes) -> tuple[int, int, int, int] | None:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1055,
-          "preview": "bounds = _alpha_bounds(source_width, source_height, pixels)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_crop_rgba": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 952,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 952,
-          "preview": "def _crop_rgba(",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1056,
-          "preview": "width, height, pixels, offset_x, offset_y = _crop_rgba(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_blit_rgba": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 974,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 974,
-          "preview": "def _blit_rgba(",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1387,
-          "preview": "_blit_rgba(",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1730,
-          "preview": "_blit_rgba(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_extrude_rgba": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 991,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 991,
-          "preview": "def _extrude_rgba(",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1396,
-          "preview": "_extrude_rgba(",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1739,
-          "preview": "_extrude_rgba(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_rotate_rgba_clockwise": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1038,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1038,
-          "preview": "def _rotate_rgba_clockwise(width: int, height: int, pixels: bytes) -> tuple[int, int, bytes]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1378,
-          "preview": "render_width, render_height, render_pixels = _rotate_rgba_clockwise(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_prepare_frame": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1052,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1052,
-          "preview": "def _prepare_frame(path: Path, trim: bool) -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1549,
-          "preview": "frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1688,
-          "preview": "frames_data = [_prepare_frame(Path(path), trim=trim) for path in inputs]",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_validate_atlas_dimensions": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1077,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1077,
-          "preview": "def _validate_atlas_dimensions(",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1573,
-          "preview": "_validate_atlas_dimensions(",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1711,
-          "preview": "_validate_atlas_dimensions(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_write_atlas_png": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1105,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1105,
-          "preview": "def _write_atlas_png(",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1767,
-          "preview": "output_bytes = _write_atlas_png(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_next_power_of_two": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1125,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1125,
-          "preview": "def _next_power_of_two(value: int) -> int:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1434,
-          "preview": "atlas_width = _next_power_of_two(content_width) if power_of_two else content_width",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1435,
-          "preview": "atlas_height = _next_power_of_two(content_height) if power_of_two else content_height",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1709,
-          "preview": "atlas_width = _next_power_of_two(content_width) if power_of_two else content_width",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1710,
-          "preview": "atlas_height = _next_power_of_two(content_height) if power_of_two else content_height",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 5
-    },
-    "_rects_intersect": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1131,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1131,
-          "preview": "def _rects_intersect(a: dict, b: dict) -> bool:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1150,
-          "preview": "if not _rects_intersect(free, used):",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_rect_contains": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1140,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1140,
-          "preview": "def _rect_contains(outer: dict, inner: dict) -> bool:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1202,
-          "preview": "index != other_index and _rect_contains(other, rect)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_split_free_rect": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1149,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1149,
-          "preview": "def _split_free_rect(free: dict, used: dict) -> list[dict]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1329,
-          "preview": "new_free.extend(_split_free_rect(candidate, used))",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_prune_free_rects": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1198,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1198,
-          "preview": "def _prune_free_rects(rects: list[dict]) -> list[dict]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1330,
-          "preview": "free_rects = _prune_free_rects(new_free)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_maxrects_score": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1211,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1211,
-          "preview": "def _maxrects_score(free: dict, reserve_width: int, reserve_height: int, heuristic: str) -> tuple:",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1297,
-          "preview": "*_maxrects_score(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_pack_maxrects": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1227,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1227,
-          "preview": "def _pack_maxrects(",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1426,
-          "preview": "placements, content_width, content_height = _pack_maxrects(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_render_compact_layout": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1368,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1368,
-          "preview": "def _render_compact_layout(",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1436,
-          "preview": "pixels = _render_compact_layout(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_choose_maxrects_layout": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1409,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "raster_pack.py",
-          "line": 1409,
-          "preview": "def _choose_maxrects_layout(",
-          "definition_candidate": true
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1560,
-          "preview": ") = _choose_maxrects_layout(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "pack_compact_atlas": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1523,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 23,
-          "preview": "from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 586,
-          "preview": "metadata = pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1523,
-          "preview": "def pack_compact_atlas(",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 8,
-          "preview": "from raster_pack import decode_rgba, encode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1017,
-          "preview": "metadata = pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1045,
-          "preview": "pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1108,
-          "preview": "pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1145,
-          "preview": "metadata = pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1170,
-          "preview": "metadata = pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1208,
-          "preview": "metadata = pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1226,
-          "preview": "metadata = pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1247,
-          "preview": "pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1263,
-          "preview": "pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1280,
-          "preview": "metadata = pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1315,
-          "preview": "baseline = pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1328,
-          "preview": "constrained = pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1351,
-          "preview": "metadata = pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1370,
-          "preview": "pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1394,
-          "preview": "metadata = pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1426,
-          "preview": "pack_compact_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1440,
-          "preview": "metadata = pack_compact_atlas(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 21
-    },
-    "pack_uniform_atlas": {
-      "definition": {
-        "file": "raster_pack.py",
-        "line": 1667,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 23,
-          "preview": "from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 560,
-          "preview": "metadata = pack_uniform_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 1667,
-          "preview": "def pack_uniform_atlas(",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 7,
-          "preview": "from raster_pack import decode_raster_rgba, encode_rgba, encode_webp, inspect_webp, pack_uniform_atlas",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_backend.py",
-          "line": 73,
-          "preview": "report = pack_uniform_atlas([png, webp], atlas, columns=2)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 8,
-          "preview": "from raster_pack import decode_rgba, encode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 106,
-          "preview": "metadata = pack_uniform_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 132,
-          "preview": "pack_uniform_atlas([first, second], root / \"atlas.png\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 967,
-          "preview": "metadata = pack_uniform_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 988,
-          "preview": "metadata = pack_uniform_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1081,
-          "preview": "pack_uniform_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1094,
-          "preview": "pack_uniform_atlas(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1125,
-          "preview": "pack_uniform_atlas(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 13
-    },
-    "chunk": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 13,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "gltf_tools.py",
-          "line": 42,
-          "preview": "raise ValueError(\"truncated GLB chunk header\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "gltf_tools.py",
-          "line": 47,
-          "preview": "raise ValueError(\"truncated GLB chunk\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "gltf_tools.py",
-          "line": 60,
-          "preview": "raise ValueError(\"GLB is missing JSON chunk\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "gltf_tools.py",
-          "line": 65,
-          "preview": "raise ValueError(\"GLB JSON chunk is invalid\") from exc",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 41,
-          "preview": "raise ValueError(f\"WebP exceeds chunk count limit {MAX_WEBP_CHUNKS}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 43,
-          "preview": "raise ValueError(\"truncated WebP chunk header\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 49,
-          "preview": "raise ValueError(\"truncated WebP chunk\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 54,
-          "preview": "raise ValueError(\"invalid WebP chunk padding\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 62,
-          "preview": "raise ValueError(\"WebP VP8X chunk must be 10 bytes\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 128,
-          "preview": "raise ValueError(\"WebP VP8X must be the first chunk\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 148,
-          "preview": "raise ValueError(\"extended WebP requires exactly one VP8 or VP8L image chunk\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 163,
-          "preview": "raise ValueError(\"lossy extended WebP with alpha requires ALPH chunk\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 210,
-          "preview": "raise ValueError(f\"PNG exceeds chunk count limit {MAX_PNG_CHUNKS}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 212,
-          "preview": "raise ValueError(\"truncated PNG chunk\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 217,
-          "preview": "raise ValueError(f\"PNG chunk exceeds size limit {MAX_PNG_CHUNK_BYTES}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_pack.py",
-          "line": 220,
-          "preview": "raise ValueError(\"truncated PNG chunk\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 13,
-          "preview": "def chunk(kind: bytes, payload: bytes) -> bytes:",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 32,
-          "preview": "parts = [signature, chunk(b\"IHDR\", ihdr_data)]",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 39,
-          "preview": "parts.append(chunk(b\"PLTE\", bytes(palette)))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 41,
-          "preview": "parts.append(chunk(b\"tRNS\", bytes([255] * max(1, palette_entries - 1) + [0])))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 45,
-          "preview": "parts.append(chunk(b\"IDAT\", zlib.compress(row * height)))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 46,
-          "preview": "parts.append(chunk(b\"IEND\", b\"\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_gltf_binary_metrics.py",
-          "line": 16,
-          "preview": "def chunk(kind: bytes, payload: bytes) -> bytes:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_gltf_binary_metrics.py",
-          "line": 28,
-          "preview": "return PNG_SIG + chunk(b\"IHDR\", ihdr) + chunk(b\"IDAT\", zlib.compress(raw)) + chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 24,
-          "preview": "def chunk(kind: bytes, payload: bytes) -> bytes:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 89,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 90,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 91,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 142,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 143,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 144,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 191,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 192,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(b\"\\x00\\x7f\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 193,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 206,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 207,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(b\"\\x00\\x44\\x80\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 208,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 222,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 223,
-          "preview": "+ chunk(b\"PLTE\", palette)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 224,
-          "preview": "+ chunk(b\"tRNS\", transparency)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 225,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(b\"\\x00\\x00\\x01\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 226,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 240,
-          "preview": "+ chunk(b\"IHDR\", b\"short\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 241,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(b\"\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 242,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 253,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 254,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(b\"\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 255,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 266,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 267,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 268,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(b\"\\x00\\x00\\x00\\x00\\xff\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 269,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 282,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 283,
-          "preview": "+ chunk(b\"IDAT\", compressed[:split])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 284,
-          "preview": "+ chunk(b\"tEXt\", b\"k\\x00v\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 285,
-          "preview": "+ chunk(b\"IDAT\", compressed[split:])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 286,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 305,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 306,
-          "preview": "+ chunk(b\"PLTE\", bytes([255, 0, 0]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 307,
-          "preview": "+ chunk(b\"tRNS\", bytes([255, 128]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 308,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(b\"\\x00\\x00\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 309,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 320,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 321,
-          "preview": "+ chunk(b\"tRNS\", b\"\\x00\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 322,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(b\"\\x00\\x00\\x00\\x00\\xff\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 323,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 335,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 336,
-          "preview": "+ chunk(b\"tRNS\", transparency)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 337,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(b\"\\x00\\x07\\x08\\x09\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 338,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 351,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 352,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 353,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 364,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 365,
-          "preview": "+ chunk(b\"PLTE\", bytes([255, 0, 0]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 366,
-          "preview": "+ chunk(b\"tRNS\", bytes([128]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 367,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(b\"\\x00\\x00\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 368,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 393,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 394,
-          "preview": "+ chunk(b\"PLTE\", palette)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 395,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 396,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 423,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 424,
-          "preview": "+ chunk(b\"PLTE\", palette)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 425,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 426,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 449,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 450,
-          "preview": "+ chunk(b\"PLTE\", palette)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 451,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 452,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 474,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 475,
-          "preview": "+ chunk(b\"PLTE\", palette)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 476,
-          "preview": "+ chunk(b\"tRNS\", transparency)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 477,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 478,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 501,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 502,
-          "preview": "+ chunk(b\"PLTE\", palette)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 503,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(b\"\\x00\\x00\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 504,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 516,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 517,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 518,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 537,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 538,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 539,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 560,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 561,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 562,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 583,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 584,
-          "preview": "+ chunk(b\"tRNS\", transparency)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 585,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 586,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 606,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 607,
-          "preview": "+ chunk(b\"tRNS\", struct.pack(\">H\", 4))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 608,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(b\"\\x00\\x00\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 609,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 621,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 622,
-          "preview": "+ chunk(b\"IDAT\", zlib.compress(raw))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 623,
-          "preview": "+ chunk(b\"IEND\", b\"\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 643,
-          "preview": "+ chunk(b\"IHDR\", ihdr)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 120
-    },
-    "write_png": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 22,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 22,
-          "preview": "def write_png(",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 102,
-          "preview": "write_png(image, 64, 32)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 112,
-          "preview": "write_png(image, 50, 32)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 121,
-          "preview": "write_png(image, 32, 32, color_type=2)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 131,
-          "preview": "write_png(image, 32, 32, color_type=3, palette_entries=8, transparency=True)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 144,
-          "preview": "write_png(image, 60, 32)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 152,
-          "preview": "write_png(image, 64, 64)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 220,
-          "preview": "write_png(image, 32, 32)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 229,
-          "preview": "write_png(image, 32, 32)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 9
-    },
-    "AssetForgeTests": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 50,
-        "kind": "class",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 50,
-          "preview": "class AssetForgeTests(unittest.TestCase):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "load_example": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 51,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 51,
-          "preview": "def load_example(self):",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 55,
-          "preview": "self.assertEqual(asset_forge.validate_manifest(self.load_example()), [])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 58,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 66,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 72,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 81,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 89,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 98,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 109,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 117,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 126,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 138,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 149,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 163,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 194,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 216,
-          "preview": "manifest = self.load_example()",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 16
-    },
-    "test_example_manifest_is_valid": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 54,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 54,
-          "preview": "def test_example_manifest_is_valid(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_pixel_art_rejects_non_nearest_interpolation": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 57,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 57,
-          "preview": "def test_pixel_art_rejects_non_nearest_interpolation(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_external_asset_requires_uri": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 65,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 65,
-          "preview": "def test_external_asset_requires_uri(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_incompatible_commercial_license_is_rejected": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 71,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 71,
-          "preview": "def test_incompatible_commercial_license_is_rejected(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_plan_routes_sprite_to_2d_pipeline": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 80,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 80,
-          "preview": "def test_plan_routes_sprite_to_2d_pipeline(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_secondary_custom_asset_prompts_reuse_search": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 88,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 88,
-          "preview": "def test_secondary_custom_asset_prompts_reuse_search(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_png_sprite_grid_validation_passes": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 97,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 97,
-          "preview": "def test_png_sprite_grid_validation_passes(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_png_sprite_grid_validation_rejects_bad_width": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 108,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 108,
-          "preview": "def test_png_sprite_grid_validation_rejects_bad_width(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_png_alpha_requirement": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 116,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 116,
-          "preview": "def test_png_alpha_requirement(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_palette_transparency_and_max_colors": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 125,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 125,
-          "preview": "def test_palette_transparency_and_max_colors(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_power_of_two_atlas": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 137,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 137,
-          "preview": "def test_power_of_two_atlas(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_atlas_manifest_contains_frame_rectangles": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 148,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 148,
-          "preview": "def test_atlas_manifest_contains_frame_rectangles(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_webp_raster_validation_supports_dimensions_and_alpha": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 162,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 162,
-          "preview": "def test_webp_raster_validation_supports_dimensions_and_alpha(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_webp_max_colors_constraint_is_rejected": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 193,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 193,
-          "preview": "def test_webp_max_colors_constraint_is_rejected(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_raster_target_format_mismatch_is_reported": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 215,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 215,
-          "preview": "def test_raster_target_format_mismatch_is_reported(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_invalid_png_crc_is_rejected": {
-      "definition": {
-        "file": "tests/test_asset_forge.py",
-        "line": 226,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_asset_forge.py",
-          "line": 226,
-          "preview": "def test_invalid_png_crc_is_rejected(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "webp_chunk": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 14,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 14,
-          "preview": "def webp_chunk(kind: bytes, payload: bytes) -> bytes:",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 848,
-          "preview": "webp_chunk(b\"VP8X\", payload),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 849,
-          "preview": "webp_chunk(b\"ANIM\", b\"\\x00\" * 6),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 850,
-          "preview": "webp_chunk(b\"ANMF\", anmf),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 863,
-          "preview": "data = webp_file(webp_chunk(b\"VP8L\", payload))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 879,
-          "preview": "data = webp_file(webp_chunk(b\"VP8 \", payload))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 739,
+          "preview": "function createMockWebGL2() {",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
+          "file": "tests/runtime_atlas_web.test.mjs",
           "line": 897,
-          "preview": "webp_chunk(b\"VP8X\", vp8x),",
+          "preview": "const rendererGl = createMockWebGL2();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 898,
-          "preview": "webp_chunk(b\"ALPH\", b\"\\x00\"),",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 986,
+          "preview": "const resolvingGl = createMockWebGL2();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 899,
-          "preview": "webp_chunk(b\"VP8 \", vp8),",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1024,
+          "preview": "const textureGl = createMockWebGL2();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 908,
-          "preview": "data = webp_file(webp_chunk(b\"VP8X\", payload))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1103,
+          "preview": "const asyncTextureGl = createMockWebGL2();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 915,
-          "preview": "data = webp_file(webp_chunk(b\"VP8X\", payload), webp_chunk(b\"VP8 \", vp8))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1151,
+          "preview": "const disposedDuringLoadGl = createMockWebGL2();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 922,
-          "preview": "data = webp_file(webp_chunk(b\"VP8X\", vp8x), webp_chunk(b\"VP8 \", vp8))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1203,
+          "preview": "const preloadGl = createMockWebGL2();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 930,
-          "preview": "data = webp_file(webp_chunk(b\"VP8X\", vp8x), webp_chunk(b\"VP8 \", vp8))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1240,
+          "preview": "const rollbackGl = createMockWebGL2();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 935,
-          "preview": "data = bytearray(webp_file(webp_chunk(b\"VP8L\", b\"\\x2f\\x00\\x00\\x00\\x00\")))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1261,
+          "preview": "const sceneGl = createMockWebGL2();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 945,
-          "preview": "path.write_bytes(webp_file(webp_chunk(b\"VP8L\", b\"\\x2f\" + bits.to_bytes(4, \"little\"))))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1310,
+          "preview": "const externalSceneGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1451,
+          "preview": "const culledSceneGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1535,
+          "preview": "const resizeGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1554,
+          "preview": "const contextGlA = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1556,
+          "preview": "const contextGlB = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1730,
+          "preview": "const entityRuntimeGlA = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1732,
+          "preview": "const entityRuntimeGlB = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1821,
+          "preview": "const suppliedRuntimeGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1981,
+          "preview": "const animatedRuntimeGlA = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1984,
+          "preview": "const animatedRuntimeGlB = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2171,
+          "preview": "const hierarchySceneGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2213,
+          "preview": "const hierarchyRuntimeGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2461,
+          "preview": "const noBlendGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2481,
+          "preview": "() => createInstancedSpriteRendererWebGL2(createMockWebGL2(), {",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2588,
+          "preview": "const layerSceneGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2628,
+          "preview": "const layerRuntimeGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2792,
+          "preview": "const cameraSceneGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2830,
+          "preview": "const cameraRuntimeGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2975,
+          "preview": "const followRuntimeGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3095,
+          "preview": "const boundedRuntimeGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3363,
+          "preview": "const pickingRuntimeGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3518,
+          "preview": "const pointerRuntimeGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3702,
+          "preview": "const autoDragGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3797,
+          "preview": "return createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3924,
+          "preview": "const constrainedDragGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 4075,
+          "preview": "const selectionRuntimeGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 4188,
+          "preview": "const groupDragGl = createMockWebGL2();",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 4265,
+          "preview": "const historyRuntimeGl = createMockWebGL2();",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 15
+      "occurrence_count": 37
     },
-    "webp_file": {
+    "object": {
       "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 19,
+        "file": "tests/runtime_atlas_web.test.mjs",
+        "line": 742,
         "kind": "function",
-        "language": "python"
+        "language": "javascript"
       },
       "occurrences": [
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 19,
-          "preview": "def webp_file(*chunks: bytes) -> bytes:",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 847,
-          "preview": "data = webp_file(",
+          "file": "animation_infer.py",
+          "line": 26,
+          "preview": "raise ValueError(f\"frame {fallback_index}: object required\")",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 863,
-          "preview": "data = webp_file(webp_chunk(b\"VP8L\", payload))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 879,
-          "preview": "data = webp_file(webp_chunk(b\"VP8 \", payload))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 896,
-          "preview": "data = webp_file(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 908,
-          "preview": "data = webp_file(webp_chunk(b\"VP8X\", payload))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 915,
-          "preview": "data = webp_file(webp_chunk(b\"VP8X\", payload), webp_chunk(b\"VP8 \", vp8))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 922,
-          "preview": "data = webp_file(webp_chunk(b\"VP8X\", vp8x), webp_chunk(b\"VP8 \", vp8))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 930,
-          "preview": "data = webp_file(webp_chunk(b\"VP8X\", vp8x), webp_chunk(b\"VP8 \", vp8))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 935,
-          "preview": "data = bytearray(webp_file(webp_chunk(b\"VP8L\", b\"\\x2f\\x00\\x00\\x00\\x00\")))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 945,
-          "preview": "path.write_bytes(webp_file(webp_chunk(b\"VP8L\", b\"\\x2f\" + bits.to_bytes(4, \"little\"))))",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 11
-    },
-    "adam7_extent": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 44,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 44,
-          "preview": "def adam7_extent(size: int, start: int, step: int) -> int:",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_raster_pack.py",
+          "file": "asset_forge.py",
           "line": 70,
-          "preview": "pass_width = adam7_extent(width, x_start, x_step)",
+          "preview": "raise ValueError(f\"{path} must contain a JSON object\")",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
+          "file": "asset_forge.py",
+          "line": 87,
+          "preview": "errors.append(\"source: object required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 97,
+          "preview": "errors.append(\"license: object required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 109,
+          "preview": "errors.append(\"target: object required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 120,
+          "preview": "errors.append(\"constraints: object required when present\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_profile_validation.py",
+          "line": 45,
+          "preview": "return None, [\"root: object required\"]",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_profile_validation.py",
+          "line": 52,
+          "preview": "return [f\"{label}: object required\"]",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_profile_validation.py",
           "line": 71,
-          "preview": "pass_height = adam7_extent(height, y_start, y_step)",
+          "preview": "return [\"root: object required\"]",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 763,
-          "preview": "pass_width = adam7_extent(width, x_start, x_step)",
+          "file": "asset_profile_validation.py",
+          "line": 118,
+          "preview": "return [\"root: object required\"]",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 764,
-          "preview": "pass_height = adam7_extent(height, y_start, y_step)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 5
-    },
-    "pack_indexed_samples": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 50,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
+          "file": "blender_adapter.py",
           "line": 50,
-          "preview": "def pack_indexed_samples(samples: list[int], depth: int) -> bytes:",
+          "preview": "\"bpy.ops.object.mode_set(mode='OBJECT') if bpy.context.object and bpy.context.object.mode != 'OBJECT' else None\\n\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "engine_profile_validation.py",
+          "line": 36,
+          "preview": "return [f\"{label}: object required\"]",
+          "definition_candidate": false
+        },
+        {
+          "file": "engine_profile_validation.py",
+          "line": 59,
+          "preview": "return [\"root: object required\"]",
+          "definition_candidate": false
+        },
+        {
+          "file": "engine_profile_validation.py",
+          "line": 120,
+          "preview": "return None, [\"root: object required\"]",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 84,
+          "preview": "errors.append(f\"accessor {index}: object required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 334,
+          "preview": "errors.append(f\"animation {animation_index}: object required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 352,
+          "preview": "errors.append(f\"animation {animation_index} sampler {sampler_index}: object required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_diagnostics.py",
+          "line": 408,
+          "preview": "errors.append(f\"animation {animation_index} channel {channel_index}: object required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_tools.py",
+          "line": 17,
+          "preview": "raise ValueError(\"glTF root must be a JSON object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_tools.py",
+          "line": 68,
+          "preview": "raise ValueError(\"GLB JSON root must be an object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "gltf_tools.py",
+          "line": 211,
+          "preview": "errors.append(\"asset object is required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "godot_export.py",
+          "line": 112,
+          "preview": "raise ValueError(f\"animation {position}: object required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "godot_export.py",
+          "line": 149,
+          "preview": "f\"animation {name} frame {frame_position}: integer index or object required\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 36,
+          "preview": "raise ValueError(f\"animation {position}: object required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 61,
+          "preview": "f\"animation {name} frame {frame_position}: integer index or object required\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 83,
+          "preview": "f\"animation {name} frame {frame_position}: integer index or object required\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 101,
+          "preview": "f\"animation {name} event {event_position}: object required\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 121,
+          "preview": "f\"animation {name} event {event_position}: payload must be an object or null\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 152,
+          "preview": "raise ValueError(\"atlas metadata must be an object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 170,
+          "preview": "raise ValueError(f\"frame {fallback_index}: object required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 286,
+          "preview": "return [\"runtime atlas must be an object\"]",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 313,
+          "preview": "errors.append(\"imageSize must be an object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 327,
+          "preview": "errors.append(\"capabilities must be an object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 363,
+          "preview": "errors.append(f\"frame {position}: object required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 385,
+          "preview": "errors.append(f\"frame {index_label}.atlasRegion must be an object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 407,
+          "preview": "errors.append(f\"frame {index_label}.{field_name} must be an object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 425,
+          "preview": "errors.append(f\"frame {index_label}.trimOffset must be an object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 441,
+          "preview": "errors.append(f\"frame {index_label}.rotation must be an object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 461,
+          "preview": "errors.append(f\"frame {index_label}.uv must be an object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 523,
+          "preview": "errors.append(f\"animation {animation_position}: object required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 565,
+          "preview": "f\"animation {name_label} frame {frame_position}: object required\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 613,
+          "preview": "f\"animation {name_label} event {event_position}: object required\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_atlas.py",
+          "line": 648,
+          "preview": "f\"animation {name_label} event {event_position}.payload must be an object or null\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "starlist_bridge.py",
+          "line": 56,
+          "preview": "raise RuntimeError(\"star-list recommender returned a non-object result\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 742,
+          "preview": "const object = (type) => ({ type, id: nextId++ });",
           "definition_candidate": true
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 774,
-          "preview": "raw.extend(pack_indexed_samples(samples, 1))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 773,
+          "preview": "const value = object(\"shader\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 790,
+          "preview": "const value = object(\"program\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 805,
+          "preview": "const value = object(\"vao\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 811,
+          "preview": "const value = object(\"buffer\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 816,
+          "preview": "const value = object(\"texture\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 479,
+          "preview": "if (!instance || typeof instance !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 480,
+          "preview": "throw new Error(`sprite batch instance ${instanceIndex} must be an object`);",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 586,
+          "preview": "if (!instance || typeof instance !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 587,
+          "preview": "throw new Error(`sprite batch instance ${instanceIndex} must be an object`);",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 633,
+          "preview": "if (!instance || typeof instance !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 634,
+          "preview": "throw new Error(`instanced sprite batch instance ${instanceIndex} must be an object`);",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 941,
+          "preview": "if (!page || typeof page !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 942,
+          "preview": "throw new Error(`runtime atlas page ${index} must be an object`);",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 1008,
+          "preview": "if (!instance || typeof instance !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 1009,
+          "preview": "throw new Error(`texture-page instance ${instanceIndex} must be an object`);",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 1803,
+          "preview": "if (!instance || typeof instance !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 1804,
+          "preview": "throw new Error(\"sprite instance must be an object\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 1901,
+          "preview": "if (!viewport || typeof viewport !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 1902,
+          "preview": "throw new Error(\"viewport must be an object\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 2825,
+          "preview": "if (!entity || typeof entity !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 2826,
+          "preview": "throw new Error(`${label} must be an object`);",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 2931,
+          "preview": "if (!patch || typeof patch !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 2932,
+          "preview": "throw new Error(\"sprite entity patch must be an object\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 3703,
+          "preview": "if (type !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 3980,
+          "preview": "if (!camera || typeof camera !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 3981,
+          "preview": "throw new Error(\"camera must be an object\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 3997,
+          "preview": "if (!instance || typeof instance !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 3998,
+          "preview": "throw new Error(`sprite instance ${index} must be an object`);",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 4050,
+          "preview": "if (!instance || typeof instance !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 4051,
+          "preview": "throw new Error(`sprite instance ${index} must be an object`);",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 4145,
+          "preview": "if (!camera || typeof camera !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 4146,
+          "preview": "throw new Error(\"camera must be an object\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 4148,
+          "preview": "if (!worldBounds || typeof worldBounds !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 4149,
+          "preview": "throw new Error(\"worldBounds must be an object\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 4393,
+          "preview": "if (!instance || typeof instance !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 4394,
+          "preview": "throw new Error(\"sprite instance must be an object\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 4537,
+          "preview": "if (!bounds || typeof bounds !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 4538,
+          "preview": "throw new Error(\"drag bounds must be an object\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 5393,
+          "preview": "if (!rect || typeof rect !== \"object\") {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 5394,
+          "preview": "throw new Error(\"selection rect must be an object\");",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 85
+    },
+    "fakeFetch": {
+      "definition": {
+        "file": "tests/runtime_atlas_web.test.mjs",
+        "line": 1169,
+        "kind": "function",
+        "language": "javascript"
+      },
+      "occurrences": [
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1169,
+          "preview": "const fakeFetch = async (url) => {",
+          "definition_candidate": true
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1185,
+          "preview": "fetchImpl: fakeFetch,",
           "definition_candidate": false
         }
       ],
       "occurrence_count": 2
     },
-    "adam7_raw": {
+    "fakeCreateImageBitmap": {
       "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 63,
+        "file": "tests/runtime_atlas_web.test.mjs",
+        "line": 1179,
         "kind": "function",
-        "language": "python"
+        "language": "javascript"
       },
       "occurrences": [
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 63,
-          "preview": "def adam7_raw(",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1179,
+          "preview": "const fakeCreateImageBitmap = async (blob, options) => {",
           "definition_candidate": true
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 741,
-          "preview": "raw = adam7_raw(width, height, pixel)",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1186,
+          "preview": "createImageBitmapImpl: fakeCreateImageBitmap,",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 809,
-          "preview": "raw = adam7_raw(width, height, pixel16)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 834,
-          "preview": "raw = adam7_raw(width, height, lambda x, y: bytes([x, y, 0, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1198,
+          "preview": "createImageBitmapImpl: fakeCreateImageBitmap,",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 4
+      "occurrence_count": 3
     },
-    "write_rgba_png": {
+    "createMockCanvas": {
       "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 83,
+        "file": "tests/runtime_atlas_web.test.mjs",
+        "line": 1508,
         "kind": "function",
-        "language": "python"
+        "language": "javascript"
       },
       "occurrences": [
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 83,
-          "preview": "def write_rgba_png(path: Path, width: int, height: int, pixel: bytes) -> None:",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 103,
-          "preview": "write_rgba_png(red, 2, 2, bytes([255, 0, 0, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1510,
+          "preview": "function createMockCanvas() {",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 104,
-          "preview": "write_rgba_png(green, 2, 2, bytes([0, 255, 0, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1537,
+          "preview": "const resizeCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 128,
-          "preview": "write_rgba_png(first, 2, 2, bytes([1, 2, 3, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1558,
+          "preview": "const runtimeCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 129,
-          "preview": "write_rgba_png(second, 3, 2, bytes([4, 5, 6, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1734,
+          "preview": "const entityRuntimeCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 158,
-          "preview": "write_rgba_png(source, 4, 4, bytes([10, 20, 30, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1823,
+          "preview": "const suppliedCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 175,
-          "preview": "write_rgba_png(source, 8, 8, bytes([0, 0, 0, 0]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1987,
+          "preview": "const animatedRuntimeCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 294,
-          "preview": "write_rgba_png(image, 1, 1, bytes([1, 2, 3, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2216,
+          "preview": "const hierarchyRuntimeCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 379,
-          "preview": "write_rgba_png(image, 1, 1, bytes([1, 2, 3, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2631,
+          "preview": "const layerRuntimeCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 986,
-          "preview": "write_rgba_png(source, 1, 1, bytes([7, 8, 9, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2833,
+          "preview": "const cameraRuntimeCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 1013,
-          "preview": "write_rgba_png(a, 3, 3, bytes([255, 0, 0, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2978,
+          "preview": "const followRuntimeCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 1014,
-          "preview": "write_rgba_png(b, 2, 1, bytes([0, 255, 0, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3098,
+          "preview": "const boundedRuntimeCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 1015,
-          "preview": "write_rgba_png(c, 1, 2, bytes([0, 0, 255, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3366,
+          "preview": "const pickingRuntimeCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 1043,
-          "preview": "write_rgba_png(source, 8, 1, bytes([1, 2, 3, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3521,
+          "preview": "const pointerRuntimeCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 1057,
-          "preview": "write_rgba_png(source, 1, 1, bytes([1, 2, 3, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3705,
+          "preview": "const autoDragCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 1078,
-          "preview": "write_rgba_png(a, 4, 4, bytes([1, 2, 3, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3790,
+          "preview": "createMockCanvas(),",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 1079,
-          "preview": "write_rgba_png(b, 4, 4, bytes([4, 5, 6, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3927,
+          "preview": "const constrainedDragCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 1092,
-          "preview": "write_rgba_png(a, 4, 4, bytes([1, 2, 3, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 4078,
+          "preview": "const selectionRuntimeCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 1105,
-          "preview": "write_rgba_png(a, 4, 4, bytes([1, 2, 3, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 4190,
+          "preview": "const groupDragCanvas = createMockCanvas();",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 1106,
-          "preview": "write_rgba_png(b, 4, 4, bytes([4, 5, 6, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1121,
-          "preview": "write_rgba_png(source, 4, 4, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1141,
-          "preview": "write_rgba_png(a, 4, 4, bytes([255, 0, 0, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1142,
-          "preview": "write_rgba_png(b, 2, 4, bytes([0, 255, 0, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1143,
-          "preview": "write_rgba_png(c, 2, 2, bytes([0, 0, 255, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1167,
-          "preview": "write_rgba_png(path, width, height, bytes([index + 1, 0, 0, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1205,
-          "preview": "write_rgba_png(path, width, height, bytes([index + 1, 0, 0, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1223,
-          "preview": "write_rgba_png(a, 4, 4, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1224,
-          "preview": "write_rgba_png(b, 2, 2, bytes([4, 5, 6, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1243,
-          "preview": "write_rgba_png(a, 4, 4, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1244,
-          "preview": "write_rgba_png(b, 1, 1, bytes([4, 5, 6, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1260,
-          "preview": "write_rgba_png(a, 1, 1, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1277,
-          "preview": "write_rgba_png(path, width, height, bytes([index + 1, 0, 0, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1312,
-          "preview": "write_rgba_png(path, width, height, bytes([index * 20, 10, 255 - index * 20, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1348,
-          "preview": "write_rgba_png(a, 4, 3, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1349,
-          "preview": "write_rgba_png(b, 2, 5, bytes([4, 5, 6, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1367,
-          "preview": "write_rgba_png(a, 1, 1, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1424,
-          "preview": "write_rgba_png(source, 4, 2, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1438,
-          "preview": "write_rgba_png(a, 4, 2, bytes([1, 2, 3, 255]))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 1439,
-          "preview": "write_rgba_png(b, 1, 1, bytes([4, 5, 6, 255]))",
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 4268,
+          "preview": "createMockCanvas(),",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 39
-    },
-    "RasterPackTests": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 95,
-        "kind": "class",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 95,
-          "preview": "class RasterPackTests(unittest.TestCase):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_pack_uniform_atlas_writes_png_and_metadata": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 96,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 96,
-          "preview": "def test_pack_uniform_atlas_writes_png_and_metadata(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_pack_rejects_mixed_frame_sizes": {
-      "definition": {
-        "file": "tests/test_raster_pack.py",
-        "line": 123,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_raster_pack.py",
-          "line": 123,
-          "preview": "def test_pack_rejects_mixed_frame_sizes(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
+      "occurrence_count": 19
     }
   }
 }
