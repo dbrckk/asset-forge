@@ -15,6 +15,7 @@ def run_starlist_recommender(
     max_complexity: str = "medium",
 ) -> dict:
     """Run dbrckk/star-list's recommender without duplicating its ranking logic."""
+    star_list_root = star_list_root.resolve()
     script = star_list_root / "scripts" / "recommend.py"
     if not script.is_file():
         raise ValueError(f"star-list recommender not found: {script}")
