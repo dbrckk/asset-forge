@@ -46,6 +46,7 @@ import {
   createSpritePointerInteractionController,
   moveSpriteEntityByWorldDelta,
   createSpriteSelectionModel,
+  moveSelectedSpriteEntitiesByWorldDelta,
   selectSpriteInstancesInRect,
 } from "../web/runtime_atlas.mjs";
 
@@ -4134,5 +4135,80 @@ const additiveRectSelection =
   );
 assert.deepEqual(additiveRectSelection.ids, ["sel-a", "sel-b"]);
 selectionRuntime.dispose();
+
+
+
+const multiMoveStore = createSpriteEntityStore();
+multiMoveStore.add({ id: "group-parent", page: "heroes", frame: "plain", x: 10, y: 10 });
+multiMoveStore.add({ id: "group-child", parent: "group-parent", page: "heroes", frame: "plain", x: 5, y: 0 });
+multiMoveStore.add({ id: "group-peer", page: "heroes", frame: "plain", x: 40, y: 20 });
+const multiSelection = createSpriteSelectionModel();
+multiSelection.set(["group-parent", "group-child", "group-peer"]);
+const multiBefore = resolveSpriteEntityHierarchy(multiMoveStore);
+const multiMoved = moveSelectedSpriteEntitiesByWorldDelta(
+  multiMoveStore,
+  multiSelection,
+  7,
+  9,
+);
+assert.deepEqual(multiMoved.movedRootIds, ["group-parent", "group-peer"]);
+const multiAfter = resolveSpriteEntityHierarchy(multiMoveStore);
+for (const id of ["group-parent", "group-child", "group-peer"]) {
+  assert.ok(Math.abs(multiAfter.byId.get(id).x - (multiBefore.byId.get(id).x + 7)) < 1e-6);
+  assert.ok(Math.abs(multiAfter.byId.get(id).y - (multiBefore.byId.get(id).y + 9)) < 1e-6);
+}
+
+multiSelection.set(["group-peer", "group-parent"]);
+const snappedGroup = moveSelectedSpriteEntitiesByWorldDelta(
+  multiMoveStore,
+  multiSelection,
+  4,
+  4,
+  { gridSize: 10 },
+);
+assert.equal(snappedGroup.deltaX, 3);
+assert.equal(snappedGroup.deltaY, 1);
+
+const groupDragGl = createMockWebGL2();
+groupDragGl.viewport = (...args) => groupDragGl.calls.push(["viewport", ...args]);
+const groupDragCanvas = createMockCanvas();
+const groupDragRuntime = await createWebGL2CanvasRuntime(
+  groupDragCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    pointerOptions: {
+      autoDragEntities: true,
+      dragSelection: true,
+      dragThreshold: 1,
+    },
+    getContext() { return groupDragGl; },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() { return { id: `blob:${url}` }; },
+        }),
+        createImageBitmapImpl: async (blob) => ({ id: `bitmap:${blob.id}` }),
+      },
+    },
+  },
+);
+groupDragRuntime.entities.add({ id: "drag-a", page: "heroes", frame: "plain", x: 10, y: 10, z: 2 });
+groupDragRuntime.entities.add({ id: "drag-b", page: "heroes", frame: "plain", x: 30, y: 10, z: 1 });
+groupDragRuntime.selection.set(["drag-a", "drag-b"]);
+groupDragRuntime.pointerDown("mouse", 12, 12);
+const groupMoveEvent = groupDragRuntime.pointerMove("mouse", 17, 16);
+assert.equal(groupMoveEvent.capturedEntityId, "drag-a");
+assert.equal(groupDragRuntime.entities.get("drag-a").x, 15);
+assert.equal(groupDragRuntime.entities.get("drag-a").y, 14);
+assert.equal(groupDragRuntime.entities.get("drag-b").x, 35);
+assert.equal(groupDragRuntime.entities.get("drag-b").y, 14);
+groupDragRuntime.pointerUp("mouse", 17, 16);
+groupDragRuntime.moveSelectionByWorldDelta(5, 0);
+assert.equal(groupDragRuntime.entities.get("drag-a").x, 20);
+assert.equal(groupDragRuntime.entities.get("drag-b").x, 40);
+groupDragRuntime.dispose();
 
 console.log("runtime_atlas.mjs smoke test passed");
