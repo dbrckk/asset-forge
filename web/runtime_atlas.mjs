@@ -994,6 +994,7 @@ export function buildTexturePageBatches(
     inputPageSequence: sequence,
     batches,
   };
+}
 
 
 function _compileWebGL2Shader(gl, type, source) {
