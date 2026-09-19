@@ -591,7 +591,7 @@ assert.match(shaderContract.fragment, /texture\(uTexture, vUv\)/);
 
 const attributeViews = instancedSpriteAttributeViews(instanced);
 assert.equal(attributeViews.buffer, instanced.instances);
-assert.equal(attributeViews.strideBytes, 80);
+assert.equal(attributeViews.strideBytes, 72);
 assert.deepEqual(attributeViews.attributes, [
   {
     name: "aVisibleRect",
