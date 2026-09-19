@@ -2402,6 +2402,34 @@ export async function createWebGL2CanvasRuntime(
         prepared.sceneBatchOptions,
       );
     },
+    screenToWorld(x, y) {
+      assertActive();
+      return screenToWorldPoint(x, y, camera);
+    },
+    worldToScreen(x, y, parallax = {}) {
+      assertActive();
+      return worldToScreenPoint(x, y, camera, parallax);
+    },
+    pickEntity(x, y, pickOptions = {}) {
+      assertActive();
+      const {
+        all = false,
+        useVisibleBounds = false,
+        ...batchOptions
+      } = pickOptions;
+      const prepared = buildSpriteEntityInstances(entityStore, {
+        visibilityMask,
+        camera,
+        ...batchOptions,
+      });
+      return pickSpriteInstances(
+        scene.pages,
+        prepared.instances,
+        x,
+        y,
+        { all, useVisibleBounds },
+      );
+    },
     async restore() {
       assertActive();
       if (!restorePromise) {
@@ -3500,4 +3528,167 @@ export function createCamera2DController(initialCamera = {}, options = {}) {
       return shakeTime < shakeDuration && shakeAmplitude > 0;
     },
   };
+}
+
+
+export function worldToScreenPoint(x, y, camera = {}, parallax = {}) {
+  const cameraX = camera.x ?? 0;
+  const cameraY = camera.y ?? 0;
+  const zoom = camera.zoom ?? 1;
+  const parallaxX = parallax.x ?? parallax.parallaxX ?? 1;
+  const parallaxY = parallax.y ?? parallax.parallaxY ?? 1;
+  for (const [name, value] of Object.entries({
+    x, y, cameraX, cameraY, zoom, parallaxX, parallaxY,
+  })) {
+    if (!Number.isFinite(value)) {
+      throw new Error(`${name} must be finite`);
+    }
+  }
+  if (!(zoom > 0)) throw new Error("camera zoom must be > 0");
+  if (parallaxX < 0 || parallaxY < 0) {
+    throw new Error("parallax must be >= 0");
+  }
+  return {
+    x: (x - cameraX * parallaxX) * zoom,
+    y: (y - cameraY * parallaxY) * zoom,
+  };
+}
+
+export function screenToWorldPoint(x, y, camera = {}) {
+  const cameraX = camera.x ?? 0;
+  const cameraY = camera.y ?? 0;
+  const zoom = camera.zoom ?? 1;
+  for (const [name, value] of Object.entries({
+    x, y, cameraX, cameraY, zoom,
+  })) {
+    if (!Number.isFinite(value)) {
+      throw new Error(`${name} must be finite`);
+    }
+  }
+  if (!(zoom > 0)) throw new Error("camera zoom must be > 0");
+  return {
+    x: x / zoom + cameraX,
+    y: y / zoom + cameraY,
+  };
+}
+
+export function pointHitsSpriteInstance(
+  atlasPages,
+  instance,
+  pointX,
+  pointY,
+  options = {},
+) {
+  if (!atlasPages || typeof atlasPages.page !== "function") {
+    throw new Error("runtime atlas page catalogue required");
+  }
+  if (!instance || typeof instance !== "object") {
+    throw new Error("sprite instance must be an object");
+  }
+  if (!Number.isFinite(pointX) || !Number.isFinite(pointY)) {
+    throw new Error("hit-test point must be finite");
+  }
+
+  const useVisibleBounds = options.useVisibleBounds ?? false;
+  if (typeof useVisibleBounds !== "boolean") {
+    throw new Error("useVisibleBounds must be boolean");
+  }
+
+  const page = atlasPages.page(instance.page);
+  const frame = page.atlas.frame(instance.frame);
+  const x = instance.x ?? 0;
+  const y = instance.y ?? 0;
+  const scaleX = instance.scaleX ?? instance.scale ?? 1;
+  const scaleY = instance.scaleY ?? instance.scale ?? 1;
+  const rotation = instance.rotation ?? 0;
+  const pivotX = instance.pivotX ?? 0;
+  const pivotY = instance.pivotY ?? 0;
+
+  for (const [name, value] of Object.entries({
+    x, y, scaleX, scaleY, rotation, pivotX, pivotY,
+  })) {
+    if (!Number.isFinite(value)) {
+      throw new Error(`sprite instance ${name} must be finite`);
+    }
+  }
+  if (!(scaleX > 0) || !(scaleY > 0)) {
+    throw new Error("sprite instance scale must be > 0");
+  }
+
+  const pivotWorldX = x + pivotX * scaleX;
+  const pivotWorldY = y + pivotY * scaleY;
+  const dx = pointX - pivotWorldX;
+  const dy = pointY - pivotWorldY;
+  const cos = Math.cos(-rotation);
+  const sin = Math.sin(-rotation);
+  const localPointX = pivotWorldX + dx * cos - dy * sin;
+  const localPointY = pivotWorldY + dx * sin + dy * cos;
+
+  const left = useVisibleBounds
+    ? x + frame.trimOffset.x * scaleX
+    : x;
+  const top = useVisibleBounds
+    ? y + frame.trimOffset.y * scaleY
+    : y;
+  const width = (useVisibleBounds
+    ? frame.sourceRegion.width
+    : frame.sourceSize.width) * scaleX;
+  const height = (useVisibleBounds
+    ? frame.sourceRegion.height
+    : frame.sourceSize.height) * scaleY;
+
+  const hit =
+    localPointX >= left &&
+    localPointX <= left + width &&
+    localPointY >= top &&
+    localPointY <= top + height;
+
+  return {
+    hit,
+    localPointX,
+    localPointY,
+    bounds: { x: left, y: top, width, height },
+  };
+}
+
+export function pickSpriteInstances(
+  atlasPages,
+  instances,
+  pointX,
+  pointY,
+  options = {},
+) {
+  if (!Array.isArray(instances)) {
+    throw new Error("sprite instances must be an array");
+  }
+  const all = options.all ?? false;
+  if (typeof all !== "boolean") {
+    throw new Error("all must be boolean");
+  }
+
+  const hits = [];
+  for (let index = 0; index < instances.length; index += 1) {
+    const instance = instances[index];
+    const result = pointHitsSpriteInstance(
+      atlasPages,
+      instance,
+      pointX,
+      pointY,
+      options,
+    );
+    if (!result.hit) continue;
+    const z = instance.z ?? 0;
+    if (!Number.isFinite(z)) {
+      throw new Error(`sprite instance ${index} z must be finite`);
+    }
+    hits.push({
+      instance,
+      inputIndex: index,
+      z,
+      hit: result,
+    });
+  }
+
+  hits.sort((a, b) => b.z - a.z || b.inputIndex - a.inputIndex);
+  return all ? hits : (hits[0] ?? null);
 }
