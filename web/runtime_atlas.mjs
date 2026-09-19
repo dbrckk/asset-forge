@@ -1855,3 +1855,204 @@ export function prepareSpriteSceneInstances(
     culling,
   };
 }
+
+
+export function resizeWebGL2Canvas(canvas, gl, options = {}) {
+  if (!canvas || !gl || typeof gl.viewport !== "function") {
+    throw new Error("canvas and WebGL2 context with viewport() are required");
+  }
+
+  const cssWidth = options.cssWidth ?? canvas.clientWidth ?? canvas.width;
+  const cssHeight = options.cssHeight ?? canvas.clientHeight ?? canvas.height;
+  const pixelRatio = options.pixelRatio ?? globalThis.devicePixelRatio ?? 1;
+  const maxPixelRatio = options.maxPixelRatio ?? 3;
+
+  for (const [name, value] of Object.entries({
+    cssWidth,
+    cssHeight,
+    pixelRatio,
+    maxPixelRatio,
+  })) {
+    if (!Number.isFinite(value) || value < 0) {
+      throw new Error(`${name} must be a finite value >= 0`);
+    }
+  }
+  if (maxPixelRatio <= 0) {
+    throw new Error("maxPixelRatio must be > 0");
+  }
+
+  const effectivePixelRatio = Math.min(pixelRatio, maxPixelRatio);
+  const width = Math.max(1, Math.round(cssWidth * effectivePixelRatio));
+  const height = Math.max(1, Math.round(cssHeight * effectivePixelRatio));
+  const resized = canvas.width !== width || canvas.height !== height;
+
+  if (resized) {
+    canvas.width = width;
+    canvas.height = height;
+  }
+  gl.viewport(0, 0, width, height);
+
+  return {
+    resized,
+    cssWidth,
+    cssHeight,
+    pixelRatio: effectivePixelRatio,
+    width,
+    height,
+  };
+}
+
+export async function createWebGL2CanvasRuntime(
+  canvas,
+  pageDefinitions,
+  options = {},
+) {
+  if (!canvas || typeof canvas.getContext !== "function") {
+    throw new Error("canvas with getContext() is required");
+  }
+
+  const contextAttributes = options.contextAttributes;
+  const getContext =
+    typeof options.getContext === "function"
+      ? options.getContext
+      : () => canvas.getContext("webgl2", contextAttributes);
+  const onContextLost =
+    typeof options.onContextLost === "function" ? options.onContextLost : null;
+  const onContextRestored =
+    typeof options.onContextRestored === "function"
+      ? options.onContextRestored
+      : null;
+
+  let gl = getContext();
+  if (!gl) {
+    throw new Error("WebGL2 context could not be created");
+  }
+
+  let scene = await createWebGL2RuntimeAtlasScene(
+    gl,
+    pageDefinitions,
+    options.sceneOptions,
+  );
+  let contextLost = false;
+  let disposed = false;
+  let restorePromise = null;
+
+  function assertActive() {
+    if (disposed) {
+      throw new Error("WebGL2 canvas runtime is disposed");
+    }
+  }
+
+  function resize(resizeOptions = {}) {
+    assertActive();
+    return resizeWebGL2Canvas(canvas, gl, {
+      ...options.resizeOptions,
+      ...resizeOptions,
+    });
+  }
+
+  async function rebuildAfterContextRestore() {
+    assertActive();
+    const restoredGl = getContext();
+    if (!restoredGl) {
+      throw new Error("WebGL2 context could not be restored");
+    }
+
+    const oldScene = scene;
+    gl = restoredGl;
+    scene = await createWebGL2RuntimeAtlasScene(
+      gl,
+      pageDefinitions,
+      options.sceneOptions,
+    );
+    oldScene.dispose();
+    contextLost = false;
+    resize();
+    onContextRestored?.({ gl, scene });
+    return scene;
+  }
+
+  function handleContextLost(event) {
+    if (disposed) return;
+    event?.preventDefault?.();
+    contextLost = true;
+    onContextLost?.({ event, gl, scene });
+  }
+
+  function handleContextRestored() {
+    if (disposed) return;
+    restorePromise = rebuildAfterContextRestore().finally(() => {
+      restorePromise = null;
+    });
+    restorePromise.catch(() => {});
+  }
+
+  canvas.addEventListener?.("webglcontextlost", handleContextLost);
+  canvas.addEventListener?.("webglcontextrestored", handleContextRestored);
+
+  if (options.resizeOnCreate !== false) {
+    resize();
+  }
+
+  return {
+    get gl() {
+      return gl;
+    },
+    get scene() {
+      return scene;
+    },
+    get contextLost() {
+      return contextLost;
+    },
+    get restoring() {
+      return restorePromise !== null;
+    },
+    resize,
+    async waitForRestore() {
+      assertActive();
+      if (restorePromise) {
+        await restorePromise;
+      }
+      return scene;
+    },
+    buildBatches(instances, batchOptions = {}) {
+      assertActive();
+      if (contextLost) {
+        throw new Error("WebGL2 context is lost");
+      }
+      return scene.buildBatches(instances, batchOptions);
+    },
+    render(instancesOrBatches, batchOptions = {}) {
+      assertActive();
+      if (contextLost) {
+        throw new Error("WebGL2 context is lost");
+      }
+      const size = resize();
+      return scene.render(
+        instancesOrBatches,
+        size.width,
+        size.height,
+        batchOptions,
+      );
+    },
+    async restore() {
+      assertActive();
+      if (!restorePromise) {
+        restorePromise = rebuildAfterContextRestore().finally(() => {
+          restorePromise = null;
+        });
+      }
+      return restorePromise;
+    },
+    dispose() {
+      if (disposed) return;
+      disposed = true;
+      canvas.removeEventListener?.("webglcontextlost", handleContextLost);
+      canvas.removeEventListener?.("webglcontextrestored", handleContextRestored);
+      scene.dispose();
+    },
+    get disposed() {
+      return disposed;
+    },
+  };
+}
