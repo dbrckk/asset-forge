@@ -2280,7 +2280,7 @@ const rotatedInstanced = buildInstancedSpriteBatch(
     },
   ],
 );
-assert.equal(rotatedInstanced.instances[11], quarterTurn);
+assert.equal(rotatedInstanced.instances[11], Math.fround(quarterTurn));
 assert.equal(rotatedInstanced.instances[12], 13);
 assert.equal(rotatedInstanced.instances[13], 23.5);
 assert.equal(rotatedInstanced.bounds[0].rotation, quarterTurn);
@@ -2389,7 +2389,7 @@ assert.deepEqual(Array.from(tintedInstanced.instances.slice(14, 18)), [
   0.5,
   0.25,
   0.75,
-  0.4,
+  Math.fround(0.4),
 ]);
 
 assert.throws(
