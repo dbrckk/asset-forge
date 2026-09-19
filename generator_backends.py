@@ -9,6 +9,9 @@ from typing import Callable
 
 
 RASTER_GENERATED_TYPES = {"sprite", "sprite-sheet", "tileset", "pixel-art"}
+VECTOR_GENERATED_TYPES = {"vector", "svg", "icon", "ui-vector", "logo"}
+SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES
+DEFAULT_VECTOR_MODEL = "recraft/recraft-v4.1-vector"
 
 
 class GenerationError(RuntimeError):
@@ -42,7 +45,7 @@ def build_generation_prompt(job: dict) -> str:
     asset_type = str(job.get("assetType") or "").strip()
     if not instruction:
         raise GenerationError("production job instruction missing")
-    if asset_type not in RASTER_GENERATED_TYPES:
+    if asset_type not in SUPPORTED_GENERATED_TYPES:
         raise GenerationError(f"unsupported generated asset type: {asset_type or '<missing>'}")
 
     manifest = job.get("manifest")
@@ -55,9 +58,15 @@ def build_generation_prompt(job: dict) -> str:
     details = [
         instruction,
         f"Asset type: {asset_type}.",
-        "Create a production-ready game asset with a transparent background when appropriate.",
-        "Do not include captions, watermarks, signatures, UI chrome, or mockup backgrounds.",
+        "Create a production-ready project asset.",
+        "Do not include captions, watermarks, signatures, UI chrome, or mockup backgrounds unless explicitly requested.",
     ]
+    if asset_type in VECTOR_GENERATED_TYPES:
+        details.append(
+            "Return clean editable vector artwork with a valid SVG viewBox, compact paths, and no embedded external resources."
+        )
+    else:
+        details.append("Use a transparent background when appropriate.")
     if constraints.get("pixelArt") is True:
         details.append("Use crisp pixel art with no anti-aliased scaling and nearest-neighbour-friendly edges.")
     fw = constraints.get("frameWidth")
@@ -83,6 +92,10 @@ def pollinations_command(
     executable: str = "polli",
 ) -> list[str]:
     prompt = build_generation_prompt(job)
+    asset_type = str(job.get("assetType") or "")
+    effective_model = model
+    if effective_model is None and asset_type in VECTOR_GENERATED_TYPES:
+        effective_model = DEFAULT_VECTOR_MODEL
     command = [
         executable,
         "gen",
@@ -92,8 +105,8 @@ def pollinations_command(
         str(Path(output)),
         "--json",
     ]
-    if model:
-        command.extend(["--model", str(model)])
+    if effective_model:
+        command.extend(["--model", str(effective_model)])
     return command
 
 
@@ -111,7 +124,7 @@ def execute_generated_asset(
     if backend != "pollinations":
         raise GenerationError(f"unsupported generator backend: {backend}")
     asset_type = str(job.get("assetType") or "")
-    if asset_type not in RASTER_GENERATED_TYPES:
+    if asset_type not in SUPPORTED_GENERATED_TYPES:
         raise GenerationError(f"unsupported generated asset type: {asset_type or '<missing>'}")
 
     executable = shutil.which("polli")
@@ -127,8 +140,10 @@ def execute_generated_asset(
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    output = output_dir / "generated-source.png"
-    command = pollinations_command(job, output, model=model, executable=executable)
+    vector = asset_type in VECTOR_GENERATED_TYPES
+    output = output_dir / ("generated-source.svg" if vector else "generated-source.png")
+    effective_model = model or (DEFAULT_VECTOR_MODEL if vector else None)
+    command = pollinations_command(job, output, model=effective_model, executable=executable)
     completed = runner(
         command,
         check=False,
@@ -158,7 +173,7 @@ def execute_generated_asset(
     return {
         "success": True,
         "backend": backend,
-        "model": model,
+        "model": effective_model,
         "assetType": asset_type,
         "sourcePath": str(output),
         "sourceBytes": output.stat().st_size,
