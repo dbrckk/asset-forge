@@ -96,14 +96,14 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T09:05:06Z
+Generated: 2026-09-19T09:14:46Z
 
 ### Git
 - Branch: `main`
-- Head: `4fbfe031eade`
-- Commit date: 2026-09-19T11:04:52+02:00
-- Commit: docs: record scene culling and sorting milestone
-- Tracked files: 205
+- Head: `9522c14dd981`
+- Commit date: 2026-09-19T11:09:40+02:00
+- Commit: docs: record WebGL2 context recovery milestone
+- Tracked files: 208
 
 ### Recently changed files
 - `README.md`
