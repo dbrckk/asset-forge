@@ -18,7 +18,8 @@
     "starlist-bridge.py",
     "svg-tools.py",
     "tests",
-    "toolchain-3d.py"
+    "toolchain-3d.py",
+    "web"
   ],
   "central_files": [
     {
@@ -37,13 +38,14 @@
         "runtime_atlas.py",
         "starlist_bridge.py",
         "svg_tools.py",
-        "toolchain_3d.py"
+        "toolchain_3d.py",
+        "web/runtime_atlas.mjs"
       ],
       "dependents": [
         "tests/test_asset_forge.py"
       ],
       "in_degree": 1,
-      "out_degree": 15,
+      "out_degree": 16,
       "path": "asset_forge.py"
     },
     {
@@ -193,6 +195,28 @@
       "path": "engine_profile_validation.py"
     },
     {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "tests/runtime_atlas_web.test.mjs",
+        "tests/test_runtime_atlas.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 0,
+      "path": "runtime_atlas.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "tests/runtime_atlas_web.test.mjs",
+        "tests/test_runtime_atlas.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 0,
+      "path": "web/runtime_atlas.mjs"
+    },
+    {
       "dependencies": [
         "asset_profile_validation.py"
       ],
@@ -238,21 +262,21 @@
       "dependencies": [],
       "dependents": [
         "asset_forge.py",
-        "tests/test_runtime_atlas.py"
-      ],
-      "in_degree": 2,
-      "out_degree": 0,
-      "path": "runtime_atlas.py"
-    },
-    {
-      "dependencies": [],
-      "dependents": [
-        "asset_forge.py",
         "tests/test_starlist_bridge.py"
       ],
       "in_degree": 2,
       "out_degree": 0,
       "path": "starlist_bridge.py"
+    },
+    {
+      "dependencies": [
+        "runtime_atlas.py",
+        "web/runtime_atlas.mjs"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 2,
+      "path": "tests/runtime_atlas_web.test.mjs"
     },
     {
       "dependencies": [
@@ -273,6 +297,16 @@
       "in_degree": 0,
       "out_degree": 2,
       "path": "tests/test_raster_backend.py"
+    },
+    {
+      "dependencies": [
+        "runtime_atlas.py",
+        "web/runtime_atlas.mjs"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 2,
+      "path": "tests/test_runtime_atlas.py"
     },
     {
       "dependencies": [
@@ -384,15 +418,6 @@
     },
     {
       "dependencies": [
-        "runtime_atlas.py"
-      ],
-      "dependents": [],
-      "in_degree": 0,
-      "out_degree": 1,
-      "path": "tests/test_runtime_atlas.py"
-    },
-    {
-      "dependencies": [
         "starlist_bridge.py"
       ],
       "dependents": [],
@@ -419,8 +444,8 @@
       "path": "tests/test_toolchain_3d.py"
     }
   ],
-  "edge_count": 50,
+  "edge_count": 54,
   "generated_by": "dbrckk/repo-brain-v7-graph",
-  "node_count": 36,
+  "node_count": 38,
   "schema_version": 1
 }
