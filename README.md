@@ -1662,3 +1662,78 @@ canvas.addEventListener("pointerup", (event) => {
 Runtime pointer callbacks receive both screen and world coordinates. World coordinates use the current runtime camera and zoom. Entity selection reuses the normal hierarchy/layer/camera/parallax picking pipeline.
 
 Multiple pointer IDs are tracked independently. `clear()` or runtime disposal cancels active pointer state.
+
+
+### Hierarchy-safe entity dragging and automatic pointer movement
+
+Entity movement can now be applied in world-space while preserving local coordinates inside parent-child hierarchies.
+
+Low-level helper:
+
+```js
+moveSpriteEntityByWorldDelta(
+  entityStore,
+  entityId,
+  deltaX,
+  deltaY,
+  {
+    axis: "both", // "both" | "x" | "y"
+  },
+);
+```
+
+For root entities, world deltas map directly to local `x/y`. For child entities, the world-space delta is inverse-rotated by the parent world rotation and divided by the parent world scale before updating the child's local coordinates.
+
+This means a child can be dragged visually in screen/world space even when its parent is translated, rotated, or non-uniformly scaled.
+
+The canvas runtime exposes:
+
+```js
+runtime.moveEntityByWorldDelta(
+  entityId,
+  deltaX,
+  deltaY,
+  options,
+)
+```
+
+Pointer-driven automatic movement is opt-in:
+
+```js
+const runtime = await createWebGL2CanvasRuntime(
+  canvas,
+  pageDefinitions,
+  {
+    pointerOptions: {
+      dragThreshold: 4,
+      autoDragEntities: true,
+      dragAxis: "both",
+    },
+  },
+);
+```
+
+When enabled, pointer drag screen deltas are divided by the current camera zoom and applied to the captured entity as world-space movement.
+
+Available axis constraints:
+
+```text
+both
+x
+y
+```
+
+The user `onDrag` callback still runs after automatic movement. Its event includes:
+
+```js
+event.capturedEntityId
+event.draggedEntity
+event.dx
+event.dy
+event.totalDx
+event.totalDy
+```
+
+Automatic dragging is disabled by default, so existing pointer-interaction users keep their previous behavior.
+
+Each drag update goes through `entityStore.update()`, incrementing `entityStore.version`. Version-aware entity batch caches therefore invalidate naturally after movement.
