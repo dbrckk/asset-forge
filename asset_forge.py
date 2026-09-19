@@ -427,6 +427,100 @@ def _write_production_inputs(output_dir: Path, job: dict) -> None:
         )
 
 
+def _persist_enriched_production_report(result: dict) -> None:
+    report_path = result.get("reportPath")
+    if not isinstance(report_path, str) or not report_path.strip():
+        return
+    path = Path(report_path)
+    payload = dict(result)
+    payload.pop("reportPath", None)
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
+def _enrich_engine_handoff(job: dict, result: dict, output_dir: Path) -> dict:
+    if result.get("success") is not True:
+        return result
+    manifest = job.get("manifest")
+    if not isinstance(manifest, dict):
+        return result
+    target = manifest.get("target")
+    engine = str(target.get("engine") or "").lower() if isinstance(target, dict) else ""
+    if engine not in {"godot", "godot4", "godot-4"}:
+        return result
+
+    asset_type = str(job.get("assetType") or "")
+    artifact = result.get("artifact")
+    if not isinstance(artifact, str) or not artifact:
+        return result
+    output_dir = Path(output_dir)
+
+    if asset_type in THREE_D_GENERATED_TYPES:
+        profile = {
+            "prop": "prop",
+            "environment": "environment",
+            "character-3d": "character",
+        }.get(asset_type, "prop")
+        delivery = result.get("validation", {}).get("godot")
+        if not isinstance(delivery, dict) or delivery.get("ready") is not True:
+            raise ValueError("Godot 3D handoff requires a ready delivery report")
+        handoff = prepare_godot_handoff(
+            Path(artifact),
+            output_dir,
+            profile=profile,
+            delivery_report=delivery,
+            asset_manifest=manifest,
+        )
+        import_validation = validate_godot_handoff(Path(handoff["projectDir"]))
+        result["engineHandoff"] = {
+            "engine": "godot4",
+            "type": "3d-project",
+            "ready": import_validation.get("passed") is not False,
+            "handoff": handoff,
+            "importValidation": import_validation,
+        }
+        if import_validation.get("passed") is False:
+            result["success"] = False
+            result["artifact"] = None
+        _persist_enriched_production_report(result)
+        return result
+
+    constraints = manifest.get("constraints")
+    if (
+        asset_type == "sprite-sheet"
+        and isinstance(constraints, dict)
+        and isinstance(constraints.get("frameWidth"), int)
+        and isinstance(constraints.get("frameHeight"), int)
+    ):
+        atlas = build_atlas_manifest(Path(artifact), manifest)
+        atlas_path = output_dir / "atlas-metadata.json"
+        atlas_path.write_text(
+            json.dumps(atlas, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        spriteframes = output_dir / f"{job.get('assetId') or manifest.get('id')}.tres"
+        write_spriteframes(
+            output=spriteframes,
+            atlas_path="res://" + Path(artifact).name,
+            atlas_metadata=atlas,
+            animation_name="default",
+            fps=12.0,
+            loop=True,
+        )
+        result["engineHandoff"] = {
+            "engine": "godot4",
+            "type": "spriteframes",
+            "ready": True,
+            "atlasMetadata": str(atlas_path),
+            "spriteFrames": str(spriteframes),
+            "atlasResourcePath": "res://" + Path(artifact).name,
+        }
+        _persist_enriched_production_report(result)
+    return result
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(prog="asset-forge")
     sub = result.add_subparsers(dest="command", required=True)
@@ -705,6 +799,7 @@ def main() -> int:
                 resolution=args.resolution,
                 timeout_seconds=args.timeout,
             )
+            result = _enrich_engine_handoff(job, result, output_dir)
         except (OSError, ValueError, RuntimeError, json.JSONDecodeError, zlib.error) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
@@ -736,6 +831,7 @@ def main() -> int:
                 resolution=args.resolution,
                 timeout_seconds=args.timeout,
             )
+            result = _enrich_engine_handoff(job, result, output_dir)
         except (OSError, ValueError, RuntimeError, json.JSONDecodeError, zlib.error) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
