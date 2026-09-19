@@ -18,6 +18,7 @@ import {
   instancedSpriteAttributeViews,
   createRuntimeAtlasPages,
   buildTexturePageBatches,
+  createInstancedSpriteRendererWebGL2,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -659,4 +660,189 @@ assert.throws(
 assert.throws(
   () => buildTexturePageBatches(pages, [], { mode: "unknown" }),
   /mode must be instanced or classic/,
+);
+
+
+function createMockWebGL2() {
+  const calls = [];
+  let nextId = 1;
+  const object = (type) => ({ type, id: nextId++ });
+  const gl = {
+    calls,
+    VERTEX_SHADER: 0x8B31,
+    FRAGMENT_SHADER: 0x8B30,
+    COMPILE_STATUS: 0x8B81,
+    LINK_STATUS: 0x8B82,
+    ARRAY_BUFFER: 0x8892,
+    ELEMENT_ARRAY_BUFFER: 0x8893,
+    STATIC_DRAW: 0x88E4,
+    DYNAMIC_DRAW: 0x88E8,
+    FLOAT: 0x1406,
+    TEXTURE0: 0x84C0,
+    TEXTURE_2D: 0x0DE1,
+    TRIANGLES: 0x0004,
+    UNSIGNED_SHORT: 0x1403,
+    createShader(type) {
+      const value = object("shader");
+      calls.push(["createShader", type, value.id]);
+      return value;
+    },
+    shaderSource(shader, source) {
+      calls.push(["shaderSource", shader.id, source.includes("#version 300 es")]);
+    },
+    compileShader(shader) {
+      calls.push(["compileShader", shader.id]);
+    },
+    getShaderParameter(shader, parameter) {
+      calls.push(["getShaderParameter", shader.id, parameter]);
+      return true;
+    },
+    getShaderInfoLog() { return ""; },
+    deleteShader(shader) { calls.push(["deleteShader", shader.id]); },
+    createProgram() {
+      const value = object("program");
+      calls.push(["createProgram", value.id]);
+      return value;
+    },
+    attachShader(program, shader) {
+      calls.push(["attachShader", program.id, shader.id]);
+    },
+    linkProgram(program) { calls.push(["linkProgram", program.id]); },
+    getProgramParameter(program, parameter) {
+      calls.push(["getProgramParameter", program.id, parameter]);
+      return true;
+    },
+    getProgramInfoLog() { return ""; },
+    deleteProgram(program) { calls.push(["deleteProgram", program.id]); },
+    createVertexArray() {
+      const value = object("vao");
+      calls.push(["createVertexArray", value.id]);
+      return value;
+    },
+    deleteVertexArray(vao) { calls.push(["deleteVertexArray", vao.id]); },
+    createBuffer() {
+      const value = object("buffer");
+      calls.push(["createBuffer", value.id]);
+      return value;
+    },
+    deleteBuffer(buffer) { calls.push(["deleteBuffer", buffer.id]); },
+    bindVertexArray(vao) { calls.push(["bindVertexArray", vao?.id ?? null]); },
+    bindBuffer(target, buffer) { calls.push(["bindBuffer", target, buffer?.id ?? null]); },
+    bufferData(target, data, usage) {
+      calls.push(["bufferData", target, data.byteLength, usage]);
+    },
+    bufferSubData(target, offset, data) {
+      calls.push(["bufferSubData", target, offset, data.byteLength]);
+    },
+    enableVertexAttribArray(location) {
+      calls.push(["enableVertexAttribArray", location]);
+    },
+    vertexAttribPointer(location, size, type, normalized, stride, offset) {
+      calls.push([
+        "vertexAttribPointer",
+        location,
+        size,
+        type,
+        normalized,
+        stride,
+        offset,
+      ]);
+    },
+    vertexAttribDivisor(location, divisor) {
+      calls.push(["vertexAttribDivisor", location, divisor]);
+    },
+    getUniformLocation(program, name) {
+      const value = { program: program.id, name };
+      calls.push(["getUniformLocation", program.id, name]);
+      return value;
+    },
+    useProgram(program) { calls.push(["useProgram", program.id]); },
+    uniform2f(location, x, y) {
+      calls.push(["uniform2f", location.name, x, y]);
+    },
+    activeTexture(texture) { calls.push(["activeTexture", texture]); },
+    bindTexture(target, texture) {
+      calls.push(["bindTexture", target, texture?.id ?? texture]);
+    },
+    uniform1i(location, value) {
+      calls.push(["uniform1i", location.name, value]);
+    },
+    drawElementsInstanced(mode, count, type, offset, instances) {
+      calls.push(["drawElementsInstanced", mode, count, type, offset, instances]);
+    },
+  };
+  return gl;
+}
+
+const rendererGl = createMockWebGL2();
+const renderer = createInstancedSpriteRendererWebGL2(rendererGl);
+const rendererBatch = buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), [
+  { frame: "plain", x: 1, y: 2 },
+  { frame: "plain", x: 3, y: 4 },
+]);
+const rendererTexture = { id: "texture-a" };
+const firstRender = renderer.renderBatch(rendererBatch, rendererTexture, 800, 600);
+assert.deepEqual(firstRender, {
+  drawCalls: 1,
+  instances: 2,
+  uploadedBytes: rendererBatch.instances.byteLength,
+});
+assert.equal(renderer.uploadedCapacityBytes, rendererBatch.instances.byteLength);
+assert.ok(
+  rendererGl.calls.some(
+    (call) =>
+      call[0] === "drawElementsInstanced" &&
+      call[2] === 6 &&
+      call[5] === 2,
+  ),
+);
+assert.ok(
+  rendererGl.calls.some(
+    (call) => call[0] === "bindTexture" && call[2] === "texture-a",
+  ),
+);
+
+const dataUploadsBefore = rendererGl.calls.filter(
+  (call) => call[0] === "bufferData" && call[3] === rendererGl.DYNAMIC_DRAW,
+).length;
+renderer.renderBatch(rendererBatch, rendererTexture, 800, 600);
+const subDataUploads = rendererGl.calls.filter(
+  (call) => call[0] === "bufferSubData",
+);
+assert.equal(dataUploadsBefore, 1);
+assert.ok(subDataUploads.length >= 1);
+
+const rendererPages = createRuntimeAtlasPages([
+  { id: "a", atlas: plainAtlas, texture: { id: "page-a" } },
+  { id: "b", atlas: atlasB, texture: { id: "page-b" } },
+]);
+const rendererPageBatches = buildTexturePageBatches(
+  rendererPages,
+  [
+    { page: "a", frame: "plain", x: 0, y: 0 },
+    { page: "b", frame: "enemy", x: 10, y: 0 },
+  ],
+  { mode: "instanced" },
+);
+const pageRender = renderer.renderPageBatches(rendererPageBatches, 1024, 768);
+assert.deepEqual(pageRender, {
+  drawCalls: 2,
+  instances: 2,
+  uploadedBytes:
+    rendererPageBatches.batches[0].batch.instances.byteLength +
+    rendererPageBatches.batches[1].batch.instances.byteLength,
+  textureSwitches: 1,
+});
+
+renderer.dispose();
+assert.equal(renderer.disposed, true);
+assert.throws(
+  () => renderer.renderBatch(rendererBatch, rendererTexture, 800, 600),
+  /renderer is disposed/,
+);
+renderer.dispose();
+
+assert.throws(
+  () => createInstancedSpriteRendererWebGL2({}),
+  /drawElementsInstanced is required/,
 );
