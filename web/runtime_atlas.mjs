@@ -2040,7 +2040,11 @@ export async function createWebGL2CanvasRuntime(
       if (contextLost) {
         throw new Error("WebGL2 context is lost");
       }
-      return scene.buildBatches(entityStore.instances(), batchOptions);
+      const prepared = buildSpriteEntityInstances(entityStore, batchOptions);
+      return scene.buildBatches(
+        prepared.instances,
+        prepared.sceneBatchOptions,
+      );
     },
     updateAnimations(deltaSeconds) {
       assertActive();
@@ -2065,11 +2069,12 @@ export async function createWebGL2CanvasRuntime(
         throw new Error("WebGL2 context is lost");
       }
       const size = resize();
+      const prepared = buildSpriteEntityInstances(entityStore, batchOptions);
       return scene.render(
-        entityStore.instances(),
+        prepared.instances,
         size.width,
         size.height,
-        batchOptions,
+        prepared.sceneBatchOptions,
       );
     },
     async restore() {
@@ -2126,6 +2131,17 @@ export function createSpriteEntityStore(options = {}) {
       typeof entity.frame !== "number"
     ) {
       throw new Error(`${label}.frame must be a string or number`);
+    }
+
+    if (
+      entity.parent != null &&
+      typeof entity.parent !== "string" &&
+      typeof entity.parent !== "number"
+    ) {
+      throw new Error(`${label}.parent must be a string, number, or null`);
+    }
+    if (entity.parent === "") {
+      throw new Error(`${label}.parent must not be an empty string`);
     }
 
     for (const field of ["x", "y", "z", "scale", "scaleX", "scaleY"]) {
@@ -2570,9 +2586,13 @@ export function createSpriteEntityBatchCache(
     }
 
     misses += 1;
-    const batches = runtimeScene.buildBatches(
-      entityStore.instances(),
+    const prepared = buildSpriteEntityInstances(
+      entityStore,
       batchOptions,
+    );
+    const batches = runtimeScene.buildBatches(
+      prepared.instances,
+      prepared.sceneBatchOptions,
     );
     entries.set(key, batches);
 
@@ -2611,5 +2631,140 @@ export function createSpriteEntityBatchCache(
         maxEntries,
       };
     },
+  };
+}
+
+
+export function resolveSpriteEntityHierarchy(entityStore, options = {}) {
+  if (
+    !entityStore ||
+    typeof entityStore.snapshot !== "function"
+  ) {
+    throw new Error("sprite entity store required");
+  }
+
+  const includeDisabled = options.includeDisabled ?? false;
+  const inheritDisabled = options.inheritDisabled ?? true;
+  const allowMissingParents = options.allowMissingParents ?? false;
+  for (const [name, value] of Object.entries({
+    includeDisabled,
+    inheritDisabled,
+    allowMissingParents,
+  })) {
+    if (typeof value !== "boolean") {
+      throw new Error(`${name} must be boolean`);
+    }
+  }
+
+  const snapshot = entityStore.snapshot({ includeDisabled: true });
+  const byId = new Map(snapshot.map((entity) => [entity.id, entity]));
+  const resolved = new Map();
+  const visiting = new Set();
+
+  function resolve(entity) {
+    if (resolved.has(entity.id)) {
+      return resolved.get(entity.id);
+    }
+    if (visiting.has(entity.id)) {
+      throw new Error(`sprite entity hierarchy cycle detected at ${entity.id}`);
+    }
+    visiting.add(entity.id);
+
+    const localScaleX = entity.scaleX ?? entity.scale ?? 1;
+    const localScaleY = entity.scaleY ?? entity.scale ?? 1;
+    const localX = entity.x ?? 0;
+    const localY = entity.y ?? 0;
+    const localZ = entity.z ?? 0;
+
+    let worldX = localX;
+    let worldY = localY;
+    let worldZ = localZ;
+    let worldScaleX = localScaleX;
+    let worldScaleY = localScaleY;
+    let inheritedDisabled = false;
+
+    if (entity.parent != null) {
+      const parent = byId.get(entity.parent);
+      if (!parent) {
+        if (!allowMissingParents) {
+          visiting.delete(entity.id);
+          throw new Error(
+            `sprite entity parent not found: ${entity.parent} for ${entity.id}`,
+          );
+        }
+      } else {
+        const parentWorld = resolve(parent);
+        worldScaleX = parentWorld.scaleX * localScaleX;
+        worldScaleY = parentWorld.scaleY * localScaleY;
+        worldX = parentWorld.x + localX * parentWorld.scaleX;
+        worldY = parentWorld.y + localY * parentWorld.scaleY;
+        worldZ = parentWorld.z + localZ;
+        inheritedDisabled =
+          inheritDisabled &&
+          (parentWorld.disabled === true || parent.enabled === false);
+      }
+    }
+
+    const world = {
+      ...entity,
+      x: worldX,
+      y: worldY,
+      z: worldZ,
+      scaleX: worldScaleX,
+      scaleY: worldScaleY,
+      disabled: entity.enabled === false || inheritedDisabled,
+    };
+    delete world.scale;
+    delete world.enabled;
+
+    visiting.delete(entity.id);
+    resolved.set(entity.id, world);
+    return world;
+  }
+
+  const instances = [];
+  for (const entity of snapshot) {
+    const world = resolve(entity);
+    if (!includeDisabled && world.disabled) {
+      continue;
+    }
+    const instance = { ...world };
+    delete instance.disabled;
+    instances.push(instance);
+  }
+
+  return {
+    instances,
+    count: instances.length,
+    totalCount: snapshot.length,
+    disabledCount: snapshot.length - instances.length,
+    byId: resolved,
+  };
+}
+
+function _splitEntityHierarchyOptions(batchOptions = {}) {
+  const {
+    hierarchy = true,
+    hierarchyOptions,
+    ...sceneBatchOptions
+  } = batchOptions;
+  if (typeof hierarchy !== "boolean") {
+    throw new Error("hierarchy must be boolean");
+  }
+  return {
+    hierarchy,
+    hierarchyOptions,
+    sceneBatchOptions,
+  };
+}
+
+export function buildSpriteEntityInstances(entityStore, batchOptions = {}) {
+  const { hierarchy, hierarchyOptions, sceneBatchOptions } =
+    _splitEntityHierarchyOptions(batchOptions);
+  return {
+    instances: hierarchy
+      ? resolveSpriteEntityHierarchy(entityStore, hierarchyOptions).instances
+      : entityStore.instances(),
+    sceneBatchOptions,
   };
 }
