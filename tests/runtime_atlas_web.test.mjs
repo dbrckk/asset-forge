@@ -4501,4 +4501,43 @@ assert.equal(retainedClipboardStore.get(retainedCutPaste.ids[0]).y, 43);
 assert.equal(retainedClipboard.clear(), true);
 assert.equal(retainedClipboard.hasData, false);
 
+
+const snappedRotationStore = createSpriteEntityStore();
+snappedRotationStore.add({
+  id: "snap-rotate",
+  page: "heroes",
+  frame: "plain",
+  x: 10,
+  y: 10,
+});
+const snappedRotationSelection = createSpriteSelectionModel();
+snappedRotationSelection.set(["snap-rotate"]);
+const snapGeometry = selectionTransformHandleGeometry(
+  snappedRotationStore,
+  snappedRotationSelection,
+);
+const snapPivot = snapGeometry.pivot;
+applySelectionTransformHandleDrag(
+  snappedRotationStore,
+  snappedRotationSelection,
+  "rotate",
+  { x: snapPivot.x + 10, y: snapPivot.y },
+  { x: snapPivot.x + 10, y: snapPivot.y + 10 },
+  { rotationSnap: Math.PI / 4 },
+);
+assert.ok(
+  Math.abs(snappedRotationStore.get("snap-rotate").rotation - Math.PI / 4) < 1e-12,
+);
+assert.throws(
+  () => applySelectionTransformHandleDrag(
+    snappedRotationStore,
+    snappedRotationSelection,
+    "rotate",
+    { x: snapPivot.x + 10, y: snapPivot.y },
+    { x: snapPivot.x, y: snapPivot.y + 10 },
+    { rotationSnap: -1 },
+  ),
+  /rotationSnap must be a finite value >= 0/,
+);
+
 console.log("runtime_atlas.mjs smoke test passed");
