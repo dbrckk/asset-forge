@@ -2206,6 +2206,14 @@ export async function createWebGL2CanvasRuntime(
   if (!["both", "x", "y"].includes(dragAxis)) {
     throw new Error("dragAxis must be both, x, or y");
   }
+  const dragGridSize = pointerOptions.dragGridSize ?? 0;
+  if (!Number.isFinite(dragGridSize) || dragGridSize < 0) {
+    throw new Error("dragGridSize must be a finite value >= 0");
+  }
+  const dragBounds =
+    pointerOptions.dragBounds === undefined
+      ? null
+      : pointerOptions.dragBounds;
   const userOnDrag =
     typeof pointerOptions.onDrag === "function"
       ? pointerOptions.onDrag
@@ -2213,6 +2221,8 @@ export async function createWebGL2CanvasRuntime(
   const {
     autoDragEntities: _autoDragEntities,
     dragAxis: _dragAxis,
+    dragGridSize: _dragGridSize,
+    dragBounds: _dragBounds,
     onDrag: _onDrag,
     ...pointerControllerOptions
   } = pointerOptions;
@@ -2232,7 +2242,11 @@ export async function createWebGL2CanvasRuntime(
           event.capturedEntityId,
           event.dx / zoom,
           event.dy / zoom,
-          { axis: dragAxis },
+          {
+            axis: dragAxis,
+            gridSize: dragGridSize,
+            bounds: dragBounds ?? worldBounds,
+          },
         );
       }
       userOnDrag?.(event);
@@ -3793,19 +3807,68 @@ export function moveSpriteEntityByWorldDelta(
   if (axis === "x") deltaY = 0;
   if (axis === "y") deltaX = 0;
 
+  const gridSize = options.gridSize ?? 0;
+  if (!Number.isFinite(gridSize) || gridSize < 0) {
+    throw new Error("gridSize must be a finite value >= 0");
+  }
+
+  const bounds = options.bounds ?? null;
+  if (bounds != null) {
+    if (!bounds || typeof bounds !== "object") {
+      throw new Error("drag bounds must be an object");
+    }
+    const bx = bounds.x ?? 0;
+    const by = bounds.y ?? 0;
+    const bw = bounds.width;
+    const bh = bounds.height;
+    for (const [name, value] of Object.entries({ bx, by, bw, bh })) {
+      if (!Number.isFinite(value)) {
+        throw new Error(`drag bounds ${name} must be finite`);
+      }
+    }
+    if (bw < 0 || bh < 0) {
+      throw new Error("drag bounds width/height must be >= 0");
+    }
+  }
+
   const entity = entityStore.get(entityId);
   if (!entity) {
     throw new Error(`sprite entity not found: ${entityId}`);
   }
 
-  let localDeltaX = deltaX;
-  let localDeltaY = deltaY;
+  const resolvedBefore = resolveSpriteEntityHierarchy(entityStore, {
+    includeDisabled: true,
+  });
+  const currentWorld = resolvedBefore.byId.get(entityId);
+  if (!currentWorld) {
+    throw new Error(`sprite entity not found: ${entityId}`);
+  }
+
+  let targetWorldX = currentWorld.x + deltaX;
+  let targetWorldY = currentWorld.y + deltaY;
+
+  if (gridSize > 0) {
+    targetWorldX = Math.round(targetWorldX / gridSize) * gridSize;
+    targetWorldY = Math.round(targetWorldY / gridSize) * gridSize;
+  }
+
+  if (bounds != null) {
+    const minX = bounds.x ?? 0;
+    const minY = bounds.y ?? 0;
+    const maxX = minX + bounds.width;
+    const maxY = minY + bounds.height;
+    targetWorldX = Math.min(maxX, Math.max(minX, targetWorldX));
+    targetWorldY = Math.min(maxY, Math.max(minY, targetWorldY));
+  }
+
+  const worldDeltaX = targetWorldX - currentWorld.x;
+  const worldDeltaY = targetWorldY - currentWorld.y;
+
+  let localDeltaX = worldDeltaX;
+  let localDeltaY = worldDeltaY;
 
   if (entity.parent != null) {
-    const resolved = resolveSpriteEntityHierarchy(entityStore, {
-      includeDisabled: true,
-    });
-    const parent = resolved.byId.get(entity.parent);
+    const parent = resolvedBefore.byId.get(entity.parent);
     if (!parent) {
       throw new Error(
         `sprite entity parent not found: ${entity.parent} for ${entityId}`,
@@ -3814,8 +3877,8 @@ export function moveSpriteEntityByWorldDelta(
 
     const cos = Math.cos(-parent.rotation);
     const sin = Math.sin(-parent.rotation);
-    const rotatedX = deltaX * cos - deltaY * sin;
-    const rotatedY = deltaX * sin + deltaY * cos;
+    const rotatedX = worldDeltaX * cos - worldDeltaY * sin;
+    const rotatedY = worldDeltaX * sin + worldDeltaY * cos;
     localDeltaX = rotatedX / parent.scaleX;
     localDeltaY = rotatedY / parent.scaleY;
   }
