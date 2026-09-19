@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import re
 import shutil
 import subprocess
 import urllib.error
@@ -18,6 +19,40 @@ SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES | TH
 DEFAULT_VECTOR_MODEL = "recraft/recraft-v4.1-vector"
 DEFAULT_3D_MODEL = "microsoft/trellis-2"
 MAX_3D_BYTES = 100 * 1024 * 1024
+MAX_METADATA_ITEMS = 64
+MAX_METADATA_STRING = 4096
+MAX_METADATA_DEPTH = 6
+_SENSITIVE_METADATA_KEY = re.compile(
+    r"(?:api[-_]?key|token|secret|authorization|password|credential)",
+    re.IGNORECASE,
+)
+
+
+def _sanitize_metadata(value, *, depth: int = 0):
+    if depth >= MAX_METADATA_DEPTH:
+        return "[TRUNCATED]"
+    if value is None or isinstance(value, (bool, int, float)):
+        return value
+    if isinstance(value, str):
+        return value[:MAX_METADATA_STRING]
+    if isinstance(value, list):
+        return [
+            _sanitize_metadata(item, depth=depth + 1)
+            for item in value[:MAX_METADATA_ITEMS]
+        ]
+    if isinstance(value, dict):
+        cleaned = {}
+        for index, (key, item) in enumerate(value.items()):
+            if index >= MAX_METADATA_ITEMS:
+                cleaned["_truncated"] = True
+                break
+            name = str(key)[:256]
+            if _SENSITIVE_METADATA_KEY.search(name):
+                cleaned[name] = "[REDACTED]"
+            else:
+                cleaned[name] = _sanitize_metadata(item, depth=depth + 1)
+        return cleaned
+    return str(value)[:MAX_METADATA_STRING]
 
 
 class GenerationError(RuntimeError):
@@ -389,7 +424,7 @@ def execute_generated_asset(
         try:
             parsed = json.loads(stdout)
             if isinstance(parsed, dict):
-                metadata = parsed
+                metadata = _sanitize_metadata(parsed)
         except json.JSONDecodeError:
             metadata = None
 
