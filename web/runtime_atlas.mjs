@@ -2235,9 +2235,31 @@ export async function createWebGL2CanvasRuntime(
   const selection =
     options.selectionModel ??
     createSpriteSelectionModel(options.selectionOptions);
+  const historyOptions = options.historyOptions ?? {};
   const history =
     options.entityHistory ??
-    createSpriteEntityHistory(entityStore, options.historyOptions);
+    createSpriteEntityHistory(entityStore, {
+      ...historyOptions,
+      captureContext:
+        historyOptions.captureContext ??
+        (() => selection.snapshot().ids),
+      restoreContext:
+        historyOptions.restoreContext ??
+        ((ids) => selection.set(
+          Array.isArray(ids)
+            ? ids.filter((id) => entityStore.has(id))
+            : [],
+        )),
+    });
+  const autoHistory = options.autoHistory !== false;
+
+  function recordRuntimeEdit(label, callback) {
+    if (!autoHistory || history.active === true) {
+      return callback();
+    }
+    return history.record(label, callback);
+  }
+
   const clipboard =
     options.clipboardController ??
     createSpriteClipboardController(
@@ -2541,15 +2563,24 @@ export async function createWebGL2CanvasRuntime(
     },
     duplicateSelection(duplicateOptions = {}) {
       assertActive();
-      return clipboard.duplicate(duplicateOptions);
+      return recordRuntimeEdit(
+        "duplicate selection",
+        () => clipboard.duplicate(duplicateOptions),
+      );
     },
     cutSelection(cutOptions = {}) {
       assertActive();
-      return clipboard.cut(cutOptions);
+      return recordRuntimeEdit(
+        "cut selection",
+        () => clipboard.cut(cutOptions),
+      );
     },
     pasteClipboard(pasteOptions = {}) {
       assertActive();
-      return clipboard.paste(pasteOptions);
+      return recordRuntimeEdit(
+        "paste clipboard",
+        () => clipboard.paste(pasteOptions),
+      );
     },
     copySelection(copyOptions = {}) {
       assertActive();
@@ -2561,48 +2592,57 @@ export async function createWebGL2CanvasRuntime(
     },
     pasteEntities(clipboard, pasteOptions = {}) {
       assertActive();
-      const result = pasteSpriteEntities(
-        entityStore,
-        clipboard,
-        pasteOptions,
-      );
-      selection.set(result.ids);
-      return result;
+      return recordRuntimeEdit("paste entities", () => {
+        const result = pasteSpriteEntities(
+          entityStore,
+          clipboard,
+          pasteOptions,
+        );
+        selection.set(result.ids);
+        return result;
+      });
     },
     reparentEntity(entityId, parentId = null, reparentOptions = {}) {
       assertActive();
-      return reparentSpriteEntity(
-        entityStore,
-        entityId,
-        parentId,
-        reparentOptions,
+      return recordRuntimeEdit(
+        "reparent entity",
+        () => reparentSpriteEntity(
+          entityStore,
+          entityId,
+          parentId,
+          reparentOptions,
+        ),
       );
     },
     removeEntity(entityId, removeOptions = {}) {
       assertActive();
-      const result = removeSpriteEntityHierarchy(
-        entityStore,
-        entityId,
-        removeOptions,
-      );
-      for (const id of result.removedIds) selection.remove(id);
-      return result;
+      return recordRuntimeEdit("remove entity", () => {
+        const result = removeSpriteEntityHierarchy(
+          entityStore,
+          entityId,
+          removeOptions,
+        );
+        for (const id of result.removedIds) selection.remove(id);
+        return result;
+      });
     },
     removeSelection(removeOptions = {}) {
       assertActive();
-      const ids = selection.snapshot().ids;
-      const removed = new Set();
-      for (const id of ids) {
-        if (!entityStore.has(id)) continue;
-        const result = removeSpriteEntityHierarchy(
-          entityStore,
-          id,
-          removeOptions,
-        );
-        for (const removedId of result.removedIds) removed.add(removedId);
-      }
-      for (const id of removed) selection.remove(id);
-      return { removedIds: [...removed], count: removed.size };
+      return recordRuntimeEdit("remove selection", () => {
+        const ids = selection.snapshot().ids;
+        const removed = new Set();
+        for (const id of ids) {
+          if (!entityStore.has(id)) continue;
+          const result = removeSpriteEntityHierarchy(
+            entityStore,
+            id,
+            removeOptions,
+          );
+          for (const removedId of result.removedIds) removed.add(removedId);
+        }
+        for (const id of removed) selection.remove(id);
+        return { removedIds: [...removed], count: removed.size };
+      });
     },
     undo() {
       assertActive();
@@ -2660,20 +2700,26 @@ export async function createWebGL2CanvasRuntime(
     },
     moveEntityByWorldDelta(entityId, deltaX, deltaY, moveOptions = {}) {
       assertActive();
-      return moveSpriteEntityByWorldDelta(
-        entityStore,
-        entityId,
-        deltaX,
-        deltaY,
-        moveOptions,
+      return recordRuntimeEdit(
+        "move entity",
+        () => moveSpriteEntityByWorldDelta(
+          entityStore,
+          entityId,
+          deltaX,
+          deltaY,
+          moveOptions,
+        ),
       );
     },
     transformSelection(transformOptions = {}) {
       assertActive();
-      return transformSelectedSpriteEntities(
-        entityStore,
-        selection,
-        transformOptions,
+      return recordRuntimeEdit(
+        "transform selection",
+        () => transformSelectedSpriteEntities(
+          entityStore,
+          selection,
+          transformOptions,
+        ),
       );
     },
     selectionHandles(handleOptions = {}) {
@@ -2691,23 +2737,29 @@ export async function createWebGL2CanvasRuntime(
       handleOptions = {},
     ) {
       assertActive();
-      return applySelectionTransformHandleDrag(
-        entityStore,
-        selection,
-        handle,
-        startPoint,
-        currentPoint,
-        handleOptions,
+      return recordRuntimeEdit(
+        "drag selection handle",
+        () => applySelectionTransformHandleDrag(
+          entityStore,
+          selection,
+          handle,
+          startPoint,
+          currentPoint,
+          handleOptions,
+        ),
       );
     },
     moveSelectionByWorldDelta(deltaX, deltaY, moveOptions = {}) {
       assertActive();
-      return moveSelectedSpriteEntitiesByWorldDelta(
-        entityStore,
-        selection,
-        deltaX,
-        deltaY,
-        moveOptions,
+      return recordRuntimeEdit(
+        "move selection",
+        () => moveSelectedSpriteEntitiesByWorldDelta(
+          entityStore,
+          selection,
+          deltaX,
+          deltaY,
+          moveOptions,
+        ),
       );
     },
     pointerMove(pointerId, x, y, pickOptions = {}) {
@@ -3294,17 +3346,39 @@ export function createSpriteEntityHistory(
     throw new Error("history maxEntries must be a positive integer");
   }
 
+  const captureContext = options.captureContext ?? null;
+  const restoreContext = options.restoreContext ?? null;
+  if (
+    captureContext !== null &&
+    typeof captureContext !== "function"
+  ) {
+    throw new Error("history captureContext must be a function");
+  }
+  if (
+    restoreContext !== null &&
+    typeof restoreContext !== "function"
+  ) {
+    throw new Error("history restoreContext must be a function");
+  }
+  if ((captureContext === null) !== (restoreContext === null)) {
+    throw new Error(
+      "history captureContext and restoreContext must be provided together",
+    );
+  }
+
   const undoStack = [];
   const redoStack = [];
   let pending = null;
 
   const capture = () => entityStore.snapshot({ includeDisabled: true });
+  const captureExtra = () =>
+    captureContext === null ? undefined : captureContext();
 
-  function sameSnapshot(a, b) {
+  function sameValue(a, b) {
     return JSON.stringify(a) === JSON.stringify(b);
   }
 
-  function restore(snapshot) {
+  function restore(snapshot, context) {
     const wanted = new Map(snapshot.map((entity) => [entity.id, entity]));
     entityStore.transact(({ add, update, remove }) => {
       for (const current of entityStore.snapshot({ includeDisabled: true })) {
@@ -3315,11 +3389,19 @@ export function createSpriteEntityHistory(
         else add(entity);
       }
     });
+    if (restoreContext !== null) {
+      restoreContext(context);
+    }
     return capture();
   }
 
   function push(entry) {
-    if (sameSnapshot(entry.before, entry.after)) return false;
+    if (
+      sameValue(entry.before, entry.after) &&
+      sameValue(entry.beforeContext, entry.afterContext)
+    ) {
+      return false;
+    }
     undoStack.push(entry);
     while (undoStack.length > maxEntries) undoStack.shift();
     redoStack.length = 0;
@@ -3329,20 +3411,28 @@ export function createSpriteEntityHistory(
   return {
     begin(label = "edit") {
       if (pending) throw new Error("sprite entity history edit already active");
-      pending = { label, before: capture() };
+      pending = {
+        label,
+        before: capture(),
+        beforeContext: captureExtra(),
+      };
       return pending.before;
     },
     commit() {
       if (!pending) throw new Error("sprite entity history edit not active");
-      const entry = { ...pending, after: capture() };
+      const entry = {
+        ...pending,
+        after: capture(),
+        afterContext: captureExtra(),
+      };
       pending = null;
       return push(entry);
     },
     cancel() {
       if (!pending) return false;
-      const before = pending.before;
+      const entry = pending;
       pending = null;
-      restore(before);
+      restore(entry.before, entry.beforeContext);
       return true;
     },
     record(label, callback) {
@@ -3365,19 +3455,29 @@ export function createSpriteEntityHistory(
     },
     undo() {
       if (pending) throw new Error("cannot undo during active history edit");
-      const entry = undoStack.pop();
+      const entry = undoStack.at(-1);
       if (!entry) return null;
-      restore(entry.before);
+      restore(entry.before, entry.beforeContext);
+      undoStack.pop();
       redoStack.push(entry);
-      return { label: entry.label, snapshot: capture() };
+      return {
+        label: entry.label,
+        snapshot: capture(),
+        context: captureExtra(),
+      };
     },
     redo() {
       if (pending) throw new Error("cannot redo during active history edit");
-      const entry = redoStack.pop();
+      const entry = redoStack.at(-1);
       if (!entry) return null;
-      restore(entry.after);
+      restore(entry.after, entry.afterContext);
+      redoStack.pop();
       undoStack.push(entry);
-      return { label: entry.label, snapshot: capture() };
+      return {
+        label: entry.label,
+        snapshot: capture(),
+        context: captureExtra(),
+      };
     },
     clear() {
       const count = undoStack.length + redoStack.length;

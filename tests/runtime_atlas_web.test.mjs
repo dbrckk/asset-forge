@@ -4277,14 +4277,46 @@ const historyRuntime = await createWebGL2CanvasRuntime(
   },
 );
 historyRuntime.entities.add({ id: "runtime-history", page: "heroes", frame: "plain", x: 1, y: 2 });
-historyRuntime.history.record("runtime move", () => {
-  historyRuntime.moveEntityByWorldDelta("runtime-history", 10, 0);
-});
+historyRuntime.selection.set(["runtime-history"]);
+
+historyRuntime.moveEntityByWorldDelta("runtime-history", 10, 0);
 assert.equal(historyRuntime.entities.get("runtime-history").x, 11);
-historyRuntime.undo();
+assert.equal(historyRuntime.history.undoCount, 1);
+assert.equal(historyRuntime.undo().label, "move entity");
 assert.equal(historyRuntime.entities.get("runtime-history").x, 1);
-historyRuntime.redo();
+assert.deepEqual(historyRuntime.selection.snapshot().ids, ["runtime-history"]);
+assert.equal(historyRuntime.redo().label, "move entity");
 assert.equal(historyRuntime.entities.get("runtime-history").x, 11);
+assert.deepEqual(historyRuntime.selection.snapshot().ids, ["runtime-history"]);
+
+const duplicatedHistory = historyRuntime.duplicateSelection({
+  offsetX: 4,
+  offsetY: 6,
+});
+const duplicatedHistoryId = duplicatedHistory.ids[0];
+assert.ok(historyRuntime.entities.get(duplicatedHistoryId));
+assert.deepEqual(historyRuntime.selection.snapshot().ids, [duplicatedHistoryId]);
+assert.equal(historyRuntime.undo().label, "duplicate selection");
+assert.equal(historyRuntime.entities.get(duplicatedHistoryId), null);
+assert.deepEqual(historyRuntime.selection.snapshot().ids, ["runtime-history"]);
+assert.equal(historyRuntime.redo().label, "duplicate selection");
+assert.ok(historyRuntime.entities.get(duplicatedHistoryId));
+assert.deepEqual(historyRuntime.selection.snapshot().ids, [duplicatedHistoryId]);
+
+const undoCountBeforeGroupedEdit = historyRuntime.history.undoCount;
+historyRuntime.history.record("runtime grouped move", () => {
+  historyRuntime.moveEntityByWorldDelta(duplicatedHistoryId, 3, 0);
+  historyRuntime.moveEntityByWorldDelta(duplicatedHistoryId, 2, 0);
+});
+assert.equal(
+  historyRuntime.history.undoCount,
+  undoCountBeforeGroupedEdit + 1,
+);
+assert.equal(historyRuntime.undo().label, "runtime grouped move");
+assert.equal(
+  historyRuntime.entities.get(duplicatedHistoryId).x,
+  15,
+);
 historyRuntime.dispose();
 
 

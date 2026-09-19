@@ -1878,26 +1878,27 @@ When the captured entity belongs to a multi-selection, the complete selection mo
 
 ### Transactional entity undo/redo
 
-The retained entity runtime now provides bounded synchronous edit history:
+The retained editor runtime now records its main mutation commands automatically. Moves, selection transforms, reparenting, deletion, duplicate, cut, and paste become undoable without wrapping each call manually:
 
 ```js
-runtime.history.record("move selection", () => {
-  runtime.moveSelectionByWorldDelta(16, 0);
-});
+runtime.moveSelectionByWorldDelta(16, 0);
+runtime.duplicateSelection();
 
 runtime.undo();
 runtime.redo();
 ```
 
-For interactive gestures, an edit can span multiple updates:
+Undo/redo restores both entity state and the retained selection, so undoing a duplicate or paste re-selects the entities that were selected before the edit. Set `autoHistory: false` when constructing the canvas runtime to disable automatic command recording.
+
+For interactive gestures or several related commands, an edit can still span multiple updates. Runtime mutators detect the active transaction and do not create nested history entries:
 
 ```js
 runtime.history.begin("drag");
-// many entity updates...
+// many runtime mutation calls...
 runtime.history.commit();
 ```
 
-`cancel()` restores the pre-edit snapshot. History restores additions, removals, and property changes transactionally, clears redo entries after a new committed edit, and rejects asynchronous callbacks so rollback semantics remain deterministic.
+`cancel()` restores the pre-edit entity and selection snapshots. History restores additions, removals, and property changes transactionally, clears redo entries after a new committed edit, and rejects asynchronous callbacks so rollback semantics remain deterministic.
 
 
 ### Safe hierarchy reparenting and deletion
