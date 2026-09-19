@@ -43,6 +43,8 @@ jobs:
           node-version: "22"
       - name: Smoke-test web runtime atlas consumer
         run: node tests/runtime_atlas_web.test.mjs
+      - name: Stress-test WebGL2 runtime atlas pipeline
+        run: node benchmarks/runtime_atlas_web.bench.mjs
       - name: Smoke-test star-list bridge
         run: python asset_forge.py discover-tools star-list "pixel art sprites atlas" --top 3
 
