@@ -96,20 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T07:38:04Z
+Generated: 2026-09-19T08:59:58Z
 
 ### Git
 - Branch: `main`
-- Head: `ddf2116baad0`
-- Commit date: 2026-09-19T09:37:52+02:00
-- Commit: chore(ai): adopt stable repo standards v20
+- Head: `63a00af186af`
+- Commit date: 2026-09-19T10:59:48+02:00
+- Commit: docs: record integrated browser runtime scene milestone
 - Tracked files: 205
 
 ### Recently changed files
-- `.repo-standards.yml`
 - `README.md`
-- `web/runtime_atlas.mjs`
 - `tests/runtime_atlas_web.test.mjs`
+- `web/runtime_atlas.mjs`
+- `.repo-standards.yml`
 
 ### Project signals
 - No common build descriptor detected

@@ -1174,6 +1174,19 @@ uniform1i(location, value)
 drawElementsInstanced(mode, count, type, offset, instances)
 ⋮----
 resolveTexture(textureKey, entry)
+⋮----
+const fakeFetch = async (url) =>
+⋮----
+async blob()
+⋮----
+const fakeCreateImageBitmap = async (blob, options) =>
+⋮----
+fetchImpl: async () => (
+⋮----
+fetchImpl: async (url) =>
+createImageBitmapImpl: async (blob) => (
+⋮----
+fetchImpl: async (url) => (
 ````
 
 ## File: tests/test_animation_infer.py
@@ -2523,6 +2536,28 @@ function clear()
 ⋮----
 get size()
 get pendingCount()
+⋮----
+export async function loadImageBitmapSource(url, options =
+⋮----
+export async function preloadRuntimeAtlasPageTextures(
+  atlasPages,
+  textureCache,
+  options = {},
+)
+⋮----
+export function releaseRuntimeAtlasPageTextures(textureCache, preloadResult)
+⋮----
+export async function createWebGL2RuntimeAtlasScene(
+  gl,
+  pageDefinitions,
+  options = {},
+)
+⋮----
+resolveTexture(textureKey)
+⋮----
+buildBatches(instances, batchOptions =
+render(instancesOrBatches, viewportWidth, viewportHeight, batchOptions =
+dispose()
 ````
 
 ## File: .repo-standards.yml
@@ -5121,6 +5156,49 @@ const renderer = createInstancedSpriteRendererWebGL2(gl, {
 ```
 
 Disposal during an in-flight asynchronous load causes that load to fail rather than allocating a texture into an already-disposed cache.
+
+
+### Browser loading and integrated WebGL2 runtime scene
+
+For browser projects, Asset Forge now provides `loadImageBitmapSource()` plus a higher-level scene helper that wires page loading, texture caching, batching, and instanced rendering together.
+
+```js
+const scene = await createWebGL2RuntimeAtlasScene(
+  gl,
+  [
+    { id: "heroes", atlas: heroAtlas, texture: "/assets/hero-atlas.png" },
+    { id: "enemies", atlas: enemyAtlas, texture: "/assets/enemy-atlas.png" },
+  ],
+);
+
+scene.render(
+  [
+    { page: "heroes", frame: "idle_0", x: 32, y: 48 },
+    { page: "enemies", frame: "slime_0", x: 120, y: 48 },
+  ],
+  canvas.width,
+  canvas.height,
+);
+```
+
+`loadImageBitmapSource(url)` uses `fetch` + `createImageBitmap` and accepts injectable implementations for tests, workers, or custom environments.
+
+`preloadRuntimeAtlasPageTextures()` loads every page through the shared texture cache. Pages that reference the same texture key share one network/image/GPU resource while retaining independent references. If any page fails to load, textures already acquired by that preload operation are released in reverse order before the error is rethrown.
+
+`releaseRuntimeAtlasPageTextures()` releases the references acquired by a preload result.
+
+`createWebGL2RuntimeAtlasScene()` owns a page catalogue, texture cache (unless an external cache is supplied), and instanced renderer. It exposes:
+
+```text
+scene.pages
+scene.textureCache
+scene.renderer
+scene.buildBatches(instances, options)
+scene.render(instancesOrBatches, viewportWidth, viewportHeight, options)
+scene.dispose()
+```
+
+An internally created texture cache is disposed with the scene. An externally supplied cache remains alive; only references acquired by the scene are released. This allows several scenes to share GPU textures safely.
 ````
 
 ## File: runtime_atlas.py
