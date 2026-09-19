@@ -5415,6 +5415,31 @@ Build its deterministic production plan:
 python asset_forge.py plan examples/asset-manifest.json
 ```
 
+### Production OS / AI Dev Server
+
+Asset Forge exposes a machine-readable production contract for autonomous workers. A generated visual request can be fulfilled end to end with one command:
+
+```bash
+asset-forge fulfill examples/production-request.json
+```
+
+The request uses schema `asset-forge/production-request/v1`. `fulfill` validates the request, compiles the deterministic production job, persists `asset-manifest.json`, `production-plan.json` and `production-job.json`, runs the appropriate raster/SVG/3D generator and validation pipeline, and emits `production-report.json`. A non-zero exit status means the asset was not promoted as production-ready.
+
+Inspect what the current worker can actually produce before advertising visual capabilities:
+
+```bash
+asset-forge operational-status
+```
+
+The JSON readiness report distinguishes PNG, WebP, SVG, generated GLB and real Godot import validation. Raster/vector generation currently uses the Pollinations CLI when available and authenticated. Server-side generated 3D additionally requires `POLLINATIONS_API_KEY`; WebP output requires Pillow/libwebp; real Godot import validation requires a Godot executable.
+
+For debugging or staged orchestration, the two lower-level commands remain available:
+
+```bash
+asset-forge production-job examples/production-request.json --output build/production-job.json
+asset-forge produce build/production-job.json --output-dir build/visual-job
+```
+
 Validate a PNG or WebP sprite sheet against its manifest:
 
 ```bash

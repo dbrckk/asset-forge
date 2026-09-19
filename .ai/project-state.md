@@ -96,16 +96,17 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T21:25:45Z
+Generated: 2026-09-19T21:27:28Z
 
 ### Git
 - Branch: `main`
-- Head: `037504f3c5c7`
-- Commit date: 2026-09-19T23:25:28+02:00
-- Commit: test: cover one-command production fulfillment
+- Head: `16da4d5518c5`
+- Commit date: 2026-09-19T23:27:18+02:00
+- Commit: docs: document autonomous production workflow
 - Tracked files: 232
 
 ### Recently changed files
+- `README.md`
 - `tests/test_fulfill.py`
 - `asset_forge.py`
 - `production_contract.py`
