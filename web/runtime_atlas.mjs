@@ -2531,6 +2531,41 @@ export async function createWebGL2CanvasRuntime(
       assertActive();
       return selection.clear();
     },
+    reparentEntity(entityId, parentId = null, reparentOptions = {}) {
+      assertActive();
+      return reparentSpriteEntity(
+        entityStore,
+        entityId,
+        parentId,
+        reparentOptions,
+      );
+    },
+    removeEntity(entityId, removeOptions = {}) {
+      assertActive();
+      const result = removeSpriteEntityHierarchy(
+        entityStore,
+        entityId,
+        removeOptions,
+      );
+      for (const id of result.removedIds) selection.remove(id);
+      return result;
+    },
+    removeSelection(removeOptions = {}) {
+      assertActive();
+      const ids = selection.snapshot().ids;
+      const removed = new Set();
+      for (const id of ids) {
+        if (!entityStore.has(id)) continue;
+        const result = removeSpriteEntityHierarchy(
+          entityStore,
+          id,
+          removeOptions,
+        );
+        for (const removedId of result.removedIds) removed.add(removedId);
+      }
+      for (const id of removed) selection.remove(id);
+      return { removedIds: [...removed], count: removed.size };
+    },
     undo() {
       assertActive();
       const result = history.undo();
@@ -2876,6 +2911,123 @@ export function createSpriteEntityStore(options = {}) {
       return version;
     },
   };
+}
+
+
+export function reparentSpriteEntity(
+  entityStore,
+  entityId,
+  parentId = null,
+  options = {},
+) {
+  const keepWorldTransform = options.keepWorldTransform ?? true;
+  if (typeof keepWorldTransform !== "boolean") {
+    throw new Error("keepWorldTransform must be boolean");
+  }
+  const entity = entityStore.get(entityId);
+  if (!entity) throw new Error(`sprite entity not found: ${entityId}`);
+  if (parentId === entityId) {
+    throw new Error("sprite entity cannot parent itself");
+  }
+  if (parentId != null && !entityStore.has(parentId)) {
+    throw new Error(`sprite entity parent not found: ${parentId}`);
+  }
+
+  const before = resolveSpriteEntityHierarchy(entityStore, {
+    includeDisabled: true,
+  });
+  const world = before.byId.get(entityId);
+  if (parentId != null) {
+    let cursor = before.byId.get(parentId);
+    while (cursor) {
+      if (cursor.id === entityId) {
+        throw new Error("sprite entity reparent would create a cycle");
+      }
+      cursor = cursor.parent == null ? null : before.byId.get(cursor.parent);
+    }
+  }
+
+  if (!keepWorldTransform) {
+    return entityStore.update(entityId, { parent: parentId });
+  }
+
+  let x = world.x;
+  let y = world.y;
+  let z = world.z;
+  let rotation = world.rotation;
+  let scaleX = world.scaleX;
+  let scaleY = world.scaleY;
+
+  if (parentId != null) {
+    const parent = before.byId.get(parentId);
+    const dx = world.x - parent.x;
+    const dy = world.y - parent.y;
+    const cos = Math.cos(-parent.rotation);
+    const sin = Math.sin(-parent.rotation);
+    x = (dx * cos - dy * sin) / parent.scaleX;
+    y = (dx * sin + dy * cos) / parent.scaleY;
+    z = world.z - parent.z;
+    rotation = world.rotation - parent.rotation;
+    scaleX = world.scaleX / parent.scaleX;
+    scaleY = world.scaleY / parent.scaleY;
+  }
+
+  return entityStore.update(entityId, {
+    parent: parentId,
+    x,
+    y,
+    z,
+    rotation,
+    scaleX,
+    scaleY,
+  });
+}
+
+export function removeSpriteEntityHierarchy(
+  entityStore,
+  entityId,
+  options = {},
+) {
+  const childPolicy = options.childPolicy ?? "detach";
+  if (!["detach", "cascade", "reject"].includes(childPolicy)) {
+    throw new Error("childPolicy must be detach, cascade, or reject");
+  }
+  if (!entityStore.has(entityId)) return { removedIds: [], count: 0 };
+
+  const snapshot = entityStore.snapshot({ includeDisabled: true });
+  const children = new Map();
+  for (const entity of snapshot) {
+    if (entity.parent != null) {
+      const list = children.get(entity.parent) ?? [];
+      list.push(entity.id);
+      children.set(entity.parent, list);
+    }
+  }
+  const directChildren = children.get(entityId) ?? [];
+  if (childPolicy === "reject" && directChildren.length > 0) {
+    throw new Error(`sprite entity has children: ${entityId}`);
+  }
+
+  const removedIds = [];
+  entityStore.transact(({ remove }) => {
+    if (childPolicy === "cascade") {
+      const visit = (id) => {
+        for (const childId of children.get(id) ?? []) visit(childId);
+        if (remove(id)) removedIds.push(id);
+      };
+      visit(entityId);
+      return;
+    }
+    if (childPolicy === "detach") {
+      for (const childId of directChildren) {
+        reparentSpriteEntity(entityStore, childId, null, {
+          keepWorldTransform: true,
+        });
+      }
+    }
+    if (remove(entityId)) removedIds.push(entityId);
+  });
+  return { removedIds, count: removedIds.length };
 }
 
 
