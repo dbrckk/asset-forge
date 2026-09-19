@@ -51,6 +51,19 @@
                 "duration": {"type": "number", "exclusiveMinimum": 0}
               }
             }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "timeSeconds"],
+              "additionalProperties": false,
+              "properties": {
+                "name": {"type": "string", "minLength": 1},
+                "timeSeconds": {"type": "number", "minimum": 0},
+                "payload": {"type": ["object", "null"]}
+              }
+            }
           }
         }
       }
