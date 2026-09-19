@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T16:06:54Z
+Generated: 2026-09-19T16:07:31Z
 
 ### Git
 - Branch: `main`
-- Head: `01ac8bd8ae1f`
-- Commit date: 2026-09-19T18:06:38+02:00
-- Commit: test: update compact instance stride expectation
+- Head: `11fa763ca071`
+- Commit date: 2026-09-19T18:07:20+02:00
+- Commit: test: account for Float32 instance precision
 - Tracked files: 209
 
 ### Recently changed files
