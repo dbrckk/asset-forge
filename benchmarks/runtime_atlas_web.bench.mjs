@@ -69,13 +69,27 @@ assert.equal(batch.instanceStrideBytes, 72);
 assert.equal(batch.instances.byteLength, batch.instanceCount * 72);
 assert.equal(batch.bounds.length, batch.instanceCount);
 
+const totalMs = prepareMs + batchMs;
 const report = {
   sprites: count,
   visible: prepared.outputCount,
   culled: prepared.culledCount,
+  cullRatio: Number((prepared.culledCount / count).toFixed(6)),
   prepareMs: Number(prepareMs.toFixed(3)),
   batchMs: Number(batchMs.toFixed(3)),
+  totalMs: Number(totalMs.toFixed(3)),
+  inputSpritesPerMs: Number((count / totalMs).toFixed(1)),
+  visibleSpritesPerMs: Number((prepared.outputCount / totalMs).toFixed(1)),
   instanceBytes: batch.instances.byteLength,
   bytesPerVisibleInstance: batch.instanceStrideBytes,
 };
+
+const maxTotalMs = Number.parseFloat(process.env.ASSET_FORGE_BENCH_MAX_TOTAL_MS ?? "");
+if (Number.isFinite(maxTotalMs) && maxTotalMs > 0) {
+  assert.ok(
+    totalMs <= maxTotalMs,
+    `runtime atlas benchmark exceeded ASSET_FORGE_BENCH_MAX_TOTAL_MS: ${totalMs.toFixed(3)}ms > ${maxTotalMs}ms`,
+  );
+}
+
 console.log(JSON.stringify(report));
