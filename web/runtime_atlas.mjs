@@ -894,6 +894,125 @@ export function buildTexturePageBatches(
     throw new Error("preserveOrder must be boolean");
   }
 
+  const sequence = [];
+  let previousPageId = null;
+  let inputTextureSwitches = 0;
+
+  const prepared = instances.map((instance, instanceIndex) => {
+    if (!instance || typeof instance !== "object") {
+      throw new Error(`texture-page instance ${instanceIndex} must be an object`);
+    }
+    const pageId = instance.page;
+    if (typeof pageId !== "string" || pageId.length === 0) {
+      throw new Error(`texture-page instance ${instanceIndex} page must be a non-empty string`);
+    }
+
+    const page = atlasPages.page(pageId);
+    if (previousPageId !== null && previousPageId !== pageId) {
+      inputTextureSwitches += 1;
+    }
+    previousPageId = pageId;
+    sequence.push(pageId);
+
+    const { page: _page, ...spriteInstance } = instance;
+    return {
+      page,
+      spriteInstance,
+      inputIndex: instanceIndex,
+    };
+  });
+
+  const groups = [];
+  if (preserveOrder) {
+    let current = null;
+    for (const item of prepared) {
+      if (!current || current.page.id !== item.page.id) {
+        current = {
+          page: item.page,
+          instances: [],
+          inputIndices: [],
+          firstInputIndex: item.inputIndex,
+        };
+        groups.push(current);
+      }
+      current.instances.push(item.spriteInstance);
+      current.inputIndices.push(item.inputIndex);
+    }
+  } else {
+    const byPage = new Map();
+    for (const item of prepared) {
+      if (!byPage.has(item.page.id)) {
+        byPage.set(item.page.id, {
+          page: item.page,
+          instances: [],
+          inputIndices: [],
+          firstInputIndex: item.inputIndex,
+        });
+      }
+      const group = byPage.get(item.page.id);
+      group.instances.push(item.spriteInstance);
+      group.inputIndices.push(item.inputIndex);
+    }
+    groups.push(
+      ...Array.from(byPage.values()).sort(
+        (a, b) => a.page.order - b.page.order || a.page.id.localeCompare(b.page.id),
+      ),
+    );
+  }
+
+  const batches = groups.map((group) => {
+    const batch =
+      mode === "instanced"
+        ? buildInstancedSpriteBatch(group.page.atlas, group.instances, options)
+        : buildSpriteBatch(group.page.atlas, group.instances, options);
+
+    return {
+      pageId: group.page.id,
+      texture: group.page.texture,
+      atlas: group.page.atlas,
+      instanceCount: group.instances.length,
+      firstInputIndex: group.firstInputIndex,
+      inputIndices: group.inputIndices,
+      batch,
+    };
+  });
+
+  const outputTextureSwitches = Math.max(0, batches.length - 1);
+
+  return {
+    mode,
+    preserveOrder,
+    pageCount: new Set(batches.map((batch) => batch.pageId)).size,
+    batchCount: batches.length,
+    instanceCount: instances.length,
+    inputTextureSwitches,
+    outputTextureSwitches,
+    textureSwitchesSaved: Math.max(
+      0,
+      inputTextureSwitches - outputTextureSwitches,
+    ),
+    inputPageSequence: sequence,
+    batches,
+  };
+},
+) {
+  if (!atlasPages || typeof atlasPages.page !== "function") {
+    throw new Error("invalid runtime atlas page catalogue");
+  }
+  if (!Array.isArray(instances)) {
+    throw new Error("texture-page batch instances must be an array");
+  }
+
+  const mode = options.mode ?? "instanced";
+  if (mode !== "instanced" && mode !== "classic") {
+    throw new Error("texture-page batch mode must be instanced or classic");
+  }
+
+  const preserveOrder = options.preserveOrder ?? false;
+  if (typeof preserveOrder !== "boolean") {
+    throw new Error("preserveOrder must be boolean");
+  }
+
   const groups = new Map();
   const sequence = [];
   let previousPageId = null;
