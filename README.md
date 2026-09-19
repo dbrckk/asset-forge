@@ -769,3 +769,46 @@ When visual layering or blending requires strict submission order, use:
 In that mode, the runtime emits one batch per contiguous texture-page run instead of merging separated runs. For an input page sequence `A, B, A`, strict-order output remains `A | B | A`; optimized output may become `A,A | B`.
 
 Both `classic` and `instanced` page-batch modes are supported. Page IDs must be unique, and a page may provide either raw runtime-atlas JSON or an already indexed atlas.
+
+
+### WebGL2 instanced renderer helper
+
+The web runtime now includes `createInstancedSpriteRendererWebGL2(gl, options)`, a dependency-free renderer built on the existing instanced sprite contract.
+
+It creates and owns:
+
+```text
+shader program
+VAO
+static unit-quad vertex buffer
+static unit-quad index buffer
+dynamic instance buffer
+```
+
+Example:
+
+```js
+const renderer = createInstancedSpriteRendererWebGL2(gl, {
+  resolveTexture(textureKey, pageBatch) {
+    return gpuTextures.get(textureKey);
+  },
+});
+
+const pageBatches = buildTexturePageBatches(pages, instances, {
+  mode: "instanced",
+});
+
+renderer.renderPageBatches(
+  pageBatches,
+  canvas.width,
+  canvas.height,
+);
+```
+
+The renderer uploads a larger instance buffer with `bufferData(..., DYNAMIC_DRAW)` only when capacity must grow. Subsequent uploads that fit reuse the allocation through `bufferSubData`.
+
+`renderBatch()` performs one `drawElementsInstanced` call. `renderPageBatches()` performs one draw call per texture-page batch and reports draw calls, rendered instance count, uploaded bytes, and texture switches.
+
+Texture-page catalogues may store actual `WebGLTexture` objects or arbitrary asset keys. The optional `resolveTexture(texture, entry)` callback resolves those keys at render time, keeping GPU resource management separate from atlas metadata.
+
+Call `dispose()` to release the VAO, buffers, and program. Rendering after disposal is rejected explicitly.
