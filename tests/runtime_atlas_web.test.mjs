@@ -740,6 +740,9 @@ function createMockWebGL2() {
     UNPACK_PREMULTIPLY_ALPHA_WEBGL: 0x9241,
     TRIANGLES: 0x0004,
     UNSIGNED_SHORT: 0x1403,
+    BLEND: 0x0BE2,
+    SRC_ALPHA: 0x0302,
+    ONE_MINUS_SRC_ALPHA: 0x0303,
     createShader(type) {
       const value = object("shader");
       calls.push(["createShader", type, value.id]);
@@ -822,6 +825,10 @@ function createMockWebGL2() {
       calls.push(["getUniformLocation", program.id, name]);
       return value;
     },
+    enable(capability) { calls.push(["enable", capability]); },
+    blendFunc(source, destination) {
+      calls.push(["blendFunc", source, destination]);
+    },
     useProgram(program) { calls.push(["useProgram", program.id]); },
     uniform2f(location, x, y) {
       calls.push(["uniform2f", location.name, x, y]);
@@ -874,6 +881,21 @@ assert.deepEqual(firstRender, {
   instances: 2,
   uploadedBytes: rendererBatch.instances.byteLength,
 });
+
+assert.equal(renderer.alphaBlending, true);
+assert.ok(
+  rendererGl.calls.some(
+    (call) => call[0] === "enable" && call[1] === rendererGl.BLEND,
+  ),
+);
+assert.ok(
+  rendererGl.calls.some(
+    (call) =>
+      call[0] === "blendFunc" &&
+      call[1] === rendererGl.SRC_ALPHA &&
+      call[2] === rendererGl.ONE_MINUS_SRC_ALPHA,
+  ),
+);
 assert.equal(renderer.uploadedCapacityBytes, rendererBatch.instances.byteLength);
 assert.ok(
   rendererGl.calls.some(
@@ -2404,5 +2426,33 @@ const tintShader = instancedSpriteWebGL2Shaders();
 assert.equal(tintShader.attributes.aTint.location, 5);
 assert.match(tintShader.vertex, /out vec4 vTint/);
 assert.match(tintShader.fragment, /texture\(uTexture, vUv\) \* vTint/);
+
+
+
+const noBlendGl = createMockWebGL2();
+const noBlendRenderer = createInstancedSpriteRendererWebGL2(noBlendGl, {
+  alphaBlending: false,
+});
+noBlendRenderer.renderBatch(
+  buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), [
+    { frame: "plain", alpha: 0.5 },
+  ]),
+  { id: "no-blend-texture" },
+  100,
+  100,
+);
+assert.equal(noBlendRenderer.alphaBlending, false);
+assert.equal(
+  noBlendGl.calls.some((call) => call[0] === "enable" && call[1] === noBlendGl.BLEND),
+  false,
+);
+noBlendRenderer.dispose();
+
+assert.throws(
+  () => createInstancedSpriteRendererWebGL2(createMockWebGL2(), {
+    alphaBlending: "yes",
+  }),
+  /alphaBlending must be boolean/,
+);
 
 console.log("runtime_atlas.mjs smoke test passed");
