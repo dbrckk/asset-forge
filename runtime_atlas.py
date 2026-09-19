@@ -2,20 +2,18 @@ from __future__ import annotations
 
 
 def _positive_int(value, field: str) -> int:
-    try:
-        result = int(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{field}: integer required") from exc
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise ValueError(f"{field}: integer required")
+    result = value
     if result <= 0:
         raise ValueError(f"{field}: must be > 0")
     return result
 
 
 def _non_negative_int(value, field: str) -> int:
-    try:
-        result = int(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{field}: integer required") from exc
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise ValueError(f"{field}: integer required")
+    result = value
     if result < 0:
         raise ValueError(f"{field}: must be >= 0")
     return result
@@ -182,6 +180,8 @@ def validate_runtime_atlas(data: dict) -> list[str]:
         errors.append("imageSize must be an object")
         atlas_width = atlas_height = None
     else:
+        for field in sorted(set(image_size) - {"width", "height"}):
+            errors.append(f"unknown imageSize field: {field}")
         try:
             atlas_width = _positive_int(image_size.get("width"), "imageSize.width")
             atlas_height = _positive_int(image_size.get("height"), "imageSize.height")
@@ -252,6 +252,8 @@ def validate_runtime_atlas(data: dict) -> list[str]:
             errors.append(f"frame {index_label}.atlasRegion must be an object")
             region = None
         else:
+            for field in sorted(set(atlas_region) - {"x", "y", "width", "height"}):
+                errors.append(f"frame {index_label}: unknown atlasRegion field {field}")
             try:
                 x = _non_negative_int(atlas_region.get("x"), f"frame {index_label}.atlasRegion.x")
                 y = _non_negative_int(atlas_region.get("y"), f"frame {index_label}.atlasRegion.y")
@@ -271,6 +273,8 @@ def validate_runtime_atlas(data: dict) -> list[str]:
             if not isinstance(obj, dict):
                 errors.append(f"frame {index_label}.{field_name} must be an object")
                 return None
+            for field in sorted(set(obj) - {"width", "height"}):
+                errors.append(f"frame {index_label}: unknown {field_name} field {field}")
             try:
                 return (
                     _positive_int(obj.get("width"), f"frame {index_label}.{field_name}.width"),
@@ -288,6 +292,8 @@ def validate_runtime_atlas(data: dict) -> list[str]:
             errors.append(f"frame {index_label}.trimOffset must be an object")
             offset = None
         else:
+            for field in sorted(set(trim_offset) - {"x", "y"}):
+                errors.append(f"frame {index_label}: unknown trimOffset field {field}")
             try:
                 offset = (
                     _non_negative_int(trim_offset.get("x"), f"frame {index_label}.trimOffset.x"),
@@ -303,6 +309,8 @@ def validate_runtime_atlas(data: dict) -> list[str]:
             rotated = None
             degrees = None
         else:
+            for field in sorted(set(rotation) - {"rotated", "degreesClockwise"}):
+                errors.append(f"frame {index_label}: unknown rotation field {field}")
             rotated = rotation.get("rotated")
             degrees = rotation.get("degreesClockwise")
             if not isinstance(rotated, bool):
@@ -319,6 +327,8 @@ def validate_runtime_atlas(data: dict) -> list[str]:
         if not isinstance(uv, dict):
             errors.append(f"frame {index_label}.uv must be an object")
         else:
+            for field in sorted(set(uv) - {"u0", "v0", "u1", "v1"}):
+                errors.append(f"frame {index_label}: unknown uv field {field}")
             values = []
             for key in ("u0", "v0", "u1", "v1"):
                 value = uv.get(key)
