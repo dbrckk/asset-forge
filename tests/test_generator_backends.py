@@ -68,10 +68,11 @@ class GeneratorBackendsTests(unittest.TestCase):
         self.assertIn("valid SVG viewBox", build_generation_prompt(vector_job))
 
     def test_backend_status_reports_auth_without_secret_value(self):
-        status = generator_backend_status(
-            environ={"POLLINATIONS_API_KEY": "super-secret-value"},
-            home=Path("/definitely/not/a/real/home"),
-        )
+        with patch("generator_backends.shutil.which", return_value="/usr/bin/polli"):
+            status = generator_backend_status(
+                environ={"POLLINATIONS_API_KEY": "super-secret-value"},
+                home=Path("/definitely/not/a/real/home"),
+            )
         self.assertTrue(status["pollinations"]["authenticated"])
         self.assertTrue(status["pollinations"]["rasterVectorReady"])
         self.assertTrue(status["pollinations"]["threeDReady"])
