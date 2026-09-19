@@ -4,6 +4,7 @@ import {
   drawFrameCanvas2D,
   frameQuad,
   indexRuntimeAtlas,
+  sourceOrientedUVs,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -15,6 +16,12 @@ const frame = indexed.frame(0);
 assert.equal(indexed.frame("hero_0.png"), frame);
 assert.equal(frameQuad(frame).rotated, true);
 assert.deepEqual(frameQuad(frame).sourceRegion, { width: 8, height: 6 });
+assert.deepEqual(sourceOrientedUVs(frame), [
+  { u: 10 / 64, v: 28 / 64 },
+  { u: 10 / 64, v: 20 / 64 },
+  { u: 16 / 64, v: 20 / 64 },
+  { u: 16 / 64, v: 28 / 64 },
+]);
 
 const calls = [];
 const ctx = {
@@ -85,7 +92,14 @@ const plainCtx = {
   rotate(...args) { plainCalls.push(["rotate", ...args]); },
   drawImage(...args) { plainCalls.push(["drawImage", ...args]); },
 };
-drawFrameCanvas2D(plainCtx, image, indexRuntimeAtlas(plainAtlas).frame("plain"), 10, 20);
+const plainFrame = indexRuntimeAtlas(plainAtlas).frame("plain");
+assert.deepEqual(sourceOrientedUVs(plainFrame), [
+  { u: 1 / 16, v: 2 / 16 },
+  { u: 5 / 16, v: 2 / 16 },
+  { u: 5 / 16, v: 7 / 16 },
+  { u: 1 / 16, v: 7 / 16 },
+]);
+drawFrameCanvas2D(plainCtx, image, plainFrame, 10, 20);
 assert.deepEqual(plainCalls, [
   ["save"],
   ["drawImage", image, 1, 2, 4, 5, 11, 21, 4, 5],
