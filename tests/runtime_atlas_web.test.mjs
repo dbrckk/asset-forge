@@ -448,8 +448,8 @@ const instanced = buildInstancedSpriteBatch(indexed, [
   { frame: "hero_0.png", x: 100, y: 200, scale: 2 },
 ]);
 assert.equal(instanced.instanceCount, 1);
-assert.equal(instanced.instanceStrideFloats, 16);
-assert.equal(instanced.instanceStrideBytes, 64);
+assert.equal(instanced.instanceStrideFloats, 20);
+assert.equal(instanced.instanceStrideBytes, 80);
 assert.deepEqual(instanced.instanceLayout, [
   "visibleX",
   "visibleY",
@@ -467,6 +467,10 @@ assert.deepEqual(instanced.instanceLayout, [
   "pivotWorldY",
   "reserved0",
   "reserved1",
+  "tintR",
+  "tintG",
+  "tintB",
+  "alpha",
 ]);
 assert.deepEqual(
   Array.from(instanced.instances),
@@ -487,6 +491,10 @@ assert.deepEqual(
     200,
     0,
     0,
+    1,
+    1,
+    1,
+    1,
   ],
 );
 assert.deepEqual(Array.from(instanced.unitQuad.vertices), [
@@ -531,7 +539,7 @@ const manyInstances = Array.from({ length: 1000 }, (_, index) => ({
 const classicMany = buildSpriteBatch(indexRuntimeAtlas(plainAtlas), manyInstances);
 const instancedMany = buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), manyInstances);
 assert.equal(classicMany.vertices.byteLength, 1000 * 4 * 4 * 4);
-assert.equal(instancedMany.instances.byteLength, 1000 * 16 * 4);
+assert.equal(instancedMany.instances.byteLength, 1000 * 20 * 4);
 assert.ok(
   instancedMany.instances.byteLength <
     classicMany.vertices.byteLength + classicMany.indices.byteLength,
@@ -561,7 +569,7 @@ assert.match(shaderContract.fragment, /texture\(uTexture, vUv\)/);
 
 const attributeViews = instancedSpriteAttributeViews(instanced);
 assert.equal(attributeViews.buffer, instanced.instances);
-assert.equal(attributeViews.strideBytes, 64);
+assert.equal(attributeViews.strideBytes, 80);
 assert.deepEqual(attributeViews.attributes, [
   {
     name: "aVisibleRect",
@@ -589,6 +597,13 @@ assert.deepEqual(attributeViews.attributes, [
     location: 4,
     size: 4,
     offsetBytes: 48,
+    divisor: 1,
+  },
+  {
+    name: "aTint",
+    location: 5,
+    size: 4,
+    offsetBytes: 64,
     divisor: 1,
   },
 ]);
@@ -2306,5 +2321,88 @@ assert.equal(
 );
 assert.match(shaderWithSpriteRotation.vertex, /cos\(spriteRotation\)/);
 assert.match(shaderWithSpriteRotation.vertex, /aPivotAndReserved/);
+
+
+
+const tintedInstanced = buildInstancedSpriteBatch(
+  indexRuntimeAtlas(plainAtlas),
+  [
+    {
+      frame: "plain",
+      tintR: 0.5,
+      tintG: 0.25,
+      tintB: 0.75,
+      alpha: 0.4,
+    },
+  ],
+);
+assert.equal(tintedInstanced.instanceStrideFloats, 20);
+assert.equal(tintedInstanced.instanceStrideBytes, 80);
+assert.deepEqual(Array.from(tintedInstanced.instances.slice(16, 20)), [
+  0.5,
+  0.25,
+  0.75,
+  0.4,
+]);
+
+assert.throws(
+  () =>
+    buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), [
+      { frame: "plain", alpha: 1.1 },
+    ]),
+  /alpha must be between 0 and 1/,
+);
+assert.throws(
+  () =>
+    buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), [
+      { frame: "plain", tintR: -0.1 },
+    ]),
+  /tintR must be between 0 and 1/,
+);
+
+const tintHierarchyStore = createSpriteEntityStore();
+tintHierarchyStore.add({
+  id: "tint-parent",
+  page: "heroes",
+  frame: "plain",
+  alpha: 0.5,
+  tintR: 0.8,
+  tintG: 0.5,
+  tintB: 1,
+});
+tintHierarchyStore.add({
+  id: "tint-child",
+  parent: "tint-parent",
+  page: "heroes",
+  frame: "plain",
+  alpha: 0.5,
+  tintR: 0.5,
+  tintG: 1,
+  tintB: 0.25,
+});
+const tintResolved = resolveSpriteEntityHierarchy(tintHierarchyStore);
+const tintChild = tintResolved.instances.find(
+  (instance) => instance.id === "tint-child",
+);
+assert.ok(Math.abs(tintChild.alpha - 0.25) < 1e-6);
+assert.ok(Math.abs(tintChild.tintR - 0.4) < 1e-6);
+assert.ok(Math.abs(tintChild.tintG - 0.5) < 1e-6);
+assert.ok(Math.abs(tintChild.tintB - 0.25) < 1e-6);
+
+assert.throws(
+  () =>
+    tintHierarchyStore.add({
+      id: "bad-alpha",
+      page: "heroes",
+      frame: "plain",
+      alpha: -0.01,
+    }),
+  /alpha must be between 0 and 1/,
+);
+
+const tintShader = instancedSpriteWebGL2Shaders();
+assert.equal(tintShader.attributes.aTint.location, 5);
+assert.match(tintShader.vertex, /out vec4 vTint/);
+assert.match(tintShader.fragment, /texture\(uTexture, vUv\) \* vTint/);
 
 console.log("runtime_atlas.mjs smoke test passed");
