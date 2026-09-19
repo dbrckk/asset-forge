@@ -192,6 +192,111 @@ class RuntimeAtlasTests(unittest.TestCase):
         self.assertIn("frame 0: unknown uv field extra", errors)
         self.assertIn("frame 0: unknown rotation field extra", errors)
 
+    def test_build_runtime_atlas_normalizes_animations(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [
+                {"index": 0, "x": 0, "y": 0, "width": 4, "height": 4},
+                {"index": 1, "x": 4, "y": 0, "width": 4, "height": 4},
+            ],
+        }
+        runtime = build_runtime_atlas(
+            source,
+            animations=[
+                {
+                    "name": "run",
+                    "fps": 10,
+                    "loop": True,
+                    "frames": [0, {"index": 1, "duration": 2}],
+                }
+            ],
+        )
+
+        self.assertEqual(
+            runtime["animations"],
+            [
+                {
+                    "name": "run",
+                    "fps": 10.0,
+                    "loop": True,
+                    "frames": [
+                        {"index": 0, "duration": 1.0},
+                        {"index": 1, "duration": 2.0},
+                    ],
+                }
+            ],
+        )
+        self.assertEqual(validate_runtime_atlas(runtime), [])
+
+    def test_build_runtime_atlas_rejects_missing_animation_frame(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [{"index": 0, "x": 0, "y": 0, "width": 4, "height": 4}],
+        }
+        with self.assertRaisesRegex(ValueError, "index 1 not found"):
+            build_runtime_atlas(
+                source,
+                animations=[
+                    {
+                        "name": "run",
+                        "fps": 10,
+                        "loop": True,
+                        "frames": [1],
+                    }
+                ],
+            )
+
+    def test_validator_rejects_animation_frame_reference_drift(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [{"index": 0, "x": 0, "y": 0, "width": 4, "height": 4}],
+        }
+        runtime = build_runtime_atlas(
+            source,
+            animations=[
+                {
+                    "name": "idle",
+                    "fps": 5,
+                    "loop": False,
+                    "frames": [0],
+                }
+            ],
+        )
+        runtime["animations"][0]["frames"][0]["index"] = 3
+        errors = validate_runtime_atlas(runtime)
+        self.assertTrue(any("index 3 not found" in error for error in errors))
+
+    def test_validator_rejects_duplicate_animation_names(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [{"index": 0, "x": 0, "y": 0, "width": 4, "height": 4}],
+        }
+        runtime = build_runtime_atlas(source)
+        runtime["animations"] = [
+            {
+                "name": "idle",
+                "fps": 5.0,
+                "loop": True,
+                "frames": [{"index": 0, "duration": 1.0}],
+            },
+            {
+                "name": "idle",
+                "fps": 5.0,
+                "loop": True,
+                "frames": [{"index": 0, "duration": 1.0}],
+            },
+        ]
+        errors = validate_runtime_atlas(runtime)
+        self.assertIn("duplicate animation name: idle", errors)
+
 
 if __name__ == "__main__":
     unittest.main()
