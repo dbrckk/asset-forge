@@ -297,6 +297,91 @@ class RuntimeAtlasTests(unittest.TestCase):
         errors = validate_runtime_atlas(runtime)
         self.assertIn("duplicate animation name: idle", errors)
 
+    def test_build_runtime_atlas_normalizes_animation_events(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [
+                {"index": 0, "x": 0, "y": 0, "width": 4, "height": 4},
+                {"index": 1, "x": 4, "y": 0, "width": 4, "height": 4},
+            ],
+        }
+        runtime = build_runtime_atlas(
+            source,
+            animations=[
+                {
+                    "name": "attack",
+                    "fps": 10,
+                    "loop": False,
+                    "frames": [0, 1],
+                    "events": [
+                        {"name": "hit", "timeSeconds": 0.15, "payload": {"damage": 5}},
+                        {"name": "windup", "timeSeconds": 0.05},
+                    ],
+                }
+            ],
+        )
+
+        self.assertEqual(
+            runtime["animations"][0]["events"],
+            [
+                {"name": "windup", "timeSeconds": 0.05},
+                {"name": "hit", "timeSeconds": 0.15, "payload": {"damage": 5}},
+            ],
+        )
+        self.assertEqual(validate_runtime_atlas(runtime), [])
+
+    def test_build_runtime_atlas_rejects_event_at_animation_end(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [{"index": 0, "x": 0, "y": 0, "width": 4, "height": 4}],
+        }
+        with self.assertRaisesRegex(ValueError, "timeSeconds must be >= 0 and < animation duration"):
+            build_runtime_atlas(
+                source,
+                animations=[
+                    {
+                        "name": "once",
+                        "fps": 10,
+                        "loop": False,
+                        "frames": [0],
+                        "events": [{"name": "end", "timeSeconds": 0.1}],
+                    }
+                ],
+            )
+
+    def test_validator_rejects_unsorted_animation_events(self):
+        source = {
+            "image": "atlas.png",
+            "imageWidth": 16,
+            "imageHeight": 16,
+            "frames": [
+                {"index": 0, "x": 0, "y": 0, "width": 4, "height": 4},
+                {"index": 1, "x": 4, "y": 0, "width": 4, "height": 4},
+            ],
+        }
+        runtime = build_runtime_atlas(
+            source,
+            animations=[
+                {
+                    "name": "run",
+                    "fps": 10,
+                    "loop": True,
+                    "frames": [0, 1],
+                    "events": [
+                        {"name": "a", "timeSeconds": 0.05},
+                        {"name": "b", "timeSeconds": 0.15},
+                    ],
+                }
+            ],
+        )
+        runtime["animations"][0]["events"].reverse()
+        errors = validate_runtime_atlas(runtime)
+        self.assertTrue(any("events must be sorted" in error for error in errors))
+
 
 if __name__ == "__main__":
     unittest.main()
