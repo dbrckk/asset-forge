@@ -1889,4 +1889,87 @@ assert.throws(
   /sprite entity not found/,
 );
 
+
+
+const animatedRuntimeGlA = createMockWebGL2();
+animatedRuntimeGlA.viewport = (...args) =>
+  animatedRuntimeGlA.calls.push(["viewport", ...args]);
+const animatedRuntimeGlB = createMockWebGL2();
+animatedRuntimeGlB.viewport = (...args) =>
+  animatedRuntimeGlB.calls.push(["viewport", ...args]);
+const animatedRuntimeCanvas = createMockCanvas();
+let animatedRuntimeContextIndex = 0;
+const animatedRuntimeEvents = [];
+
+const animatedRuntime = await createWebGL2CanvasRuntime(
+  animatedRuntimeCanvas,
+  [{ id: "heroes", atlas: entityAnimationAtlas, texture: "heroes.png" }],
+  {
+    getContext() {
+      return animatedRuntimeContextIndex === 0
+        ? animatedRuntimeGlA
+        : animatedRuntimeGlB;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    animationOptions: {
+      onEvent(event) {
+        animatedRuntimeEvents.push([event.entityId, event.name]);
+      },
+    },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+
+animatedRuntime.entities.add({
+  id: "runtime-hero",
+  page: "heroes",
+  frame: 0,
+  x: 5,
+  y: 5,
+});
+const runtimeHeroAnimation = animatedRuntime.animations.bind(
+  "runtime-hero",
+  "run",
+);
+animatedRuntime.updateAnimations(0.16);
+assert.equal(animatedRuntime.entities.get("runtime-hero").frame, 1);
+assert.deepEqual(animatedRuntimeEvents, [
+  ["runtime-hero", "step"],
+  ["runtime-hero", "impact"],
+]);
+assert.equal(animatedRuntime.renderEntities().instances, 1);
+
+animatedRuntimeCanvas.dispatch("webglcontextlost", {
+  preventDefault() {},
+});
+const animationTimeBeforeLostUpdate = runtimeHeroAnimation.timeSeconds;
+animatedRuntime.updateAnimations(0.05);
+assert.ok(runtimeHeroAnimation.timeSeconds > animationTimeBeforeLostUpdate);
+
+animatedRuntimeContextIndex = 1;
+animatedRuntimeCanvas.dispatch("webglcontextrestored");
+await animatedRuntime.waitForRestore();
+assert.equal(animatedRuntime.animations.size, 1);
+assert.equal(
+  animatedRuntime.animations.get("runtime-hero"),
+  runtimeHeroAnimation,
+);
+assert.equal(animatedRuntime.entities.get("runtime-hero").page, "heroes");
+animatedRuntime.updateAnimations(0.10);
+assert.equal(animatedRuntime.renderEntities().instances, 1);
+animatedRuntime.dispose();
+
 console.log("runtime_atlas.mjs smoke test passed");
