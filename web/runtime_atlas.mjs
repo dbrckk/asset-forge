@@ -2214,6 +2214,10 @@ export async function createWebGL2CanvasRuntime(
     pointerOptions.dragBounds === undefined
       ? null
       : pointerOptions.dragBounds;
+  const dragSelection = pointerOptions.dragSelection ?? false;
+  if (typeof dragSelection !== "boolean") {
+    throw new Error("dragSelection must be boolean");
+  }
   const userOnDrag =
     typeof pointerOptions.onDrag === "function"
       ? pointerOptions.onDrag
@@ -2223,6 +2227,7 @@ export async function createWebGL2CanvasRuntime(
     dragAxis: _dragAxis,
     dragGridSize: _dragGridSize,
     dragBounds: _dragBounds,
+    dragSelection: _dragSelection,
     onDrag: _onDrag,
     ...pointerControllerOptions
   } = pointerOptions;
@@ -2241,17 +2246,32 @@ export async function createWebGL2CanvasRuntime(
         event.capturedEntityId != null
       ) {
         const zoom = camera.zoom;
-        event.draggedEntity = moveSpriteEntityByWorldDelta(
-          entityStore,
-          event.capturedEntityId,
-          event.dx / zoom,
-          event.dy / zoom,
-          {
-            axis: dragAxis,
-            gridSize: dragGridSize,
-            bounds: dragBounds ?? worldBounds,
-          },
-        );
+        const moveOptions = {
+          axis: dragAxis,
+          gridSize: dragGridSize,
+          bounds: dragBounds ?? worldBounds,
+        };
+        if (
+          dragSelection &&
+          selection.has(event.capturedEntityId) &&
+          selection.size > 1
+        ) {
+          event.draggedSelection = moveSelectedSpriteEntitiesByWorldDelta(
+            entityStore,
+            selection,
+            event.dx / zoom,
+            event.dy / zoom,
+            moveOptions,
+          );
+        } else {
+          event.draggedEntity = moveSpriteEntityByWorldDelta(
+            entityStore,
+            event.capturedEntityId,
+            event.dx / zoom,
+            event.dy / zoom,
+            moveOptions,
+          );
+        }
       }
       userOnDrag?.(event);
     },
@@ -2544,6 +2564,16 @@ export async function createWebGL2CanvasRuntime(
       return moveSpriteEntityByWorldDelta(
         entityStore,
         entityId,
+        deltaX,
+        deltaY,
+        moveOptions,
+      );
+    },
+    moveSelectionByWorldDelta(deltaX, deltaY, moveOptions = {}) {
+      assertActive();
+      return moveSelectedSpriteEntitiesByWorldDelta(
+        entityStore,
+        selection,
         deltaX,
         deltaY,
         moveOptions,
@@ -4202,6 +4232,94 @@ export function createSpritePointerInteractionController(options = {}) {
   };
 }
 
+
+export function moveSelectedSpriteEntitiesByWorldDelta(
+  entityStore,
+  selectionModel,
+  deltaX,
+  deltaY,
+  options = {},
+) {
+  if (!selectionModel || typeof selectionModel.snapshot !== "function") {
+    throw new Error("sprite selection model required");
+  }
+  if (!Number.isFinite(deltaX) || !Number.isFinite(deltaY)) {
+    throw new Error("selection drag delta must be finite");
+  }
+  const snapshot = selectionModel.snapshot();
+  const ids = snapshot.ids ?? [];
+  if (!Array.isArray(ids)) {
+    throw new Error("selection snapshot ids must be an array");
+  }
+  if (ids.length === 0) {
+    return { ids: [], entities: [], count: 0 };
+  }
+
+  const before = resolveSpriteEntityHierarchy(entityStore, {
+    includeDisabled: true,
+  });
+  const selectedSet = new Set(ids);
+  const roots = ids.filter((id) => {
+    let current = before.byId.get(id);
+    if (!current) {
+      throw new Error(`sprite entity not found: ${id}`);
+    }
+    while (current.parent != null) {
+      if (selectedSet.has(current.parent)) return false;
+      current = before.byId.get(current.parent);
+      if (!current) break;
+    }
+    return true;
+  });
+
+  const primary = snapshot.primaryId != null
+    ? before.byId.get(snapshot.primaryId)
+    : null;
+  if (!primary) {
+    throw new Error("selection primary entity not found");
+  }
+
+  let targetX = primary.x + deltaX;
+  let targetY = primary.y + deltaY;
+  const gridSize = options.gridSize ?? 0;
+  if (!Number.isFinite(gridSize) || gridSize < 0) {
+    throw new Error("gridSize must be a finite value >= 0");
+  }
+  if (gridSize > 0) {
+    targetX = Math.round(targetX / gridSize) * gridSize;
+    targetY = Math.round(targetY / gridSize) * gridSize;
+  }
+
+  const effectiveDeltaX = targetX - primary.x;
+  const effectiveDeltaY = targetY - primary.y;
+  const entities = [];
+
+  entityStore.transact(() => {
+    for (const id of roots) {
+      entities.push(
+        moveSpriteEntityByWorldDelta(
+          entityStore,
+          id,
+          effectiveDeltaX,
+          effectiveDeltaY,
+          {
+            ...options,
+            gridSize: 0,
+          },
+        ),
+      );
+    }
+  });
+
+  return {
+    ids: [...ids],
+    movedRootIds: roots,
+    entities,
+    count: ids.length,
+    deltaX: effectiveDeltaX,
+    deltaY: effectiveDeltaY,
+  };
+}
 
 export function createSpriteSelectionModel(options = {}) {
   const selected = new Set();
