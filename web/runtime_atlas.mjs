@@ -1661,3 +1661,181 @@ export async function createWebGL2RuntimeAtlasScene(
     },
   };
 }
+
+
+export function spriteInstanceBounds(atlasPages, instance) {
+  if (!atlasPages || typeof atlasPages.page !== "function") {
+    throw new Error("runtime atlas page catalogue required");
+  }
+  if (!instance || typeof instance !== "object") {
+    throw new Error("sprite instance must be an object");
+  }
+  const page = atlasPages.page(instance.page);
+  const frame = page.atlas.frame(instance.frame);
+  const x = instance.x ?? 0;
+  const y = instance.y ?? 0;
+  const scaleX = instance.scaleX ?? instance.scale ?? 1;
+  const scaleY = instance.scaleY ?? instance.scale ?? 1;
+
+  for (const [name, value] of Object.entries({ x, y, scaleX, scaleY })) {
+    if (!Number.isFinite(value)) {
+      throw new Error(`sprite instance ${name} must be finite`);
+    }
+  }
+  if (scaleX <= 0 || scaleY <= 0) {
+    throw new Error("sprite instance scale must be > 0");
+  }
+
+  return {
+    x,
+    y,
+    width: frame.sourceSize.width * scaleX,
+    height: frame.sourceSize.height * scaleY,
+    visibleX: x + frame.trimOffset.x * scaleX,
+    visibleY: y + frame.trimOffset.y * scaleY,
+    visibleWidth: frame.sourceRegion.width * scaleX,
+    visibleHeight: frame.sourceRegion.height * scaleY,
+  };
+}
+
+export function cullSpriteInstances(
+  atlasPages,
+  instances,
+  viewport,
+  options = {},
+) {
+  if (!Array.isArray(instances)) {
+    throw new Error("sprite instances must be an array");
+  }
+  if (!viewport || typeof viewport !== "object") {
+    throw new Error("viewport must be an object");
+  }
+
+  const x = viewport.x ?? 0;
+  const y = viewport.y ?? 0;
+  const width = viewport.width;
+  const height = viewport.height;
+  const padding = options.padding ?? 0;
+  const useVisibleBounds = options.useVisibleBounds ?? true;
+
+  for (const [name, value] of Object.entries({ x, y, width, height, padding })) {
+    if (!Number.isFinite(value)) {
+      throw new Error(`viewport ${name} must be finite`);
+    }
+  }
+  if (width < 0 || height < 0) {
+    throw new Error("viewport width/height must be >= 0");
+  }
+  if (padding < 0) {
+    throw new Error("viewport padding must be >= 0");
+  }
+  if (typeof useVisibleBounds !== "boolean") {
+    throw new Error("useVisibleBounds must be boolean");
+  }
+
+  const left = x - padding;
+  const top = y - padding;
+  const right = x + width + padding;
+  const bottom = y + height + padding;
+
+  const visible = [];
+  const culledIndices = [];
+
+  for (let index = 0; index < instances.length; index += 1) {
+    const instance = instances[index];
+    const bounds = spriteInstanceBounds(atlasPages, instance);
+    const bx = useVisibleBounds ? bounds.visibleX : bounds.x;
+    const by = useVisibleBounds ? bounds.visibleY : bounds.y;
+    const bw = useVisibleBounds ? bounds.visibleWidth : bounds.width;
+    const bh = useVisibleBounds ? bounds.visibleHeight : bounds.height;
+    const intersects =
+      bx + bw > left &&
+      by + bh > top &&
+      bx < right &&
+      by < bottom;
+
+    if (intersects) {
+      visible.push(instance);
+    } else {
+      culledIndices.push(index);
+    }
+  }
+
+  return {
+    instances: visible,
+    inputCount: instances.length,
+    visibleCount: visible.length,
+    culledCount: culledIndices.length,
+    culledIndices,
+    viewport: { x, y, width, height, padding, useVisibleBounds },
+  };
+}
+
+export function stableSortSpriteInstances(instances, options = {}) {
+  if (!Array.isArray(instances)) {
+    throw new Error("sprite instances must be an array");
+  }
+
+  const key = options.key ?? "z";
+  const direction = options.direction ?? "ascending";
+  if (typeof key !== "string" || key.length === 0) {
+    throw new Error("sort key must be a non-empty string");
+  }
+  if (direction !== "ascending" && direction !== "descending") {
+    throw new Error("sort direction must be ascending or descending");
+  }
+
+  const multiplier = direction === "ascending" ? 1 : -1;
+  const decorated = instances.map((instance, index) => {
+    const value = instance?.[key] ?? 0;
+    if (!Number.isFinite(value)) {
+      throw new Error(`sprite sort value ${key} must be finite`);
+    }
+    return { instance, index, value };
+  });
+
+  decorated.sort((a, b) => {
+    const delta = (a.value - b.value) * multiplier;
+    return delta || a.index - b.index;
+  });
+
+  return decorated.map((entry) => entry.instance);
+}
+
+export function prepareSpriteSceneInstances(
+  atlasPages,
+  instances,
+  options = {},
+) {
+  if (!Array.isArray(instances)) {
+    throw new Error("sprite instances must be an array");
+  }
+
+  let prepared = instances;
+  let culling = null;
+
+  if (options.viewport) {
+    culling = cullSpriteInstances(
+      atlasPages,
+      prepared,
+      options.viewport,
+      options.culling,
+    );
+    prepared = culling.instances;
+  }
+
+  if (options.sort !== false) {
+    prepared = stableSortSpriteInstances(prepared, {
+      key: options.sortKey ?? "z",
+      direction: options.sortDirection ?? "ascending",
+    });
+  }
+
+  return {
+    instances: prepared,
+    inputCount: instances.length,
+    outputCount: prepared.length,
+    culledCount: culling?.culledCount ?? 0,
+    culling,
+  };
+}
