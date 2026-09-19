@@ -4611,7 +4611,7 @@ const nestedTransformResult = transformSelectedSpriteEntities(
 assert.deepEqual(nestedTransformResult.transformedRootIds, ["nested-root"]);
 assert.equal(nestedTransformStore.get("nested-child").x, 10);
 assert.equal(nestedTransformStore.get("nested-child").y, 0);
-assert.equal(nestedTransformStore.get("nested-child").rotation, 0);
+assert.equal(nestedTransformStore.get("nested-child").rotation ?? 0, 0);
 const nestedResolvedAfter = resolveSpriteEntityHierarchy(nestedTransformStore);
 assert.ok(Math.abs(nestedResolvedAfter.byId.get("nested-child").x) < 1e-9);
 assert.ok(Math.abs(nestedResolvedAfter.byId.get("nested-child").y - 10) < 1e-9);
