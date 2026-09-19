@@ -96,22 +96,22 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T16:03:29Z
+Generated: 2026-09-19T16:06:54Z
 
 ### Git
 - Branch: `main`
-- Head: `a510b9219870`
-- Commit date: 2026-09-19T18:03:14+02:00
-- Commit: test: align sprite bounds with rotation metadata
+- Head: `01ac8bd8ae1f`
+- Commit date: 2026-09-19T18:06:38+02:00
+- Commit: test: update compact instance stride expectation
 - Tracked files: 209
 
 ### Recently changed files
 - `tests/runtime_atlas_web.test.mjs`
+- `README.md`
+- `web/runtime_atlas.mjs`
 - `raster_pack.py`
 - `tests/test_asset_forge.py`
 - `tests/test_raster_pack.py`
-- `README.md`
-- `web/runtime_atlas.mjs`
 
 ### Project signals
 - No common build descriptor detected

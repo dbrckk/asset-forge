@@ -2541,7 +2541,7 @@ export function buildInstancedSpriteBatch(indexedAtlas, instances, options =
 // visibleX, visibleY, visibleWidth, visibleHeight,
 // u0, v0, u1, v1,
 // atlasRotationFlag, sourceWidth, sourceHeight, spriteRotationRadians,
-// pivotWorldX, pivotWorldY, reserved0, reserved1,
+// pivotWorldX, pivotWorldY,
 // tintR, tintG, tintB, alpha
 ⋮----
 export function instancedSpriteUV(
@@ -5927,7 +5927,7 @@ Parent-child hierarchy resolution now rotates a child's local offset by the pare
 childWorldRotation = parentWorldRotation + childLocalRotation
 ```
 
-The instanced WebGL buffer contract has expanded from 12 to 16 floats per sprite:
+The rotation-aware instanced WebGL buffer contract uses 14 floats per sprite before tint data:
 
 ```text
 visibleX
@@ -5944,13 +5944,11 @@ sourceHeight
 spriteRotationRadians
 pivotWorldX
 pivotWorldY
-reserved0
-reserved1
 ```
 
-This is a 64-byte instance record. The WebGL2 shader rotates each visible sprite quad around the world-space pivot while retaining the independent atlas-packing 90-degree UV rotation logic.
+This rotation/pivot portion is 56 bytes before tint data. The WebGL2 shader rotates each visible sprite quad around the world-space pivot while retaining the independent atlas-packing 90-degree UV rotation logic.
 
-`instancedSpriteAttributeViews()` now exposes a fourth instanced attribute at location 4 (`aPivotAndReserved`). Existing location 0-3 meanings are preserved.
+`instancedSpriteAttributeViews()` exposes the pivot at location 4 (`aPivotAndReserved`) as two floats. Existing location 0-3 meanings and the attribute name are preserved for compatibility.
 
 The classic CPU-generated quad batch also applies sprite rotation around the same pivot. `spriteInstanceBounds()` returns rotation-aware axis-aligned bounding boxes, so viewport culling remains correct for rotated sprites.
 
@@ -5977,7 +5975,7 @@ runtime.entities.add({
 
 Color and alpha inherit multiplicatively through the parent-child hierarchy. A child with `alpha: 0.5` under a parent with `alpha: 0.5` resolves to world alpha `0.25`.
 
-The instanced record is now 20 floats / 80 bytes:
+The complete instanced record is now 18 floats / 72 bytes:
 
 ```text
 visibleX
@@ -5994,8 +5992,6 @@ sourceHeight
 spriteRotationRadians
 pivotWorldX
 pivotWorldY
-reserved0
-reserved1
 tintR
 tintG
 tintB
