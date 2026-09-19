@@ -735,3 +735,37 @@ with indices `0,1,2,0,2,3`.
 `instancedSpriteWebGL2Shaders()` returns reference WebGL2 GLSL ES 3.00 vertex/fragment shader sources plus the expected attribute/uniform contract. The vertex shader handles source-space positioning and packed 90° rotation in UV space; `instancedSpriteAttributeViews()` returns byte offsets/divisors for the instance buffer.
 
 This lets host projects create one static unit-quad VBO, one dynamic instance VBO, and render many sprites with `drawElementsInstanced` while keeping Asset Forge's trim/rotation semantics.
+
+
+### Multi-atlas texture-page batching
+
+The web runtime can now manage multiple runtime atlases as texture pages:
+
+```js
+const pages = createRuntimeAtlasPages([
+  { id: "heroes", atlas: heroAtlas, texture: heroTexture },
+  { id: "enemies", atlas: enemyAtlas, texture: enemyTexture },
+]);
+
+const grouped = buildTexturePageBatches(
+  pages,
+  [
+    { page: "heroes", frame: "idle_0", x: 20, y: 40 },
+    { page: "enemies", frame: "slime_0", x: 80, y: 40 },
+    { page: "heroes", frame: "idle_1", x: 140, y: 40 },
+  ],
+  { mode: "instanced" },
+);
+```
+
+By default, instances are grouped globally by texture page to minimize texture binding changes. Each output batch retains `inputIndices` so the host can relate optimized draw order back to logical instance order. Metrics include `inputTextureSwitches`, `outputTextureSwitches`, and `textureSwitchesSaved`.
+
+When visual layering or blending requires strict submission order, use:
+
+```js
+{ preserveOrder: true }
+```
+
+In that mode, the runtime emits one batch per contiguous texture-page run instead of merging separated runs. For an input page sequence `A, B, A`, strict-order output remains `A | B | A`; optimized output may become `A,A | B`.
+
+Both `classic` and `instanced` page-batch modes are supported. Page IDs must be unique, and a page may provide either raw runtime-atlas JSON or an already indexed atlas.
