@@ -5,6 +5,7 @@ import {
   frameQuad,
   indexRuntimeAtlas,
   sourceOrientedUVs,
+  animationFrameAtTime,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -107,3 +108,50 @@ assert.deepEqual(plainCalls, [
 ]);
 
 console.log("runtime_atlas.mjs smoke test passed");
+
+
+const animatedAtlas = {
+  ...plainAtlas,
+  frameCount: 2,
+  frames: [
+    plainAtlas.frames[0],
+    {
+      ...plainAtlas.frames[0],
+      index: 1,
+      name: "plain_2",
+      atlasRegion: { x: 5, y: 2, width: 4, height: 5 },
+      uv: { u0: 5 / 16, v0: 2 / 16, u1: 9 / 16, v1: 7 / 16 },
+    },
+  ],
+  animations: [
+    {
+      name: "run",
+      fps: 10,
+      loop: true,
+      frames: [
+        { index: 0, duration: 1 },
+        { index: 1, duration: 2 },
+      ],
+    },
+    {
+      name: "once",
+      fps: 2,
+      loop: false,
+      frames: [
+        { index: 0, duration: 1 },
+        { index: 1, duration: 1 },
+      ],
+    },
+  ],
+};
+
+const animated = indexRuntimeAtlas(animatedAtlas);
+assert.equal(animated.animation("run").fps, 10);
+assert.equal(animationFrameAtTime(animated, "run", 0.05).frame.index, 0);
+assert.equal(animationFrameAtTime(animated, "run", 0.15).frame.index, 1);
+assert.equal(animationFrameAtTime(animated, "run", 0.35).frame.index, 0);
+
+const onceFinished = animationFrameAtTime(animated, "once", 5);
+assert.equal(onceFinished.frame.index, 1);
+assert.equal(onceFinished.finished, true);
+assert.equal(onceFinished.durationSeconds, 1);
