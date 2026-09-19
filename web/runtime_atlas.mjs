@@ -2126,6 +2126,12 @@ export async function createWebGL2CanvasRuntime(
     throw new Error("visibilityMask must be an unsigned 32-bit integer");
   }
   visibilityMask >>>= 0;
+  let camera = {
+    x: options.camera?.x ?? 0,
+    y: options.camera?.y ?? 0,
+    zoom: options.camera?.zoom ?? 1,
+  };
+  applyCameraToSpriteInstances([], camera);
   let contextLost = false;
   let disposed = false;
   let restorePromise = null;
@@ -2205,6 +2211,20 @@ export async function createWebGL2CanvasRuntime(
       visibilityMask = nextMask >>> 0;
       return visibilityMask;
     },
+    get camera() {
+      return { ...camera };
+    },
+    setCamera(nextCamera = {}) {
+      assertActive();
+      const candidate = {
+        x: nextCamera.x ?? camera.x,
+        y: nextCamera.y ?? camera.y,
+        zoom: nextCamera.zoom ?? camera.zoom,
+      };
+      applyCameraToSpriteInstances([], candidate);
+      camera = candidate;
+      return { ...camera };
+    },
     get gl() {
       return gl;
     },
@@ -2239,6 +2259,7 @@ export async function createWebGL2CanvasRuntime(
       }
       const prepared = buildSpriteEntityInstances(entityStore, {
         visibilityMask,
+        camera,
         ...batchOptions,
       });
       return scene.buildBatches(
@@ -2271,6 +2292,7 @@ export async function createWebGL2CanvasRuntime(
       const size = resize();
       const prepared = buildSpriteEntityInstances(entityStore, {
         visibilityMask,
+        camera,
         ...batchOptions,
       });
       return scene.render(
@@ -2361,6 +2383,8 @@ export function createSpriteEntityStore(options = {}) {
       "tintR",
       "tintG",
       "tintB",
+      "parallaxX",
+      "parallaxY",
     ]) {
       if (entity[field] != null && !Number.isFinite(entity[field])) {
         throw new Error(`${label}.${field} must be finite`);
@@ -2384,6 +2408,12 @@ export function createSpriteEntityStore(options = {}) {
         entity.layerMask > 0xffffffff)
     ) {
       throw new Error(`${label}.layerMask must be an unsigned 32-bit integer`);
+    }
+    for (const field of ["parallaxX", "parallaxY"]) {
+      const value = entity[field];
+      if (value != null && value < 0) {
+        throw new Error(`${label}.${field} must be >= 0`);
+      }
     }
   }
 
@@ -3004,6 +3034,62 @@ export function resolveSpriteEntityHierarchy(entityStore, options = {}) {
   };
 }
 
+export function applyCameraToSpriteInstances(
+  instances,
+  camera = {},
+) {
+  if (!Array.isArray(instances)) {
+    throw new Error("sprite instances must be an array");
+  }
+  if (!camera || typeof camera !== "object") {
+    throw new Error("camera must be an object");
+  }
+
+  const x = camera.x ?? 0;
+  const y = camera.y ?? 0;
+  const zoom = camera.zoom ?? 1;
+  for (const [name, value] of Object.entries({ x, y, zoom })) {
+    if (!Number.isFinite(value)) {
+      throw new Error(`camera ${name} must be finite`);
+    }
+  }
+  if (!(zoom > 0)) {
+    throw new Error("camera zoom must be > 0");
+  }
+
+  const transformed = instances.map((instance, index) => {
+    if (!instance || typeof instance !== "object") {
+      throw new Error(`sprite instance ${index} must be an object`);
+    }
+    const parallaxX = instance.parallaxX ?? 1;
+    const parallaxY = instance.parallaxY ?? 1;
+    if (!Number.isFinite(parallaxX) || parallaxX < 0) {
+      throw new Error(`sprite instance ${index} parallaxX must be finite and >= 0`);
+    }
+    if (!Number.isFinite(parallaxY) || parallaxY < 0) {
+      throw new Error(`sprite instance ${index} parallaxY must be finite and >= 0`);
+    }
+
+    const scaleX = (instance.scaleX ?? instance.scale ?? 1) * zoom;
+    const scaleY = (instance.scaleY ?? instance.scale ?? 1) * zoom;
+    return {
+      ...instance,
+      x: ((instance.x ?? 0) - x * parallaxX) * zoom,
+      y: ((instance.y ?? 0) - y * parallaxY) * zoom,
+      scaleX,
+      scaleY,
+      parallaxX,
+      parallaxY,
+    };
+  });
+
+  return {
+    instances: transformed,
+    count: transformed.length,
+    camera: { x, y, zoom },
+  };
+}
+
 export function filterSpriteInstancesByLayer(
   instances,
   visibilityMask = 0xffffffff,
@@ -3061,6 +3147,7 @@ function _splitEntityHierarchyOptions(batchOptions = {}) {
     hierarchy = true,
     hierarchyOptions,
     visibilityMask = 0xffffffff,
+    camera = null,
     ...sceneBatchOptions
   } = batchOptions;
   if (typeof hierarchy !== "boolean") {
@@ -3077,6 +3164,7 @@ function _splitEntityHierarchyOptions(batchOptions = {}) {
     hierarchy,
     hierarchyOptions,
     visibilityMask: visibilityMask >>> 0,
+    camera,
     sceneBatchOptions,
   };
 }
@@ -3086,6 +3174,7 @@ export function buildSpriteEntityInstances(entityStore, batchOptions = {}) {
     hierarchy,
     hierarchyOptions,
     visibilityMask,
+    camera,
     sceneBatchOptions,
   } = _splitEntityHierarchyOptions(batchOptions);
   const sourceInstances = hierarchy
@@ -3095,9 +3184,17 @@ export function buildSpriteEntityInstances(entityStore, batchOptions = {}) {
     sourceInstances,
     visibilityMask,
   );
+  const cameraTransform = camera == null
+    ? {
+        instances: layerFiltering.instances,
+        count: layerFiltering.instances.length,
+        camera: null,
+      }
+    : applyCameraToSpriteInstances(layerFiltering.instances, camera);
   return {
-    instances: layerFiltering.instances,
+    instances: cameraTransform.instances,
     layerFiltering,
+    cameraTransform,
     sceneBatchOptions,
   };
 }
