@@ -1227,6 +1227,8 @@ layerRuntimeGl.viewport = (...args)
 cameraRuntimeGl.viewport = (...args)
 ⋮----
 followRuntimeGl.viewport = (...args)
+⋮----
+boundedRuntimeGl.viewport = (...args)
 ````
 
 ## File: tests/test_animation_infer.py
@@ -2631,6 +2633,8 @@ export async function createWebGL2CanvasRuntime(
 ⋮----
 function resize(resizeOptions =
 ⋮----
+function clampRuntimeCamera(nextCamera)
+⋮----
 async function rebuildAfterContextRestore()
 ⋮----
 function handleContextLost(event)
@@ -2640,9 +2644,12 @@ function handleContextRestored()
 get visibilityMask()
 setVisibilityMask(nextMask)
 get camera()
+get worldBounds()
 ⋮----
+setWorldBounds(nextBounds)
 setCamera(nextCamera =
 updateCameraFollow(targetX, targetY, deltaSeconds)
+updateCameraFollowEntity(entityId, deltaSeconds, followOptions =
 shakeCamera(amplitude, durationSeconds, frequency)
 clearCameraShake()
 get gl()
@@ -2742,6 +2749,15 @@ export function filterSpriteInstancesByLayer(
 function _splitEntityHierarchyOptions(batchOptions =
 ⋮----
 export function buildSpriteEntityInstances(entityStore, batchOptions =
+⋮----
+export function clampCameraToWorldBounds(
+  camera,
+  worldBounds,
+  viewportWidth,
+  viewportHeight,
+)
+⋮----
+function clampAxis(value, min, size, visibleSize)
 ⋮----
 export function createCamera2DController(initialCamera =
 ⋮----
@@ -5947,6 +5963,73 @@ runtime.renderEntities({
 ```
 
 Camera follow/shake modifies the runtime camera used by the existing parallax, culling, batching, and render pipeline.
+
+
+### Camera world bounds and direct entity follow
+
+The 2D camera can now be constrained to finite world bounds.
+
+```js
+const runtime = await createWebGL2CanvasRuntime(
+  canvas,
+  pageDefinitions,
+  {
+    worldBounds: {
+      x: 0,
+      y: 0,
+      width: 4096,
+      height: 2048,
+    },
+  },
+);
+```
+
+Low-level helper:
+
+```js
+clampCameraToWorldBounds(
+  camera,
+  worldBounds,
+  viewportWidth,
+  viewportHeight,
+)
+```
+
+Clamping is zoom-aware. Visible world size is computed as:
+
+```text
+visibleWorldWidth = viewportWidth / zoom
+visibleWorldHeight = viewportHeight / zoom
+```
+
+If the world is smaller than the visible viewport on an axis, the camera is centered on that world axis instead of exposing asymmetric empty space.
+
+The canvas runtime exposes:
+
+```js
+runtime.worldBounds
+runtime.setWorldBounds(bounds)
+runtime.setWorldBounds(null)
+```
+
+Camera changes from `setCamera()`, target follow, and screen shake are clamped against the current world bounds.
+
+Direct entity follow is also available:
+
+```js
+runtime.updateCameraFollowEntity(
+  "player",
+  deltaSeconds,
+  {
+    offsetX: 16,
+    offsetY: 24,
+  },
+);
+```
+
+The entity target is resolved after parent-child hierarchy transforms, so following a child tracks its world-space position rather than its local coordinates. Offsets are useful for following an entity center or a custom focus point.
+
+When world bounds are cleared, camera coordinates become unrestricted again.
 ````
 
 ## File: runtime_atlas.py
