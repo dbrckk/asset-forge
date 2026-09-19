@@ -1,16 +1,16 @@
 # Change impact
 
-Base: e3b1359132157c7a1ad10ae7bac8cf0b843ca823
-Head: 11fa763ca07100aa85ce9b116f6d6a05c5e9e4cc
+Base: 31d33baa0d8e1418070c1be8897fbeae8b27928a
+Head: 8eea6b3aa512362f1875dab6aaab26e1b10d10b1
 
 ## Changed files
-- M tests/runtime_atlas_web.test.mjs
+- M web/runtime_atlas.mjs
 
 ## Affected areas
-- tests
+- web
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_runtime_atlas.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

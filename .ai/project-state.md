@@ -96,22 +96,18 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T16:07:31Z
+Generated: 2026-09-19T16:09:12Z
 
 ### Git
 - Branch: `main`
-- Head: `11fa763ca071`
-- Commit date: 2026-09-19T18:07:20+02:00
-- Commit: test: account for Float32 instance precision
+- Head: `8eea6b3aa512`
+- Commit date: 2026-09-19T18:08:55+02:00
+- Commit: fix: count only active pointer presses
 - Tracked files: 209
 
 ### Recently changed files
-- `tests/runtime_atlas_web.test.mjs`
-- `README.md`
 - `web/runtime_atlas.mjs`
-- `raster_pack.py`
-- `tests/test_asset_forge.py`
-- `tests/test_raster_pack.py`
+- `tests/runtime_atlas_web.test.mjs`
 
 ### Project signals
 - No common build descriptor detected
