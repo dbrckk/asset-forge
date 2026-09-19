@@ -2117,6 +2117,15 @@ export async function createWebGL2CanvasRuntime(
       entityStore,
       options.animationOptions,
     );
+  let visibilityMask = options.visibilityMask ?? 0xffffffff;
+  if (
+    !Number.isInteger(visibilityMask) ||
+    visibilityMask < 0 ||
+    visibilityMask > 0xffffffff
+  ) {
+    throw new Error("visibilityMask must be an unsigned 32-bit integer");
+  }
+  visibilityMask >>>= 0;
   let contextLost = false;
   let disposed = false;
   let restorePromise = null;
@@ -2181,6 +2190,21 @@ export async function createWebGL2CanvasRuntime(
   return {
     entities: entityStore,
     animations: animationSystem,
+    get visibilityMask() {
+      return visibilityMask;
+    },
+    setVisibilityMask(nextMask) {
+      assertActive();
+      if (
+        !Number.isInteger(nextMask) ||
+        nextMask < 0 ||
+        nextMask > 0xffffffff
+      ) {
+        throw new Error("visibilityMask must be an unsigned 32-bit integer");
+      }
+      visibilityMask = nextMask >>> 0;
+      return visibilityMask;
+    },
     get gl() {
       return gl;
     },
@@ -2213,7 +2237,10 @@ export async function createWebGL2CanvasRuntime(
       if (contextLost) {
         throw new Error("WebGL2 context is lost");
       }
-      const prepared = buildSpriteEntityInstances(entityStore, batchOptions);
+      const prepared = buildSpriteEntityInstances(entityStore, {
+        visibilityMask,
+        ...batchOptions,
+      });
       return scene.buildBatches(
         prepared.instances,
         prepared.sceneBatchOptions,
@@ -2242,7 +2269,10 @@ export async function createWebGL2CanvasRuntime(
         throw new Error("WebGL2 context is lost");
       }
       const size = resize();
-      const prepared = buildSpriteEntityInstances(entityStore, batchOptions);
+      const prepared = buildSpriteEntityInstances(entityStore, {
+        visibilityMask,
+        ...batchOptions,
+      });
       return scene.render(
         prepared.instances,
         size.width,
@@ -2346,6 +2376,14 @@ export function createSpriteEntityStore(options = {}) {
       if (value != null && (value < 0 || value > 1)) {
         throw new Error(`${label}.${field} must be between 0 and 1`);
       }
+    }
+    if (
+      entity.layerMask != null &&
+      (!Number.isInteger(entity.layerMask) ||
+        entity.layerMask < 0 ||
+        entity.layerMask > 0xffffffff)
+    ) {
+      throw new Error(`${label}.layerMask must be an unsigned 32-bit integer`);
     }
   }
 
@@ -2966,29 +3004,100 @@ export function resolveSpriteEntityHierarchy(entityStore, options = {}) {
   };
 }
 
+export function filterSpriteInstancesByLayer(
+  instances,
+  visibilityMask = 0xffffffff,
+) {
+  if (!Array.isArray(instances)) {
+    throw new Error("sprite instances must be an array");
+  }
+  if (
+    !Number.isInteger(visibilityMask) ||
+    visibilityMask < 0 ||
+    visibilityMask > 0xffffffff
+  ) {
+    throw new Error("visibilityMask must be an unsigned 32-bit integer");
+  }
+
+  const mask = visibilityMask >>> 0;
+  const visible = [];
+  const filteredIndices = [];
+
+  for (let index = 0; index < instances.length; index += 1) {
+    const instance = instances[index];
+    if (!instance || typeof instance !== "object") {
+      throw new Error(`sprite instance ${index} must be an object`);
+    }
+    const layerMask = instance.layerMask ?? 1;
+    if (
+      !Number.isInteger(layerMask) ||
+      layerMask < 0 ||
+      layerMask > 0xffffffff
+    ) {
+      throw new Error(
+        `sprite instance ${index} layerMask must be an unsigned 32-bit integer`,
+      );
+    }
+
+    if (((layerMask >>> 0) & mask) !== 0) {
+      visible.push(instance);
+    } else {
+      filteredIndices.push(index);
+    }
+  }
+
+  return {
+    instances: visible,
+    inputCount: instances.length,
+    visibleCount: visible.length,
+    filteredCount: filteredIndices.length,
+    filteredIndices,
+    visibilityMask: mask,
+  };
+}
+
 function _splitEntityHierarchyOptions(batchOptions = {}) {
   const {
     hierarchy = true,
     hierarchyOptions,
+    visibilityMask = 0xffffffff,
     ...sceneBatchOptions
   } = batchOptions;
   if (typeof hierarchy !== "boolean") {
     throw new Error("hierarchy must be boolean");
   }
+  if (
+    !Number.isInteger(visibilityMask) ||
+    visibilityMask < 0 ||
+    visibilityMask > 0xffffffff
+  ) {
+    throw new Error("visibilityMask must be an unsigned 32-bit integer");
+  }
   return {
     hierarchy,
     hierarchyOptions,
+    visibilityMask: visibilityMask >>> 0,
     sceneBatchOptions,
   };
 }
 
 export function buildSpriteEntityInstances(entityStore, batchOptions = {}) {
-  const { hierarchy, hierarchyOptions, sceneBatchOptions } =
-    _splitEntityHierarchyOptions(batchOptions);
+  const {
+    hierarchy,
+    hierarchyOptions,
+    visibilityMask,
+    sceneBatchOptions,
+  } = _splitEntityHierarchyOptions(batchOptions);
+  const sourceInstances = hierarchy
+    ? resolveSpriteEntityHierarchy(entityStore, hierarchyOptions).instances
+    : entityStore.instances();
+  const layerFiltering = filterSpriteInstancesByLayer(
+    sourceInstances,
+    visibilityMask,
+  );
   return {
-    instances: hierarchy
-      ? resolveSpriteEntityHierarchy(entityStore, hierarchyOptions).instances
-      : entityStore.instances(),
+    instances: layerFiltering.instances,
+    layerFiltering,
     sceneBatchOptions,
   };
 }
