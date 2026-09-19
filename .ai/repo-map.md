@@ -1256,6 +1256,8 @@ constrainedDragGl.viewport = (...args)
 onChange(event)
 ⋮----
 selectionRuntimeGl.viewport = (...args)
+⋮----
+groupDragGl.viewport = (...args)
 ````
 
 ## File: tests/test_animation_infer.py
@@ -2703,6 +2705,7 @@ selectEntity(entityId, selectOptions =
 clearSelection()
 selectEntitiesInRect(rect, selectOptions =
 moveEntityByWorldDelta(entityId, deltaX, deltaY, moveOptions =
+moveSelectionByWorldDelta(deltaX, deltaY, moveOptions =
 pointerMove(pointerId, x, y, pickOptions =
 pointerDown(pointerId, x, y, pickOptions =
 pointerUp(pointerId, x, y, pickOptions =
@@ -2869,6 +2872,14 @@ function cancel(pointerId)
 get hoverEntityId()
 get activePointerCount()
 pointerState(pointerId)
+⋮----
+export function moveSelectedSpriteEntitiesByWorldDelta(
+  entityStore,
+  selectionModel,
+  deltaX,
+  deltaY,
+  options = {},
+)
 ⋮----
 export function createSpriteSelectionModel(options =
 ⋮----
@@ -6481,6 +6492,32 @@ runtime.selectEntitiesInRect(rect, {
   additive: true,
 });
 ```
+
+
+### Multi-selection dragging
+
+Selected entities can now move as one world-space group:
+
+```js
+runtime.moveSelectionByWorldDelta(dx, dy, {
+  axis: "both",
+  gridSize: 16,
+  bounds: runtime.worldBounds,
+});
+```
+
+`moveSelectedSpriteEntitiesByWorldDelta()` uses the selection primary entity as the snap anchor. If both a parent and its descendant are selected, only the highest selected ancestor is directly moved, preventing double movement while preserving every selected entity's visual offset.
+
+Pointer group dragging is opt-in:
+
+```js
+pointerOptions: {
+  autoDragEntities: true,
+  dragSelection: true,
+}
+```
+
+When the captured entity belongs to a multi-selection, the complete selection moves together. Otherwise the existing single-entity drag behavior is preserved.
 ````
 
 ## File: runtime_atlas.py
