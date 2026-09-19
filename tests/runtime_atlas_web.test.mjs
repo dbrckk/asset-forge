@@ -8,6 +8,8 @@ import {
   animationFrameAtTime,
   createAnimationPlayer,
   drawAnimationPlayerCanvas2D,
+  animationEventsBetween,
+  animationDurationSeconds,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -233,3 +235,94 @@ assert.equal(drawn.frame.index, 1);
 assert.deepEqual(drawn.bounds, { x: 3, y: 4, width: 12, height: 14 });
 assert.equal(animationDrawCalls[0][0], "save");
 assert.equal(animationDrawCalls.at(-1)[0], "restore");
+
+
+const eventAtlas = {
+  ...animatedAtlas,
+  animations: [
+    {
+      name: "event-loop",
+      fps: 10,
+      loop: true,
+      frames: [
+        { index: 0, duration: 1 },
+        { index: 1, duration: 1 },
+      ],
+      events: [
+        { name: "start", timeSeconds: 0, payload: { phase: "begin" } },
+        { name: "footstep", timeSeconds: 0.05 },
+        { name: "impact", timeSeconds: 0.15, payload: { damage: 7 } },
+      ],
+    },
+    {
+      name: "event-once",
+      fps: 10,
+      loop: false,
+      frames: [
+        { index: 0, duration: 1 },
+        { index: 1, duration: 1 },
+      ],
+      events: [
+        { name: "fire", timeSeconds: 0.1 },
+      ],
+    },
+  ],
+};
+
+const eventIndexed = indexRuntimeAtlas(eventAtlas);
+assert.equal(animationDurationSeconds(eventIndexed.animation("event-loop")), 0.2);
+assert.deepEqual(
+  animationEventsBetween(eventIndexed.animation("event-loop"), 0, 0.46).map(
+    (entry) => [entry.name, Number(entry.absoluteTimeSeconds.toFixed(2)), entry.loopCount],
+  ),
+  [
+    ["start", 0, 0],
+    ["footstep", 0.05, 0],
+    ["impact", 0.15, 0],
+    ["start", 0.2, 1],
+    ["footstep", 0.25, 1],
+    ["impact", 0.35, 1],
+    ["start", 0.4, 2],
+    ["footstep", 0.45, 2],
+  ],
+);
+
+const markerEvents = [];
+const markerPlayer = createAnimationPlayer(eventIndexed, "event-loop", {
+  autoplay: true,
+  onEvent(event) {
+    markerEvents.push([
+      event.name,
+      Number(event.absoluteTimeSeconds.toFixed(2)),
+      event.loopCount,
+      event.payload,
+    ]);
+  },
+});
+markerPlayer.update(0.46);
+assert.deepEqual(markerEvents, [
+  ["start", 0, 0, { phase: "begin" }],
+  ["footstep", 0.05, 0, null],
+  ["impact", 0.15, 0, { damage: 7 }],
+  ["start", 0.2, 1, { phase: "begin" }],
+  ["footstep", 0.25, 1, null],
+  ["impact", 0.35, 1, { damage: 7 }],
+  ["start", 0.4, 2, { phase: "begin" }],
+  ["footstep", 0.45, 2, null],
+]);
+
+const onceMarkerEvents = [];
+const onceMarkerPlayer = createAnimationPlayer(eventIndexed, "event-once", {
+  autoplay: true,
+  onEvent(event) {
+    onceMarkerEvents.push(event.name);
+  },
+});
+onceMarkerPlayer.update(5);
+onceMarkerPlayer.update(1);
+assert.deepEqual(onceMarkerEvents, ["fire"]);
+
+assert.throws(
+  () => animationEventsBetween(eventIndexed.animation("event-loop"), 1, 0),
+  /invalid animation event interval/,
+);
