@@ -597,3 +597,33 @@ drawFrameCanvas2D(ctx, image, sample.frame, x, y);
 ```
 
 Looping animations wrap by total duration. Non-looping animations clamp to the final frame and return `finished: true`. Per-frame duration multipliers are interpreted in units of `1 / fps`.
+
+
+### Runtime animation player controller
+
+The web runtime now provides `createAnimationPlayer()` on top of the pure `animationFrameAtTime()` sampler.
+
+```js
+const atlas = indexRuntimeAtlas(runtimeAtlas);
+const player = createAnimationPlayer(atlas, "run", {
+  autoplay: true,
+  playbackRate: 1,
+  onFrame(sample) {
+    // sample.frame changed
+  },
+  onLoop(event) {
+    // event.loopCount
+  },
+  onFinish(sample) {
+    // non-looping animation reached its final frame
+  },
+});
+
+// in your game loop:
+player.update(deltaSeconds);
+drawAnimationPlayerCanvas2D(ctx, image, player, x, y);
+```
+
+The controller supports `play()`, `pause()`, `seek(seconds)`, `setPlaybackRate(rate)`, `sample()`, and `update(deltaSeconds)`. It never owns a timer or `requestAnimationFrame`, so timing remains deterministic and controlled by the host game loop.
+
+`onFrame` fires when the sampled frame changes, `onLoop` reports every crossed loop boundary even when a large delta spans multiple loops, and `onFinish` fires once when a non-looping animation completes. Playback rate must remain positive.
