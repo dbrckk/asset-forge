@@ -1249,6 +1249,7 @@ export function createWebGL2TextureCache(gl, options = {}) {
   }
 
   const entries = new Map();
+  const pending = new Map();
   let disposed = false;
 
   const defaults = {
@@ -1343,6 +1344,47 @@ export function createWebGL2TextureCache(gl, options = {}) {
     return texture;
   }
 
+  async function load(key, sourceOrFactory, textureOptions = {}) {
+    assertActive();
+    if (entries.has(key)) {
+      entries.get(key).references += 1;
+      return entries.get(key).texture;
+    }
+    if (pending.has(key)) {
+      const texture = await pending.get(key);
+      const entry = entries.get(key);
+      if (!entry) {
+        throw new Error(`texture cache load completed without entry for ${key}`);
+      }
+      entry.references += 1;
+      return texture;
+    }
+
+    const promise = (async () => {
+      const source =
+        typeof sourceOrFactory === "function"
+          ? await sourceOrFactory(key)
+          : await sourceOrFactory;
+      assertActive();
+      const texture = createTextureFromSource(source, textureOptions);
+      entries.set(key, {
+        key,
+        texture,
+        references: 1,
+        source,
+        options: { ...textureOptions },
+      });
+      return texture;
+    })();
+
+    pending.set(key, promise);
+    try {
+      return await promise;
+    } finally {
+      pending.delete(key);
+    }
+  }
+
   function get(key) {
     assertActive();
     return entries.get(key)?.texture ?? null;
@@ -1398,11 +1440,13 @@ export function createWebGL2TextureCache(gl, options = {}) {
       gl.deleteTexture(entry.texture);
     }
     entries.clear();
+    pending.clear();
     disposed = true;
   }
 
   return {
     acquire,
+    load,
     get,
     has,
     references,
@@ -1412,6 +1456,9 @@ export function createWebGL2TextureCache(gl, options = {}) {
     dispose,
     get size() {
       return entries.size;
+    },
+    get pendingCount() {
+      return pending.size;
     },
     get disposed() {
       return disposed;
