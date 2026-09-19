@@ -2400,6 +2400,10 @@ export function drawAnimationPlayerCanvas2D(
   destinationY = 0,
   options = {},
 )
+⋮----
+export function buildSpriteBatch(indexedAtlas, instances, options =
+⋮----
+export function drawSpriteBatchCanvas2D(ctx, image, indexedAtlas, instances)
 ````
 
 ## File: .repo-standards.yml
@@ -4802,6 +4806,44 @@ const player = createAnimationPlayer(atlas, "attack", {
 ```
 
 Events fire only when `update(deltaSeconds)` advances playback; `seek()` and `sample()` do not replay crossed markers. A marker at `timeSeconds: 0` fires on the first positive advance from the start and again at every loop boundary. Large updates emit every crossed marker in deterministic chronological order, including markers from multiple loops. Event dispatch is capped at 10,000 markers per update to guard against pathological deltas.
+
+
+### Sprite batching for WebGL and Canvas2D
+
+The web runtime now exposes `buildSpriteBatch()` for one-atlas sprite batching.
+
+```js
+const batch = buildSpriteBatch(atlas, [
+  { frame: "hero_idle_0.png", x: 32, y: 48, scale: 2 },
+  { frame: "enemy_0.png", x: 120, y: 48, scaleX: 1.5, scaleY: 1 },
+]);
+```
+
+The returned vertex buffer is a `Float32Array` with interleaved:
+
+```text
+[x, y, u, v]
+```
+
+using four source-oriented vertices per sprite in top-left, top-right, bottom-right, bottom-left order. Trim offsets are applied to positions, source-region dimensions define the visible quad, and rotated atlas frames use rotation-correct UV ordering.
+
+Each sprite contributes six triangle indices:
+
+```text
+0, 1, 2, 0, 2, 3
+```
+
+with the proper per-sprite vertex offset. Index storage automatically uses `Uint16Array` while the vertex count fits 16 bits, then switches to `Uint32Array`. The result reports `indexType`, counts, layout metadata, and logical/visible bounds per instance.
+
+A configurable `maxInstances` guard defaults to 100,000 to prevent accidental pathological allocations.
+
+Canvas2D also has:
+
+```js
+drawSpriteBatchCanvas2D(ctx, image, atlas, instances);
+```
+
+This is an API convenience rather than a GPU draw-call batch: Canvas2D still issues one `drawImage` per sprite. Non-uniform scale is supported by the WebGL batch builder; the Canvas2D batch helper currently requires uniform scale per sprite.
 ````
 
 ## File: runtime_atlas.py

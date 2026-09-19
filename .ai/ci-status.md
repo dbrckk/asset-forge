@@ -2,10 +2,10 @@
 
 Summary: 0 success / 4 failure / 0 active
 
-- Validate asset-forge: completed / failure (ca212327)
-- Validate asset-forge: completed / failure (46504b8d)
-- Validate asset-forge: completed / failure (273ae18f)
-- Validate asset-forge: completed / failure (149d8e61)
+- Validate asset-forge: completed / failure (2272d58e)
+- Validate asset-forge: completed / failure (0ac5e97c)
+- Validate asset-forge: completed / failure (45be825f)
+- Validate asset-forge: completed / failure (8216f094)
 
 ## Latest failed run structure
 - Job: test

@@ -96,21 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T07:07:38Z
+Generated: 2026-09-19T07:16:27Z
 
 ### Git
 - Branch: `main`
-- Head: `ca212327561c`
-- Commit date: 2026-09-19T09:04:44+02:00
-- Commit: chore(ai): adopt repo standards v18
-- Tracked files: 203
+- Head: `2272d58e5487`
+- Commit date: 2026-09-19T09:16:11+02:00
+- Commit: docs: record sprite batching milestone
+- Tracked files: 204
 
 ### Recently changed files
-- `.repo-standards.yml`
 - `README.md`
-- `examples/runtime-atlas.json`
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
+- `.repo-standards.yml`
 
 ### Project signals
 - No common build descriptor detected
