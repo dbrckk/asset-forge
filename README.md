@@ -812,3 +812,46 @@ The renderer uploads a larger instance buffer with `bufferData(..., DYNAMIC_DRAW
 Texture-page catalogues may store actual `WebGLTexture` objects or arbitrary asset keys. The optional `resolveTexture(texture, entry)` callback resolves those keys at render time, keeping GPU resource management separate from atlas metadata.
 
 Call `dispose()` to release the VAO, buffers, and program. Rendering after disposal is rejected explicitly.
+
+
+### WebGL2 texture cache
+
+The web runtime now includes `createWebGL2TextureCache(gl, options)` for centralized GPU texture lifetime management.
+
+```js
+const textures = createWebGL2TextureCache(gl, {
+  minFilter: gl.NEAREST,
+  magFilter: gl.LINEAR,
+  wrapS: gl.CLAMP_TO_EDGE,
+  wrapT: gl.CLAMP_TO_EDGE,
+  premultiplyAlpha: true,
+});
+
+const heroTexture = textures.acquire("hero", heroImageBitmap);
+```
+
+Repeated `acquire(key, source)` calls reuse the same `WebGLTexture` and increment a reference count. `release(key)` decrements it and deletes the GPU texture when the count reaches zero.
+
+Asynchronous loads are deduplicated:
+
+```js
+const texture = await textures.load("hero", async () => {
+  return await createImageBitmap(await fetch("hero.png").then(r => r.blob()));
+});
+```
+
+If multiple callers request the same key while loading is still in flight, the source factory runs once, one GPU texture is created, and every caller receives the same texture with its own reference count.
+
+Per-texture options can override filtering, wrapping, mipmap generation, and premultiplied-alpha upload behavior. `get()`, `has()`, `references()`, `delete()`, `clear()`, and `dispose()` are provided for explicit lifecycle control.
+
+The cache is designed to plug directly into the renderer:
+
+```js
+const renderer = createInstancedSpriteRendererWebGL2(gl, {
+  resolveTexture(textureKey) {
+    return textures.get(textureKey);
+  },
+});
+```
+
+Disposal during an in-flight asynchronous load causes that load to fail rather than allocating a texture into an already-disposed cache.
