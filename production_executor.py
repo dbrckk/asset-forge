@@ -43,6 +43,26 @@ def _trusted_generated_source(output_dir: Path, generation: dict, *, label: str 
     return source
 
 
+def _provenance_from_manifest(manifest: dict) -> dict:
+    source = manifest.get("source") if isinstance(manifest, dict) else None
+    license_data = manifest.get("license") if isinstance(manifest, dict) else None
+    source = source if isinstance(source, dict) else {}
+    license_data = license_data if isinstance(license_data, dict) else {}
+    return {
+        "source": {
+            "mode": source.get("mode"),
+            "uri": source.get("uri"),
+            "author": source.get("author"),
+        },
+        "license": {
+            "id": license_data.get("id"),
+            "commercialUse": license_data.get("commercialUse"),
+            "derivatives": license_data.get("derivatives"),
+            "attributionRequired": license_data.get("attributionRequired"),
+        },
+    }
+
+
 def _stage_provided_source(source_path: Path, output_dir: Path, *, suffix: str) -> dict:
     source = Path(source_path)
     if not source.is_file():
@@ -138,6 +158,7 @@ def execute_generated_raster_job(
         "requestId": job.get("requestId"),
         "assetId": asset_id,
         "assetType": job.get("assetType"),
+        "provenance": _provenance_from_manifest(manifest),
         "success": not errors,
         "generation": generation,
         "processing": processing,
@@ -236,6 +257,7 @@ def execute_generated_vector_job(
         "requestId": job.get("requestId"),
         "assetId": asset_id,
         "assetType": asset_type,
+        "provenance": _provenance_from_manifest(manifest),
         "success": not errors,
         "generation": generation,
         "processing": {
@@ -372,6 +394,7 @@ def execute_generated_3d_job(
         "requestId": job.get("requestId"),
         "assetId": asset_id,
         "assetType": asset_type,
+        "provenance": _provenance_from_manifest(manifest),
         "success": not combined_errors,
         "generation": generation,
         "validation": {
