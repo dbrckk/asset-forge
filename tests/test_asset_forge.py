@@ -81,7 +81,7 @@ class AssetForgeTests(unittest.TestCase):
         manifest = self.load_example()
         plan = asset_forge.build_plan(manifest, ROOT)
         self.assertEqual(plan["pipeline"], "pipelines/sprite-2d.json")
-        self.assertIn("validate-alpha-and-grid", plan["stages"])
+        self.assertIn("validate-alpha-palette-and-grid", plan["stages"])
         tool_ids = [item["id"] for item in plan["candidateTools"]]
         self.assertIn("pixelorama", tool_ids)
 
@@ -171,8 +171,10 @@ class AssetForgeTests(unittest.TestCase):
         width, height = 64, 32
         vp8x = bytes([0x10, 0, 0, 0]) + (width - 1).to_bytes(3, "little") + (height - 1).to_bytes(3, "little")
         vp8 = (0).to_bytes(3, "little") + b"\x9d\x01\x2a" + width.to_bytes(2, "little") + height.to_bytes(2, "little")
+        alpha = b"\x00\x00"
         chunks = (
             b"VP8X" + struct.pack("<I", len(vp8x)) + vp8x
+            + b"ALPH" + struct.pack("<I", len(alpha)) + alpha
             + b"VP8 " + struct.pack("<I", len(vp8)) + vp8
         )
         body = b"WEBP" + chunks
@@ -228,7 +230,7 @@ class AssetForgeTests(unittest.TestCase):
             data = bytearray(image.read_bytes())
             data[-1] ^= 0x01
             image.write_bytes(data)
-            with self.assertRaisesRegex(ValueError, "invalid CRC"):
+            with self.assertRaisesRegex(ValueError, "invalid PNG CRC"):
                 asset_forge.inspect_png(image)
 
 

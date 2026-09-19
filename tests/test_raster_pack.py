@@ -906,7 +906,7 @@ class RasterPackTests(unittest.TestCase):
     def test_webp_incomplete_vp8x_is_rejected(self):
         payload = bytes([0, 0, 0, 0]) + (9).to_bytes(3, "little") + (9).to_bytes(3, "little")
         data = webp_file(webp_chunk(b"VP8X", payload))
-        with self.assertRaisesRegex(ValueError, "requires VP8 or VP8L"):
+        with self.assertRaisesRegex(ValueError, "requires exactly one VP8 or VP8L"):
             inspect_webp_bytes(data)
 
     def test_webp_reserved_vp8x_bits_are_rejected(self):
@@ -1041,7 +1041,7 @@ class RasterPackTests(unittest.TestCase):
             root = Path(tmp)
             source = root / "wide.png"
             write_rgba_png(source, 8, 1, bytes([1, 2, 3, 255]))
-            with self.assertRaisesRegex(ValueError, "exceeds max atlas width"):
+            with self.assertRaisesRegex(ValueError, "cannot fit max atlas width"):
                 pack_compact_atlas(
                     [source],
                     root / "atlas.png",

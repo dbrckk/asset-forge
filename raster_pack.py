@@ -1764,8 +1764,13 @@ def pack_uniform_atlas(
             }
         )
 
-    encode_rgba(output, atlas_width, atlas_height, bytes(canvas), adaptive=True)
-    output_bytes = _enforce_atlas_file_budget(output, max_bytes)
+    output_bytes = _write_atlas_png(
+        output,
+        atlas_width,
+        atlas_height,
+        bytes(canvas),
+        max_bytes,
+    )
 
     return {
         "image": output.name,
