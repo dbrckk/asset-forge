@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import shutil
 import subprocess
@@ -48,6 +49,97 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
     }
 
 
+def _sprite_sheet_geometry(job: dict) -> tuple[int, int, int, int] | None:
+    asset_type = str(job.get("assetType") or "")
+    if asset_type not in RASTER_GENERATED_TYPES:
+        return None
+    manifest = job.get("manifest")
+    if not isinstance(manifest, dict):
+        return None
+    constraints = manifest.get("constraints")
+    if not isinstance(constraints, dict):
+        return None
+    frame_width = constraints.get("frameWidth")
+    frame_height = constraints.get("frameHeight")
+    frame_count = constraints.get("expectedFrames")
+    if not (
+        isinstance(frame_width, int)
+        and frame_width > 0
+        and isinstance(frame_height, int)
+        and frame_height > 0
+        and isinstance(frame_count, int)
+        and frame_count > 0
+    ):
+        return None
+
+    columns = max(1, math.ceil(math.sqrt(frame_count)))
+    while columns < frame_count and frame_count % columns:
+        columns += 1
+    rows = frame_count // columns
+    return (
+        frame_width * columns,
+        frame_height * rows,
+        columns,
+        rows,
+    )
+
+
+def _generation_dimensions(job: dict) -> tuple[int, int] | None:
+    geometry = _sprite_sheet_geometry(job)
+    if geometry is None:
+        return None
+    width, height, _, _ = geometry
+    shortest = max(1, min(width, height))
+    scale = max(1.0, 512.0 / shortest)
+    request_width = min(2048, max(64, math.ceil(width * scale / 64) * 64))
+    request_height = min(2048, max(64, math.ceil(height * scale / 64) * 64))
+    return request_width, request_height
+
+
+def _normalize_raster_geometry(raw: Path, output: Path, job: dict) -> dict | None:
+    geometry = _sprite_sheet_geometry(job)
+    if geometry is None:
+        if raw.resolve() != output.resolve():
+            shutil.copyfile(raw, output)
+        return None
+
+    target_width, target_height, columns, rows = geometry
+    try:
+        from PIL import Image
+    except ImportError as exc:
+        raise GenerationError(
+            "Pillow is required to normalize generated sprite-sheet dimensions"
+        ) from exc
+
+    constraints = job.get("manifest", {}).get("constraints", {})
+    pixel_art = isinstance(constraints, dict) and constraints.get("pixelArt") is True
+    resampling = Image.Resampling.NEAREST if pixel_art else Image.Resampling.LANCZOS
+    try:
+        with Image.open(raw) as image:
+            image.load()
+            original = image.size
+            normalized = image.convert("RGBA").resize(
+                (target_width, target_height),
+                resample=resampling,
+            )
+            output.parent.mkdir(parents=True, exist_ok=True)
+            normalized.save(output, format="PNG", optimize=True)
+    except (OSError, ValueError) as exc:
+        raise GenerationError(
+            f"generated raster normalization failed: {type(exc).__name__}"
+        ) from exc
+
+    return {
+        "originalWidth": original[0],
+        "originalHeight": original[1],
+        "width": target_width,
+        "height": target_height,
+        "columns": columns,
+        "rows": rows,
+        "pixelArt": pixel_art,
+    }
+
+
 def build_generation_prompt(job: dict) -> str:
     instruction = str(job.get("instruction") or "").strip()
     asset_type = str(job.get("assetType") or "").strip()
@@ -88,8 +180,12 @@ def build_generation_prompt(job: dict) -> str:
         details.append(f"Each animation frame must be exactly {fw}x{fh} pixels.")
     if isinstance(frames, int):
         details.append(f"The sprite sheet must contain exactly {frames} frames.")
-    if isinstance(fw, int) and isinstance(fh, int) and isinstance(frames, int):
-        details.append("Arrange frames on a clean regular grid with no gutters unless the request says otherwise.")
+    geometry = _sprite_sheet_geometry(job)
+    if geometry is not None:
+        _, _, columns, rows = geometry
+        details.append(
+            f"Arrange the frames on an exact {columns}-column by {rows}-row regular grid with no gutters."
+        )
     prompt = " ".join(details)
     if len(prompt) > 16000:
         raise GenerationError("generation prompt exceeds 16000 characters")
@@ -119,6 +215,11 @@ def pollinations_command(
     ]
     if effective_model:
         command.extend(["--model", str(effective_model)])
+    dimensions = _generation_dimensions(job)
+    if dimensions is not None:
+        command.extend(
+            ["--width", str(dimensions[0]), "--height", str(dimensions[1])]
+        )
     return command
 
 
@@ -130,6 +231,7 @@ def execute_generated_asset(
     model: str | None = None,
     timeout_seconds: float = 180.0,
     runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,
+    raster_normalizer: Callable[[Path, Path, dict], dict | None] = _normalize_raster_geometry,
 ) -> dict:
     if job.get("requiresGenerator") is not True:
         raise GenerationError("production job does not require a generator")
@@ -153,7 +255,17 @@ def execute_generated_asset(
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     vector = asset_type in VECTOR_GENERATED_TYPES
-    output = output_dir / ("generated-source.svg" if vector else "generated-source.png")
+    constrained_raster = (
+        asset_type in RASTER_GENERATED_TYPES
+        and _sprite_sheet_geometry(job) is not None
+    )
+    output = output_dir / (
+        "generated-source.svg"
+        if vector
+        else "generated-raw.png"
+        if constrained_raster
+        else "generated-source.png"
+    )
     effective_model = model or (DEFAULT_VECTOR_MODEL if vector else None)
     command = pollinations_command(job, output, model=effective_model, executable=executable)
     completed = runner(
@@ -172,6 +284,14 @@ def execute_generated_asset(
     if not output.is_file() or output.stat().st_size <= 0:
         raise GenerationError("pollinations generation did not produce an output file")
 
+    normalization = None
+    final_output = output
+    if constrained_raster:
+        final_output = output_dir / "generated-source.png"
+        normalization = raster_normalizer(output, final_output, job)
+        if not final_output.is_file() or final_output.stat().st_size <= 0:
+            raise GenerationError("raster normalization did not produce an output file")
+
     stdout = str(completed.stdout or "").strip()
     metadata = None
     if stdout:
@@ -187,8 +307,9 @@ def execute_generated_asset(
         "backend": backend,
         "model": effective_model,
         "assetType": asset_type,
-        "sourcePath": str(output),
-        "sourceBytes": output.stat().st_size,
+        "sourcePath": str(final_output),
+        "sourceBytes": final_output.stat().st_size,
+        "normalization": normalization,
         "metadata": metadata,
     }
 
