@@ -36,6 +36,7 @@ import {
   buildSpriteEntityInstances,
   createSpriteEntityBatchCache,
   filterSpriteInstancesByLayer,
+  applyCameraToSpriteInstances,
 } from "../web/runtime_atlas.mjs";
 
 const atlas = JSON.parse(
@@ -2653,5 +2654,223 @@ assert.throws(
   /visibilityMask must be an unsigned 32-bit integer/,
 );
 layerRuntime.dispose();
+
+
+
+const cameraInput = [
+  {
+    id: "world",
+    x: 120,
+    y: 80,
+    scaleX: 2,
+    scaleY: 3,
+  },
+  {
+    id: "background",
+    x: 120,
+    y: 80,
+    parallaxX: 0.5,
+    parallaxY: 0.25,
+  },
+];
+const cameraApplied = applyCameraToSpriteInstances(
+  cameraInput,
+  { x: 100, y: 40, zoom: 2 },
+);
+assert.deepEqual(
+  cameraApplied.instances.map((instance) => [
+    instance.id,
+    instance.x,
+    instance.y,
+    instance.scaleX,
+    instance.scaleY,
+    instance.parallaxX,
+    instance.parallaxY,
+  ]),
+  [
+    ["world", 40, 80, 4, 6, 1, 1],
+    ["background", 140, 140, 2, 2, 0.5, 0.25],
+  ],
+);
+assert.deepEqual(cameraApplied.camera, {
+  x: 100,
+  y: 40,
+  zoom: 2,
+});
+
+assert.throws(
+  () => applyCameraToSpriteInstances([], { zoom: 0 }),
+  /camera zoom must be > 0/,
+);
+assert.throws(
+  () =>
+    applyCameraToSpriteInstances(
+      [{ x: 0, y: 0, parallaxX: -1 }],
+      {},
+    ),
+  /parallaxX must be finite and >= 0/,
+);
+
+const cameraStore = createSpriteEntityStore();
+cameraStore.add({
+  id: "camera-world",
+  page: "heroes",
+  frame: "plain",
+  x: 120,
+  y: 80,
+  layerMask: 1,
+});
+cameraStore.add({
+  id: "camera-bg",
+  page: "heroes",
+  frame: "plain",
+  x: 120,
+  y: 80,
+  layerMask: 1,
+  parallaxX: 0.5,
+  parallaxY: 0.5,
+});
+
+const cameraPrepared = buildSpriteEntityInstances(cameraStore, {
+  camera: { x: 100, y: 40, zoom: 2 },
+});
+assert.deepEqual(
+  cameraPrepared.instances.map((instance) => [
+    instance.id,
+    instance.x,
+    instance.y,
+  ]),
+  [
+    ["camera-world", 40, 80],
+    ["camera-bg", 140, 120],
+  ],
+);
+assert.deepEqual(cameraPrepared.cameraTransform.camera, {
+  x: 100,
+  y: 40,
+  zoom: 2,
+});
+
+assert.throws(
+  () =>
+    cameraStore.add({
+      id: "bad-parallax",
+      page: "heroes",
+      frame: "plain",
+      parallaxX: -0.1,
+    }),
+  /parallaxX must be >= 0/,
+);
+
+const cameraSceneGl = createMockWebGL2();
+const cameraScene = await createWebGL2RuntimeAtlasScene(
+  cameraSceneGl,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    loaderOptions: {
+      fetchImpl: async (url) => ({
+        ok: true,
+        status: 200,
+        async blob() {
+          return { id: `blob:${url}` };
+        },
+      }),
+      createImageBitmapImpl: async (blob) => ({
+        id: `bitmap:${blob.id}`,
+      }),
+    },
+  },
+);
+const cameraCache = createSpriteEntityBatchCache(cameraScene, cameraStore);
+const cameraCacheA = cameraCache.build({
+  camera: { x: 0, y: 0, zoom: 1 },
+  preserveOrder: true,
+});
+const cameraCacheAAgain = cameraCache.build({
+  camera: { x: 0, y: 0, zoom: 1 },
+  preserveOrder: true,
+});
+const cameraCacheB = cameraCache.build({
+  camera: { x: 50, y: 0, zoom: 1 },
+  preserveOrder: true,
+});
+assert.equal(cameraCacheA.cacheHit, false);
+assert.equal(cameraCacheAAgain.cacheHit, true);
+assert.equal(cameraCacheB.cacheHit, false);
+assert.notEqual(cameraCacheA.cacheKey, cameraCacheB.cacheKey);
+cameraScene.dispose();
+
+const cameraRuntimeGl = createMockWebGL2();
+cameraRuntimeGl.viewport = (...args) =>
+  cameraRuntimeGl.calls.push(["viewport", ...args]);
+const cameraRuntimeCanvas = createMockCanvas();
+const cameraRuntime = await createWebGL2CanvasRuntime(
+  cameraRuntimeCanvas,
+  [{ id: "heroes", atlas: plainAtlas, texture: "heroes.png" }],
+  {
+    camera: { x: 100, y: 40, zoom: 2 },
+    getContext() {
+      return cameraRuntimeGl;
+    },
+    resizeOptions: { pixelRatio: 1 },
+    sceneOptions: {
+      loaderOptions: {
+        fetchImpl: async (url) => ({
+          ok: true,
+          status: 200,
+          async blob() {
+            return { id: `blob:${url}` };
+          },
+        }),
+        createImageBitmapImpl: async (blob) => ({
+          id: `bitmap:${blob.id}`,
+        }),
+      },
+    },
+  },
+);
+cameraRuntime.entities.add({
+  id: "runtime-camera-world",
+  page: "heroes",
+  frame: "plain",
+  x: 120,
+  y: 80,
+});
+
+assert.deepEqual(cameraRuntime.camera, {
+  x: 100,
+  y: 40,
+  zoom: 2,
+});
+const cameraRuntimeBatches = cameraRuntime.buildEntityBatches({
+  preserveOrder: true,
+});
+assert.equal(cameraRuntimeBatches.batches[0].batch.bounds[0].x, 40);
+assert.equal(cameraRuntimeBatches.batches[0].batch.bounds[0].y, 80);
+
+cameraRuntime.setCamera({ x: 110, zoom: 1 });
+assert.deepEqual(cameraRuntime.camera, {
+  x: 110,
+  y: 40,
+  zoom: 1,
+});
+const movedCameraBatches = cameraRuntime.buildEntityBatches({
+  preserveOrder: true,
+});
+assert.equal(movedCameraBatches.batches[0].batch.bounds[0].x, 10);
+assert.equal(movedCameraBatches.batches[0].batch.bounds[0].y, 40);
+
+const cameraOverrideBatches = cameraRuntime.buildEntityBatches({
+  camera: { x: 0, y: 0, zoom: 1 },
+  preserveOrder: true,
+});
+assert.equal(cameraOverrideBatches.batches[0].batch.bounds[0].x, 120);
+assert.equal(cameraOverrideBatches.batches[0].batch.bounds[0].y, 80);
+
+assert.throws(
+  () => cameraRuntime.setCamera({ zoom: -1 }),
+  /camera zoom must be > 0/,
+);
+cameraRuntime.dispose();
 
 console.log("runtime_atlas.mjs smoke test passed");
