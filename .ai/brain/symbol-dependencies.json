@@ -8,16 +8,40 @@
     "createMockWebGL2": {
       "source": {
         "file": "tests/runtime_atlas_web.test.mjs",
-        "start": 715,
-        "end": 871
+        "start": 716,
+        "end": 872
       },
       "symbol_dependencies": [
+        {
+          "symbol": "deleteTexture",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1535,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "instances",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 2529,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "imported_module"
+        },
         {
           "symbol": "object",
           "definitions": [
             {
               "file": "tests/runtime_atlas_web.test.mjs",
-              "line": 718,
+              "line": 719,
               "kind": "function",
               "language": "javascript"
             }
@@ -25,22 +49,35 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 1
+      "dependency_count": 3
     },
     "object": {
       "source": {
         "file": "tests/runtime_atlas_web.test.mjs",
-        "start": 718,
-        "end": 838
+        "start": 719,
+        "end": 839
       },
-      "symbol_dependencies": [],
-      "dependency_count": 0
+      "symbol_dependencies": [
+        {
+          "symbol": "deleteTexture",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1535,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
     },
     "fakeFetch": {
       "source": {
         "file": "tests/runtime_atlas_web.test.mjs",
-        "start": 1145,
-        "end": 1154
+        "start": 1146,
+        "end": 1155
       },
       "symbol_dependencies": [],
       "dependency_count": 0
@@ -48,8 +85,8 @@
     "fakeCreateImageBitmap": {
       "source": {
         "file": "tests/runtime_atlas_web.test.mjs",
-        "start": 1155,
-        "end": 1158
+        "start": 1156,
+        "end": 1159
       },
       "symbol_dependencies": [],
       "dependency_count": 0
@@ -57,11 +94,66 @@
     "createMockCanvas": {
       "source": {
         "file": "tests/runtime_atlas_web.test.mjs",
-        "start": 1483,
-        "end": 1506
+        "start": 1484,
+        "end": 1507
       },
-      "symbol_dependencies": [],
-      "dependency_count": 0
+      "symbol_dependencies": [
+        {
+          "symbol": "add",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 2448,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "get",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1505,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 2463,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 2723,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "has",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 1510,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 2468,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 3
     },
     "indexRuntimeAtlas": {
       "source": {
@@ -81,13 +173,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -105,7 +197,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -154,7 +246,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2924,
+              "line": 2949,
               "kind": "function",
               "language": "javascript"
             }
@@ -209,13 +301,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -279,13 +377,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -309,13 +407,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -379,13 +483,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -409,13 +513,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -491,13 +601,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -521,13 +631,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -627,13 +743,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -645,7 +761,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -657,13 +773,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -719,7 +841,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -765,7 +887,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -787,7 +909,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -827,7 +949,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -855,13 +977,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -879,7 +1001,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -943,13 +1065,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -967,7 +1089,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -979,7 +1101,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -1056,7 +1178,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -1104,13 +1226,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -1146,7 +1268,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -1182,7 +1304,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2924,
+              "line": 2949,
               "kind": "function",
               "language": "javascript"
             }
@@ -1228,13 +1350,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -1246,7 +1368,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -1304,7 +1426,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -1340,13 +1462,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -1358,7 +1480,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -1404,7 +1526,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -1464,13 +1586,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -1482,7 +1604,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -1540,7 +1662,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -1594,13 +1716,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -1682,7 +1804,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -1700,19 +1822,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -1772,13 +1894,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -1796,7 +1918,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -1890,7 +2012,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -1920,13 +2042,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -1944,7 +2066,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -2014,7 +2136,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -2032,19 +2154,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -2104,13 +2226,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -2128,7 +2250,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -2222,7 +2344,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -2240,19 +2362,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -2312,13 +2434,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -2336,7 +2458,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -2418,7 +2540,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -2436,19 +2558,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -2508,13 +2630,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -2532,7 +2654,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -2626,7 +2748,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -2644,19 +2766,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -2704,7 +2826,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -2810,7 +2932,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -2828,19 +2950,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -2888,13 +3010,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -3000,7 +3122,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -3018,19 +3140,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -3078,13 +3200,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -3102,7 +3224,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -3196,7 +3318,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -3214,19 +3336,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -3274,13 +3396,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -3298,7 +3420,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -3392,7 +3514,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -3410,19 +3532,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -3458,13 +3580,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -3482,7 +3604,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -3588,7 +3710,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -3636,13 +3758,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -3660,7 +3782,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -3891,13 +4013,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -3909,7 +4031,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -4013,7 +4135,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -4047,7 +4169,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -4081,7 +4203,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -4115,7 +4237,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -4150,7 +4272,7 @@
       "source": {
         "file": "web/runtime_atlas.mjs",
         "start": 2080,
-        "end": 2325
+        "end": 2350
       },
       "symbol_dependencies": [
         {
@@ -4158,7 +4280,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3036,
+              "line": 3061,
               "kind": "function",
               "language": "javascript"
             }
@@ -4182,7 +4304,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -4194,7 +4316,31 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3171,
+              "line": 3196,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "clearShake",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3342,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "createCamera2DController",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3226,
               "kind": "function",
               "language": "javascript"
             }
@@ -4206,7 +4352,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2560,
+              "line": 2585,
               "kind": "function",
               "language": "javascript"
             }
@@ -4218,7 +4364,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2326,
+              "line": 2351,
               "kind": "function",
               "language": "javascript"
             }
@@ -4266,13 +4412,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -4284,7 +4430,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2173,
+              "line": 2176,
               "kind": "function",
               "language": "javascript"
             }
@@ -4296,7 +4442,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2180,
+              "line": 2183,
               "kind": "function",
               "language": "javascript"
             }
@@ -4308,7 +4454,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -4320,7 +4466,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2152,
+              "line": 2155,
               "kind": "function",
               "language": "javascript"
             }
@@ -4332,7 +4478,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2144,
+              "line": 2147,
               "kind": "function",
               "language": "javascript"
             }
@@ -4352,17 +4498,47 @@
           "relation": "same_file"
         },
         {
+          "symbol": "setCamera",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3310,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "shake",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3321,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
           "symbol": "update",
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -4370,13 +4546,13 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 15
+      "dependency_count": 19
     },
     "resize": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2144,
-        "end": 2264
+        "start": 2147,
+        "end": 2267
       },
       "symbol_dependencies": [
         {
@@ -4384,7 +4560,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3036,
+              "line": 3061,
               "kind": "function",
               "language": "javascript"
             }
@@ -4408,7 +4584,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -4416,11 +4592,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "buildSpriteEntityInstances",
+          "symbol": "clearShake",
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3171,
+              "line": 3342,
               "kind": "function",
               "language": "javascript"
             }
@@ -4468,13 +4644,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -4486,7 +4662,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2173,
+              "line": 2176,
               "kind": "function",
               "language": "javascript"
             }
@@ -4498,19 +4674,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2180,
-              "kind": "function",
-              "language": "javascript"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "instances",
-          "definitions": [
-            {
-              "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2183,
               "kind": "function",
               "language": "javascript"
             }
@@ -4522,7 +4686,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2152,
+              "line": 2155,
               "kind": "function",
               "language": "javascript"
             }
@@ -4540,15 +4704,63 @@
             }
           ],
           "relation": "same_file"
+        },
+        {
+          "symbol": "setCamera",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3310,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "shake",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3321,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "update",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 2472,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
         }
       ],
-      "dependency_count": 11
+      "dependency_count": 13
     },
     "rebuildAfterContextRestore": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2152,
-        "end": 2272
+        "start": 2155,
+        "end": 2275
       },
       "symbol_dependencies": [
         {
@@ -4556,7 +4768,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3036,
+              "line": 3061,
               "kind": "function",
               "language": "javascript"
             }
@@ -4580,7 +4792,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -4588,11 +4800,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "buildSpriteEntityInstances",
+          "symbol": "clearShake",
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3171,
+              "line": 3342,
               "kind": "function",
               "language": "javascript"
             }
@@ -4640,13 +4852,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -4658,7 +4870,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2173,
+              "line": 2176,
               "kind": "function",
               "language": "javascript"
             }
@@ -4670,7 +4882,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2180,
+              "line": 2183,
               "kind": "function",
               "language": "javascript"
             }
@@ -4682,7 +4894,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -4694,7 +4906,31 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2144,
+              "line": 2147,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "setCamera",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3310,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "shake",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3321,
               "kind": "function",
               "language": "javascript"
             }
@@ -4706,13 +4942,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -4720,13 +4962,13 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 11
+      "dependency_count": 13
     },
     "handleContextLost": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2173,
-        "end": 2293
+        "start": 2176,
+        "end": 2296
       },
       "symbol_dependencies": [
         {
@@ -4734,7 +4976,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3036,
+              "line": 3061,
               "kind": "function",
               "language": "javascript"
             }
@@ -4758,7 +5000,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -4770,7 +5012,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3171,
+              "line": 3196,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "clearShake",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3342,
               "kind": "function",
               "language": "javascript"
             }
@@ -4788,13 +5042,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -4806,7 +5060,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2180,
+              "line": 2183,
               "kind": "function",
               "language": "javascript"
             }
@@ -4818,7 +5072,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -4830,7 +5084,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2152,
+              "line": 2155,
               "kind": "function",
               "language": "javascript"
             }
@@ -4842,7 +5096,31 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2144,
+              "line": 2147,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "setCamera",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3310,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "shake",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3321,
               "kind": "function",
               "language": "javascript"
             }
@@ -4854,13 +5132,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -4868,13 +5152,13 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 9
+      "dependency_count": 12
     },
     "handleContextRestored": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2180,
-        "end": 2300
+        "start": 2183,
+        "end": 2303
       },
       "symbol_dependencies": [
         {
@@ -4882,7 +5166,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3036,
+              "line": 3061,
               "kind": "function",
               "language": "javascript"
             }
@@ -4906,7 +5190,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2138,
+              "line": 2141,
               "kind": "function",
               "language": "javascript"
             }
@@ -4918,7 +5202,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3171,
+              "line": 3196,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "clearShake",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3342,
               "kind": "function",
               "language": "javascript"
             }
@@ -4936,13 +5232,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -4954,7 +5250,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2173,
+              "line": 2176,
               "kind": "function",
               "language": "javascript"
             }
@@ -4966,7 +5262,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -4978,7 +5274,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2152,
+              "line": 2155,
               "kind": "function",
               "language": "javascript"
             }
@@ -4990,7 +5286,31 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2144,
+              "line": 2147,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "setCamera",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3310,
+              "kind": "function",
+              "language": "javascript"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "shake",
+          "definitions": [
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3321,
               "kind": "function",
               "language": "javascript"
             }
@@ -5002,13 +5322,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -5016,13 +5342,13 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 9
+      "dependency_count": 12
     },
     "createSpriteEntityStore": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2328,
-        "end": 2559
+        "start": 2353,
+        "end": 2584
       },
       "symbol_dependencies": [
         {
@@ -5030,7 +5356,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -5048,19 +5374,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -5072,7 +5398,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2419,
+              "line": 2444,
               "kind": "function",
               "language": "javascript"
             }
@@ -5090,13 +5416,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -5114,7 +5440,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -5126,7 +5452,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -5138,7 +5464,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2336,
+              "line": 2361,
               "kind": "function",
               "language": "javascript"
             }
@@ -5150,7 +5476,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2467,
+              "line": 2492,
               "kind": "function",
               "language": "javascript"
             }
@@ -5162,7 +5488,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2488,
+              "line": 2513,
               "kind": "function",
               "language": "javascript"
             }
@@ -5174,7 +5500,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2511,
+              "line": 2536,
               "kind": "function",
               "language": "javascript"
             }
@@ -5186,13 +5512,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -5204,7 +5536,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2346,
+              "line": 2371,
               "kind": "function",
               "language": "javascript"
             }
@@ -5217,8 +5549,8 @@
     "normalizeId": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2336,
-        "end": 2456
+        "start": 2361,
+        "end": 2481
       },
       "symbol_dependencies": [
         {
@@ -5226,7 +5558,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -5238,7 +5570,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2419,
+              "line": 2444,
               "kind": "function",
               "language": "javascript"
             }
@@ -5256,13 +5588,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -5280,7 +5612,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -5292,13 +5624,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -5310,7 +5648,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2346,
+              "line": 2371,
               "kind": "function",
               "language": "javascript"
             }
@@ -5323,8 +5661,8 @@
     "validateEntity": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2346,
-        "end": 2466
+        "start": 2371,
+        "end": 2491
       },
       "symbol_dependencies": [
         {
@@ -5332,7 +5670,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -5344,7 +5682,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2419,
+              "line": 2444,
               "kind": "function",
               "language": "javascript"
             }
@@ -5362,13 +5700,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -5386,7 +5724,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -5398,7 +5736,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2336,
+              "line": 2361,
               "kind": "function",
               "language": "javascript"
             }
@@ -5410,13 +5748,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -5429,8 +5773,8 @@
     "cloneEntity": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2419,
-        "end": 2539
+        "start": 2444,
+        "end": 2564
       },
       "symbol_dependencies": [
         {
@@ -5438,7 +5782,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -5456,19 +5800,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -5486,13 +5830,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -5510,7 +5854,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -5522,7 +5866,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -5534,7 +5878,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2336,
+              "line": 2361,
               "kind": "function",
               "language": "javascript"
             }
@@ -5546,7 +5890,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2467,
+              "line": 2492,
               "kind": "function",
               "language": "javascript"
             }
@@ -5558,7 +5902,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2488,
+              "line": 2513,
               "kind": "function",
               "language": "javascript"
             }
@@ -5570,7 +5914,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2511,
+              "line": 2536,
               "kind": "function",
               "language": "javascript"
             }
@@ -5582,13 +5926,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -5600,7 +5950,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2346,
+              "line": 2371,
               "kind": "function",
               "language": "javascript"
             }
@@ -5613,8 +5963,8 @@
     "add": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2423,
-        "end": 2543
+        "start": 2448,
+        "end": 2568
       },
       "symbol_dependencies": [
         {
@@ -5628,19 +5978,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -5652,7 +6002,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2419,
+              "line": 2444,
               "kind": "function",
               "language": "javascript"
             }
@@ -5670,13 +6020,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -5694,7 +6044,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -5706,7 +6056,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -5718,7 +6068,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2336,
+              "line": 2361,
               "kind": "function",
               "language": "javascript"
             }
@@ -5730,7 +6080,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2467,
+              "line": 2492,
               "kind": "function",
               "language": "javascript"
             }
@@ -5742,7 +6092,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2488,
+              "line": 2513,
               "kind": "function",
               "language": "javascript"
             }
@@ -5754,7 +6104,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2511,
+              "line": 2536,
               "kind": "function",
               "language": "javascript"
             }
@@ -5766,13 +6116,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -5784,7 +6140,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2346,
+              "line": 2371,
               "kind": "function",
               "language": "javascript"
             }
@@ -5797,8 +6153,8 @@
     "update": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2447,
-        "end": 2567
+        "start": 2472,
+        "end": 2592
       },
       "symbol_dependencies": [
         {
@@ -5806,7 +6162,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -5824,19 +6180,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -5848,7 +6204,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2419,
+              "line": 2444,
               "kind": "function",
               "language": "javascript"
             }
@@ -5860,7 +6216,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2560,
+              "line": 2585,
               "kind": "function",
               "language": "javascript"
             }
@@ -5878,13 +6234,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -5902,7 +6258,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -5914,7 +6270,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -5926,7 +6282,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2336,
+              "line": 2361,
               "kind": "function",
               "language": "javascript"
             }
@@ -5938,7 +6294,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2467,
+              "line": 2492,
               "kind": "function",
               "language": "javascript"
             }
@@ -5950,7 +6306,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2488,
+              "line": 2513,
               "kind": "function",
               "language": "javascript"
             }
@@ -5962,7 +6318,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2511,
+              "line": 2536,
               "kind": "function",
               "language": "javascript"
             }
@@ -5974,7 +6330,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2346,
+              "line": 2371,
               "kind": "function",
               "language": "javascript"
             }
@@ -5987,8 +6343,8 @@
     "remove": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2467,
-        "end": 2587
+        "start": 2492,
+        "end": 2612
       },
       "symbol_dependencies": [
         {
@@ -5996,7 +6352,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -6014,19 +6370,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -6038,7 +6394,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2419,
+              "line": 2444,
               "kind": "function",
               "language": "javascript"
             }
@@ -6050,7 +6406,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2560,
+              "line": 2585,
               "kind": "function",
               "language": "javascript"
             }
@@ -6068,13 +6424,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -6092,7 +6448,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -6104,7 +6460,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -6116,7 +6472,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2336,
+              "line": 2361,
               "kind": "function",
               "language": "javascript"
             }
@@ -6128,7 +6484,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2488,
+              "line": 2513,
               "kind": "function",
               "language": "javascript"
             }
@@ -6140,7 +6496,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2511,
+              "line": 2536,
               "kind": "function",
               "language": "javascript"
             }
@@ -6152,13 +6508,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -6171,8 +6533,8 @@
     "snapshot": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2488,
-        "end": 2608
+        "start": 2513,
+        "end": 2633
       },
       "symbol_dependencies": [
         {
@@ -6180,7 +6542,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -6192,7 +6554,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2595,
+              "line": 2620,
               "kind": "function",
               "language": "javascript"
             }
@@ -6210,19 +6572,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -6234,7 +6596,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2419,
+              "line": 2444,
               "kind": "function",
               "language": "javascript"
             }
@@ -6246,7 +6608,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2560,
+              "line": 2585,
               "kind": "function",
               "language": "javascript"
             }
@@ -6258,7 +6620,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2587,
+              "line": 2612,
               "kind": "function",
               "language": "javascript"
             }
@@ -6276,13 +6638,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -6300,7 +6662,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -6312,7 +6674,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -6324,7 +6686,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2467,
+              "line": 2492,
               "kind": "function",
               "language": "javascript"
             }
@@ -6336,7 +6698,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2511,
+              "line": 2536,
               "kind": "function",
               "language": "javascript"
             }
@@ -6348,13 +6710,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -6367,8 +6735,8 @@
     "instances": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2504,
-        "end": 2624
+        "start": 2529,
+        "end": 2649
       },
       "symbol_dependencies": [
         {
@@ -6376,7 +6744,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -6388,7 +6756,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2595,
+              "line": 2620,
               "kind": "function",
               "language": "javascript"
             }
@@ -6406,19 +6774,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -6430,7 +6798,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2419,
+              "line": 2444,
               "kind": "function",
               "language": "javascript"
             }
@@ -6454,7 +6822,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2560,
+              "line": 2585,
               "kind": "function",
               "language": "javascript"
             }
@@ -6466,7 +6834,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2587,
+              "line": 2612,
               "kind": "function",
               "language": "javascript"
             }
@@ -6484,13 +6852,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -6508,7 +6876,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -6520,7 +6888,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2467,
+              "line": 2492,
               "kind": "function",
               "language": "javascript"
             }
@@ -6544,7 +6912,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2488,
+              "line": 2513,
               "kind": "function",
               "language": "javascript"
             }
@@ -6556,7 +6924,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2511,
+              "line": 2536,
               "kind": "function",
               "language": "javascript"
             }
@@ -6568,13 +6936,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -6587,8 +6961,8 @@
     "transact": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2511,
-        "end": 2631
+        "start": 2536,
+        "end": 2656
       },
       "symbol_dependencies": [
         {
@@ -6596,7 +6970,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -6608,7 +6982,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2595,
+              "line": 2620,
               "kind": "function",
               "language": "javascript"
             }
@@ -6626,19 +7000,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -6650,7 +7024,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2419,
+              "line": 2444,
               "kind": "function",
               "language": "javascript"
             }
@@ -6674,7 +7048,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2560,
+              "line": 2585,
               "kind": "function",
               "language": "javascript"
             }
@@ -6686,7 +7060,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2587,
+              "line": 2612,
               "kind": "function",
               "language": "javascript"
             }
@@ -6704,13 +7078,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -6728,7 +7102,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -6740,7 +7114,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -6752,7 +7126,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2467,
+              "line": 2492,
               "kind": "function",
               "language": "javascript"
             }
@@ -6776,7 +7150,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2488,
+              "line": 2513,
               "kind": "function",
               "language": "javascript"
             }
@@ -6788,13 +7162,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -6807,8 +7187,8 @@
     "createSpriteAnimationSystem": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2562,
-        "end": 2753
+        "start": 2587,
+        "end": 2778
       },
       "symbol_dependencies": [
         {
@@ -6816,7 +7196,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2595,
+              "line": 2620,
               "kind": "function",
               "language": "javascript"
             }
@@ -6834,19 +7214,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -6870,7 +7250,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2587,
+              "line": 2612,
               "kind": "function",
               "language": "javascript"
             }
@@ -6888,13 +7268,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -6912,7 +7292,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -6936,7 +7316,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2702,
+              "line": 2727,
               "kind": "function",
               "language": "javascript"
             }
@@ -6948,13 +7328,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -6967,8 +7353,8 @@
     "ensureEntity": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2587,
-        "end": 2707
+        "start": 2612,
+        "end": 2732
       },
       "symbol_dependencies": [
         {
@@ -6976,7 +7362,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2595,
+              "line": 2620,
               "kind": "function",
               "language": "javascript"
             }
@@ -7006,13 +7392,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -7030,7 +7416,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -7054,7 +7440,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2702,
+              "line": 2727,
               "kind": "function",
               "language": "javascript"
             }
@@ -7066,13 +7452,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -7085,8 +7477,8 @@
     "bind": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2595,
-        "end": 2715
+        "start": 2620,
+        "end": 2740
       },
       "symbol_dependencies": [
         {
@@ -7106,7 +7498,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2587,
+              "line": 2612,
               "kind": "function",
               "language": "javascript"
             }
@@ -7124,13 +7516,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -7148,7 +7540,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -7172,7 +7564,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2702,
+              "line": 2727,
               "kind": "function",
               "language": "javascript"
             }
@@ -7184,13 +7576,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -7203,8 +7601,8 @@
     "unbind": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2702,
-        "end": 2822
+        "start": 2727,
+        "end": 2847
       },
       "symbol_dependencies": [
         {
@@ -7212,7 +7610,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2754,
+              "line": 2779,
               "kind": "function",
               "language": "javascript"
             }
@@ -7224,7 +7622,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -7236,7 +7634,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2595,
+              "line": 2620,
               "kind": "function",
               "language": "javascript"
             }
@@ -7254,19 +7652,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -7278,7 +7676,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2789,
+              "line": 2814,
               "kind": "function",
               "language": "javascript"
             }
@@ -7296,13 +7694,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -7320,7 +7718,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -7332,7 +7730,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -7344,7 +7742,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2816,
+              "line": 2841,
               "kind": "function",
               "language": "javascript"
             }
@@ -7368,13 +7766,19 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2447,
+              "line": 2472,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2709,
+              "line": 2734,
+              "kind": "function",
+              "language": "javascript"
+            },
+            {
+              "file": "web/runtime_atlas.mjs",
+              "line": 3272,
               "kind": "function",
               "language": "javascript"
             }
@@ -7387,8 +7791,8 @@
     "_stableSceneCacheKey": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2756,
-        "end": 2788
+        "start": 2781,
+        "end": 2813
       },
       "symbol_dependencies": [
         {
@@ -7396,7 +7800,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -7414,7 +7818,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -7427,8 +7831,8 @@
     "createSpriteEntityBatchCache": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2790,
-        "end": 2896
+        "start": 2815,
+        "end": 2921
       },
       "symbol_dependencies": [
         {
@@ -7436,7 +7840,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2754,
+              "line": 2779,
               "kind": "function",
               "language": "javascript"
             }
@@ -7448,7 +7852,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2832,
+              "line": 2857,
               "kind": "function",
               "language": "javascript"
             }
@@ -7460,7 +7864,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3171,
+              "line": 3196,
               "kind": "function",
               "language": "javascript"
             }
@@ -7478,19 +7882,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -7502,7 +7906,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2826,
+              "line": 2851,
               "kind": "function",
               "language": "javascript"
             }
@@ -7520,13 +7924,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -7538,7 +7942,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -7550,7 +7954,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2816,
+              "line": 2841,
               "kind": "function",
               "language": "javascript"
             }
@@ -7563,8 +7967,8 @@
     "invalidate": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2816,
-        "end": 2936
+        "start": 2841,
+        "end": 2961
       },
       "symbol_dependencies": [
         {
@@ -7572,7 +7976,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2754,
+              "line": 2779,
               "kind": "function",
               "language": "javascript"
             }
@@ -7584,7 +7988,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -7596,7 +8000,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2832,
+              "line": 2857,
               "kind": "function",
               "language": "javascript"
             }
@@ -7608,7 +8012,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3171,
+              "line": 3196,
               "kind": "function",
               "language": "javascript"
             }
@@ -7626,19 +8030,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -7650,7 +8054,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2826,
+              "line": 2851,
               "kind": "function",
               "language": "javascript"
             }
@@ -7668,13 +8072,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -7692,7 +8096,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -7704,7 +8108,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -7716,7 +8120,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2924,
+              "line": 2949,
               "kind": "function",
               "language": "javascript"
             }
@@ -7728,7 +8132,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2897,
+              "line": 2922,
               "kind": "function",
               "language": "javascript"
             }
@@ -7740,7 +8144,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2488,
+              "line": 2513,
               "kind": "function",
               "language": "javascript"
             }
@@ -7753,8 +8157,8 @@
     "ensureVersion": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2826,
-        "end": 2946
+        "start": 2851,
+        "end": 2971
       },
       "symbol_dependencies": [
         {
@@ -7762,7 +8166,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2754,
+              "line": 2779,
               "kind": "function",
               "language": "javascript"
             }
@@ -7774,7 +8178,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -7786,7 +8190,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2832,
+              "line": 2857,
               "kind": "function",
               "language": "javascript"
             }
@@ -7798,7 +8202,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3171,
+              "line": 3196,
               "kind": "function",
               "language": "javascript"
             }
@@ -7816,19 +8220,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -7846,13 +8250,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -7870,7 +8274,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -7882,7 +8286,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -7894,7 +8298,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2816,
+              "line": 2841,
               "kind": "function",
               "language": "javascript"
             }
@@ -7906,7 +8310,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2924,
+              "line": 2949,
               "kind": "function",
               "language": "javascript"
             }
@@ -7918,7 +8322,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2897,
+              "line": 2922,
               "kind": "function",
               "language": "javascript"
             }
@@ -7930,7 +8334,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2488,
+              "line": 2513,
               "kind": "function",
               "language": "javascript"
             }
@@ -7943,8 +8347,8 @@
     "build": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2832,
-        "end": 2952
+        "start": 2857,
+        "end": 2977
       },
       "symbol_dependencies": [
         {
@@ -7952,7 +8356,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2754,
+              "line": 2779,
               "kind": "function",
               "language": "javascript"
             }
@@ -7964,7 +8368,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -7976,7 +8380,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3171,
+              "line": 3196,
               "kind": "function",
               "language": "javascript"
             }
@@ -7994,19 +8398,19 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2478,
+              "line": 2503,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2736,
+              "line": 2761,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2872,
+              "line": 2897,
               "kind": "function",
               "language": "javascript"
             }
@@ -8018,7 +8422,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2826,
+              "line": 2851,
               "kind": "function",
               "language": "javascript"
             }
@@ -8036,13 +8440,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -8060,7 +8464,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -8072,7 +8476,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -8084,7 +8488,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2816,
+              "line": 2841,
               "kind": "function",
               "language": "javascript"
             }
@@ -8096,7 +8500,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2924,
+              "line": 2949,
               "kind": "function",
               "language": "javascript"
             }
@@ -8108,7 +8512,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2897,
+              "line": 2922,
               "kind": "function",
               "language": "javascript"
             }
@@ -8120,7 +8524,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2488,
+              "line": 2513,
               "kind": "function",
               "language": "javascript"
             }
@@ -8133,8 +8537,8 @@
     "resolveSpriteEntityHierarchy": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2899,
-        "end": 3035
+        "start": 2924,
+        "end": 3060
       },
       "symbol_dependencies": [
         {
@@ -8142,7 +8546,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -8160,13 +8564,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -8184,7 +8588,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -8196,7 +8600,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -8208,7 +8612,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2924,
+              "line": 2949,
               "kind": "function",
               "language": "javascript"
             }
@@ -8220,7 +8624,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2488,
+              "line": 2513,
               "kind": "function",
               "language": "javascript"
             }
@@ -8233,8 +8637,8 @@
     "resolve": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 2924,
-        "end": 3044
+        "start": 2949,
+        "end": 3069
       },
       "symbol_dependencies": [
         {
@@ -8242,7 +8646,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2423,
+              "line": 2448,
               "kind": "function",
               "language": "javascript"
             }
@@ -8254,7 +8658,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 3036,
+              "line": 3061,
               "kind": "function",
               "language": "javascript"
             }
@@ -8272,13 +8676,13 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2438,
+              "line": 2463,
               "kind": "function",
               "language": "javascript"
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2698,
+              "line": 2723,
               "kind": "function",
               "language": "javascript"
             }
@@ -8296,7 +8700,7 @@
             },
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2443,
+              "line": 2468,
               "kind": "function",
               "language": "javascript"
             }
@@ -8308,7 +8712,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }
@@ -8320,7 +8724,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2488,
+              "line": 2513,
               "kind": "function",
               "language": "javascript"
             }
@@ -8333,8 +8737,8 @@
     "applyCameraToSpriteInstances": {
       "source": {
         "file": "web/runtime_atlas.mjs",
-        "start": 3037,
-        "end": 3091
+        "start": 3062,
+        "end": 3116
       },
       "symbol_dependencies": [
         {
@@ -8342,7 +8746,7 @@
           "definitions": [
             {
               "file": "web/runtime_atlas.mjs",
-              "line": 2504,
+              "line": 2529,
               "kind": "function",
               "language": "javascript"
             }

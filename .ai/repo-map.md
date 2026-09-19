@@ -1225,6 +1225,8 @@ hierarchyRuntimeGl.viewport = (...args)
 layerRuntimeGl.viewport = (...args)
 ⋮----
 cameraRuntimeGl.viewport = (...args)
+⋮----
+followRuntimeGl.viewport = (...args)
 ````
 
 ## File: tests/test_animation_infer.py
@@ -2638,7 +2640,11 @@ function handleContextRestored()
 get visibilityMask()
 setVisibilityMask(nextMask)
 get camera()
+⋮----
 setCamera(nextCamera =
+updateCameraFollow(targetX, targetY, deltaSeconds)
+shakeCamera(amplitude, durationSeconds, frequency)
+clearCameraShake()
 get gl()
 get scene()
 get contextLost()
@@ -2736,6 +2742,23 @@ export function filterSpriteInstancesByLayer(
 function _splitEntityHierarchyOptions(batchOptions =
 ⋮----
 export function buildSpriteEntityInstances(entityStore, batchOptions =
+⋮----
+export function createCamera2DController(initialCamera =
+⋮----
+function baseCamera()
+⋮----
+function shakenCamera()
+⋮----
+function update(targetX, targetY, deltaSeconds)
+⋮----
+function setCamera(nextCamera =
+⋮----
+function shake(amplitude, durationSeconds, frequency = 24)
+⋮----
+function clearShake()
+⋮----
+get baseCamera()
+get shaking()
 ````
 
 ## File: .repo-standards.yml
@@ -5862,6 +5885,68 @@ runtime.renderEntities({
 Camera transforms happen after hierarchy resolution and layer filtering but before viewport culling, stable depth sorting, texture grouping, and GPU batching.
 
 The version-aware entity batch cache includes the camera object in its stable options key, so different camera positions/zoom values produce distinct cached variants.
+
+
+### Camera follow, dead zone, smoothing, and deterministic shake
+
+The runtime now provides `createCamera2DController()` for game-style camera behavior on top of the base 2D camera.
+
+```js
+const controller = createCamera2DController(
+  { x: 0, y: 0, zoom: 1 },
+  {
+    deadZoneWidth: 120,
+    deadZoneHeight: 80,
+    smoothing: 8,
+  },
+);
+```
+
+`update(targetX, targetY, deltaSeconds)` keeps the target inside the configured dead zone. When the target exits it, the camera moves only as far as required to bring the target back to the boundary.
+
+With `smoothing > 0`, movement uses an exponential time-based interpolation:
+
+```text
+alpha = 1 - exp(-smoothing * deltaSeconds)
+```
+
+which avoids frame-rate-dependent lerp behavior.
+
+Deterministic screen shake is available through:
+
+```js
+controller.shake(amplitude, durationSeconds, frequency);
+```
+
+Shake decays linearly over its duration and uses deterministic sine phases rather than randomness, making tests/replays reproducible.
+
+The canvas runtime exposes the controller directly:
+
+```js
+runtime.cameraController
+runtime.updateCameraFollow(targetX, targetY, deltaSeconds)
+runtime.shakeCamera(amplitude, durationSeconds, frequency)
+runtime.clearCameraShake()
+```
+
+Example game loop:
+
+```js
+runtime.updateAnimations(dt);
+runtime.updateCameraFollow(player.x, player.y, dt);
+runtime.renderEntities({
+  viewport: {
+    x: 0,
+    y: 0,
+    width: canvas.width,
+    height: canvas.height,
+  },
+  sort: true,
+  preserveOrder: true,
+});
+```
+
+Camera follow/shake modifies the runtime camera used by the existing parallax, culling, batching, and render pipeline.
 ````
 
 ## File: runtime_atlas.py

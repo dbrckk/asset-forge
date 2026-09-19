@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T12:41:43Z
+Generated: 2026-09-19T14:11:35Z
 
 ### Git
 - Branch: `main`
-- Head: `b9f96a955126`
-- Commit date: 2026-09-19T14:41:40+02:00
-- Commit: docs: record 2D camera and parallax milestone
+- Head: `e24a993fc5c5`
+- Commit date: 2026-09-19T16:11:27+02:00
+- Commit: docs: record camera controller milestone
 - Tracked files: 209
 
 ### Recently changed files
