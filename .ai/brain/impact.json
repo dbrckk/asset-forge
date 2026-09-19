@@ -1,17 +1,497 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "75d8c8a05d73ab189a56d216c2bff4a6b3702174",
-  "head": "a49db11c03188fbb9ffc8f7bf22072d1331d5280",
+  "base": "a49db11c03188fbb9ffc8f7bf22072d1331d5280",
+  "head": "ddf2116baad0cacbe1b6c09ad5cd7eee54f3bc28",
   "index_mode": "incremental",
   "changed_files": [
     {
       "path": ".repo-standards.yml",
       "status": "M"
+    },
+    {
+      "path": "README.md",
+      "status": "M"
+    },
+    {
+      "path": "tests/runtime_atlas_web.test.mjs",
+      "status": "M"
+    },
+    {
+      "path": "web/runtime_atlas.mjs",
+      "status": "M"
     }
   ],
-  "changed_source_files": [],
-  "impacted_files": [],
-  "impacted_symbols": [],
-  "selected_tests": []
+  "changed_source_files": [
+    "tests/runtime_atlas_web.test.mjs",
+    "web/runtime_atlas.mjs"
+  ],
+  "impacted_files": [
+    "asset_forge.py",
+    "tests/runtime_atlas_web.test.mjs",
+    "tests/test_runtime_atlas.py",
+    "web/runtime_atlas.mjs"
+  ],
+  "impacted_symbols": [
+    {
+      "name": "load_json",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 66
+    },
+    {
+      "name": "validate_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 74
+    },
+    {
+      "name": "is_power_of_two",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 132
+    },
+    {
+      "name": "sprite_grid",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 136
+    },
+    {
+      "name": "build_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 157
+    },
+    {
+      "name": "validate_raster_file",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 188
+    },
+    {
+      "name": "select_tools",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 247
+    },
+    {
+      "name": "build_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 265
+    },
+    {
+      "name": "load_valid_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 294
+    },
+    {
+      "name": "cmd_validate",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 310
+    },
+    {
+      "name": "cmd_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 318
+    },
+    {
+      "name": "cmd_validate_raster",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 326
+    },
+    {
+      "name": "cmd_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 340
+    },
+    {
+      "name": "parser",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 364
+    },
+    {
+      "name": "main",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 543
+    },
+    {
+      "name": "createMockWebGL2",
+      "kind": "function",
+      "file": "tests/runtime_atlas_web.test.mjs",
+      "line": 665
+    },
+    {
+      "name": "object",
+      "kind": "function",
+      "file": "tests/runtime_atlas_web.test.mjs",
+      "line": 670
+    },
+    {
+      "name": "RuntimeAtlasTests",
+      "kind": "class",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 6
+    },
+    {
+      "name": "test_exports_trim_and_rotation_semantics",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 7
+    },
+    {
+      "name": "test_defaults_non_rotated_source_region",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 56
+    },
+    {
+      "name": "test_rejects_rotation_dimension_mismatch",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 69
+    },
+    {
+      "name": "test_rejects_source_trim_out_of_bounds",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 90
+    },
+    {
+      "name": "test_rejects_duplicate_indices",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 110
+    },
+    {
+      "name": "test_validator_accepts_generated_runtime_atlas",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 123
+    },
+    {
+      "name": "test_validator_detects_uv_drift",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 133
+    },
+    {
+      "name": "test_validator_detects_frame_count_mismatch",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 145
+    },
+    {
+      "name": "test_validator_rejects_unknown_fields",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 157
+    },
+    {
+      "name": "test_validator_rejects_boolean_integer_fields",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 169
+    },
+    {
+      "name": "test_validator_rejects_unknown_nested_fields",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 181
+    },
+    {
+      "name": "test_build_runtime_atlas_normalizes_animations",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 195
+    },
+    {
+      "name": "test_build_runtime_atlas_rejects_missing_animation_frame",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 233
+    },
+    {
+      "name": "test_validator_rejects_animation_frame_reference_drift",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 253
+    },
+    {
+      "name": "test_validator_rejects_duplicate_animation_names",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 275
+    },
+    {
+      "name": "test_build_runtime_atlas_normalizes_animation_events",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 300
+    },
+    {
+      "name": "test_build_runtime_atlas_rejects_event_at_animation_end",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 335
+    },
+    {
+      "name": "test_validator_rejects_unsorted_animation_events",
+      "kind": "function",
+      "file": "tests/test_runtime_atlas.py",
+      "line": 356
+    },
+    {
+      "name": "indexRuntimeAtlas",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1
+    },
+    {
+      "name": "frameQuad",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 57
+    },
+    {
+      "name": "drawFrameCanvas2D",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 74
+    },
+    {
+      "name": "sourceOrientedUVs",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 142
+    },
+    {
+      "name": "animationFrameAtTime",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 167
+    },
+    {
+      "name": "animationDurationSeconds",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 226
+    },
+    {
+      "name": "animationEventsBetween",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 241
+    },
+    {
+      "name": "includeOccurrence",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 260
+    },
+    {
+      "name": "createAnimationPlayer",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 314
+    },
+    {
+      "name": "emit",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 335
+    },
+    {
+      "name": "sample",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 350
+    },
+    {
+      "name": "drawAnimationPlayerCanvas2D",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 431
+    },
+    {
+      "name": "buildSpriteBatch",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 452
+    },
+    {
+      "name": "drawSpriteBatchCanvas2D",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 551
+    },
+    {
+      "name": "buildInstancedSpriteBatch",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 579
+    },
+    {
+      "name": "instancedSpriteUV",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 694
+    },
+    {
+      "name": "instancedSpriteWebGL2Shaders",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 725
+    },
+    {
+      "name": "instancedSpriteAttributeViews",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 786
+    },
+    {
+      "name": "createRuntimeAtlasPages",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 823
+    },
+    {
+      "name": "buildTexturePageBatches",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 874
+    },
+    {
+      "name": "_compileWebGL2Shader",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 998
+    },
+    {
+      "name": "_linkWebGL2Program",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1014
+    },
+    {
+      "name": "createInstancedSpriteRendererWebGL2",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1038
+    },
+    {
+      "name": "assertActive",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1127
+    },
+    {
+      "name": "renderBatch",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1133
+    },
+    {
+      "name": "renderPageBatches",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1181
+    },
+    {
+      "name": "dispose",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1217
+    },
+    {
+      "name": "createWebGL2TextureCache",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1245
+    },
+    {
+      "name": "assertActive",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1264
+    },
+    {
+      "name": "createTextureFromSource",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1270
+    },
+    {
+      "name": "acquire",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1321
+    },
+    {
+      "name": "load",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1347
+    },
+    {
+      "name": "promise",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1363
+    },
+    {
+      "name": "get",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1388
+    },
+    {
+      "name": "has",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1393
+    },
+    {
+      "name": "references",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1398
+    },
+    {
+      "name": "release",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1403
+    },
+    {
+      "name": "deleteTexture",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1418
+    },
+    {
+      "name": "clear",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1429
+    },
+    {
+      "name": "dispose",
+      "kind": "function",
+      "file": "web/runtime_atlas.mjs",
+      "line": 1437
+    }
+  ],
+  "selected_tests": [
+    "tests/runtime_atlas_web.test.mjs",
+    "tests/test_runtime_atlas.py"
+  ]
 }

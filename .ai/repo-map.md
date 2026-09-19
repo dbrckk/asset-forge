@@ -1151,6 +1151,8 @@ deleteProgram(program)
 createVertexArray()
 deleteVertexArray(vao)
 createBuffer()
+createTexture()
+deleteTexture(texture)
 deleteBuffer(buffer)
 bindVertexArray(vao)
 bindBuffer(target, buffer)
@@ -1164,6 +1166,10 @@ useProgram(program)
 uniform2f(location, x, y)
 activeTexture(texture)
 bindTexture(target, texture)
+pixelStorei(parameter, value)
+texParameteri(target, parameter, value)
+texImage2D(...args)
+generateMipmap(target)
 uniform1i(location, value)
 drawElementsInstanced(mode, count, type, offset, instances)
 ⋮----
@@ -2494,13 +2500,36 @@ function dispose()
 ⋮----
 get disposed()
 get uploadedCapacityBytes()
+⋮----
+export function createWebGL2TextureCache(gl, options =
+⋮----
+function createTextureFromSource(source, textureOptions =
+⋮----
+function acquire(key, source, textureOptions =
+⋮----
+async function load(key, sourceOrFactory, textureOptions =
+⋮----
+function get(key)
+⋮----
+function has(key)
+⋮----
+function references(key)
+⋮----
+function release(key)
+⋮----
+function deleteTexture(key)
+⋮----
+function clear()
+⋮----
+get size()
+get pendingCount()
 ````
 
 ## File: .repo-standards.yml
 ````yaml
 source: dbrckk/repo-standards
 ref: main
-version: 19
+version: 20
 adopted: true
 workflow_mode: unified-single-commit
 repo_brain: dbrckk/repo-brain@main
@@ -2515,6 +2544,8 @@ auto_routing_learning: source-diff-success-v1
 validation_memory: passed-failed-test-history-v1
 regression_gate: repo-brain-core-tests-v1
 benchmark: routing-benchmark-v1
+stability_profile: stable-v1
+benchmark_guard: avg-files-le-6-cache-required-v1
 ai_context:
   index: .ai/index.md
   project_state: .ai/project-state.md
@@ -2553,6 +2584,7 @@ ai_context:
   brain_auto_learning: .ai/brain/auto-learning.json
   brain_validation_memory: .ai/brain/validation-memory.json
   brain_benchmark: .ai/brain/benchmark.json
+  brain_benchmark_health: .ai/brain/benchmark-health.json
   brain_hotset: .ai/brain/hotset.json
   brain_context_manifest: .ai/brain/context-manifest.json
   brain_context_packets: .ai/brain/context/
@@ -5046,6 +5078,49 @@ The renderer uploads a larger instance buffer with `bufferData(..., DYNAMIC_DRAW
 Texture-page catalogues may store actual `WebGLTexture` objects or arbitrary asset keys. The optional `resolveTexture(texture, entry)` callback resolves those keys at render time, keeping GPU resource management separate from atlas metadata.
 
 Call `dispose()` to release the VAO, buffers, and program. Rendering after disposal is rejected explicitly.
+
+
+### WebGL2 texture cache
+
+The web runtime now includes `createWebGL2TextureCache(gl, options)` for centralized GPU texture lifetime management.
+
+```js
+const textures = createWebGL2TextureCache(gl, {
+  minFilter: gl.NEAREST,
+  magFilter: gl.LINEAR,
+  wrapS: gl.CLAMP_TO_EDGE,
+  wrapT: gl.CLAMP_TO_EDGE,
+  premultiplyAlpha: true,
+});
+
+const heroTexture = textures.acquire("hero", heroImageBitmap);
+```
+
+Repeated `acquire(key, source)` calls reuse the same `WebGLTexture` and increment a reference count. `release(key)` decrements it and deletes the GPU texture when the count reaches zero.
+
+Asynchronous loads are deduplicated:
+
+```js
+const texture = await textures.load("hero", async () => {
+  return await createImageBitmap(await fetch("hero.png").then(r => r.blob()));
+});
+```
+
+If multiple callers request the same key while loading is still in flight, the source factory runs once, one GPU texture is created, and every caller receives the same texture with its own reference count.
+
+Per-texture options can override filtering, wrapping, mipmap generation, and premultiplied-alpha upload behavior. `get()`, `has()`, `references()`, `delete()`, `clear()`, and `dispose()` are provided for explicit lifecycle control.
+
+The cache is designed to plug directly into the renderer:
+
+```js
+const renderer = createInstancedSpriteRendererWebGL2(gl, {
+  resolveTexture(textureKey) {
+    return textures.get(textureKey);
+  },
+});
+```
+
+Disposal during an in-flight asynchronous load causes that load to fail rather than allocating a texture into an already-disposed cache.
 ````
 
 ## File: runtime_atlas.py
