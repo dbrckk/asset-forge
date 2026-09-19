@@ -1254,3 +1254,60 @@ ONE_MINUS_SRC_ALPHA
 ```
 
 Set `alphaBlending: false` when the host engine owns blend state itself.
+
+
+### Sprite layers and runtime visibility masks
+
+Persistent sprite entities now support a 32-bit `layerMask`:
+
+```js
+runtime.entities.add({
+  id: "world-tree",
+  page: "world",
+  frame: "tree",
+  layerMask: 0b0001,
+});
+
+runtime.entities.add({
+  id: "hud",
+  page: "ui",
+  frame: "healthbar",
+  layerMask: 0b0100,
+});
+```
+
+An entity is visible when:
+
+```text
+(entity.layerMask & visibilityMask) !== 0
+```
+
+The default entity layer is bit 0 (`1`), while the default runtime visibility mask enables all 32 bits.
+
+`createWebGL2CanvasRuntime()` exposes:
+
+```js
+runtime.visibilityMask
+runtime.setVisibilityMask(mask)
+```
+
+Example:
+
+```js
+runtime.setVisibilityMask(0b0001 | 0b0010);
+runtime.renderEntities();
+```
+
+A per-call `visibilityMask` overrides the runtime mask temporarily:
+
+```js
+runtime.renderEntities({
+  visibilityMask: 0b0100,
+});
+```
+
+`filterSpriteInstancesByLayer()` is also available as a low-level helper and reports input, visible, filtered counts, plus filtered indices.
+
+Layer filtering happens after hierarchy world-transform resolution but before culling, sorting, texture grouping, and GPU batching. Parent transforms therefore remain available to visible descendants even when parent and child use different layer masks.
+
+The version-aware entity batch cache includes `visibilityMask` in its stable cache key, so world/UI/effects views can coexist as separate cached batch variants without false cache hits.
