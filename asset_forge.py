@@ -365,6 +365,68 @@ def cmd_atlas_manifest(manifest_path: Path, asset_path: Path, output: Path | Non
     return 0
 
 
+def execute_compiled_production_job(
+    job: dict,
+    output_dir: Path,
+    *,
+    backend: str = "pollinations",
+    model: str | None = None,
+    resolution: str = "low",
+    timeout_seconds: float = 600.0,
+) -> dict:
+    asset_type = str(job.get("assetType") or "")
+    if asset_type in THREE_D_GENERATED_TYPES:
+        return execute_generated_3d_job(
+            job,
+            output_dir,
+            structural_validator=inspect_gltf,
+            profile_validator=validate_gltf_profile,
+            quality_reporter=quality_report,
+            godot_delivery_reporter=godot_3d_delivery_report,
+            model=model or "microsoft/trellis-2",
+            resolution=resolution,
+            timeout_seconds=timeout_seconds,
+        )
+    if asset_type in VECTOR_GENERATED_TYPES:
+        return execute_generated_vector_job(
+            job,
+            output_dir,
+            sanitizer=sanitize_svg,
+            normalizer=normalize_viewbox,
+            profile_validator=validate_svg_profile,
+            generic_validator=inspect_svg,
+            backend=backend,
+            model=model,
+            timeout_seconds=min(timeout_seconds, 180.0),
+        )
+    return execute_generated_raster_job(
+        job,
+        output_dir,
+        validator=validate_raster_file,
+        png_optimizer=recompress_png,
+        webp_encoder=encode_webp,
+        backend=backend,
+        model=model,
+        timeout_seconds=min(timeout_seconds, 180.0),
+    )
+
+
+def _write_production_inputs(output_dir: Path, job: dict) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    payloads = {
+        "production-job.json": job,
+        "asset-manifest.json": job.get("manifest"),
+        "production-plan.json": job.get("plan"),
+    }
+    for name, payload in payloads.items():
+        if not isinstance(payload, dict):
+            raise ValueError(f"{name}: object required")
+        (output_dir / name).write_text(
+            json.dumps(payload, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(prog="asset-forge")
     sub = result.add_subparsers(dest="command", required=True)
@@ -395,6 +457,14 @@ def parser() -> argparse.ArgumentParser:
     produce.add_argument("--model")
     produce.add_argument("--resolution", choices=["low", "medium", "high"], default="low")
     produce.add_argument("--timeout", type=float, default=600.0)
+
+    fulfill = sub.add_parser("fulfill", help="compile and execute a generated production request end to end")
+    fulfill.add_argument("request", type=Path)
+    fulfill.add_argument("--output-dir", type=Path)
+    fulfill.add_argument("--backend", choices=["pollinations"], default="pollinations")
+    fulfill.add_argument("--model")
+    fulfill.add_argument("--resolution", choices=["low", "medium", "high"], default="low")
+    fulfill.add_argument("--timeout", type=float, default=600.0)
 
     raster = sub.add_parser("validate-raster", help="validate a PNG or WebP against an asset manifest")
     raster.add_argument("manifest", type=Path)
@@ -627,42 +697,45 @@ def main() -> int:
                 delivery = job.get("delivery") if isinstance(job, dict) else None
                 configured = delivery.get("outputDir") if isinstance(delivery, dict) else None
                 output_dir = Path(configured) if isinstance(configured, str) and configured.strip() else Path("build/asset-forge") / str(job.get("requestId") or "job")
-            asset_type = str(job.get("assetType") or "")
-            if asset_type in THREE_D_GENERATED_TYPES:
-                result = execute_generated_3d_job(
-                    job,
-                    output_dir,
-                    structural_validator=inspect_gltf,
-                    profile_validator=validate_gltf_profile,
-                    quality_reporter=quality_report,
-                    godot_delivery_reporter=godot_3d_delivery_report,
-                    model=args.model or "microsoft/trellis-2",
-                    resolution=args.resolution,
-                    timeout_seconds=args.timeout,
-                )
-            elif asset_type in VECTOR_GENERATED_TYPES:
-                result = execute_generated_vector_job(
-                    job,
-                    output_dir,
-                    sanitizer=sanitize_svg,
-                    normalizer=normalize_viewbox,
-                    profile_validator=validate_svg_profile,
-                    generic_validator=inspect_svg,
-                    backend=args.backend,
-                    model=args.model,
-                    timeout_seconds=min(args.timeout, 180.0),
-                )
-            else:
-                result = execute_generated_raster_job(
-                    job,
-                    output_dir,
-                    validator=validate_raster_file,
-                    png_optimizer=recompress_png,
-                    webp_encoder=encode_webp,
-                    backend=args.backend,
-                    model=args.model,
-                    timeout_seconds=min(args.timeout, 180.0),
-                )
+            result = execute_compiled_production_job(
+                job,
+                output_dir,
+                backend=args.backend,
+                model=args.model,
+                resolution=args.resolution,
+                timeout_seconds=args.timeout,
+            )
+        except (OSError, ValueError, RuntimeError, json.JSONDecodeError, zlib.error) as exc:
+            print(f"INVALID: {exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result.get("success") else 1
+    if args.command == "fulfill":
+        try:
+            request = load_json(args.request)
+            errors = validate_production_request(request, validate_manifest)
+            if errors:
+                print("INVALID")
+                for error in errors:
+                    print(f"- {error}")
+                return 1
+            plan = build_plan(request["manifest"], root)
+            job = build_production_job(request, plan)
+            if job.get("requiresGenerator") is not True:
+                raise ValueError("fulfill currently requires manifest.source.mode=generated")
+            output_dir = args.output_dir
+            if output_dir is None:
+                configured = job.get("delivery", {}).get("outputDir")
+                output_dir = Path(configured) if isinstance(configured, str) and configured.strip() else Path("build/asset-forge") / str(job.get("requestId") or "job")
+            _write_production_inputs(output_dir, job)
+            result = execute_compiled_production_job(
+                job,
+                output_dir,
+                backend=args.backend,
+                model=args.model,
+                resolution=args.resolution,
+                timeout_seconds=args.timeout,
+            )
         except (OSError, ValueError, RuntimeError, json.JSONDecodeError, zlib.error) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
             return 2
