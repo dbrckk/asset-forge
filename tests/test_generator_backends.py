@@ -49,6 +49,23 @@ class GeneratorBackendsTests(unittest.TestCase):
         self.assertIn("--model", command)
         self.assertFalse(any("POLLINATIONS_API_KEY" in item for item in command))
 
+    def test_vector_generation_defaults_to_recraft_svg_model(self):
+        vector_job = job()
+        vector_job["assetType"] = "icon"
+        vector_job["instruction"] = "Create a clean game inventory icon."
+        vector_job["manifest"]["constraints"] = {}
+        command = pollinations_command(
+            vector_job,
+            Path("out/generated.svg"),
+            executable="/usr/bin/polli",
+        )
+        self.assertIn("--model", command)
+        self.assertEqual(
+            command[command.index("--model") + 1],
+            "recraft/recraft-v4.1-vector",
+        )
+        self.assertIn("valid SVG viewBox", build_generation_prompt(vector_job))
+
     def test_backend_status_reports_auth_without_secret_value(self):
         status = generator_backend_status(
             environ={"POLLINATIONS_API_KEY": "super-secret-value"},
