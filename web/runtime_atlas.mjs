@@ -2238,6 +2238,13 @@ export async function createWebGL2CanvasRuntime(
   const history =
     options.entityHistory ??
     createSpriteEntityHistory(entityStore, options.historyOptions);
+  const clipboard =
+    options.clipboardController ??
+    createSpriteClipboardController(
+      entityStore,
+      selection,
+      options.clipboardOptions,
+    );
 
   const pointerInteractions = createSpritePointerInteractionController({
     ...pointerControllerOptions,
@@ -2327,6 +2334,7 @@ export async function createWebGL2CanvasRuntime(
     entities: entityStore,
     animations: animationSystem,
     history,
+    clipboard,
     get visibilityMask() {
       return visibilityMask;
     },
@@ -2533,13 +2541,15 @@ export async function createWebGL2CanvasRuntime(
     },
     duplicateSelection(duplicateOptions = {}) {
       assertActive();
-      const result = duplicateSpriteEntities(
-        entityStore,
-        selection.snapshot().ids,
-        duplicateOptions,
-      );
-      selection.set(result.ids);
-      return result;
+      return clipboard.duplicate(duplicateOptions);
+    },
+    cutSelection(cutOptions = {}) {
+      assertActive();
+      return clipboard.cut(cutOptions);
+    },
+    pasteClipboard(pasteOptions = {}) {
+      assertActive();
+      return clipboard.paste(pasteOptions);
     },
     copySelection(copyOptions = {}) {
       assertActive();
@@ -4760,6 +4770,124 @@ export function createSpritePointerInteractionController(options = {}) {
     pointerState(pointerId) {
       const state = pointers.get(pointerId);
       return state ? { ...state } : null;
+    },
+  };
+}
+
+
+export function createSpriteClipboardController(
+  entityStore,
+  selectionModel,
+  options = {},
+) {
+  if (!selectionModel || typeof selectionModel.snapshot !== "function") {
+    throw new Error("sprite selection model required");
+  }
+  let clipboard = null;
+  const defaultOffsetX = options.offsetX ?? 16;
+  const defaultOffsetY = options.offsetY ?? 16;
+  if (!Number.isFinite(defaultOffsetX) || !Number.isFinite(defaultOffsetY)) {
+    throw new Error("clipboard offsets must be finite");
+  }
+
+  return {
+    copy(copyOptions = {}) {
+      clipboard = copySpriteEntities(
+        entityStore,
+        selectionModel.snapshot().ids,
+        copyOptions,
+      );
+      return clipboard;
+    },
+    cut(cutOptions = {}) {
+      const {
+        childPolicy = "cascade",
+        ...copyOptions
+      } = cutOptions;
+      clipboard = copySpriteEntities(
+        entityStore,
+        selectionModel.snapshot().ids,
+        copyOptions,
+      );
+      const selected = [...selectionModel.snapshot().ids];
+      const removed = new Set();
+      for (const id of selected) {
+        if (!entityStore.has(id)) continue;
+        const result = removeSpriteEntityHierarchy(
+          entityStore,
+          id,
+          { childPolicy },
+        );
+        for (const removedId of result.removedIds) removed.add(removedId);
+      }
+      selectionModel.clear();
+      return {
+        clipboard,
+        removedIds: [...removed],
+        count: removed.size,
+      };
+    },
+    paste(pasteOptions = {}) {
+      if (!clipboard) return null;
+      const result = pasteSpriteEntities(
+        entityStore,
+        clipboard,
+        {
+          offsetX: defaultOffsetX,
+          offsetY: defaultOffsetY,
+          ...pasteOptions,
+        },
+      );
+      selectionModel.set(result.ids);
+      return result;
+    },
+    duplicate(duplicateOptions = {}) {
+      const result = duplicateSpriteEntities(
+        entityStore,
+        selectionModel.snapshot().ids,
+        {
+          offsetX: defaultOffsetX,
+          offsetY: defaultOffsetY,
+          ...duplicateOptions,
+        },
+      );
+      selectionModel.set(result.ids);
+      return result;
+    },
+    set(value) {
+      if (
+        value != null &&
+        (
+          value.format !== "asset-forge-sprite-clipboard" ||
+          value.version !== 1 ||
+          !Array.isArray(value.entities)
+        )
+      ) {
+        throw new Error("invalid sprite entity clipboard");
+      }
+      clipboard = value == null
+        ? null
+        : {
+            ...value,
+            entities: value.entities.map((entity) => ({ ...entity })),
+          };
+      return this.get();
+    },
+    get() {
+      return clipboard == null
+        ? null
+        : {
+            ...clipboard,
+            entities: clipboard.entities.map((entity) => ({ ...entity })),
+          };
+    },
+    clear() {
+      const hadClipboard = clipboard != null;
+      clipboard = null;
+      return hadClipboard;
+    },
+    get hasData() {
+      return clipboard != null;
     },
   };
 }
