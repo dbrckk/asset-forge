@@ -70,7 +70,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Harden and productize the retained 2D scene/editor runtime; hierarchy editing now supports world-transform-preserving reparenting and explicit detach/cascade/reject deletion policies integrated with retained selection.
+- Harden and productize the retained 2D scene/editor runtime; hierarchy-aware duplicate/copy/paste now remaps IDs and parent links, supports descendant expansion, root offsets, and runtime selection integration.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
@@ -91,7 +91,7 @@ Status: active
 - `python asset_forge.py run-3d <source.blend> <workdir> [--profile ...] [--optimizer ...] [--engine generic|godot4]`
 
 ## Last verified
-- 2026-09-19: latest GitHub source inspected after adding reparentSpriteEntity() with world-transform preservation/cycle checks, removeSpriteEntityHierarchy() with detach/cascade/reject policies, and runtime reparentEntity()/removeEntity()/removeSelection() selection integration.
+- 2026-09-19: latest GitHub source inspected after adding duplicateSpriteEntities(), copySpriteEntities(), pasteSpriteEntities(), versioned sprite clipboard payloads, internal hierarchy ID remapping, descendant expansion, and runtime duplicateSelection()/copySelection()/pasteEntities().
 
 <!-- AUTO:START -->
 ## Automatic repository state
