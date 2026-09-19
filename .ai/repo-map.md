@@ -1141,6 +1141,14 @@ updates:
     "assetType": {"type": "string", "minLength": 1},
     "success": {"type": "boolean"},
     "generation": {"type": "object"},
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "source": {"type": "object"},
+        "license": {"type": "object"}
+      },
+      "additionalProperties": true
+    },
     "processing": {"type": "object"},
     "validation": {
       "type": "object",
@@ -1761,6 +1769,8 @@ def test_parser_accepts_end_to_end_fulfill_command(self)
 ⋮----
 args = asset_forge.parser().parse_args(
 ⋮----
+def test_parser_accepts_provided_source(self)
+⋮----
 def test_production_inputs_are_persisted_for_handoff_and_audit(self)
 ⋮----
 request = asset_forge.load_json(ROOT / "examples/production-request.json")
@@ -1779,6 +1789,11 @@ job = {
 expected = {"success": True, "artifact": "hero.png"}
 ⋮----
 result = asset_forge.execute_compiled_production_job(
+⋮----
+def test_compiled_job_forwards_provided_source(self)
+⋮----
+source = Path("downloads/icon.svg")
+expected = {"success": True, "artifact": "icon.svg"}
 ⋮----
 def test_godot_sprite_sheet_gets_engine_handoff(self)
 ⋮----
@@ -2291,6 +2306,20 @@ def godot(path, profile)
 report = execute_generated_3d_job(
 ⋮----
 def test_generated_character_3d_fails_when_profile_quality_fails(self)
+⋮----
+def test_provided_png_source_skips_generator_and_is_staged(self)
+⋮----
+provided_job = job()
+⋮----
+source = Path(source_td) / "licensed.png"
+⋮----
+def optimizer(input_path, output_path)
+⋮----
+def test_provided_source_symlink_is_rejected(self)
+⋮----
+real = Path(source_td) / "real.png"
+⋮----
+link = Path(source_td) / "linked.png"
 ⋮----
 def test_generator_source_must_stay_inside_job_output(self)
 ⋮----
@@ -5093,6 +5122,13 @@ source = Path(str(raw or ""))
 resolved_out = Path(output_dir).resolve()
 resolved_source = source.resolve()
 ⋮----
+def _provenance_from_manifest(manifest: dict) -> dict
+⋮----
+source = manifest.get("source") if isinstance(manifest, dict) else None
+license_data = manifest.get("license") if isinstance(manifest, dict) else None
+source = source if isinstance(source, dict) else {}
+license_data = license_data if isinstance(license_data, dict) else {}
+⋮----
 def _stage_provided_source(source_path: Path, output_dir: Path, *, suffix: str) -> dict
 ⋮----
 source = Path(source_path)
@@ -5749,6 +5785,14 @@ For debugging or staged orchestration, the two lower-level commands remain avail
 asset-forge production-job examples/production-request.json --output build/production-job.json
 asset-forge produce build/production-job.json --output-dir build/visual-job
 ```
+
+For licensed external assets or project-authored source files, Asset Forge intentionally does **not** fetch arbitrary manifest URLs. The orchestrator should acquire the approved file, preserve its provenance/license fields in the manifest, then pass the local file explicitly:
+
+```bash
+asset-forge fulfill request.json --source ./downloads/licensed-icon.svg
+```
+
+The provided source is copied into the job output sandbox before processing. Symlinks, empty files, oversized files, incompatible source extensions, and path escapes are rejected. This keeps network acquisition separate from trusted validation/optimization while still supporting the reuse-first policy.
 
 Validate a PNG or WebP sprite sheet against its manifest:
 

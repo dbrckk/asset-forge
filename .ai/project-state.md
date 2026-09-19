@@ -96,21 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T21:37:54Z
+Generated: 2026-09-19T21:40:57Z
 
 ### Git
 - Branch: `main`
-- Head: `ae772a25f3fe`
-- Commit date: 2026-09-19T23:37:43+02:00
-- Commit: feat: process provided external and custom asset sources
+- Head: `f6415503eee5`
+- Commit date: 2026-09-19T23:40:44+02:00
+- Commit: test: cover production provenance reporting
 - Tracked files: 238
 
 ### Recently changed files
+- `tests/test_production_executor.py`
+- `schemas/production-report.schema.json`
 - `production_executor.py`
-- `.github/workflows/live-generation.yml`
-- `examples/production-request-live-vector.json`
-- `.github/workflows/release.yml`
-- `.github/dependabot.yml`
+- `README.md`
 
 ### Project signals
 - No common build descriptor detected

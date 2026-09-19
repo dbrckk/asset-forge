@@ -4,37 +4,17 @@
     "expand_to": 12,
     "max_files": 6,
     "requested_max_files": 12,
-    "score_margin": 2,
+    "score_margin": 0,
     "tier": "bounded",
-    "top_score": 29
+    "top_score": 30
   },
   "cache": {
-    "fingerprint": "17b246bf3fa899fde5f966cabc41df53eb4b0afd8fa9b367ac045df882d699cc",
+    "fingerprint": "ff8440a4e99d462ad11440633bc36d48ba72dee12b362ec664a1f0fe9811044c",
     "hit": false
   },
-  "candidate_count": 14,
+  "candidate_count": 17,
   "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
   "files": [
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine",
-        "game"
-      ],
-      "path": "godot_handoff.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 29,
-      "symbols": [
-        "build_import_recommendations",
-        "detect_godot",
-        "godot_import_command",
-        "load_godot_profile",
-        "prepare_godot_handoff",
-        "validate_godot_handoff"
-      ]
-    },
     {
       "learning_score": 0,
       "matched_terms": [
@@ -43,9 +23,10 @@
       "path": "asset_forge.py",
       "reasons": [
         "impact",
+        "recently-changed",
         "search-index"
       ],
-      "score": 27,
+      "score": 30,
       "symbols": [
         "_enrich_engine_handoff",
         "_persist_enriched_production_report",
@@ -66,6 +47,49 @@
         "sprite_grid",
         "validate_manifest",
         "validate_raster_file"
+      ]
+    },
+    {
+      "learning_score": 0,
+      "matched_terms": [
+        "engine"
+      ],
+      "path": "tests/test_fulfill.py",
+      "reasons": [
+        "impact",
+        "recently-changed",
+        "search-index"
+      ],
+      "score": 30,
+      "symbols": [
+        "FulfillCommandTests",
+        "test_compiled_job_forwards_provided_source",
+        "test_compiled_job_routes_raster_to_generated_raster_executor",
+        "test_godot_3d_gets_handoff_and_import_validation",
+        "test_godot_sprite_sheet_gets_engine_handoff",
+        "test_parser_accepts_end_to_end_fulfill_command",
+        "test_parser_accepts_provided_source",
+        "test_production_inputs_are_persisted_for_handoff_and_audit"
+      ]
+    },
+    {
+      "learning_score": 0,
+      "matched_terms": [
+        "engine",
+        "game"
+      ],
+      "path": "godot_handoff.py",
+      "reasons": [
+        "search-index"
+      ],
+      "score": 29,
+      "symbols": [
+        "build_import_recommendations",
+        "detect_godot",
+        "godot_import_command",
+        "load_godot_profile",
+        "prepare_godot_handoff",
+        "validate_godot_handoff"
       ]
     },
     {
@@ -122,46 +146,13 @@
       "score": 26,
       "symbols": [
         "ProductionExecutionError",
+        "_provenance_from_manifest",
         "_safe_asset_id",
         "_stage_provided_source",
         "_trusted_generated_source",
         "execute_generated_3d_job",
         "execute_generated_raster_job",
         "execute_generated_vector_job"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine"
-      ],
-      "path": "tests/test_production_executor.py",
-      "reasons": [
-        "impact",
-        "search-index"
-      ],
-      "score": 23,
-      "symbols": [
-        "ProductionExecutorTests",
-        "copy_step",
-        "encode",
-        "generator",
-        "godot",
-        "job",
-        "normalizer",
-        "optimizer",
-        "profile_validator",
-        "quality",
-        "sanitizer",
-        "test_asset_id_cannot_escape_job_output",
-        "test_generated_3d_flows_through_profile_quality_and_godot_gates",
-        "test_generated_character_3d_fails_when_profile_quality_fails",
-        "test_generated_png_flows_through_processing_validation_and_report",
-        "test_generated_vector_is_sanitized_normalized_and_validated",
-        "test_generator_source_must_stay_inside_job_output",
-        "test_non_raster_target_fails_closed",
-        "test_validation_errors_block_artifact_promotion",
-        "test_vector_validation_errors_block_promotion"
       ]
     }
   ],
