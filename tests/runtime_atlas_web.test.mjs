@@ -448,8 +448,8 @@ const instanced = buildInstancedSpriteBatch(indexed, [
   { frame: "hero_0.png", x: 100, y: 200, scale: 2 },
 ]);
 assert.equal(instanced.instanceCount, 1);
-assert.equal(instanced.instanceStrideFloats, 12);
-assert.equal(instanced.instanceStrideBytes, 48);
+assert.equal(instanced.instanceStrideFloats, 16);
+assert.equal(instanced.instanceStrideBytes, 64);
 assert.deepEqual(instanced.instanceLayout, [
   "visibleX",
   "visibleY",
@@ -459,10 +459,14 @@ assert.deepEqual(instanced.instanceLayout, [
   "v0",
   "u1",
   "v1",
-  "rotationFlag",
+  "atlasRotationFlag",
   "sourceWidth",
   "sourceHeight",
-  "reserved",
+  "spriteRotationRadians",
+  "pivotWorldX",
+  "pivotWorldY",
+  "reserved0",
+  "reserved1",
 ]);
 assert.deepEqual(
   Array.from(instanced.instances),
@@ -478,6 +482,10 @@ assert.deepEqual(
     1,
     24,
     20,
+    0,
+    100,
+    200,
+    0,
     0,
   ],
 );
@@ -523,8 +531,11 @@ const manyInstances = Array.from({ length: 1000 }, (_, index) => ({
 const classicMany = buildSpriteBatch(indexRuntimeAtlas(plainAtlas), manyInstances);
 const instancedMany = buildInstancedSpriteBatch(indexRuntimeAtlas(plainAtlas), manyInstances);
 assert.equal(classicMany.vertices.byteLength, 1000 * 4 * 4 * 4);
-assert.equal(instancedMany.instances.byteLength, 1000 * 12 * 4);
-assert.ok(instancedMany.instances.byteLength < classicMany.vertices.byteLength);
+assert.equal(instancedMany.instances.byteLength, 1000 * 16 * 4);
+assert.ok(
+  instancedMany.instances.byteLength <
+    classicMany.vertices.byteLength + classicMany.indices.byteLength,
+);
 
 assert.throws(
   () => buildInstancedSpriteBatch(indexed, [{ frame: 0, scale: 0 }]),
@@ -550,7 +561,7 @@ assert.match(shaderContract.fragment, /texture\(uTexture, vUv\)/);
 
 const attributeViews = instancedSpriteAttributeViews(instanced);
 assert.equal(attributeViews.buffer, instanced.instances);
-assert.equal(attributeViews.strideBytes, 48);
+assert.equal(attributeViews.strideBytes, 64);
 assert.deepEqual(attributeViews.attributes, [
   {
     name: "aVisibleRect",
@@ -571,6 +582,13 @@ assert.deepEqual(attributeViews.attributes, [
     location: 3,
     size: 4,
     offsetBytes: 32,
+    divisor: 1,
+  },
+  {
+    name: "aPivotAndReserved",
+    location: 4,
+    size: 4,
+    offsetBytes: 48,
     divisor: 1,
   },
 ]);
@@ -2183,5 +2201,110 @@ const runtimeHierarchyRender = hierarchyRuntime.renderEntities({
 });
 assert.equal(runtimeHierarchyRender.instances, 2);
 hierarchyRuntime.dispose();
+
+
+
+const quarterTurn = Math.PI / 2;
+const rotatedInstanced = buildInstancedSpriteBatch(
+  indexRuntimeAtlas(plainAtlas),
+  [
+    {
+      frame: "plain",
+      x: 10,
+      y: 20,
+      rotation: quarterTurn,
+      pivotX: 3,
+      pivotY: 3.5,
+    },
+  ],
+);
+assert.equal(rotatedInstanced.instances[11], quarterTurn);
+assert.equal(rotatedInstanced.instances[12], 13);
+assert.equal(rotatedInstanced.instances[13], 23.5);
+assert.equal(rotatedInstanced.bounds[0].rotation, quarterTurn);
+assert.equal(rotatedInstanced.bounds[0].pivotWorldX, 13);
+assert.equal(rotatedInstanced.bounds[0].pivotWorldY, 23.5);
+
+const rotatedClassic = buildSpriteBatch(
+  indexRuntimeAtlas(plainAtlas),
+  [
+    {
+      frame: "plain",
+      x: 10,
+      y: 20,
+      rotation: quarterTurn,
+      pivotX: 3,
+      pivotY: 3.5,
+    },
+  ],
+);
+const rotatedClassicPositions = [];
+for (let i = 0; i < 4; i += 1) {
+  rotatedClassicPositions.push([
+    rotatedClassic.vertices[i * 4],
+    rotatedClassic.vertices[i * 4 + 1],
+  ]);
+}
+assert.ok(
+  Math.abs(rotatedClassicPositions[0][0] - 15.5) < 1e-6 &&
+    Math.abs(rotatedClassicPositions[0][1] - 21.5) < 1e-6,
+);
+
+const rotatedBounds = spriteInstanceBounds(
+  createRuntimeAtlasPages([
+    { id: "plain-page", atlas: plainAtlas, texture: "plain.png" },
+  ]),
+  {
+    page: "plain-page",
+    frame: "plain",
+    x: 10,
+    y: 20,
+    rotation: quarterTurn,
+    pivotX: 3,
+    pivotY: 3.5,
+  },
+);
+assert.ok(Math.abs(rotatedBounds.width - 7) < 1e-6);
+assert.ok(Math.abs(rotatedBounds.height - 6) < 1e-6);
+assert.ok(Math.abs(rotatedBounds.visibleWidth - 5) < 1e-6);
+assert.ok(Math.abs(rotatedBounds.visibleHeight - 4) < 1e-6);
+
+const rotationHierarchyStore = createSpriteEntityStore();
+rotationHierarchyStore.add({
+  id: "rot-parent",
+  page: "heroes",
+  frame: "plain",
+  x: 100,
+  y: 100,
+  rotation: quarterTurn,
+  scale: 2,
+});
+rotationHierarchyStore.add({
+  id: "rot-child",
+  parent: "rot-parent",
+  page: "heroes",
+  frame: "plain",
+  x: 10,
+  y: 0,
+  rotation: quarterTurn,
+});
+const resolvedRotationHierarchy =
+  resolveSpriteEntityHierarchy(rotationHierarchyStore);
+const rotatedChild = resolvedRotationHierarchy.instances.find(
+  (instance) => instance.id === "rot-child",
+);
+assert.ok(Math.abs(rotatedChild.x - 100) < 1e-6);
+assert.ok(Math.abs(rotatedChild.y - 120) < 1e-6);
+assert.ok(Math.abs(rotatedChild.rotation - Math.PI) < 1e-6);
+assert.equal(rotatedChild.scaleX, 2);
+assert.equal(rotatedChild.scaleY, 2);
+
+const shaderWithSpriteRotation = instancedSpriteWebGL2Shaders();
+assert.equal(
+  shaderWithSpriteRotation.attributes.aPivotAndReserved.location,
+  4,
+);
+assert.match(shaderWithSpriteRotation.vertex, /cos\(spriteRotation\)/);
+assert.match(shaderWithSpriteRotation.vertex, /aPivotAndReserved/);
 
 console.log("runtime_atlas.mjs smoke test passed");
