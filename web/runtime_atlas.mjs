@@ -1136,6 +1136,10 @@ export function createInstancedSpriteRendererWebGL2(gl, options = {}) {
   }
 
   const shaderContract = options.shaders ?? instancedSpriteWebGL2Shaders();
+  const resolveTexture =
+    typeof options.resolveTexture === "function"
+      ? options.resolveTexture
+      : (texture) => texture;
   const program = _linkWebGL2Program(
     gl,
     shaderContract.vertex,
@@ -1282,9 +1286,13 @@ export function createInstancedSpriteRendererWebGL2(gl, options = {}) {
       if (!entry.batch || !(entry.batch.instances instanceof Float32Array)) {
         throw new Error("instanced texture-page batches required");
       }
+      const texture = resolveTexture(entry.texture, entry);
+      if (!texture) {
+        throw new Error(`WebGL texture could not be resolved for page ${entry.pageId}`);
+      }
       const result = renderBatch(
         entry.batch,
-        entry.texture,
+        texture,
         viewportWidth,
         viewportHeight,
       );
