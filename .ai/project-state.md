@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T07:02:53Z
+Generated: 2026-09-19T07:07:38Z
 
 ### Git
 - Branch: `main`
-- Head: `46504b8dafee`
-- Commit date: 2026-09-19T09:02:43+02:00
-- Commit: docs: record runtime animation event marker milestone
-- Tracked files: 201
+- Head: `ca212327561c`
+- Commit date: 2026-09-19T09:04:44+02:00
+- Commit: chore(ai): adopt repo standards v18
+- Tracked files: 203
 
 ### Recently changed files
+- `.repo-standards.yml`
 - `README.md`
 - `examples/runtime-atlas.json`
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
-- `tests/test_runtime_atlas.py`
 
 ### Project signals
 - No common build descriptor detected
