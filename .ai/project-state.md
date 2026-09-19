@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T11:46:54Z
+Generated: 2026-09-19T12:04:52Z
 
 ### Git
 - Branch: `main`
-- Head: `78ab2b1dafe5`
-- Commit date: 2026-09-19T13:46:49+02:00
-- Commit: docs: record sprite entity hierarchy milestone
+- Head: `f89e75951773`
+- Commit date: 2026-09-19T14:04:49+02:00
+- Commit: docs: record sprite rotation and pivot milestone
 - Tracked files: 209
 
 ### Recently changed files

@@ -2,10 +2,10 @@
 
 Summary: 0 success / 2 failure / 2 active
 
-- Validate asset-forge: queued / pending (78ab2b1d)
-- Validate asset-forge: in_progress / pending (a1d7125d)
-- Validate asset-forge: completed / failure (6872f794)
-- Validate asset-forge: completed / failure (cfa97f32)
+- Validate asset-forge: queued / pending (f89e7595)
+- Validate asset-forge: in_progress / pending (01dd48ff)
+- Validate asset-forge: completed / failure (1c2e536d)
+- Validate asset-forge: completed / failure (2e50a999)
 
 ## Latest failed run structure
 - Job: test
