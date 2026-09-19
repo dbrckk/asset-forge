@@ -73,6 +73,8 @@ class GeneratorBackendsTests(unittest.TestCase):
             home=Path("/definitely/not/a/real/home"),
         )
         self.assertTrue(status["pollinations"]["authenticated"])
+        self.assertTrue(status["pollinations"]["rasterVectorReady"])
+        self.assertTrue(status["pollinations"]["threeDReady"])
         self.assertEqual(status["pollinations"]["credentialSource"], "environment")
         self.assertNotIn("super-secret-value", repr(status))
 
