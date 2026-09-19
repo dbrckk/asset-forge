@@ -120,6 +120,44 @@ class GeneratorBackendsTests(unittest.TestCase):
             self.assertEqual(result["normalization"]["rows"], 2)
             self.assertEqual(result["metadata"], {"ok": True})
 
+    def test_generator_metadata_redacts_credentials_before_reporting(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+
+            def runner(command, **kwargs):
+                target = Path(command[command.index("--output") + 1])
+                target.write_bytes(b"PNG")
+
+                class Result:
+                    returncode = 0
+                    stdout = (
+                        '{"ok":true,"api_key":"top-secret",'
+                        '"nested":{"access_token":"also-secret"}}'
+                    )
+                    stderr = ""
+
+                return Result()
+
+            with patch("generator_backends.shutil.which", return_value="/usr/bin/polli"):
+                result = execute_generated_asset(
+                    job(),
+                    out,
+                    runner=runner,
+                    raster_normalizer=lambda raw, output, value: (
+                        output.write_bytes(raw.read_bytes())
+                        and {"width": 64, "height": 64, "columns": 2, "rows": 2}
+                    ),
+                )
+
+        self.assertTrue(result["metadata"]["ok"])
+        self.assertEqual(result["metadata"]["api_key"], "[REDACTED]")
+        self.assertEqual(
+            result["metadata"]["nested"]["access_token"],
+            "[REDACTED]",
+        )
+        self.assertNotIn("top-secret", repr(result))
+        self.assertNotIn("also-secret", repr(result))
+
     def test_required_alpha_runs_transparency_processor_before_normalization(self):
         alpha_job = job()
         alpha_job["manifest"]["constraints"]["requiresAlpha"] = True
