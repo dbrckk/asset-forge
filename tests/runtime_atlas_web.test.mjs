@@ -1386,6 +1386,46 @@ const paddedCull = cullSpriteInstances(
 );
 assert.equal(paddedCull.visibleCount, 1);
 
+const unrotatedFastCull = cullSpriteInstances(
+  scenePagesForCulling,
+  [{
+    page: "heroes",
+    frame: "plain",
+    x: 60,
+    y: 10,
+    scaleX: 2,
+    scaleY: 1.5,
+    id: "fast-unrotated",
+  }],
+  { x: 0, y: 0, width: 64, height: 64 },
+);
+assert.equal(unrotatedFastCull.visibleCount, 1);
+
+const rotatedCullFallback = cullSpriteInstances(
+  scenePagesForCulling,
+  [{
+    page: "heroes",
+    frame: "plain",
+    x: 66,
+    y: 24,
+    rotation: Math.PI / 4,
+    pivotX: 3,
+    pivotY: 3.5,
+    id: "rotated-fallback",
+  }],
+  { x: 0, y: 0, width: 64, height: 64 },
+);
+assert.equal(rotatedCullFallback.visibleCount, 1);
+
+assert.throws(
+  () => cullSpriteInstances(
+    scenePagesForCulling,
+    [{ page: "heroes", frame: "plain", x: Number.NaN, y: 0 }],
+    { x: 0, y: 0, width: 64, height: 64 },
+  ),
+  /sprite instance x must be finite/,
+);
+
 const stableSorted = stableSortSpriteInstances(
   [
     { id: "a", z: 2 },
