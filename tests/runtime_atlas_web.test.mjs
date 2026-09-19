@@ -33,6 +33,9 @@ import {
   createSpriteEntityStore,
   createSpriteEntityHistory,
   reparentSpriteEntity,
+  duplicateSpriteEntities,
+  copySpriteEntities,
+  pasteSpriteEntities,
   removeSpriteEntityHierarchy,
   createSpriteAnimationSystem,
   resolveSpriteEntityHierarchy,
@@ -4319,5 +4322,49 @@ assert.throws(
   () => removeSpriteEntityHierarchy(hierarchyEditStore, "reject-parent", { childPolicy: "reject" }),
   /has children/,
 );
+
+
+
+const clipboardStore = createSpriteEntityStore();
+clipboardStore.add({ id: "copy-parent", page: "heroes", frame: "plain", x: 10, y: 20 });
+clipboardStore.add({ id: "copy-child", parent: "copy-parent", page: "heroes", frame: "plain", x: 5, y: 6 });
+clipboardStore.add({ id: "copy-other", page: "heroes", frame: "plain", x: 100, y: 200 });
+
+const duplicatedTree = duplicateSpriteEntities(
+  clipboardStore,
+  ["copy-parent"],
+  { includeDescendants: true, offsetX: 20, offsetY: 30 },
+);
+assert.equal(duplicatedTree.count, 2);
+const duplicateParentId = duplicatedTree.idMap.get("copy-parent");
+const duplicateChildId = duplicatedTree.idMap.get("copy-child");
+assert.equal(clipboardStore.get(duplicateParentId).x, 30);
+assert.equal(clipboardStore.get(duplicateParentId).y, 50);
+assert.equal(clipboardStore.get(duplicateChildId).parent, duplicateParentId);
+assert.equal(clipboardStore.get(duplicateChildId).x, 5);
+assert.equal(clipboardStore.get(duplicateChildId).y, 6);
+
+const clipboard = copySpriteEntities(
+  clipboardStore,
+  ["copy-parent"],
+  { includeDescendants: true },
+);
+assert.equal(clipboard.format, "asset-forge-sprite-clipboard");
+assert.equal(clipboard.entities.length, 2);
+
+const pasteStore = createSpriteEntityStore();
+const pasted = pasteSpriteEntities(
+  pasteStore,
+  clipboard,
+  { offsetX: 40, offsetY: 50 },
+);
+assert.equal(pasted.count, 2);
+const pastedParent = pasteStore.get(pasted.idMap.get("copy-parent"));
+const pastedChild = pasteStore.get(pasted.idMap.get("copy-child"));
+assert.equal(pastedParent.x, 50);
+assert.equal(pastedParent.y, 70);
+assert.equal(pastedChild.parent, pastedParent.id);
+assert.equal(pastedChild.x, 5);
+assert.equal(pastedChild.y, 6);
 
 console.log("runtime_atlas.mjs smoke test passed");
