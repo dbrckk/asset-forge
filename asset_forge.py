@@ -20,10 +20,10 @@ from gltf_tools import inspect_gltf, validate_gltf_profile
 from godot_3d_delivery import godot_3d_delivery_report
 from godot_handoff import prepare_godot_handoff, validate_godot_handoff
 from godot_export import write_spriteframes
-from generator_backends import VECTOR_GENERATED_TYPES, execute_generated_asset, generator_backend_status
+from generator_backends import THREE_D_GENERATED_TYPES, VECTOR_GENERATED_TYPES, execute_generated_asset, generator_backend_status
 from raster_pack import encode_webp, inspect_png, inspect_raster, pack_compact_atlas, pack_uniform_atlas, raster_backend_status, recompress_png
 from production_contract import build_production_job, validate_production_request
-from production_executor import execute_generated_raster_job, execute_generated_vector_job
+from production_executor import execute_generated_3d_job, execute_generated_raster_job, execute_generated_vector_job
 from runtime_atlas import build_runtime_atlas, validate_runtime_atlas
 from starlist_bridge import build_visual_discovery_report, run_starlist_recommender
 from toolchain_3d import build_3d_pipeline, detect_3d_tools, execute_3d_pipeline, prepare_3d_pipeline
@@ -391,7 +391,8 @@ def parser() -> argparse.ArgumentParser:
     produce.add_argument("--output-dir", type=Path)
     produce.add_argument("--backend", choices=["pollinations"], default="pollinations")
     produce.add_argument("--model")
-    produce.add_argument("--timeout", type=float, default=180.0)
+    produce.add_argument("--resolution", choices=["low", "medium", "high"], default="low")
+    produce.add_argument("--timeout", type=float, default=600.0)
 
     raster = sub.add_parser("validate-raster", help="validate a PNG or WebP against an asset manifest")
     raster.add_argument("manifest", type=Path)
@@ -621,7 +622,20 @@ def main() -> int:
                 delivery = job.get("delivery") if isinstance(job, dict) else None
                 configured = delivery.get("outputDir") if isinstance(delivery, dict) else None
                 output_dir = Path(configured) if isinstance(configured, str) and configured.strip() else Path("build/asset-forge") / str(job.get("requestId") or "job")
-            if str(job.get("assetType") or "") in VECTOR_GENERATED_TYPES:
+            asset_type = str(job.get("assetType") or "")
+            if asset_type in THREE_D_GENERATED_TYPES:
+                result = execute_generated_3d_job(
+                    job,
+                    output_dir,
+                    structural_validator=inspect_gltf,
+                    profile_validator=validate_gltf_profile,
+                    quality_reporter=quality_report,
+                    godot_delivery_reporter=godot_3d_delivery_report,
+                    model=args.model or "microsoft/trellis-2",
+                    resolution=args.resolution,
+                    timeout_seconds=args.timeout,
+                )
+            elif asset_type in VECTOR_GENERATED_TYPES:
                 result = execute_generated_vector_job(
                     job,
                     output_dir,
@@ -631,7 +645,7 @@ def main() -> int:
                     generic_validator=inspect_svg,
                     backend=args.backend,
                     model=args.model,
-                    timeout_seconds=args.timeout,
+                    timeout_seconds=min(args.timeout, 180.0),
                 )
             else:
                 result = execute_generated_raster_job(
@@ -642,7 +656,7 @@ def main() -> int:
                     webp_encoder=encode_webp,
                     backend=args.backend,
                     model=args.model,
-                    timeout_seconds=args.timeout,
+                    timeout_seconds=min(args.timeout, 180.0),
                 )
         except (OSError, ValueError, RuntimeError, json.JSONDecodeError, zlib.error) as exc:
             print(f"INVALID: {exc}", file=sys.stderr)
