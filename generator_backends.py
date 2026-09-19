@@ -98,6 +98,86 @@ def _generation_dimensions(job: dict) -> tuple[int, int] | None:
     return request_width, request_height
 
 
+def _ensure_transparency(
+    path: Path,
+    job: dict,
+    *,
+    runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,
+    timeout_seconds: float = 180.0,
+) -> dict | None:
+    manifest = job.get("manifest")
+    constraints = manifest.get("constraints") if isinstance(manifest, dict) else None
+    if not isinstance(constraints, dict) or constraints.get("requiresAlpha") is not True:
+        return None
+
+    try:
+        from PIL import Image
+    except ImportError as exc:
+        raise GenerationError(
+            "Pillow is required to inspect generated raster transparency"
+        ) from exc
+
+    try:
+        with Image.open(path) as image:
+            alpha = image.convert("RGBA").getchannel("A")
+            minimum, maximum = alpha.getextrema()
+    except (OSError, ValueError) as exc:
+        raise GenerationError(
+            f"generated raster transparency inspection failed: {type(exc).__name__}"
+        ) from exc
+
+    if minimum < 255:
+        return {
+            "required": True,
+            "changed": False,
+            "backend": None,
+            "alphaRange": [minimum, maximum],
+        }
+
+    executable = shutil.which("rembg")
+    if not executable:
+        raise GenerationError(
+            "generated raster requires transparency but rembg is unavailable"
+        )
+
+    temporary = path.with_name(path.stem + "-transparent.png")
+    completed = runner(
+        [executable, "i", str(path), str(temporary)],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=timeout_seconds,
+    )
+    if completed.returncode != 0:
+        stderr = str(completed.stderr or "").strip()
+        raise GenerationError(
+            "rembg background removal failed"
+            + (f": {stderr[:1000]}" if stderr else "")
+        )
+    if not temporary.is_file() or temporary.stat().st_size <= 0:
+        raise GenerationError("rembg did not produce an output file")
+
+    try:
+        with Image.open(temporary) as image:
+            alpha = image.convert("RGBA").getchannel("A")
+            new_minimum, new_maximum = alpha.getextrema()
+    except (OSError, ValueError) as exc:
+        raise GenerationError(
+            f"rembg output inspection failed: {type(exc).__name__}"
+        ) from exc
+    if new_minimum >= 255:
+        temporary.unlink(missing_ok=True)
+        raise GenerationError("rembg output is still fully opaque")
+
+    temporary.replace(path)
+    return {
+        "required": True,
+        "changed": True,
+        "backend": "rembg",
+        "alphaRange": [new_minimum, new_maximum],
+    }
+
+
 def _normalize_raster_geometry(raw: Path, output: Path, job: dict) -> dict | None:
     geometry = _sprite_sheet_geometry(job)
     if geometry is None:
@@ -234,6 +314,7 @@ def execute_generated_asset(
     timeout_seconds: float = 180.0,
     runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,
     raster_normalizer: Callable[[Path, Path, dict], dict | None] = _normalize_raster_geometry,
+    transparency_processor: Callable[..., dict | None] = _ensure_transparency,
 ) -> dict:
     if job.get("requiresGenerator") is not True:
         raise GenerationError("production job does not require a generator")
@@ -286,6 +367,14 @@ def execute_generated_asset(
     if not output.is_file() or output.stat().st_size <= 0:
         raise GenerationError("pollinations generation did not produce an output file")
 
+    transparency = None
+    if asset_type in RASTER_GENERATED_TYPES:
+        transparency = transparency_processor(
+            output,
+            job,
+            timeout_seconds=min(timeout, 180.0),
+        )
+
     normalization = None
     final_output = output
     if constrained_raster:
@@ -312,6 +401,7 @@ def execute_generated_asset(
         "sourcePath": str(final_output),
         "sourceBytes": final_output.stat().st_size,
         "normalization": normalization,
+        "transparency": transparency,
         "metadata": metadata,
     }
 
