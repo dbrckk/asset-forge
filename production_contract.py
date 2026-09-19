@@ -7,6 +7,7 @@ from typing import Callable
 
 REQUEST_SCHEMA = "asset-forge/production-request/v1"
 JOB_SCHEMA = "asset-forge/production-job/v1"
+REPORT_SCHEMA = "asset-forge/production-report/v1"
 SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$")
 
 
@@ -87,3 +88,46 @@ def build_production_job(
         "manifest": manifest,
         "plan": plan,
     }
+
+
+def validate_production_report(report: dict) -> list[str]:
+    errors: list[str] = []
+    if not isinstance(report, dict):
+        return ["report: object required"]
+    if report.get("schema") != REPORT_SCHEMA:
+        errors.append(f"schema: must be {REPORT_SCHEMA}")
+
+    for field in ("requestId", "assetId", "assetType"):
+        value = report.get(field)
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"{field}: non-empty string required")
+
+    success = report.get("success")
+    if not isinstance(success, bool):
+        errors.append("success: boolean required")
+
+    generation = report.get("generation")
+    if not isinstance(generation, dict):
+        errors.append("generation: object required")
+
+    validation = report.get("validation")
+    if not isinstance(validation, dict):
+        errors.append("validation: object required")
+    else:
+        validation_errors = validation.get("errors")
+        if not isinstance(validation_errors, list):
+            errors.append("validation.errors: array required")
+
+    artifact = report.get("artifact")
+    if artifact is not None and (not isinstance(artifact, str) or not artifact.strip()):
+        errors.append("artifact: non-empty string or null required")
+    if success is True and not isinstance(artifact, str):
+        errors.append("artifact: required when success=true")
+    if success is False and artifact is not None:
+        errors.append("artifact: must be null when success=false")
+
+    handoff = report.get("engineHandoff")
+    if handoff is not None and not isinstance(handoff, dict):
+        errors.append("engineHandoff: object required when present")
+
+    return errors
