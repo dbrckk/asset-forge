@@ -1874,3 +1874,27 @@ pointerOptions: {
 ```
 
 When the captured entity belongs to a multi-selection, the complete selection moves together. Otherwise the existing single-entity drag behavior is preserved.
+
+
+### Transactional entity undo/redo
+
+The retained entity runtime now provides bounded synchronous edit history:
+
+```js
+runtime.history.record("move selection", () => {
+  runtime.moveSelectionByWorldDelta(16, 0);
+});
+
+runtime.undo();
+runtime.redo();
+```
+
+For interactive gestures, an edit can span multiple updates:
+
+```js
+runtime.history.begin("drag");
+// many entity updates...
+runtime.history.commit();
+```
+
+`cancel()` restores the pre-edit snapshot. History restores additions, removals, and property changes transactionally, clears redo entries after a new committed edit, and rejects asynchronous callbacks so rollback semantics remain deterministic.
