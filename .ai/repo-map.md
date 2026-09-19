@@ -2715,6 +2715,7 @@ undo()
 redo()
 selectEntitiesInRect(rect, selectOptions =
 moveEntityByWorldDelta(entityId, deltaX, deltaY, moveOptions =
+transformSelection(transformOptions =
 moveSelectionByWorldDelta(deltaX, deltaY, moveOptions =
 pointerMove(pointerId, x, y, pickOptions =
 pointerDown(pointerId, x, y, pickOptions =
@@ -2940,6 +2941,12 @@ function cancel(pointerId)
 get hoverEntityId()
 get activePointerCount()
 pointerState(pointerId)
+⋮----
+export function transformSelectedSpriteEntities(
+  entityStore,
+  selectionModel,
+  transform = {},
+)
 ⋮----
 export function moveSelectedSpriteEntitiesByWorldDelta(
   entityStore,
@@ -6649,6 +6656,22 @@ runtime.pasteEntities(clipboard, {
 ```
 
 Clipboard payloads use the versioned `asset-forge-sprite-clipboard` format. Pasted entities receive fresh IDs, internal parent references are remapped, and the newly created entities become the active selection.
+
+
+### Hierarchy-aware duplicate, copy, and paste
+
+Selections and entity trees can now be duplicated or copied into a portable in-memory clipboard:
+
+```js
+const copy = runtime.copySelection({ includeDescendants: true });
+const pasted = runtime.pasteEntities(copy, { offsetX: 16, offsetY: 16 });
+```
+
+`runtime.duplicateSelection()` performs the same operation directly inside the current entity store and selects the new entities.
+
+Internal parent-child links are remapped to the newly allocated IDs. Only top-level copied roots receive the paste offset, so descendant local transforms remain unchanged and the duplicated hierarchy preserves its shape.
+
+The clipboard contract is versioned as `asset-forge-sprite-clipboard` version 1.
 ````
 
 ## File: runtime_atlas.py
