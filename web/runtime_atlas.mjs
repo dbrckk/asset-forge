@@ -223,3 +223,90 @@ export function animationFrameAtTime(indexedAtlas, animationOrName, timeSeconds)
 
   throw new Error("unable to resolve animation frame");
 }
+
+
+export function createAnimationPlayer(indexedAtlas, animationName, options = {}) {
+  const animation = indexedAtlas.animation(animationName);
+  let timeSeconds = options.startTime ?? 0;
+  let playing = options.autoplay ?? false;
+  let playbackRate = options.playbackRate ?? 1;
+  let lastFrameIndex = null;
+  let finishEmitted = false;
+
+  if (!Number.isFinite(timeSeconds) || timeSeconds < 0) {
+    throw new Error("startTime must be a finite value >= 0");
+  }
+  if (!Number.isFinite(playbackRate) || playbackRate <= 0) {
+    throw new Error("playbackRate must be > 0");
+  }
+
+  const onFrame = typeof options.onFrame === "function" ? options.onFrame : null;
+  const onFinish = typeof options.onFinish === "function" ? options.onFinish : null;
+
+  function emit(sample) {
+    if (sample.frameIndex !== lastFrameIndex) {
+      lastFrameIndex = sample.frameIndex;
+      onFrame?.(sample);
+    }
+    if (sample.finished && !finishEmitted) {
+      finishEmitted = true;
+      playing = false;
+      onFinish?.(sample);
+    } else if (!sample.finished) {
+      finishEmitted = false;
+    }
+    return sample;
+  }
+
+  function sample() {
+    return emit(animationFrameAtTime(indexedAtlas, animation, timeSeconds));
+  }
+
+  return {
+    get animation() {
+      return animation;
+    },
+    get timeSeconds() {
+      return timeSeconds;
+    },
+    get playing() {
+      return playing;
+    },
+    get playbackRate() {
+      return playbackRate;
+    },
+    play() {
+      playing = true;
+      return sample();
+    },
+    pause() {
+      playing = false;
+      return sample();
+    },
+    seek(nextTimeSeconds) {
+      if (!Number.isFinite(nextTimeSeconds) || nextTimeSeconds < 0) {
+        throw new Error("seek time must be a finite value >= 0");
+      }
+      timeSeconds = nextTimeSeconds;
+      finishEmitted = false;
+      return sample();
+    },
+    setPlaybackRate(rate) {
+      if (!Number.isFinite(rate) || rate <= 0) {
+        throw new Error("playbackRate must be > 0");
+      }
+      playbackRate = rate;
+      return playbackRate;
+    },
+    sample,
+    update(deltaSeconds) {
+      if (!Number.isFinite(deltaSeconds) || deltaSeconds < 0) {
+        throw new Error("deltaSeconds must be a finite value >= 0");
+      }
+      if (playing) {
+        timeSeconds += deltaSeconds * playbackRate;
+      }
+      return sample();
+    },
+  };
+}
