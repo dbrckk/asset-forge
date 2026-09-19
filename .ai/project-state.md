@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T15:21:10Z
+Generated: 2026-09-19T15:23:59Z
 
 ### Git
 - Branch: `main`
-- Head: `739d63d9d1f2`
-- Commit date: 2026-09-19T17:20:55+02:00
-- Commit: docs: record entity undo redo milestone
+- Head: `f0a4b009ca06`
+- Commit date: 2026-09-19T17:23:45+02:00
+- Commit: docs: record safe hierarchy editing milestone
 - Tracked files: 209
 
 ### Recently changed files

@@ -2705,6 +2705,9 @@ pickEntity(x, y, pickOptions =
 ⋮----
 selectEntity(entityId, selectOptions =
 clearSelection()
+reparentEntity(entityId, parentId = null, reparentOptions =
+removeEntity(entityId, removeOptions =
+removeSelection(removeOptions =
 undo()
 redo()
 selectEntitiesInRect(rect, selectOptions =
@@ -2741,6 +2744,21 @@ function instances(options =
 function transact(callback)
 ⋮----
 get version()
+⋮----
+export function reparentSpriteEntity(
+  entityStore,
+  entityId,
+  parentId = null,
+  options = {},
+)
+⋮----
+export function removeSpriteEntityHierarchy(
+  entityStore,
+  entityId,
+  options = {},
+)
+⋮----
+const visit = (id) =>
 ⋮----
 export function createSpriteEntityHistory(
   entityStore,
@@ -6571,6 +6589,21 @@ runtime.history.commit();
 ```
 
 `cancel()` restores the pre-edit snapshot. History restores additions, removals, and property changes transactionally, clears redo entries after a new committed edit, and rejects asynchronous callbacks so rollback semantics remain deterministic.
+
+
+### Safe hierarchy reparenting and deletion
+
+`reparentSpriteEntity()` changes a parent while preserving world position, depth, rotation, and scale by default. It rejects self-parenting, missing parents, and hierarchy cycles.
+
+Hierarchy deletion supports three explicit child policies:
+
+```text
+detach   keep direct children and preserve their world transforms
+cascade  recursively remove descendants
+reject   refuse deletion when children exist
+```
+
+The canvas runtime exposes `reparentEntity()`, `removeEntity()`, and `removeSelection()`. Removed IDs are also removed from the retained selection model.
 ````
 
 ## File: runtime_atlas.py
