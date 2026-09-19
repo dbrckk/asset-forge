@@ -70,7 +70,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
-- Harden and productize the retained 2D scene/editor runtime; hierarchy-aware duplicate/copy/paste now remaps IDs and parent links, supports descendant expansion, root offsets, and runtime selection integration.
+- Harden and productize the retained 2D scene/editor runtime; retained clipboard state now supports copy/cut/paste/duplicate, versioned payload import/export, hierarchy-safe deletion, offsets, and automatic selection of pasted entities.
 
 ## Validation
 - `python -m compileall -q asset_forge.py raster_pack.py godot_export.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py blender_adapter.py toolchain_3d.py tests`
