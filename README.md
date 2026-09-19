@@ -1848,3 +1848,29 @@ runtime.selectEntitiesInRect(rect, {
   additive: true,
 });
 ```
+
+
+### Multi-selection dragging
+
+Selected entities can now move as one world-space group:
+
+```js
+runtime.moveSelectionByWorldDelta(dx, dy, {
+  axis: "both",
+  gridSize: 16,
+  bounds: runtime.worldBounds,
+});
+```
+
+`moveSelectedSpriteEntitiesByWorldDelta()` uses the selection primary entity as the snap anchor. If both a parent and its descendant are selected, only the highest selected ancestor is directly moved, preventing double movement while preserving every selected entity's visual offset.
+
+Pointer group dragging is opt-in:
+
+```js
+pointerOptions: {
+  autoDragEntities: true,
+  dragSelection: true,
+}
+```
+
+When the captured entity belongs to a multi-selection, the complete selection moves together. Otherwise the existing single-entity drag behavior is preserved.
