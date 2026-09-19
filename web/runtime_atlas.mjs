@@ -123,3 +123,28 @@ export function drawFrameCanvas2D(
     height: frame.sourceSize.height * scale,
   };
 }
+
+
+export function sourceOrientedUVs(frame) {
+  const { u0, v0, u1, v1 } = frame.uv;
+  if (!frame.rotation.rotated) {
+    return [
+      { u: u0, v: v0 },
+      { u: u1, v: v0 },
+      { u: u1, v: v1 },
+      { u: u0, v: v1 },
+    ];
+  }
+  if (frame.rotation.degreesClockwise !== 90) {
+    throw new Error("runtime atlas consumer only supports 90-degree clockwise packed rotation");
+  }
+
+  // Return UVs in source-orientation vertex order:
+  // top-left, top-right, bottom-right, bottom-left.
+  return [
+    { u: u0, v: v1 },
+    { u: u0, v: v0 },
+    { u: u1, v: v0 },
+    { u: u1, v: v1 },
+  ];
+}
