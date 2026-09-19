@@ -96,20 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-19T07:16:27Z
+Generated: 2026-09-19T07:18:46Z
 
 ### Git
 - Branch: `main`
-- Head: `2272d58e5487`
-- Commit date: 2026-09-19T09:16:11+02:00
-- Commit: docs: record sprite batching milestone
+- Head: `9e0b1195a492`
+- Commit date: 2026-09-19T09:18:39+02:00
+- Commit: docs: record instanced WebGL sprite milestone
 - Tracked files: 204
 
 ### Recently changed files
 - `README.md`
 - `tests/runtime_atlas_web.test.mjs`
 - `web/runtime_atlas.mjs`
-- `.repo-standards.yml`
 
 ### Project signals
 - No common build descriptor detected

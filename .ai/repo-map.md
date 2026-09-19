@@ -2404,6 +2404,30 @@ export function drawAnimationPlayerCanvas2D(
 export function buildSpriteBatch(indexedAtlas, instances, options =
 ⋮----
 export function drawSpriteBatchCanvas2D(ctx, image, indexedAtlas, instances)
+⋮----
+export function buildInstancedSpriteBatch(indexedAtlas, instances, options =
+⋮----
+// Per instance:
+// visibleX, visibleY, visibleWidth, visibleHeight,
+// u0, v0, u1, v1,
+// rotationFlag, sourceWidth, sourceHeight, reserved
+⋮----
+export function instancedSpriteUV(
+  u0,
+  v0,
+  u1,
+  v1,
+  rotationFlag,
+  unitX,
+  unitY,
+)
+⋮----
+// Packed texture is 90° clockwise. Convert source-oriented unit coords
+// to stored atlas UV coordinates.
+⋮----
+export function instancedSpriteWebGL2Shaders()
+⋮----
+export function instancedSpriteAttributeViews(batch)
 ````
 
 ## File: .repo-standards.yml
@@ -4844,6 +4868,38 @@ drawSpriteBatchCanvas2D(ctx, image, atlas, instances);
 ```
 
 This is an API convenience rather than a GPU draw-call batch: Canvas2D still issues one `drawImage` per sprite. Non-uniform scale is supported by the WebGL batch builder; the Canvas2D batch helper currently requires uniform scale per sprite.
+
+
+### WebGL2 instanced sprite contract
+
+For large sprite counts, `buildInstancedSpriteBatch()` avoids duplicating four full vertices per sprite. It stores one shared unit quad plus 12 floats per instance:
+
+```text
+visibleX
+visibleY
+visibleWidth
+visibleHeight
+u0
+v0
+u1
+v1
+rotationFlag
+sourceWidth
+sourceHeight
+reserved
+```
+
+The instance buffer is therefore 48 bytes per sprite. The shared unit quad is:
+
+```text
+(0,0) (1,0) (1,1) (0,1)
+```
+
+with indices `0,1,2,0,2,3`.
+
+`instancedSpriteWebGL2Shaders()` returns reference WebGL2 GLSL ES 3.00 vertex/fragment shader sources plus the expected attribute/uniform contract. The vertex shader handles source-space positioning and packed 90° rotation in UV space; `instancedSpriteAttributeViews()` returns byte offsets/divisors for the instance buffer.
+
+This lets host projects create one static unit-quad VBO, one dynamic instance VBO, and render many sprites with `drawElementsInstanced` while keeping Asset Forge's trim/rotation semantics.
 ````
 
 ## File: runtime_atlas.py
