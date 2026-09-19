@@ -267,6 +267,63 @@ class ProductionExecutorTests(unittest.TestCase):
                 report["validation"]["errors"],
             )
 
+    def test_provided_png_source_skips_generator_and_is_staged(self):
+        provided_job = job()
+        provided_job["requiresGenerator"] = False
+
+        with tempfile.TemporaryDirectory() as td, tempfile.TemporaryDirectory() as source_td:
+            root = Path(td)
+            source = Path(source_td) / "licensed.png"
+            source.write_bytes(b"source")
+
+            def optimizer(input_path, output_path):
+                self.assertEqual(input_path.name, "provided-source.png")
+                output_path.write_bytes(b"png")
+                return {"output": str(output_path)}
+
+            report = execute_generated_raster_job(
+                provided_job,
+                root,
+                validator=lambda path, manifest: ({"format": "png"}, []),
+                png_optimizer=optimizer,
+                webp_encoder=lambda *a, **k: self.fail("webp must not run"),
+                generator=lambda *a, **k: self.fail("generator must not run"),
+                source_path=source,
+            )
+
+            self.assertTrue(report["success"])
+            self.assertEqual(report["generation"]["backend"], "provided")
+            self.assertTrue((root / "provided-source.png").is_file())
+            self.assertEqual(report["artifact"], str(root / "hero-run.png"))
+
+    def test_provided_source_symlink_is_rejected(self):
+        provided_job = job()
+        provided_job["requiresGenerator"] = False
+
+        with tempfile.TemporaryDirectory() as td, tempfile.TemporaryDirectory() as source_td:
+            root = Path(td)
+            real = Path(source_td) / "real.png"
+            real.write_bytes(b"source")
+            link = Path(source_td) / "linked.png"
+            try:
+                link.symlink_to(real)
+            except (OSError, NotImplementedError):
+                self.skipTest("symlinks unavailable on this platform")
+
+            with self.assertRaisesRegex(
+                ProductionExecutionError,
+                "must not be a symlink",
+            ):
+                execute_generated_raster_job(
+                    provided_job,
+                    root,
+                    validator=lambda p, m: ({}, []),
+                    png_optimizer=lambda *a: {},
+                    webp_encoder=lambda *a, **k: {},
+                    generator=lambda *a, **k: self.fail("generator must not run"),
+                    source_path=link,
+                )
+
     def test_generator_source_must_stay_inside_job_output(self):
         with tempfile.TemporaryDirectory() as td, tempfile.TemporaryDirectory() as outside_td:
             root = Path(td)
