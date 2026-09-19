@@ -2235,6 +2235,9 @@ export async function createWebGL2CanvasRuntime(
   const selection =
     options.selectionModel ??
     createSpriteSelectionModel(options.selectionOptions);
+  const history =
+    options.entityHistory ??
+    createSpriteEntityHistory(entityStore, options.historyOptions);
 
   const pointerInteractions = createSpritePointerInteractionController({
     ...pointerControllerOptions,
@@ -2323,6 +2326,7 @@ export async function createWebGL2CanvasRuntime(
   return {
     entities: entityStore,
     animations: animationSystem,
+    history,
     get visibilityMask() {
       return visibilityMask;
     },
@@ -2526,6 +2530,28 @@ export async function createWebGL2CanvasRuntime(
     clearSelection() {
       assertActive();
       return selection.clear();
+    },
+    undo() {
+      assertActive();
+      const result = history.undo();
+      if (result) {
+        const liveIds = new Set(
+          entityStore.snapshot({ includeDisabled: true }).map((entity) => entity.id),
+        );
+        selection.set(selection.snapshot().ids.filter((id) => liveIds.has(id)));
+      }
+      return result;
+    },
+    redo() {
+      assertActive();
+      const result = history.redo();
+      if (result) {
+        const liveIds = new Set(
+          entityStore.snapshot({ includeDisabled: true }).map((entity) => entity.id),
+        );
+        selection.set(selection.snapshot().ids.filter((id) => liveIds.has(id)));
+      }
+      return result;
     },
     selectEntitiesInRect(rect, selectOptions = {}) {
       assertActive();
@@ -2849,6 +2875,123 @@ export function createSpriteEntityStore(options = {}) {
     get version() {
       return version;
     },
+  };
+}
+
+
+export function createSpriteEntityHistory(
+  entityStore,
+  options = {},
+) {
+  if (
+    !entityStore ||
+    typeof entityStore.snapshot !== "function" ||
+    typeof entityStore.transact !== "function"
+  ) {
+    throw new Error("sprite entity store with snapshot/transact required");
+  }
+  const maxEntries = options.maxEntries ?? 100;
+  if (!Number.isInteger(maxEntries) || maxEntries <= 0) {
+    throw new Error("history maxEntries must be a positive integer");
+  }
+
+  const undoStack = [];
+  const redoStack = [];
+  let pending = null;
+
+  const capture = () => entityStore.snapshot({ includeDisabled: true });
+
+  function sameSnapshot(a, b) {
+    return JSON.stringify(a) === JSON.stringify(b);
+  }
+
+  function restore(snapshot) {
+    const wanted = new Map(snapshot.map((entity) => [entity.id, entity]));
+    entityStore.transact(({ add, update, remove }) => {
+      for (const current of entityStore.snapshot({ includeDisabled: true })) {
+        if (!wanted.has(current.id)) remove(current.id);
+      }
+      for (const entity of snapshot) {
+        if (entityStore.has(entity.id)) update(entity.id, entity);
+        else add(entity);
+      }
+    });
+    return capture();
+  }
+
+  function push(entry) {
+    if (sameSnapshot(entry.before, entry.after)) return false;
+    undoStack.push(entry);
+    while (undoStack.length > maxEntries) undoStack.shift();
+    redoStack.length = 0;
+    return true;
+  }
+
+  return {
+    begin(label = "edit") {
+      if (pending) throw new Error("sprite entity history edit already active");
+      pending = { label, before: capture() };
+      return pending.before;
+    },
+    commit() {
+      if (!pending) throw new Error("sprite entity history edit not active");
+      const entry = { ...pending, after: capture() };
+      pending = null;
+      return push(entry);
+    },
+    cancel() {
+      if (!pending) return false;
+      const before = pending.before;
+      pending = null;
+      restore(before);
+      return true;
+    },
+    record(label, callback) {
+      if (typeof callback !== "function") {
+        throw new Error("sprite entity history callback required");
+      }
+      this.begin(label);
+      try {
+        const result = callback();
+        if (result && typeof result.then === "function") {
+          this.cancel();
+          throw new Error("sprite entity history callbacks must be synchronous");
+        }
+        this.commit();
+        return result;
+      } catch (error) {
+        if (pending) this.cancel();
+        throw error;
+      }
+    },
+    undo() {
+      if (pending) throw new Error("cannot undo during active history edit");
+      const entry = undoStack.pop();
+      if (!entry) return null;
+      restore(entry.before);
+      redoStack.push(entry);
+      return { label: entry.label, snapshot: capture() };
+    },
+    redo() {
+      if (pending) throw new Error("cannot redo during active history edit");
+      const entry = redoStack.pop();
+      if (!entry) return null;
+      restore(entry.after);
+      undoStack.push(entry);
+      return { label: entry.label, snapshot: capture() };
+    },
+    clear() {
+      const count = undoStack.length + redoStack.length;
+      undoStack.length = 0;
+      redoStack.length = 0;
+      pending = null;
+      return count;
+    },
+    get canUndo() { return undoStack.length > 0; },
+    get canRedo() { return redoStack.length > 0; },
+    get undoCount() { return undoStack.length; },
+    get redoCount() { return redoStack.length; },
+    get active() { return pending !== null; },
   };
 }
 
