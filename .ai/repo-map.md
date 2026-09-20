@@ -112,6 +112,7 @@ tests/
   test_starlist_bridge.py
   test_svg_tools.py
   test_toolchain_3d.py
+  test_visual_similarity.py
 web/
   runtime_atlas.mjs
 .repo-standards.yml
@@ -140,6 +141,7 @@ runtime_atlas.py
 starlist_bridge.py
 svg_tools.py
 toolchain_3d.py
+visual_similarity.py
 ````
 
 # Files
@@ -2138,6 +2140,15 @@ generate = [command for command in seen if command[1:3] == ["gen", "image"]][0]
 def test_visual_reference_rejects_vector_generation(self)
 ⋮----
 reference = root / "parent.png"
+⋮----
+def test_visual_similarity_retries_until_threshold_passes(self)
+⋮----
+scores = iter([0.20, 0.73])
+generation_calls = []
+⋮----
+def test_visual_similarity_fails_after_retry_budget(self)
+⋮----
+value = job()
 ````
 
 ## File: tests/test_gltf_binary_metrics.py
@@ -3274,6 +3285,21 @@ result = execute_3d_pipeline(plan, Path("."))
     def test_godot4_target_adds_delivery_stage(self, detect)
 ⋮----
 def test_invalid_target_engine_is_rejected(self)
+````
+
+## File: tests/test_visual_similarity.py
+````python
+class VisualSimilarityTests(unittest.TestCase)
+⋮----
+def test_identical_images_score_higher_than_different_images(self)
+⋮----
+root = Path(td)
+parent = root / "parent.png"
+same = root / "same.png"
+different = root / "different.png"
+⋮----
+same_score = compare_visuals(parent, same)["score"]
+different_score = compare_visuals(parent, different)["score"]
 ````
 
 ## File: web/runtime_atlas.mjs
@@ -4570,19 +4596,36 @@ command = pollinations_command(
 ⋮----
 command = imagen_codex_command(
 ⋮----
-stdout = str(completed.stdout or "").strip()
+similarity_threshold = constraints.get("visualSimilarityMin", 0.42)
+similarity_retries = constraints.get("visualSimilarityRetries", 2)
+⋮----
+similarity_threshold = float(similarity_threshold)
+similarity_retries = int(similarity_retries)
+⋮----
+similarity_history = []
 ⋮----
 transparency = None
+normalization = None
+final_output = output
+stdout = ""
+⋮----
+attempt_command = list(command)
+⋮----
+stdout = str(completed.stdout or "").strip()
+⋮----
+current_output = output
 ⋮----
 transparency = transparency_processor(
 ⋮----
-normalization = None
-final_output = output
+final_output = current_output
 ⋮----
 final_output = output_dir / "generated-source.png"
-normalization = raster_normalizer(output, final_output, job)
+normalization = raster_normalizer(current_output, final_output, job)
 ⋮----
 parsed = json.loads(stdout)
+⋮----
+similarity = similarity_evaluator(final_output, references)
+score = similarity.get("score") if isinstance(similarity, dict) else None
 ⋮----
 class _NoCredentialRedirect(urllib.request.HTTPRedirectHandler)
 ⋮----
@@ -5519,6 +5562,7 @@ py-modules = [
   "starlist_bridge",
   "svg_tools",
   "toolchain_3d",
+  "visual_similarity",
 ]
 
 
@@ -8530,4 +8574,56 @@ godot_validation = {
 summary = _build_production_summary(plan, success, results)
 ⋮----
 report_path = Path(plan["workdir"]) / "production-report.json"
+````
+
+## File: visual_similarity.py
+````python
+class VisualSimilarityError(RuntimeError)
+⋮----
+def _load_rgba(path: Path, *, size: int = 32)
+⋮----
+def _histogram_signature(image, bins: int = 8) -> list[float]
+⋮----
+rgba = list(image.getdata())
+values = [0.0] * (bins * 3)
+weight_total = 0.0
+⋮----
+weight = a / 255.0
+⋮----
+scale = 1.0 / (weight_total * 3.0)
+⋮----
+def _histogram_similarity(a: list[float], b: list[float]) -> float
+⋮----
+distance = sum(abs(x - y) for x, y in zip(a, b))
+⋮----
+def _average_hash(image, width: int = 16, height: int = 16) -> list[int]
+⋮----
+gray = image.convert("L").resize((width, height))
+pixels = list(gray.getdata())
+average = sum(pixels) / max(1, len(pixels))
+⋮----
+def _hash_similarity(a: list[int], b: list[int]) -> float
+⋮----
+distance = sum(1 for x, y in zip(a, b) if x != y)
+⋮----
+def _alpha_occupancy(image) -> float
+⋮----
+alpha = image.getchannel("A")
+pixels = list(alpha.getdata())
+⋮----
+def _occupancy_similarity(a: float, b: float) -> float
+⋮----
+def compare_visuals(parent: Path, child: Path) -> dict
+⋮----
+parent_image = _load_rgba(Path(parent))
+child_image = _load_rgba(Path(child))
+histogram = _histogram_similarity(
+structure = _hash_similarity(
+occupancy = _occupancy_similarity(
+score = 0.50 * histogram + 0.35 * structure + 0.15 * occupancy
+⋮----
+def compare_against_references(child: Path, references: list[Path]) -> dict
+⋮----
+comparisons = [compare_visuals(reference, child) for reference in references]
+best = max(comparisons, key=lambda value: float(value["score"]))
 ````

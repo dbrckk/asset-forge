@@ -96,19 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T13:56:09Z
+Generated: 2026-09-20T14:10:25Z
 
 ### Git
 - Branch: `main`
-- Head: `c60b44dd7b92`
-- Commit date: 2026-09-20T15:53:19+02:00
-- Commit: test: verify identity-consistency reference prompt
-- Tracked files: 245
+- Head: `705b5abfe249`
+- Commit date: 2026-09-20T16:10:15+02:00
+- Commit: fix: package visual similarity runtime module
+- Tracked files: 247
 
 ### Recently changed files
+- `pyproject.toml`
+- `tests/test_visual_similarity.py`
 - `tests/test_generator_backends.py`
 - `generator_backends.py`
-- `asset_forge.py`
 
 ### Project signals
 - `pyproject.toml`

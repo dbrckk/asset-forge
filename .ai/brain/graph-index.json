@@ -24,6 +24,7 @@
     "svg-tools.py",
     "tests",
     "toolchain-3d.py",
+    "visual-similarity.py",
     "web"
   ],
   "central_files": [
@@ -47,7 +48,6 @@
         "runtime_atlas.py",
         "starlist_bridge.py",
         "svg_tools.py",
-        "tests/test_generator_backends.py",
         "toolchain_3d.py",
         "web/runtime_atlas.mjs"
       ],
@@ -57,7 +57,7 @@
         "tests/test_production_contract.py"
       ],
       "in_degree": 3,
-      "out_degree": 21,
+      "out_degree": 20,
       "path": "asset_forge.py"
     },
     {
@@ -108,7 +108,8 @@
     },
     {
       "dependencies": [
-        "tests/test_generator_backends.py"
+        "tests/test_generator_backends.py",
+        "visual_similarity.py"
       ],
       "dependents": [
         "asset_forge.py",
@@ -117,22 +118,8 @@
         "tests/test_generator_backends.py"
       ],
       "in_degree": 4,
-      "out_degree": 1,
+      "out_degree": 2,
       "path": "generator_backends.py"
-    },
-    {
-      "dependencies": [
-        "generator_backends.py"
-      ],
-      "dependents": [
-        "asset_forge.py",
-        "generator_backends.py",
-        "production_contract.py",
-        "tests/test_production_contract.py"
-      ],
-      "in_degree": 4,
-      "out_degree": 1,
-      "path": "tests/test_generator_backends.py"
     },
     {
       "dependencies": [
@@ -276,18 +263,6 @@
     },
     {
       "dependencies": [
-        "tests/test_generator_backends.py"
-      ],
-      "dependents": [
-        "asset_forge.py",
-        "tests/test_production_contract.py"
-      ],
-      "in_degree": 2,
-      "out_degree": 1,
-      "path": "production_contract.py"
-    },
-    {
-      "dependencies": [
         "generator_backends.py"
       ],
       "dependents": [
@@ -309,17 +284,6 @@
       "in_degree": 2,
       "out_degree": 1,
       "path": "svg_tools.py"
-    },
-    {
-      "dependencies": [
-        "asset_forge.py",
-        "production_contract.py",
-        "tests/test_generator_backends.py"
-      ],
-      "dependents": [],
-      "in_degree": 0,
-      "out_degree": 3,
-      "path": "tests/test_production_contract.py"
     },
     {
       "dependencies": [],
@@ -344,6 +308,16 @@
     {
       "dependencies": [],
       "dependents": [
+        "asset_forge.py",
+        "tests/test_production_contract.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 0,
+      "path": "production_contract.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
         "raster_pack.py",
         "tests/test_raster_backend.py"
       ],
@@ -360,6 +334,27 @@
       "in_degree": 2,
       "out_degree": 0,
       "path": "starlist_bridge.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "generator_backends.py",
+        "tests/test_visual_similarity.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 0,
+      "path": "visual_similarity.py"
+    },
+    {
+      "dependencies": [
+        "generator_backends.py"
+      ],
+      "dependents": [
+        "generator_backends.py"
+      ],
+      "in_degree": 1,
+      "out_degree": 1,
+      "path": "tests/test_generator_backends.py"
     },
     {
       "dependencies": [
@@ -390,6 +385,16 @@
       "in_degree": 0,
       "out_degree": 2,
       "path": "tests/test_gltf_binary_metrics.py"
+    },
+    {
+      "dependencies": [
+        "asset_forge.py",
+        "production_contract.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 2,
+      "path": "tests/test_production_contract.py"
     },
     {
       "dependencies": [
@@ -572,10 +577,19 @@
       "in_degree": 0,
       "out_degree": 1,
       "path": "tests/test_toolchain_3d.py"
+    },
+    {
+      "dependencies": [
+        "visual_similarity.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_visual_similarity.py"
     }
   ],
-  "edge_count": 76,
+  "edge_count": 75,
   "generated_by": "dbrckk/repo-brain-v7-graph",
-  "node_count": 48,
+  "node_count": 50,
   "schema_version": 1
 }
