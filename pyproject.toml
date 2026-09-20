@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "asset-forge"
+version = "0.1.0"
+description = "Production-grade visual asset pipeline for raster, vector, 3D, runtime atlases, and engine handoff."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "License terms are defined by the repository owner."}
+authors = [{name = "dbrckk"}]
+dependencies = []
+
+[project.optional-dependencies]
+webp = ["Pillow>=12.2,<13"]
+generation = ["Pillow>=12.2,<13", "rembg[cpu,cli]"]
+dev = ["Pillow>=12.2,<13"]
+
+[project.scripts]
+asset-forge = "asset_forge:main"
+
+[tool.setuptools]
+py-modules = [
+  "animation_infer",
+  "asset_forge",
+  "asset_profile_validation",
+  "blender_adapter",
+  "engine_profile_validation",
+  "generator_backends",
+  "gltf_binary_metrics",
+  "gltf_diagnostics",
+  "gltf_quality",
+  "gltf_tools",
+  "godot_3d_delivery",
+  "godot_export",
+  "godot_handoff",
+  "operational_status",
+  "production_contract",
+  "production_executor",
+  "raster_backend",
+  "raster_pack",
+  "runtime_atlas",
+  "starlist_bridge",
+  "svg_tools",
+  "toolchain_3d",
+]
