@@ -529,12 +529,14 @@ def execute_generated_asset(
     if asset_type not in SUPPORTED_GENERATED_TYPES:
         raise GenerationError(f"unsupported generated asset type: {asset_type or '<missing>'}")
 
-    executable_name = "polli" if backend == "pollinations" else "imagen"
-    executable = shutil.which(executable_name)
-    if not executable:
-        if backend == "pollinations":
-            raise GenerationError("polli executable not found; install @pollinations/cli")
-        raise GenerationError("imagen executable not found")
+    executable = None
+    if backend != "qwen-colab":
+        executable_name = "polli" if backend == "pollinations" else "imagen"
+        executable = shutil.which(executable_name)
+        if not executable:
+            if backend == "pollinations":
+                raise GenerationError("polli executable not found; install @pollinations/cli")
+            raise GenerationError("imagen executable not found")
 
     try:
         timeout = float(timeout_seconds)
@@ -565,7 +567,7 @@ def execute_generated_asset(
     references = [Path(path) for path in (reference_paths or [])]
     if references and asset_type not in RASTER_GENERATED_TYPES:
         raise GenerationError("visual references are currently supported for raster generation only")
-    if references and backend not in {"pollinations", "imagen-codex"}:
+    if references and backend not in {"pollinations", "imagen-codex", "qwen-colab"}:
         raise GenerationError("selected backend does not support visual references")
     if len(references) > 4:
         raise GenerationError("at most 4 visual references are supported")
@@ -577,6 +579,7 @@ def execute_generated_asset(
         DEFAULT_VECTOR_MODEL if backend == "pollinations" and vector else
         DEFAULT_REFERENCE_MODEL if backend == "pollinations" and references else
         "codex-2" if backend == "imagen-codex" else
+        "Qwen/Qwen-Image-2.1" if backend == "qwen-colab" else
         None
     )
     reference_urls = []
@@ -591,7 +594,29 @@ def execute_generated_asset(
                 )
             )
 
-    if backend == "pollinations":
+    if backend == "qwen-colab":
+        try:
+            submitted = submit_colab_job(
+                job,
+                reference_paths=references,
+            )
+            colab_result = wait_colab_result(
+                submitted["id"],
+                repository=submitted["repository"],
+                branch=submitted["branch"],
+                timeout_seconds=timeout,
+                poll_seconds=min(10.0, max(2.0, timeout / 30.0)),
+            )
+            download_result_asset(
+                colab_result,
+                output,
+                repository=submitted["repository"],
+                branch=submitted["branch"],
+            )
+        except (ColabQueueError, TimeoutError, OSError, urllib.error.URLError) as exc:
+            raise GenerationError(f"qwen-colab generation failed: {exc}") from exc
+        command = None
+    elif backend == "pollinations":
         command = pollinations_command(
             job,
             output,
@@ -652,8 +677,11 @@ def execute_generated_asset(
     previous_similarity_failed = False
     previous_technical_failed = False
     for attempt in range(retry_budget + 1):
-        attempt_command = list(command)
-        if attempt > 0:
+        if backend == "qwen-colab":
+            attempt_command = None
+        else:
+            attempt_command = list(command)
+        if attempt > 0 and attempt_command is not None:
             retry_guidance = []
             if previous_similarity_failed:
                 retry_guidance.append(
@@ -672,27 +700,32 @@ def execute_generated_asset(
                     attempt_command[3] = attempt_command[3] + " " + guidance
                 else:
                     attempt_command[-1] = attempt_command[-1] + " " + guidance
-        completed = runner(
-            attempt_command,
-            check=False,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-        )
-        if completed.returncode != 0:
-            stderr = str(completed.stderr or "").strip()
-            raise GenerationError(
-                f"{backend} generation failed"
-                + (f": {stderr[:1000]}" if stderr else "")
+        if backend == "qwen-colab":
+            stdout = ""
+            metadata = _sanitize_metadata(colab_result.get("metadata") or {})
+            current_output = output
+        else:
+            completed = runner(
+                attempt_command,
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
             )
+            if completed.returncode != 0:
+                stderr = str(completed.stderr or "").strip()
+                raise GenerationError(
+                    f"{backend} generation failed"
+                    + (f": {stderr[:1000]}" if stderr else "")
+                )
+            stdout = str(completed.stdout or "").strip()
+            metadata = None
+            current_output = output
 
-        stdout = str(completed.stdout or "").strip()
-        metadata = None
-        current_output = output
         if backend == "imagen-codex":
             current_output, metadata = _imagen_output_path(output_dir, stdout)
         elif not current_output.is_file() or current_output.stat().st_size <= 0:
-            raise GenerationError("pollinations generation did not produce an output file")
+            raise GenerationError(f"{backend} generation did not produce an output file")
 
         transparency = None
         if asset_type in RASTER_GENERATED_TYPES:
@@ -828,6 +861,8 @@ def execute_generated_asset(
                 "transport": (
                     "uploaded-url"
                     if backend == "pollinations"
+                    else "github-staged-reference"
+                    if backend == "qwen-colab"
                     else "local-input-ref"
                 ),
             }
