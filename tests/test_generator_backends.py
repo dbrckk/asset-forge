@@ -450,6 +450,7 @@ class GeneratorBackendsTests(unittest.TestCase):
                 result["references"][0]["url"],
                 "https://media.pollinations.ai/parent-ref",
             )
+            self.assertIn("strict visual identity anchor", generate[3])
 
     def test_visual_reference_rejects_vector_generation(self):
         vector_job = job()
