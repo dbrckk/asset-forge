@@ -1,541 +1,85 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "c5ab9d5ab552f61e11b4b5a88c0a6e1f2019bdeb",
-  "head": "ada952393ef2bd51b8f1761499f46228096d8ed0",
+  "base": "ada952393ef2bd51b8f1761499f46228096d8ed0",
+  "head": "b76970cc2b03d5b1e798b483c86d39042c4de84b",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "production_executor.py",
+      "path": "remote_batch.py",
       "status": "M"
-    },
-    {
-      "path": "pyproject.toml",
-      "status": "M"
-    },
-    {
-      "path": "semantic_art_review.py",
-      "status": "A"
-    },
-    {
-      "path": "tests/test_semantic_art_review.py",
-      "status": "A"
     }
   ],
   "changed_source_files": [
-    "production_executor.py",
-    "semantic_art_review.py",
-    "tests/test_semantic_art_review.py"
+    "remote_batch.py"
   ],
   "impacted_files": [
-    "asset_forge.py",
-    "production_executor.py",
-    "semantic_art_review.py",
-    "tests/test_production_executor.py",
-    "tests/test_semantic_art_review.py"
+    "remote_batch.py",
+    "tests/test_remote_batch.py"
   ],
   "impacted_symbols": [
     {
-      "name": "load_json",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 72
+      "name": "RemoteBatchError",
+      "kind": "class",
+      "file": "remote_batch.py",
+      "line": 14
     },
     {
-      "name": "validate_manifest",
+      "name": "_safe_id",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 80
+      "file": "remote_batch.py",
+      "line": 18
     },
     {
-      "name": "is_power_of_two",
+      "name": "_ordered_items",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 138
+      "file": "remote_batch.py",
+      "line": 25
     },
     {
-      "name": "sprite_grid",
+      "name": "run",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 142
-    },
-    {
-      "name": "build_atlas_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 163
-    },
-    {
-      "name": "validate_raster_file",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 194
-    },
-    {
-      "name": "select_tools",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 253
-    },
-    {
-      "name": "build_plan",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 271
-    },
-    {
-      "name": "load_valid_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 300
-    },
-    {
-      "name": "cmd_validate",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 316
-    },
-    {
-      "name": "cmd_plan",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 324
-    },
-    {
-      "name": "cmd_validate_raster",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 332
-    },
-    {
-      "name": "cmd_atlas_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 346
-    },
-    {
-      "name": "execute_compiled_production_job",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 370
-    },
-    {
-      "name": "_write_production_inputs",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 424
-    },
-    {
-      "name": "_persist_enriched_production_report",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 440
-    },
-    {
-      "name": "_enrich_engine_handoff",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 453
-    },
-    {
-      "name": "parser",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 534
+      "file": "remote_batch.py",
+      "line": 77
     },
     {
       "name": "main",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 748
+      "file": "remote_batch.py",
+      "line": 254
     },
     {
-      "name": "ProductionExecutionError",
-      "kind": "class",
-      "file": "production_executor.py",
-      "line": 14
-    },
-    {
-      "name": "_safe_asset_id",
+      "name": "request",
       "kind": "function",
-      "file": "production_executor.py",
-      "line": 18
-    },
-    {
-      "name": "_trusted_generated_source",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 32
-    },
-    {
-      "name": "_provenance_from_manifest",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 49
-    },
-    {
-      "name": "_stage_provided_source",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 69
-    },
-    {
-      "name": "execute_generated_raster_job",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 95
-    },
-    {
-      "name": "execute_generated_vector_job",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 248
-    },
-    {
-      "name": "execute_generated_3d_job",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 352
-    },
-    {
-      "name": "SemanticArtReviewError",
-      "kind": "class",
-      "file": "semantic_art_review.py",
-      "line": 12
-    },
-    {
-      "name": "_credential_available",
-      "kind": "function",
-      "file": "semantic_art_review.py",
-      "line": 16
-    },
-    {
-      "name": "_json_from_text",
-      "kind": "function",
-      "file": "semantic_art_review.py",
-      "line": 24
-    },
-    {
-      "name": "_extract_review",
-      "kind": "function",
-      "file": "semantic_art_review.py",
-      "line": 42
-    },
-    {
-      "name": "_number",
-      "kind": "function",
-      "file": "semantic_art_review.py",
-      "line": 60
-    },
-    {
-      "name": "review_raster_art",
-      "kind": "function",
-      "file": "semantic_art_review.py",
-      "line": 72
-    },
-    {
-      "name": "job",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 13
-    },
-    {
-      "name": "ProductionExecutorTests",
-      "kind": "class",
-      "file": "tests/test_production_executor.py",
-      "line": 27
-    },
-    {
-      "name": "test_generated_png_flows_through_processing_validation_and_report",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 28
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 32
-    },
-    {
-      "name": "optimizer",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 37
-    },
-    {
-      "name": "validator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 41
-    },
-    {
-      "name": "test_webp_target_encodes_before_validation",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 59
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 63
-    },
-    {
-      "name": "encode",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 68
-    },
-    {
-      "name": "validator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 73
-    },
-    {
-      "name": "test_validation_errors_block_artifact_promotion",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 87
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 91
-    },
-    {
-      "name": "optimizer",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 96
-    },
-    {
-      "name": "test_generated_vector_is_sanitized_normalized_and_validated",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 112
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 119
-    },
-    {
-      "name": "sanitizer",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 127
-    },
-    {
-      "name": "normalizer",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 131
-    },
-    {
-      "name": "profile_validator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 138
-    },
-    {
-      "name": "test_vector_validation_errors_block_promotion",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 156
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 163
-    },
-    {
-      "name": "copy_step",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 168
-    },
-    {
-      "name": "test_generated_3d_flows_through_profile_quality_and_godot_gates",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 186
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 194
-    },
-    {
-      "name": "profile_validator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 203
-    },
-    {
-      "name": "quality",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 208
-    },
-    {
-      "name": "godot",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 217
-    },
-    {
-      "name": "test_generated_character_3d_fails_when_profile_quality_fails",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 236
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 243
-    },
-    {
-      "name": "test_provided_png_source_skips_generator_and_is_staged",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 271
-    },
-    {
-      "name": "optimizer",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 280
-    },
-    {
-      "name": "test_provided_source_symlink_is_rejected",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 301
-    },
-    {
-      "name": "test_generator_source_must_stay_inside_job_output",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 329
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 335
-    },
-    {
-      "name": "test_asset_id_cannot_escape_job_output",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 351
-    },
-    {
-      "name": "test_non_raster_target_fails_closed",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 369
-    },
-    {
-      "name": "test_generated_3d_reports_lod_artifacts_when_enabled",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 382
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 393
-    },
-    {
-      "name": "lod_reporter",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 398
-    },
-    {
-      "name": "test_required_lod_toolchain_unavailable_blocks_3d_promotion",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 431
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 442
-    },
-    {
-      "name": "SemanticArtReviewTests",
-      "kind": "class",
-      "file": "tests/test_semantic_art_review.py",
+      "file": "tests/test_remote_batch.py",
       "line": 10
     },
     {
-      "name": "manifest",
-      "kind": "function",
-      "file": "tests/test_semantic_art_review.py",
-      "line": 11
+      "name": "RemoteBatchTests",
+      "kind": "class",
+      "file": "tests/test_remote_batch.py",
+      "line": 37
     },
     {
-      "name": "test_unavailable_provider_is_non_blocking_when_optional",
+      "name": "test_dependency_order_and_reference_are_preserved",
       "kind": "function",
-      "file": "tests/test_semantic_art_review.py",
-      "line": 22
-    },
-    {
-      "name": "test_required_provider_fails_closed_when_unavailable",
-      "kind": "function",
-      "file": "tests/test_semantic_art_review.py",
+      "file": "tests/test_remote_batch.py",
       "line": 38
     },
     {
-      "name": "test_structured_vision_review_is_scored",
+      "name": "fake_run",
       "kind": "function",
-      "file": "tests/test_semantic_art_review.py",
-      "line": 55
-    },
-    {
-      "name": "runner",
-      "kind": "function",
-      "file": "tests/test_semantic_art_review.py",
-      "line": 65
+      "file": "tests/test_remote_batch.py",
+      "line": 57
     },
     {
       "name": "Result",
       "kind": "class",
-      "file": "tests/test_semantic_art_review.py",
-      "line": 67
-    },
-    {
-      "name": "test_low_semantic_score_fails_threshold",
-      "kind": "function",
-      "file": "tests/test_semantic_art_review.py",
-      "line": 107
-    },
-    {
-      "name": "runner",
-      "kind": "function",
-      "file": "tests/test_semantic_art_review.py",
-      "line": 116
-    },
-    {
-      "name": "Result",
-      "kind": "class",
-      "file": "tests/test_semantic_art_review.py",
-      "line": 117
+      "file": "tests/test_remote_batch.py",
+      "line": 79
     }
   ],
   "selected_tests": [
-    "tests/test_production_executor.py",
-    "tests/test_semantic_art_review.py"
+    "tests/test_remote_batch.py"
   ]
 }

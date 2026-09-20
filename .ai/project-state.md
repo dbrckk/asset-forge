@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T16:49:01Z
+Generated: 2026-09-20T16:50:25Z
 
 ### Git
 - Branch: `main`
-- Head: `ada952393ef2`
-- Commit date: 2026-09-20T18:48:51+02:00
-- Commit: test: cover optional semantic AAA art review
-- Tracked files: 270
+- Head: `b76970cc2b03`
+- Commit date: 2026-09-20T18:50:07+02:00
+- Commit: feat: include semantic art QA in remote batch receipts
+- Tracked files: 274
 
 ### Recently changed files
+- `remote_batch.py`
 - `tests/test_semantic_art_review.py`
 - `pyproject.toml`
 - `production_executor.py`
 - `semantic_art_review.py`
-- `.github/workflows/deadline-zero-live-pilot.yml`
 
 ### Project signals
 - `pyproject.toml`

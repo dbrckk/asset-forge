@@ -1,16 +1,16 @@
 # Change impact
 
-Base: c94907e536d2cc3a58fcdac7710e4cb67082953c
-Head: ada952393ef2bd51b8f1761499f46228096d8ed0
+Base: 54c49feea4a8d6ed8816f104e11bc6b34e8684cf
+Head: b76970cc2b03d5b1e798b483c86d39042c4de84b
 
 ## Changed files
-- A tests/test_semantic_art_review.py
+- M remote_batch.py
 
 ## Affected areas
-- tests
+- (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_remote_batch.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.
