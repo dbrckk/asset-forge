@@ -1,58 +1,41 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "41d6260bdea08297e8c7b8697f368a43765e3734",
-  "head": "d36634296bfd8ace2034a71a97dd18d0efaf959c",
+  "base": "d36634296bfd8ace2034a71a97dd18d0efaf959c",
+  "head": "f497bd36ae9978bc6a18e912e726f0ba5add980a",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "asset_forge.py",
+      "path": ".github/workflows/live-generation.yml",
       "status": "M"
     },
     {
-      "path": "colab_queue.py",
-      "status": "A"
+      "path": ".github/workflows/production-os-batch.yml",
+      "status": "M"
+    },
+    {
+      "path": ".github/workflows/production-os-dispatch.yml",
+      "status": "M"
     },
     {
       "path": "generator_backends.py",
       "status": "M"
     },
     {
-      "path": "notebooks/qwen-image-2.1-worker.ipynb",
-      "status": "A"
-    },
-    {
-      "path": "pyproject.toml",
+      "path": "tests/test_generator_backends.py",
       "status": "M"
-    },
-    {
-      "path": "qwen_colab_worker.py",
-      "status": "A"
-    },
-    {
-      "path": "tests/test_colab_queue.py",
-      "status": "A"
     }
   ],
   "changed_source_files": [
-    "asset_forge.py",
-    "colab_queue.py",
     "generator_backends.py",
-    "qwen_colab_worker.py",
-    "tests/test_colab_queue.py"
+    "tests/test_generator_backends.py"
   ],
   "impacted_files": [
     "asset_forge.py",
-    "colab_queue.py",
     "generator_backends.py",
     "operational_status.py",
     "production_executor.py",
-    "qwen_colab_worker.py",
-    "tests/test_asset_forge.py",
-    "tests/test_colab_queue.py",
-    "tests/test_fulfill.py",
-    "tests/test_generator_backends.py",
-    "tests/test_production_contract.py"
+    "tests/test_generator_backends.py"
   ],
   "impacted_symbols": [
     {
@@ -170,54 +153,6 @@
       "line": 748
     },
     {
-      "name": "ColabQueueError",
-      "kind": "class",
-      "file": "colab_queue.py",
-      "line": 13
-    },
-    {
-      "name": "job_id",
-      "kind": "function",
-      "file": "colab_queue.py",
-      "line": 17
-    },
-    {
-      "name": "build_colab_job",
-      "kind": "function",
-      "file": "colab_queue.py",
-      "line": 22
-    },
-    {
-      "name": "_github_request",
-      "kind": "function",
-      "file": "colab_queue.py",
-      "line": 50
-    },
-    {
-      "name": "submit",
-      "kind": "function",
-      "file": "colab_queue.py",
-      "line": 69
-    },
-    {
-      "name": "wait_result",
-      "kind": "function",
-      "file": "colab_queue.py",
-      "line": 121
-    },
-    {
-      "name": "download_result_asset",
-      "kind": "function",
-      "file": "colab_queue.py",
-      "line": 160
-    },
-    {
-      "name": "worker_status",
-      "kind": "function",
-      "file": "colab_queue.py",
-      "line": 190
-    },
-    {
       "name": "_sanitize_metadata",
       "kind": "function",
       "file": "generator_backends.py",
@@ -281,49 +216,49 @@
       "name": "imagen_codex_command",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 433
+      "line": 431
     },
     {
       "name": "_imagen_output_path",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 475
+      "line": 473
     },
     {
       "name": "execute_generated_asset",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 511
+      "line": 509
     },
     {
       "name": "_NoCredentialRedirect",
       "kind": "class",
       "file": "generator_backends.py",
-      "line": 893
+      "line": 912
     },
     {
       "name": "redirect_request",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 894
+      "line": 913
     },
     {
       "name": "_default_3d_opener",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 898
+      "line": 917
     },
     {
       "name": "_upload_reference_image",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 905
+      "line": 924
     },
     {
       "name": "execute_generated_3d_asset",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 937
+      "line": 956
     },
     {
       "name": "build_operational_status",
@@ -378,294 +313,6 @@
       "kind": "function",
       "file": "production_executor.py",
       "line": 352
-    },
-    {
-      "name": "_token",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 21
-    },
-    {
-      "name": "_request",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 28
-    },
-    {
-      "name": "list_jobs",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 48
-    },
-    {
-      "name": "_get_json",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 63
-    },
-    {
-      "name": "_put",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 74
-    },
-    {
-      "name": "_put_overwrite",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 85
-    },
-    {
-      "name": "heartbeat",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 100
-    },
-    {
-      "name": "_delete",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 116
-    },
-    {
-      "name": "_download_reference",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 124
-    },
-    {
-      "name": "load_pipeline",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 143
-    },
-    {
-      "name": "run_job",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 158
-    },
-    {
-      "name": "process_once",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 203
-    },
-    {
-      "name": "main",
-      "kind": "function",
-      "file": "qwen_colab_worker.py",
-      "line": 246
-    },
-    {
-      "name": "chunk",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 13
-    },
-    {
-      "name": "write_png",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 22
-    },
-    {
-      "name": "AssetForgeTests",
-      "kind": "class",
-      "file": "tests/test_asset_forge.py",
-      "line": 50
-    },
-    {
-      "name": "load_example",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 51
-    },
-    {
-      "name": "test_example_manifest_is_valid",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 54
-    },
-    {
-      "name": "test_pixel_art_rejects_non_nearest_interpolation",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 57
-    },
-    {
-      "name": "test_external_asset_requires_uri",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 65
-    },
-    {
-      "name": "test_incompatible_commercial_license_is_rejected",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 71
-    },
-    {
-      "name": "test_plan_routes_sprite_to_2d_pipeline",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 80
-    },
-    {
-      "name": "test_secondary_custom_asset_prompts_reuse_search",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 88
-    },
-    {
-      "name": "test_png_sprite_grid_validation_passes",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 97
-    },
-    {
-      "name": "test_png_sprite_grid_validation_rejects_bad_width",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 108
-    },
-    {
-      "name": "test_png_alpha_requirement",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 116
-    },
-    {
-      "name": "test_palette_transparency_and_max_colors",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 125
-    },
-    {
-      "name": "test_power_of_two_atlas",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 137
-    },
-    {
-      "name": "test_atlas_manifest_contains_frame_rectangles",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 148
-    },
-    {
-      "name": "test_webp_raster_validation_supports_dimensions_and_alpha",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 162
-    },
-    {
-      "name": "test_webp_max_colors_constraint_is_rejected",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 193
-    },
-    {
-      "name": "test_raster_target_format_mismatch_is_reported",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 215
-    },
-    {
-      "name": "test_invalid_png_crc_is_rejected",
-      "kind": "function",
-      "file": "tests/test_asset_forge.py",
-      "line": 226
-    },
-    {
-      "name": "ColabQueueTests",
-      "kind": "class",
-      "file": "tests/test_colab_queue.py",
-      "line": 6
-    },
-    {
-      "name": "base_job",
-      "kind": "function",
-      "file": "tests/test_colab_queue.py",
-      "line": 7
-    },
-    {
-      "name": "test_build_job_is_deterministic",
-      "kind": "function",
-      "file": "tests/test_colab_queue.py",
-      "line": 20
-    },
-    {
-      "name": "test_build_job_limits_references_to_ten",
-      "kind": "function",
-      "file": "tests/test_colab_queue.py",
-      "line": 29
-    },
-    {
-      "name": "test_missing_instruction_is_rejected",
-      "kind": "function",
-      "file": "tests/test_colab_queue.py",
-      "line": 34
-    },
-    {
-      "name": "test_job_id_changes_with_semantic_input",
-      "kind": "function",
-      "file": "tests/test_colab_queue.py",
-      "line": 38
-    },
-    {
-      "name": "test_job_id_is_short_content_hash",
-      "kind": "function",
-      "file": "tests/test_colab_queue.py",
-      "line": 45
-    },
-    {
-      "name": "FulfillCommandTests",
-      "kind": "class",
-      "file": "tests/test_fulfill.py",
-      "line": 13
-    },
-    {
-      "name": "test_parser_accepts_end_to_end_fulfill_command",
-      "kind": "function",
-      "file": "tests/test_fulfill.py",
-      "line": 14
-    },
-    {
-      "name": "test_parser_accepts_provided_source",
-      "kind": "function",
-      "file": "tests/test_fulfill.py",
-      "line": 30
-    },
-    {
-      "name": "test_production_inputs_are_persisted_for_handoff_and_audit",
-      "kind": "function",
-      "file": "tests/test_fulfill.py",
-      "line": 41
-    },
-    {
-      "name": "test_compiled_job_routes_raster_to_generated_raster_executor",
-      "kind": "function",
-      "file": "tests/test_fulfill.py",
-      "line": 58
-    },
-    {
-      "name": "test_compiled_job_forwards_provided_source",
-      "kind": "function",
-      "file": "tests/test_fulfill.py",
-      "line": 90
-    },
-    {
-      "name": "test_godot_sprite_sheet_gets_engine_handoff",
-      "kind": "function",
-      "file": "tests/test_fulfill.py",
-      "line": 116
-    },
-    {
-      "name": "test_godot_3d_gets_handoff_and_import_validation",
-      "kind": "function",
-      "file": "tests/test_fulfill.py",
-      "line": 161
     },
     {
       "name": "job",
@@ -818,275 +465,241 @@
       "line": 317
     },
     {
-      "name": "test_auto_backend_falls_back_to_imagen_codex_for_raster",
+      "name": "test_auto_backend_uses_live_qwen_colab_when_pollinations_unavailable",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
       "line": 327
     },
     {
-      "name": "test_auto_backend_rejects_vector_when_only_imagen_is_ready",
+      "name": "test_auto_backend_does_not_fall_back_to_imagen_codex",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 337
+      "line": 338
     },
     {
-      "name": "test_required_alpha_runs_transparency_processor_before_normalization",
+      "name": "test_auto_backend_rejects_vector_when_only_imagen_is_ready",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
       "line": 350
     },
     {
+      "name": "test_required_alpha_runs_transparency_processor_before_normalization",
+      "kind": "function",
+      "file": "tests/test_generator_backends.py",
+      "line": 363
+    },
+    {
       "name": "runner",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 358
-    },
-    {
-      "name": "Result",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 361
-    },
-    {
-      "name": "transparency",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 367
-    },
-    {
-      "name": "normalize",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
       "line": 371
     },
     {
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_generator_backends.py",
+      "line": 374
+    },
+    {
+      "name": "transparency",
+      "kind": "function",
+      "file": "tests/test_generator_backends.py",
+      "line": 380
+    },
+    {
+      "name": "normalize",
+      "kind": "function",
+      "file": "tests/test_generator_backends.py",
+      "line": 384
+    },
+    {
       "name": "test_3d_prompt_is_reference_image_oriented",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 390
-    },
-    {
-      "name": "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 398
-    },
-    {
-      "name": "generator",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
       "line": 403
     },
     {
+      "name": "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+      "kind": "function",
+      "file": "tests/test_generator_backends.py",
+      "line": 411
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_generator_backends.py",
+      "line": 416
+    },
+    {
       "name": "upload_runner",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 409
-    },
-    {
-      "name": "Result",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 412
-    },
-    {
-      "name": "Response",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 418
-    },
-    {
-      "name": "__enter__",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 420
-    },
-    {
-      "name": "__exit__",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
       "line": 422
     },
     {
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_generator_backends.py",
+      "line": 425
+    },
+    {
+      "name": "Response",
+      "kind": "class",
+      "file": "tests/test_generator_backends.py",
+      "line": 431
+    },
+    {
+      "name": "__enter__",
+      "kind": "function",
+      "file": "tests/test_generator_backends.py",
+      "line": 433
+    },
+    {
+      "name": "__exit__",
+      "kind": "function",
+      "file": "tests/test_generator_backends.py",
+      "line": 435
+    },
+    {
       "name": "read",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 424
+      "line": 437
     },
     {
       "name": "opener",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 427
+      "line": 440
     },
     {
       "name": "test_3d_generation_requires_server_api_key",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 457
+      "line": 470
     },
     {
       "name": "test_unsupported_generated_type_fails_closed",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 467
+      "line": 480
     },
     {
       "name": "test_raster_generation_uploads_and_passes_visual_reference",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 474
+      "line": 487
     },
     {
       "name": "runner",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 481
+      "line": 494
     },
     {
       "name": "Upload",
       "kind": "class",
       "file": "tests/test_generator_backends.py",
-      "line": 484
+      "line": 497
     },
     {
       "name": "Generate",
       "kind": "class",
       "file": "tests/test_generator_backends.py",
-      "line": 491
+      "line": 504
     },
     {
       "name": "test_visual_reference_rejects_vector_generation",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 532
+      "line": 545
     },
     {
       "name": "test_visual_similarity_retries_until_threshold_passes",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 550
+      "line": 563
     },
     {
       "name": "runner",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 558
+      "line": 571
     },
     {
       "name": "Upload",
       "kind": "class",
       "file": "tests/test_generator_backends.py",
-      "line": 560
+      "line": 573
     },
     {
       "name": "Generate",
       "kind": "class",
       "file": "tests/test_generator_backends.py",
-      "line": 568
+      "line": 581
     },
     {
       "name": "test_visual_similarity_fails_after_retry_budget",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 598
+      "line": 611
     },
     {
       "name": "runner",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 607
+      "line": 620
     },
     {
       "name": "Upload",
       "kind": "class",
       "file": "tests/test_generator_backends.py",
-      "line": 609
+      "line": 622
     },
     {
       "name": "Generate",
       "kind": "class",
       "file": "tests/test_generator_backends.py",
-      "line": 616
+      "line": 629
     },
     {
       "name": "test_technical_quality_retries_without_visual_reference",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 642
+      "line": 655
     },
     {
       "name": "runner",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 651
+      "line": 664
     },
     {
       "name": "Generate",
       "kind": "class",
       "file": "tests/test_generator_backends.py",
-      "line": 655
+      "line": 668
     },
     {
       "name": "test_technical_quality_rejects_after_retry_budget",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 686
+      "line": 699
     },
     {
       "name": "runner",
       "kind": "function",
       "file": "tests/test_generator_backends.py",
-      "line": 694
+      "line": 707
     },
     {
       "name": "Generate",
       "kind": "class",
       "file": "tests/test_generator_backends.py",
-      "line": 698
-    },
-    {
-      "name": "ProductionContractTests",
-      "kind": "class",
-      "file": "tests/test_production_contract.py",
-      "line": 15
-    },
-    {
-      "name": "request",
-      "kind": "function",
-      "file": "tests/test_production_contract.py",
-      "line": 16
-    },
-    {
-      "name": "test_valid_request_builds_machine_readable_job",
-      "kind": "function",
-      "file": "tests/test_production_contract.py",
-      "line": 27
-    },
-    {
-      "name": "test_valid_production_report_contract",
-      "kind": "function",
-      "file": "tests/test_production_contract.py",
-      "line": 42
-    },
-    {
-      "name": "test_failed_report_cannot_claim_an_artifact",
-      "kind": "function",
-      "file": "tests/test_production_contract.py",
-      "line": 56
-    },
-    {
-      "name": "test_invalid_request_is_rejected",
-      "kind": "function",
-      "file": "tests/test_production_contract.py",
-      "line": 72
+      "line": 711
     }
   ],
   "selected_tests": [
-    "tests/test_asset_forge.py",
-    "tests/test_colab_queue.py",
-    "tests/test_fulfill.py",
-    "tests/test_generator_backends.py",
-    "tests/test_production_contract.py"
+    "tests/test_generator_backends.py"
   ]
 }

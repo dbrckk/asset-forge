@@ -1,16 +1,16 @@
 # Change impact
 
-Base: d95772d2473d6551d0944379f4a156f4258c5bcd
-Head: d36634296bfd8ace2034a71a97dd18d0efaf959c
+Base: a8006facefe7f818aef44b85e3e11ebd7ca5e966
+Head: f497bd36ae9978bc6a18e912e726f0ba5add980a
 
 ## Changed files
-- M asset_forge.py
+- M tests/test_generator_backends.py
 
 ## Affected areas
-- (root)
+- tests
 
 ## Related test candidates
-- tests/test_asset_forge.py
+- No direct filename-based test match detected.
 
 ## Agent guidance
 - Read this file before broad repository exploration.

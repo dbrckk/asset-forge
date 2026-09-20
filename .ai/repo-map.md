@@ -375,6 +375,12 @@ jobs:
       - name: Install Pollinations CLI
         if: steps.credential.outputs.configured == 'true'
         run: npm install --global @pollinations/cli@0.1.15
+      - name: Authenticate Pollinations CLI
+        if: steps.credential.outputs.configured == 'true'
+        env:
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+        run: printf '%s' "$POLLINATIONS_API_KEY" | polli auth login --with-token
+
       - name: Check Asset Forge readiness
         if: steps.credential.outputs.configured == 'true'
         env:
@@ -422,14 +428,14 @@ on:
         options:
           - auto
           - pollinations
-          - imagen-codex
+          - qwen-colab
       model:
         description: "Optional model override"
         required: false
         type: string
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: asset-forge-batch-${{ inputs.correlation_id }}
@@ -441,8 +447,9 @@ jobs:
     timeout-minutes: 35
     env:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
-      CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}
-      CHATGPT_ACCESS_TOKEN: ${{ secrets.CHATGPT_ACCESS_TOKEN }}
+      GITHUB_TOKEN: ${{ github.token }}
+      ASSET_FORGE_GITHUB_TOKEN: ${{ github.token }}
+      ASSET_FORGE_GITHUB_REPOSITORY: ${{ github.repository }}
     steps:
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -462,18 +469,6 @@ jobs:
 
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
-
-      - name: Install Imagen Codex CLI
-        if: inputs.backend != 'pollinations' && (env.CODEX_ACCESS_TOKEN != '' || env.CHATGPT_ACCESS_TOKEN != '')
-        shell: bash
-        run: |
-          archive=/tmp/imagen-linux-amd64.tar.gz
-          curl -fsSL https://github.com/Leechael/imagen/releases/download/v0.1.2/imagen-linux-amd64.tar.gz -o "$archive"
-          echo "2ae06f466ba49898ff0c8a2afdd77b74481002d3036c247316138c727ceb7cb0  $archive" | sha256sum -c -
-          mkdir -p /tmp/imagen-install
-          tar -xzf "$archive" -C /tmp/imagen-install
-          sudo install -m 0755 /tmp/imagen-install/imagen /usr/local/bin/imagen
-          imagen --help >/dev/null
 
       - name: Authenticate Pollinations CLI
         if: env.POLLINATIONS_API_KEY != ''
@@ -558,14 +553,14 @@ on:
         options:
           - auto
           - pollinations
-          - imagen-codex
+          - qwen-colab
       model:
         description: "Optional model override"
         required: false
         type: string
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: asset-forge-production-${{ github.run_id }}
@@ -577,8 +572,9 @@ jobs:
     timeout-minutes: 20
     env:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
-      CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}
-      CHATGPT_ACCESS_TOKEN: ${{ secrets.CHATGPT_ACCESS_TOKEN }}
+      GITHUB_TOKEN: ${{ github.token }}
+      ASSET_FORGE_GITHUB_TOKEN: ${{ github.token }}
+      ASSET_FORGE_GITHUB_REPOSITORY: ${{ github.repository }}
     steps:
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -598,18 +594,6 @@ jobs:
 
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
-
-      - name: Install Imagen Codex CLI
-        if: inputs.backend != 'pollinations' && (env.CODEX_ACCESS_TOKEN != '' || env.CHATGPT_ACCESS_TOKEN != '')
-        shell: bash
-        run: |
-          archive=/tmp/imagen-linux-amd64.tar.gz
-          curl -fsSL https://github.com/Leechael/imagen/releases/download/v0.1.2/imagen-linux-amd64.tar.gz -o "$archive"
-          echo "2ae06f466ba49898ff0c8a2afdd77b74481002d3036c247316138c727ceb7cb0  $archive" | sha256sum -c -
-          mkdir -p /tmp/imagen-install
-          tar -xzf "$archive" -C /tmp/imagen-install
-          sudo install -m 0755 /tmp/imagen-install/imagen /usr/local/bin/imagen
-          imagen --help >/dev/null
 
       - name: Authenticate Pollinations CLI
         if: env.POLLINATIONS_API_KEY != ''
@@ -2695,7 +2679,9 @@ calls = []
 ⋮----
 def test_auto_backend_prefers_pollinations_for_raster_when_ready(self)
 ⋮----
-def test_auto_backend_falls_back_to_imagen_codex_for_raster(self)
+def test_auto_backend_uses_live_qwen_colab_when_pollinations_unavailable(self)
+⋮----
+def test_auto_backend_does_not_fall_back_to_imagen_codex(self)
 ⋮----
 def test_auto_backend_rejects_vector_when_only_imagen_is_ready(self)
 ⋮----
@@ -5674,9 +5660,6 @@ references = [Path(path) for path in (reference_paths or [])]
 effective_model = model or (
 reference_urls = []
 ⋮----
-submitted = submit_colab_job(
-colab_result = wait_colab_result(
-⋮----
 command = None
 ⋮----
 command = pollinations_command(
@@ -5706,16 +5689,26 @@ stdout = ""
 previous_similarity_failed = False
 previous_technical_failed = False
 ⋮----
-attempt_command = None
-⋮----
-attempt_command = list(command)
-⋮----
 retry_guidance = []
 ⋮----
-guidance = " ".join(retry_guidance)
+attempt_command = None
+attempt_job = json.loads(json.dumps(job))
+⋮----
+manifest_value = (
+constraint_value = (
+constraint_value = dict(constraint_value)
+⋮----
+manifest_value = dict(manifest_value)
+⋮----
+submitted = submit_colab_job(
+colab_result = wait_colab_result(
 ⋮----
 metadata = _sanitize_metadata(colab_result.get("metadata") or {})
 current_output = output
+⋮----
+attempt_command = list(command)
+⋮----
+guidance = " ".join(retry_guidance)
 ⋮----
 stdout = str(completed.stdout or "").strip()
 ⋮----
