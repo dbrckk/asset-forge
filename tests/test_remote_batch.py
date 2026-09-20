@@ -94,6 +94,54 @@ class RemoteBatchTests(unittest.TestCase):
             self.assertEqual(reference.name, "hero.png")
             self.assertTrue((root / "out" / "batch-result.json").is_file())
 
+    def test_remote_batch_propagates_library_version_metadata(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            spec = root / "spec.json"
+            spec.write_text(json.dumps({"items": [{
+                "id": "hero",
+                "request": request("hero-request", "hero"),
+                "target_path": "assets/art/pilot/hero.png",
+            }]}))
+
+            def fake_run(cmd, **kwargs):
+                request_path = Path(cmd[cmd.index("fulfill") + 1])
+                payload = json.loads(request_path.read_text())
+                output = Path(cmd[cmd.index("--output-dir") + 1])
+                output.mkdir(parents=True, exist_ok=True)
+                artifact = output / (payload["manifest"]["id"] + ".png")
+                artifact.write_bytes(b"hero")
+                (output / "production-report.json").write_text(json.dumps({
+                    "success": True,
+                    "artifact": str(artifact),
+                    "generation": {},
+                    "validation": {},
+                    "library": {
+                        "schema": "asset-forge/library-receipt/v1",
+                        "cacheHit": False,
+                        "reuseScope": "new",
+                        "entry": {
+                            "version": 3,
+                            "preferred": True,
+                            "duplicateOf": None,
+                            "compositeQuality": 0.91,
+                        },
+                    },
+                }))
+                class Result:
+                    returncode = 0
+                    stdout = ""
+                    stderr = ""
+                return Result()
+
+            with patch("remote_batch.subprocess.run", side_effect=fake_run):
+                result = run(spec, root / "out")
+
+            library = result["items"][0]["library"]
+            self.assertEqual(library["entry"]["version"], 3)
+            self.assertTrue(library["entry"]["preferred"])
+            self.assertEqual(library["entry"]["compositeQuality"], 0.91)
+
 
 if __name__ == "__main__":
     unittest.main()
