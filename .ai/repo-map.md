@@ -1931,6 +1931,12 @@ target = out / "generated-source.png"
 ⋮----
 stdout = '{"files":["generated-source.png"],"provider":"codex"}'
 ⋮----
+def test_auto_backend_prefers_pollinations_for_raster_when_ready(self)
+⋮----
+def test_auto_backend_falls_back_to_imagen_codex_for_raster(self)
+⋮----
+def test_auto_backend_rejects_vector_when_only_imagen_is_ready(self)
+⋮----
 def test_required_alpha_runs_transparency_processor_before_normalization(self)
 ⋮----
 alpha_job = job()
@@ -4362,6 +4368,12 @@ command = [
 ⋮----
 dimensions = _generation_dimensions(job)
 ⋮----
+def select_generation_backend(job: dict, requested: str = "auto") -> str
+⋮----
+status = generator_backend_status()
+pollinations = status.get("pollinations", {})
+imagen_codex = status.get("imagenCodex", {})
+⋮----
 def _imagen_output_path(output_dir: Path, stdout: str) -> tuple[Path, dict | None]
 ⋮----
 metadata = None
@@ -4382,6 +4394,8 @@ resolved_candidate = candidate.resolve()
 fallback = Path(output_dir) / "generated-source.png"
 ⋮----
 matches = sorted(Path(output_dir).glob("generated-source*.png"))
+⋮----
+backend = select_generation_backend(job, backend)
 ⋮----
 executable_name = "polli" if backend == "pollinations" else "imagen"
 executable = shutil.which(executable_name)

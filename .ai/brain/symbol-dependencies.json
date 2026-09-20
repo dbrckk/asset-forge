@@ -1186,7 +1186,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 426,
+              "line": 461,
               "kind": "function",
               "language": "python"
             }
@@ -1630,11 +1630,45 @@
       ],
       "dependency_count": 2
     },
-    "imagen_codex_command": {
+    "select_generation_backend": {
       "source": {
         "file": "generator_backends.py",
         "start": 360,
-        "end": 387
+        "end": 392
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "generator_backend_status",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 62,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "imagen_codex_command": {
+      "source": {
+        "file": "generator_backends.py",
+        "start": 395,
+        "end": 422
       },
       "symbol_dependencies": [
         {
@@ -1667,8 +1701,8 @@
     "_imagen_output_path": {
       "source": {
         "file": "generator_backends.py",
-        "start": 390,
-        "end": 423
+        "start": 425,
+        "end": 458
       },
       "symbol_dependencies": [
         {
@@ -1701,8 +1735,8 @@
     "execute_generated_asset": {
       "source": {
         "file": "generator_backends.py",
-        "start": 426,
-        "end": 554
+        "start": 461,
+        "end": 588
       },
       "symbol_dependencies": [
         {
@@ -1734,7 +1768,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 390,
+              "line": 425,
               "kind": "function",
               "language": "python"
             }
@@ -1782,7 +1816,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 360,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -1800,15 +1834,27 @@
             }
           ],
           "relation": "same_file"
+        },
+        {
+          "symbol": "select_generation_backend",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 360,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
         }
       ],
-      "dependency_count": 8
+      "dependency_count": 9
     },
     "_NoCredentialRedirect": {
       "source": {
         "file": "generator_backends.py",
-        "start": 558,
-        "end": 560
+        "start": 592,
+        "end": 594
       },
       "symbol_dependencies": [
         {
@@ -1828,7 +1874,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 559,
+              "line": 593,
               "kind": "function",
               "language": "python"
             }
@@ -1841,8 +1887,8 @@
     "redirect_request": {
       "source": {
         "file": "generator_backends.py",
-        "start": 559,
-        "end": 560
+        "start": 593,
+        "end": 594
       },
       "symbol_dependencies": [
         {
@@ -1863,8 +1909,8 @@
     "_default_3d_opener": {
       "source": {
         "file": "generator_backends.py",
-        "start": 563,
-        "end": 567
+        "start": 597,
+        "end": 601
       },
       "symbol_dependencies": [
         {
@@ -1872,7 +1918,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 558,
+              "line": 592,
               "kind": "class",
               "language": "python"
             }
@@ -1885,8 +1931,8 @@
     "_upload_reference_image": {
       "source": {
         "file": "generator_backends.py",
-        "start": 570,
-        "end": 599
+        "start": 604,
+        "end": 633
       },
       "symbol_dependencies": [
         {
@@ -1907,8 +1953,8 @@
     "execute_generated_3d_asset": {
       "source": {
         "file": "generator_backends.py",
-        "start": 602,
-        "end": 718
+        "start": 636,
+        "end": 752
       },
       "symbol_dependencies": [
         {
@@ -1928,7 +1974,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 563,
+              "line": 597,
               "kind": "function",
               "language": "python"
             }
@@ -1940,7 +1986,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 570,
+              "line": 604,
               "kind": "function",
               "language": "python"
             }
@@ -1952,7 +1998,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 426,
+              "line": 461,
               "kind": "function",
               "language": "python"
             }
@@ -1962,43 +2008,163 @@
       ],
       "dependency_count": 4
     },
-    "build_operational_status": {
+    "ProductionExecutionError": {
       "source": {
-        "file": "operational_status.py",
-        "start": 10,
-        "end": 77
+        "file": "production_executor.py",
+        "start": 11,
+        "end": 12
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_safe_asset_id": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 15,
+        "end": 26
       },
       "symbol_dependencies": [
         {
-          "symbol": "detect_3d_tools",
+          "symbol": "ProductionExecutionError",
           "definitions": [
             {
-              "file": "toolchain_3d.py",
-              "line": 18,
+              "file": "production_executor.py",
+              "line": 11,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_trusted_generated_source": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 29,
+        "end": 43
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 11,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_provenance_from_manifest": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 46,
+        "end": 63
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_stage_provided_source": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 66,
+        "end": 89
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 11,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "execute_generated_raster_job": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 92,
+        "end": 178
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 11,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_provenance_from_manifest",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 46,
               "kind": "function",
               "language": "python"
             }
           ],
-          "relation": "imported_module"
+          "relation": "same_file"
         },
         {
-          "symbol": "generator_backend_status",
+          "symbol": "_safe_asset_id",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_stage_provided_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 66,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_trusted_generated_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 29,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_asset",
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 62,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "raster_backend_status",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 712,
+              "line": 461,
               "kind": "function",
               "language": "python"
             }
@@ -2006,13 +2172,177 @@
           "relation": "imported_module"
         }
       ],
-      "dependency_count": 3
+      "dependency_count": 6
+    },
+    "execute_generated_vector_job": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 181,
+        "end": 282
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 11,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_provenance_from_manifest",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 46,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_safe_asset_id",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_stage_provided_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 66,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_trusted_generated_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 29,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 461,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 6
+    },
+    "execute_generated_3d_job": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 285,
+        "end": 417
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 11,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_provenance_from_manifest",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 46,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_safe_asset_id",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 15,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_stage_provided_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 66,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_trusted_generated_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 29,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 636,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 6
     },
     "job": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 17,
-        "end": 32
+        "start": 18,
+        "end": 33
       },
       "symbol_dependencies": [],
       "dependency_count": 0
@@ -2020,8 +2350,8 @@
     "GeneratorBackendsTests": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 35,
-        "end": 362
+        "start": 36,
+        "end": 399
       },
       "symbol_dependencies": [
         {
@@ -2041,7 +2371,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 309,
+              "line": 346,
               "kind": "class",
               "language": "python"
             }
@@ -2053,31 +2383,31 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 93,
+              "line": 94,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 132,
+              "line": 134,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 209,
+              "line": 212,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 253,
+              "line": 289,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 303,
+              "line": 340,
               "kind": "class",
               "language": "python"
             }
@@ -2089,7 +2419,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 311,
+              "line": 348,
               "kind": "function",
               "language": "python"
             }
@@ -2101,7 +2431,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 313,
+              "line": 350,
               "kind": "function",
               "language": "python"
             }
@@ -2125,7 +2455,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 602,
+              "line": 636,
               "kind": "function",
               "language": "python"
             }
@@ -2137,7 +2467,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 426,
+              "line": 461,
               "kind": "function",
               "language": "python"
             }
@@ -2149,7 +2479,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 294,
+              "line": 331,
               "kind": "function",
               "language": "python"
             }
@@ -2173,7 +2503,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 360,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -2185,7 +2515,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -2197,7 +2527,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 263,
+              "line": 299,
               "kind": "function",
               "language": "python"
             }
@@ -2209,7 +2539,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 318,
+              "line": 355,
               "kind": "function",
               "language": "python"
             }
@@ -2233,7 +2563,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 315,
+              "line": 352,
               "kind": "function",
               "language": "python"
             }
@@ -2245,25 +2575,25 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 90,
+              "line": 91,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 128,
+              "line": 130,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 205,
+              "line": 208,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 250,
+              "line": 286,
               "kind": "function",
               "language": "python"
             }
@@ -2271,11 +2601,23 @@
           "relation": "same_file"
         },
         {
+          "symbol": "select_generation_backend",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 360,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
           "symbol": "test_3d_generation_requires_server_api_key",
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 348,
+              "line": 385,
               "kind": "function",
               "language": "python"
             }
@@ -2287,7 +2629,43 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 281,
+              "line": 318,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_auto_backend_falls_back_to_imagen_codex_for_raster",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 255,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_auto_backend_prefers_pollinations_for_raster_when_ready",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 245,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_auto_backend_rejects_vector_when_only_imagen_is_ready",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 265,
               "kind": "function",
               "language": "python"
             }
@@ -2299,7 +2677,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 75,
+              "line": 76,
               "kind": "function",
               "language": "python"
             }
@@ -2311,7 +2689,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 164,
+              "line": 167,
               "kind": "function",
               "language": "python"
             }
@@ -2323,7 +2701,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 289,
+              "line": 326,
               "kind": "function",
               "language": "python"
             }
@@ -2335,7 +2713,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 201,
+              "line": 204,
               "kind": "function",
               "language": "python"
             }
@@ -2347,7 +2725,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 87,
+              "line": 88,
               "kind": "function",
               "language": "python"
             }
@@ -2359,7 +2737,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 124,
+              "line": 126,
               "kind": "function",
               "language": "python"
             }
@@ -2371,7 +2749,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 180,
+              "line": 183,
               "kind": "function",
               "language": "python"
             }
@@ -2383,7 +2761,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 195,
+              "line": 198,
               "kind": "function",
               "language": "python"
             }
@@ -2395,7 +2773,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 42,
+              "line": 43,
               "kind": "function",
               "language": "python"
             }
@@ -2407,7 +2785,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 36,
+              "line": 37,
               "kind": "function",
               "language": "python"
             }
@@ -2419,7 +2797,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 242,
+              "line": 278,
               "kind": "function",
               "language": "python"
             }
@@ -2431,7 +2809,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 358,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -2443,7 +2821,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 58,
+              "line": 59,
               "kind": "function",
               "language": "python"
             }
@@ -2455,7 +2833,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 259,
+              "line": 295,
               "kind": "function",
               "language": "python"
             }
@@ -2467,7 +2845,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 300,
+              "line": 337,
               "kind": "function",
               "language": "python"
             }
@@ -2479,13 +2857,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -2493,13 +2871,13 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 35
+      "dependency_count": 39
     },
     "test_prompt_preserves_hard_sprite_constraints": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 36,
-        "end": 40
+        "start": 37,
+        "end": 41
       },
       "symbol_dependencies": [
         {
@@ -2519,7 +2897,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -2532,8 +2910,8 @@
     "test_pollinations_command_never_contains_api_key": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 42,
-        "end": 56
+        "start": 43,
+        "end": 57
       },
       "symbol_dependencies": [
         {
@@ -2541,7 +2919,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -2566,8 +2944,8 @@
     "test_vector_generation_defaults_to_recraft_svg_model": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 58,
-        "end": 73
+        "start": 59,
+        "end": 74
       },
       "symbol_dependencies": [
         {
@@ -2587,7 +2965,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -2612,8 +2990,8 @@
     "test_backend_status_reports_auth_without_secret_value": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 75,
-        "end": 85
+        "start": 76,
+        "end": 86
       },
       "symbol_dependencies": [
         {
@@ -2633,13 +3011,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -2652,8 +3030,8 @@
     "test_execute_generated_asset_uses_bounded_subprocess_and_output": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 87,
-        "end": 122
+        "start": 88,
+        "end": 124
       },
       "symbol_dependencies": [
         {
@@ -2661,31 +3039,31 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 93,
+              "line": 94,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 132,
+              "line": 134,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 209,
+              "line": 212,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 253,
+              "line": 289,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 303,
+              "line": 340,
               "kind": "class",
               "language": "python"
             }
@@ -2697,7 +3075,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 426,
+              "line": 461,
               "kind": "function",
               "language": "python"
             }
@@ -2709,7 +3087,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -2721,25 +3099,25 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 90,
+              "line": 91,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 128,
+              "line": 130,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 205,
+              "line": 208,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 250,
+              "line": 286,
               "kind": "function",
               "language": "python"
             }
@@ -2751,13 +3129,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -2770,8 +3148,8 @@
     "runner": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 90,
-        "end": 210
+        "start": 91,
+        "end": 211
       },
       "symbol_dependencies": [
         {
@@ -2791,31 +3169,31 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 93,
+              "line": 94,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 132,
+              "line": 134,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 209,
+              "line": 212,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 253,
+              "line": 289,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 303,
+              "line": 340,
               "kind": "class",
               "language": "python"
             }
@@ -2827,7 +3205,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 426,
+              "line": 461,
               "kind": "function",
               "language": "python"
             }
@@ -2851,7 +3229,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 360,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -2863,7 +3241,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -2875,7 +3253,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 164,
+              "line": 167,
               "kind": "function",
               "language": "python"
             }
@@ -2887,7 +3265,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 201,
+              "line": 204,
               "kind": "function",
               "language": "python"
             }
@@ -2899,7 +3277,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 124,
+              "line": 126,
               "kind": "function",
               "language": "python"
             }
@@ -2911,7 +3289,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 180,
+              "line": 183,
               "kind": "function",
               "language": "python"
             }
@@ -2923,7 +3301,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 195,
+              "line": 198,
               "kind": "function",
               "language": "python"
             }
@@ -2935,13 +3313,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -2954,8 +3332,8 @@
     "Result": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 93,
-        "end": 213
+        "start": 94,
+        "end": 214
       },
       "symbol_dependencies": [
         {
@@ -2975,7 +3353,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 426,
+              "line": 461,
               "kind": "function",
               "language": "python"
             }
@@ -2999,7 +3377,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 360,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -3011,7 +3389,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -3023,25 +3401,25 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 90,
+              "line": 91,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 128,
+              "line": 130,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 205,
+              "line": 208,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 250,
+              "line": 286,
               "kind": "function",
               "language": "python"
             }
@@ -3053,7 +3431,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 164,
+              "line": 167,
               "kind": "function",
               "language": "python"
             }
@@ -3065,7 +3443,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 201,
+              "line": 204,
               "kind": "function",
               "language": "python"
             }
@@ -3077,7 +3455,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 124,
+              "line": 126,
               "kind": "function",
               "language": "python"
             }
@@ -3089,7 +3467,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 180,
+              "line": 183,
               "kind": "function",
               "language": "python"
             }
@@ -3101,7 +3479,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 195,
+              "line": 198,
               "kind": "function",
               "language": "python"
             }
@@ -3113,13 +3491,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -3132,8 +3510,8 @@
     "test_generator_metadata_redacts_credentials_before_reporting": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 124,
-        "end": 160
+        "start": 126,
+        "end": 163
       },
       "symbol_dependencies": [
         {
@@ -3141,31 +3519,31 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 93,
+              "line": 94,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 132,
+              "line": 134,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 209,
+              "line": 212,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 253,
+              "line": 289,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 303,
+              "line": 340,
               "kind": "class",
               "language": "python"
             }
@@ -3177,7 +3555,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 426,
+              "line": 461,
               "kind": "function",
               "language": "python"
             }
@@ -3189,7 +3567,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -3201,25 +3579,25 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 90,
+              "line": 91,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 128,
+              "line": 130,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 205,
+              "line": 208,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 250,
+              "line": 286,
               "kind": "function",
               "language": "python"
             }
@@ -3231,13 +3609,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -3250,8 +3628,8 @@
     "test_backend_status_reports_imagen_codex_without_exposing_token": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 164,
-        "end": 178
+        "start": 167,
+        "end": 181
       },
       "symbol_dependencies": [
         {
@@ -3271,13 +3649,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -3290,8 +3668,8 @@
     "which": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 165,
-        "end": 285
+        "start": 168,
+        "end": 288
       },
       "symbol_dependencies": [
         {
@@ -3311,31 +3689,31 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 93,
+              "line": 94,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 132,
+              "line": 134,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 209,
+              "line": 212,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 253,
+              "line": 289,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 303,
+              "line": 340,
               "kind": "class",
               "language": "python"
             }
@@ -3343,23 +3721,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "build_generation_prompt",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 277,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
           "symbol": "execute_generated_asset",
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 426,
+              "line": 461,
               "kind": "function",
               "language": "python"
             }
@@ -3383,7 +3749,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 360,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -3395,19 +3761,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "normalize",
-          "definitions": [
-            {
-              "file": "tests/test_generator_backends.py",
-              "line": 263,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -3419,25 +3773,25 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 90,
+              "line": 91,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 128,
+              "line": 130,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 205,
+              "line": 208,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 250,
+              "line": 286,
               "kind": "function",
               "language": "python"
             }
@@ -3445,11 +3799,47 @@
           "relation": "same_file"
         },
         {
-          "symbol": "test_3d_prompt_is_reference_image_oriented",
+          "symbol": "select_generation_backend",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 360,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_auto_backend_falls_back_to_imagen_codex_for_raster",
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 281,
+              "line": 255,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_auto_backend_prefers_pollinations_for_raster_when_ready",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 245,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_auto_backend_rejects_vector_when_only_imagen_is_ready",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 265,
               "kind": "function",
               "language": "python"
             }
@@ -3461,7 +3851,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 201,
+              "line": 204,
               "kind": "function",
               "language": "python"
             }
@@ -3473,7 +3863,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 180,
+              "line": 183,
               "kind": "function",
               "language": "python"
             }
@@ -3485,7 +3875,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 195,
+              "line": 198,
               "kind": "function",
               "language": "python"
             }
@@ -3497,19 +3887,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 242,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "transparency",
-          "definitions": [
-            {
-              "file": "tests/test_generator_backends.py",
-              "line": 259,
+              "line": 278,
               "kind": "function",
               "language": "python"
             }
@@ -3522,8 +3900,8 @@
     "test_imagen_codex_command_uses_raster_output_and_no_token_argument": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 180,
-        "end": 193
+        "start": 183,
+        "end": 196
       },
       "symbol_dependencies": [
         {
@@ -3531,7 +3909,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 360,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -3543,7 +3921,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -3556,8 +3934,8 @@
     "test_imagen_codex_rejects_vector_generation": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 195,
-        "end": 199
+        "start": 198,
+        "end": 202
       },
       "symbol_dependencies": [
         {
@@ -3577,7 +3955,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 360,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -3589,7 +3967,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -3602,8 +3980,8 @@
     "test_execute_generated_asset_supports_imagen_codex_raster": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 201,
-        "end": 240
+        "start": 204,
+        "end": 243
       },
       "symbol_dependencies": [
         {
@@ -3611,31 +3989,31 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 93,
+              "line": 94,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 132,
+              "line": 134,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 209,
+              "line": 212,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 253,
+              "line": 289,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 303,
+              "line": 340,
               "kind": "class",
               "language": "python"
             }
@@ -3647,7 +4025,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 426,
+              "line": 461,
               "kind": "function",
               "language": "python"
             }
@@ -3659,7 +4037,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -3671,25 +4049,25 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 90,
+              "line": 91,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 128,
+              "line": 130,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 205,
+              "line": 208,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 250,
+              "line": 286,
               "kind": "function",
               "language": "python"
             }
@@ -3701,13 +4079,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -3717,55 +4095,19 @@
       ],
       "dependency_count": 5
     },
-    "test_required_alpha_runs_transparency_processor_before_normalization": {
+    "test_auto_backend_prefers_pollinations_for_raster_when_ready": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 242,
-        "end": 279
+        "start": 245,
+        "end": 253
       },
       "symbol_dependencies": [
         {
-          "symbol": "Result",
-          "definitions": [
-            {
-              "file": "tests/test_generator_backends.py",
-              "line": 93,
-              "kind": "class",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_generator_backends.py",
-              "line": 132,
-              "kind": "class",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_generator_backends.py",
-              "line": 209,
-              "kind": "class",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_generator_backends.py",
-              "line": 253,
-              "kind": "class",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_generator_backends.py",
-              "line": 303,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "execute_generated_asset",
+          "symbol": "generator_backend_status",
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 426,
+              "line": 62,
               "kind": "function",
               "language": "python"
             }
@@ -3777,7 +4119,193 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "select_generation_backend",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 360,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_auto_backend_falls_back_to_imagen_codex_for_raster": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 255,
+        "end": 263
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "generator_backend_status",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 62,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 18,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "select_generation_backend",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 360,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "test_auto_backend_rejects_vector_when_only_imagen_is_ready": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 265,
+        "end": 276
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "GenerationError",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 58,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator_backend_status",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 62,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 18,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "select_generation_backend",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 360,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "test_required_alpha_runs_transparency_processor_before_normalization": {
+      "source": {
+        "file": "tests/test_generator_backends.py",
+        "start": 278,
+        "end": 316
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 94,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 134,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 212,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 289,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 340,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 461,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "job",
+          "definitions": [
+            {
+              "file": "tests/test_generator_backends.py",
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -3789,7 +4317,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 263,
+              "line": 299,
               "kind": "function",
               "language": "python"
             }
@@ -3801,25 +4329,25 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 90,
+              "line": 91,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 128,
+              "line": 130,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 205,
+              "line": 208,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 250,
+              "line": 286,
               "kind": "function",
               "language": "python"
             }
@@ -3831,7 +4359,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 259,
+              "line": 295,
               "kind": "function",
               "language": "python"
             }
@@ -3843,13 +4371,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -3862,8 +4390,8 @@
     "transparency": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 259,
-        "end": 379
+        "start": 295,
+        "end": 415
       },
       "symbol_dependencies": [
         {
@@ -3883,7 +4411,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 309,
+              "line": 346,
               "kind": "class",
               "language": "python"
             }
@@ -3895,31 +4423,31 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 93,
+              "line": 94,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 132,
+              "line": 134,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 209,
+              "line": 212,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 253,
+              "line": 289,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 303,
+              "line": 340,
               "kind": "class",
               "language": "python"
             }
@@ -3931,7 +4459,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 311,
+              "line": 348,
               "kind": "function",
               "language": "python"
             }
@@ -3943,7 +4471,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 313,
+              "line": 350,
               "kind": "function",
               "language": "python"
             }
@@ -3967,7 +4495,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 602,
+              "line": 636,
               "kind": "function",
               "language": "python"
             }
@@ -3979,7 +4507,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 426,
+              "line": 461,
               "kind": "function",
               "language": "python"
             }
@@ -3991,7 +4519,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 294,
+              "line": 331,
               "kind": "function",
               "language": "python"
             }
@@ -4003,7 +4531,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -4015,7 +4543,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 263,
+              "line": 299,
               "kind": "function",
               "language": "python"
             }
@@ -4027,7 +4555,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 318,
+              "line": 355,
               "kind": "function",
               "language": "python"
             }
@@ -4039,7 +4567,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 315,
+              "line": 352,
               "kind": "function",
               "language": "python"
             }
@@ -4051,25 +4579,25 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 90,
+              "line": 91,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 128,
+              "line": 130,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 205,
+              "line": 208,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 250,
+              "line": 286,
               "kind": "function",
               "language": "python"
             }
@@ -4081,7 +4609,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 348,
+              "line": 385,
               "kind": "function",
               "language": "python"
             }
@@ -4093,7 +4621,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 281,
+              "line": 318,
               "kind": "function",
               "language": "python"
             }
@@ -4105,7 +4633,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 289,
+              "line": 326,
               "kind": "function",
               "language": "python"
             }
@@ -4117,7 +4645,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 358,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -4129,7 +4657,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 300,
+              "line": 337,
               "kind": "function",
               "language": "python"
             }
@@ -4141,13 +4669,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -4160,8 +4688,8 @@
     "normalize": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 263,
-        "end": 383
+        "start": 299,
+        "end": 419
       },
       "symbol_dependencies": [
         {
@@ -4181,7 +4709,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 309,
+              "line": 346,
               "kind": "class",
               "language": "python"
             }
@@ -4193,31 +4721,31 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 93,
+              "line": 94,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 132,
+              "line": 134,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 209,
+              "line": 212,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 253,
+              "line": 289,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 303,
+              "line": 340,
               "kind": "class",
               "language": "python"
             }
@@ -4229,7 +4757,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 311,
+              "line": 348,
               "kind": "function",
               "language": "python"
             }
@@ -4241,7 +4769,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 313,
+              "line": 350,
               "kind": "function",
               "language": "python"
             }
@@ -4265,7 +4793,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 602,
+              "line": 636,
               "kind": "function",
               "language": "python"
             }
@@ -4277,7 +4805,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 426,
+              "line": 461,
               "kind": "function",
               "language": "python"
             }
@@ -4289,7 +4817,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 294,
+              "line": 331,
               "kind": "function",
               "language": "python"
             }
@@ -4301,7 +4829,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -4313,7 +4841,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 318,
+              "line": 355,
               "kind": "function",
               "language": "python"
             }
@@ -4325,7 +4853,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 315,
+              "line": 352,
               "kind": "function",
               "language": "python"
             }
@@ -4337,25 +4865,25 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 90,
+              "line": 91,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 128,
+              "line": 130,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 205,
+              "line": 208,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 250,
+              "line": 286,
               "kind": "function",
               "language": "python"
             }
@@ -4367,7 +4895,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 348,
+              "line": 385,
               "kind": "function",
               "language": "python"
             }
@@ -4379,7 +4907,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 281,
+              "line": 318,
               "kind": "function",
               "language": "python"
             }
@@ -4391,7 +4919,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 289,
+              "line": 326,
               "kind": "function",
               "language": "python"
             }
@@ -4403,7 +4931,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 358,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -4415,7 +4943,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 259,
+              "line": 295,
               "kind": "function",
               "language": "python"
             }
@@ -4427,7 +4955,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 300,
+              "line": 337,
               "kind": "function",
               "language": "python"
             }
@@ -4439,13 +4967,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -4458,8 +4986,8 @@
     "test_3d_prompt_is_reference_image_oriented": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 281,
-        "end": 287
+        "start": 318,
+        "end": 324
       },
       "symbol_dependencies": [
         {
@@ -4479,7 +5007,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -4492,8 +5020,8 @@
     "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 289,
-        "end": 346
+        "start": 326,
+        "end": 383
       },
       "symbol_dependencies": [
         {
@@ -4501,7 +5029,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 309,
+              "line": 346,
               "kind": "class",
               "language": "python"
             }
@@ -4513,31 +5041,31 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 93,
+              "line": 94,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 132,
+              "line": 134,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 209,
+              "line": 212,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 253,
+              "line": 289,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 303,
+              "line": 340,
               "kind": "class",
               "language": "python"
             }
@@ -4549,7 +5077,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 311,
+              "line": 348,
               "kind": "function",
               "language": "python"
             }
@@ -4561,7 +5089,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 313,
+              "line": 350,
               "kind": "function",
               "language": "python"
             }
@@ -4573,7 +5101,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 602,
+              "line": 636,
               "kind": "function",
               "language": "python"
             }
@@ -4585,7 +5113,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 294,
+              "line": 331,
               "kind": "function",
               "language": "python"
             }
@@ -4597,7 +5125,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -4609,7 +5137,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 318,
+              "line": 355,
               "kind": "function",
               "language": "python"
             }
@@ -4621,7 +5149,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 315,
+              "line": 352,
               "kind": "function",
               "language": "python"
             }
@@ -4633,7 +5161,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 300,
+              "line": 337,
               "kind": "function",
               "language": "python"
             }
@@ -4645,13 +5173,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -4664,8 +5192,8 @@
     "generator": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 294,
-        "end": 414
+        "start": 331,
+        "end": 451
       },
       "symbol_dependencies": [
         {
@@ -4685,7 +5213,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 309,
+              "line": 346,
               "kind": "class",
               "language": "python"
             }
@@ -4697,31 +5225,31 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 93,
+              "line": 94,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 132,
+              "line": 134,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 209,
+              "line": 212,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 253,
+              "line": 289,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 303,
+              "line": 340,
               "kind": "class",
               "language": "python"
             }
@@ -4733,7 +5261,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 311,
+              "line": 348,
               "kind": "function",
               "language": "python"
             }
@@ -4745,7 +5273,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 313,
+              "line": 350,
               "kind": "function",
               "language": "python"
             }
@@ -4769,7 +5297,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 602,
+              "line": 636,
               "kind": "function",
               "language": "python"
             }
@@ -4781,7 +5309,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -4793,7 +5321,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 318,
+              "line": 355,
               "kind": "function",
               "language": "python"
             }
@@ -4805,7 +5333,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 315,
+              "line": 352,
               "kind": "function",
               "language": "python"
             }
@@ -4817,7 +5345,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 348,
+              "line": 385,
               "kind": "function",
               "language": "python"
             }
@@ -4829,7 +5357,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 358,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -4841,7 +5369,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 300,
+              "line": 337,
               "kind": "function",
               "language": "python"
             }
@@ -4853,13 +5381,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -4872,8 +5400,8 @@
     "upload_runner": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 300,
-        "end": 420
+        "start": 337,
+        "end": 457
       },
       "symbol_dependencies": [
         {
@@ -4893,7 +5421,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 309,
+              "line": 346,
               "kind": "class",
               "language": "python"
             }
@@ -4905,31 +5433,31 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 93,
+              "line": 94,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 132,
+              "line": 134,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 209,
+              "line": 212,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 253,
+              "line": 289,
               "kind": "class",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 303,
+              "line": 340,
               "kind": "class",
               "language": "python"
             }
@@ -4941,7 +5469,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 311,
+              "line": 348,
               "kind": "function",
               "language": "python"
             }
@@ -4953,7 +5481,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 313,
+              "line": 350,
               "kind": "function",
               "language": "python"
             }
@@ -4977,7 +5505,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 602,
+              "line": 636,
               "kind": "function",
               "language": "python"
             }
@@ -4989,7 +5517,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 294,
+              "line": 331,
               "kind": "function",
               "language": "python"
             }
@@ -5001,7 +5529,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -5013,7 +5541,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 318,
+              "line": 355,
               "kind": "function",
               "language": "python"
             }
@@ -5025,7 +5553,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 315,
+              "line": 352,
               "kind": "function",
               "language": "python"
             }
@@ -5037,7 +5565,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 348,
+              "line": 385,
               "kind": "function",
               "language": "python"
             }
@@ -5049,7 +5577,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 358,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -5061,13 +5589,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -5080,8 +5608,8 @@
     "Response": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 309,
-        "end": 429
+        "start": 346,
+        "end": 466
       },
       "symbol_dependencies": [
         {
@@ -5101,7 +5629,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 311,
+              "line": 348,
               "kind": "function",
               "language": "python"
             }
@@ -5113,7 +5641,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 313,
+              "line": 350,
               "kind": "function",
               "language": "python"
             }
@@ -5137,7 +5665,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 602,
+              "line": 636,
               "kind": "function",
               "language": "python"
             }
@@ -5149,7 +5677,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 294,
+              "line": 331,
               "kind": "function",
               "language": "python"
             }
@@ -5161,7 +5689,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -5173,7 +5701,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 318,
+              "line": 355,
               "kind": "function",
               "language": "python"
             }
@@ -5185,7 +5713,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 315,
+              "line": 352,
               "kind": "function",
               "language": "python"
             }
@@ -5197,7 +5725,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 348,
+              "line": 385,
               "kind": "function",
               "language": "python"
             }
@@ -5209,7 +5737,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 358,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -5221,7 +5749,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 300,
+              "line": 337,
               "kind": "function",
               "language": "python"
             }
@@ -5233,13 +5761,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -5252,8 +5780,8 @@
     "__enter__": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 311,
-        "end": 431
+        "start": 348,
+        "end": 468
       },
       "symbol_dependencies": [
         {
@@ -5273,7 +5801,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 309,
+              "line": 346,
               "kind": "class",
               "language": "python"
             }
@@ -5285,7 +5813,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 313,
+              "line": 350,
               "kind": "function",
               "language": "python"
             }
@@ -5309,7 +5837,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 602,
+              "line": 636,
               "kind": "function",
               "language": "python"
             }
@@ -5321,7 +5849,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 294,
+              "line": 331,
               "kind": "function",
               "language": "python"
             }
@@ -5333,7 +5861,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -5345,7 +5873,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 318,
+              "line": 355,
               "kind": "function",
               "language": "python"
             }
@@ -5357,7 +5885,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 315,
+              "line": 352,
               "kind": "function",
               "language": "python"
             }
@@ -5369,7 +5897,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 348,
+              "line": 385,
               "kind": "function",
               "language": "python"
             }
@@ -5381,7 +5909,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 358,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -5393,7 +5921,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 300,
+              "line": 337,
               "kind": "function",
               "language": "python"
             }
@@ -5405,13 +5933,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -5424,8 +5952,8 @@
     "__exit__": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 313,
-        "end": 433
+        "start": 350,
+        "end": 470
       },
       "symbol_dependencies": [
         {
@@ -5445,7 +5973,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 309,
+              "line": 346,
               "kind": "class",
               "language": "python"
             }
@@ -5469,7 +5997,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 602,
+              "line": 636,
               "kind": "function",
               "language": "python"
             }
@@ -5481,7 +6009,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 294,
+              "line": 331,
               "kind": "function",
               "language": "python"
             }
@@ -5493,7 +6021,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -5505,7 +6033,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 318,
+              "line": 355,
               "kind": "function",
               "language": "python"
             }
@@ -5517,7 +6045,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 315,
+              "line": 352,
               "kind": "function",
               "language": "python"
             }
@@ -5529,7 +6057,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 348,
+              "line": 385,
               "kind": "function",
               "language": "python"
             }
@@ -5541,7 +6069,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 358,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -5553,7 +6081,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 300,
+              "line": 337,
               "kind": "function",
               "language": "python"
             }
@@ -5565,13 +6093,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -5584,8 +6112,8 @@
     "read": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 315,
-        "end": 435
+        "start": 352,
+        "end": 472
       },
       "symbol_dependencies": [
         {
@@ -5605,7 +6133,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 309,
+              "line": 346,
               "kind": "class",
               "language": "python"
             }
@@ -5629,7 +6157,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 602,
+              "line": 636,
               "kind": "function",
               "language": "python"
             }
@@ -5641,7 +6169,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 294,
+              "line": 331,
               "kind": "function",
               "language": "python"
             }
@@ -5653,7 +6181,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -5665,7 +6193,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 318,
+              "line": 355,
               "kind": "function",
               "language": "python"
             }
@@ -5677,7 +6205,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 348,
+              "line": 385,
               "kind": "function",
               "language": "python"
             }
@@ -5689,7 +6217,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 358,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -5701,7 +6229,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 300,
+              "line": 337,
               "kind": "function",
               "language": "python"
             }
@@ -5713,13 +6241,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -5732,8 +6260,8 @@
     "opener": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 318,
-        "end": 438
+        "start": 355,
+        "end": 475
       },
       "symbol_dependencies": [
         {
@@ -5753,7 +6281,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 309,
+              "line": 346,
               "kind": "class",
               "language": "python"
             }
@@ -5777,7 +6305,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 602,
+              "line": 636,
               "kind": "function",
               "language": "python"
             }
@@ -5789,7 +6317,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 294,
+              "line": 331,
               "kind": "function",
               "language": "python"
             }
@@ -5801,7 +6329,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -5813,7 +6341,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 348,
+              "line": 385,
               "kind": "function",
               "language": "python"
             }
@@ -5825,7 +6353,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 358,
+              "line": 395,
               "kind": "function",
               "language": "python"
             }
@@ -5837,7 +6365,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 300,
+              "line": 337,
               "kind": "function",
               "language": "python"
             }
@@ -5849,13 +6377,13 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 165,
+              "line": 168,
               "kind": "function",
               "language": "python"
             },
             {
               "file": "tests/test_generator_backends.py",
-              "line": 216,
+              "line": 219,
               "kind": "function",
               "language": "python"
             }
@@ -5868,8 +6396,8 @@
     "test_3d_generation_requires_server_api_key": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 348,
-        "end": 356
+        "start": 385,
+        "end": 393
       },
       "symbol_dependencies": [
         {
@@ -5889,7 +6417,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 602,
+              "line": 636,
               "kind": "function",
               "language": "python"
             }
@@ -5901,7 +6429,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -5914,8 +6442,8 @@
     "test_unsupported_generated_type_fails_closed": {
       "source": {
         "file": "tests/test_generator_backends.py",
-        "start": 358,
-        "end": 362
+        "start": 395,
+        "end": 399
       },
       "symbol_dependencies": [
         {
@@ -5947,7 +6475,7 @@
           "definitions": [
             {
               "file": "tests/test_generator_backends.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }

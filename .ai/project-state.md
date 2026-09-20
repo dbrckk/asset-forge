@@ -96,21 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T08:36:18Z
+Generated: 2026-09-20T08:50:26Z
 
 ### Git
 - Branch: `main`
-- Head: `9fc828fafb50`
-- Commit date: 2026-09-20T10:36:01+02:00
-- Commit: test: cover Codex image generation backend
+- Head: `7cd615b9b429`
+- Commit date: 2026-09-20T10:50:17+02:00
+- Commit: test: keep explicit Pollinations unit paths deterministic
 - Tracked files: 244
 
 ### Recently changed files
 - `tests/test_generator_backends.py`
+- `production_executor.py`
 - `asset_forge.py`
-- `operational_status.py`
 - `generator_backends.py`
-- `.github/workflows/live-generation.yml`
 
 ### Project signals
 - `pyproject.toml`
