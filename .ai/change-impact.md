@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 020b59a42cdd2a21f965178dc4364a27397b7b4e
-Head: 9508a7b19b993a91977daa528fc032e39ee5a882
+Base: 6bfb3e5ca80d2a190078526707a9b31d01197d66
+Head: 3f523c473dfff805ba74dd5bbfae40e2e3dc2e41
 
 ## Changed files
-- M production_executor.py
+- M remote_batch.py
 
 ## Affected areas
 - (root)
 
 ## Related test candidates
-- tests/test_production_executor.py
+- tests/test_remote_batch.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

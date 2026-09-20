@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T16:19:55Z
+Generated: 2026-09-20T16:21:13Z
 
 ### Git
 - Branch: `main`
-- Head: `9508a7b19b99`
-- Commit date: 2026-09-20T18:19:44+02:00
-- Commit: feat: generate and report 3D LOD artifacts in production
+- Head: `3f523c473dff`
+- Commit date: 2026-09-20T18:20:58+02:00
+- Commit: feat: bundle additional 3D LOD artifacts remotely
 - Tracked files: 264
 
 ### Recently changed files
+- `remote_batch.py`
+- `tests/test_production_executor.py`
 - `production_executor.py`
 - `pyproject.toml`
 - `lod_3d.py`
-- `gltf_quality.py`
-- `asset_profile_validation.py`
 
 ### Project signals
 - `pyproject.toml`

@@ -1,213 +1,58 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "97f855baa01ea4c9ce6a53127750f6c482aa80ed",
-  "head": "9508a7b19b993a91977daa528fc032e39ee5a882",
+  "base": "9508a7b19b993a91977daa528fc032e39ee5a882",
+  "head": "3f523c473dfff805ba74dd5bbfae40e2e3dc2e41",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "lod_3d.py",
-      "status": "A"
-    },
-    {
-      "path": "production_executor.py",
+      "path": "remote_batch.py",
       "status": "M"
     },
     {
-      "path": "pyproject.toml",
+      "path": "tests/test_production_executor.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
-    "lod_3d.py",
-    "production_executor.py"
+    "remote_batch.py",
+    "tests/test_production_executor.py"
   ],
   "impacted_files": [
-    "asset_forge.py",
-    "lod_3d.py",
-    "production_executor.py",
-    "tests/test_production_executor.py"
+    "remote_batch.py",
+    "tests/test_production_executor.py",
+    "tests/test_remote_batch.py"
   ],
   "impacted_symbols": [
     {
-      "name": "load_json",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 70
+      "name": "RemoteBatchError",
+      "kind": "class",
+      "file": "remote_batch.py",
+      "line": 14
     },
     {
-      "name": "validate_manifest",
+      "name": "_safe_id",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 78
+      "file": "remote_batch.py",
+      "line": 18
     },
     {
-      "name": "is_power_of_two",
+      "name": "_ordered_items",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 136
+      "file": "remote_batch.py",
+      "line": 25
     },
     {
-      "name": "sprite_grid",
+      "name": "run",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 140
-    },
-    {
-      "name": "build_atlas_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 161
-    },
-    {
-      "name": "validate_raster_file",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 192
-    },
-    {
-      "name": "select_tools",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 251
-    },
-    {
-      "name": "build_plan",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 269
-    },
-    {
-      "name": "load_valid_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 298
-    },
-    {
-      "name": "cmd_validate",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 314
-    },
-    {
-      "name": "cmd_plan",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 322
-    },
-    {
-      "name": "cmd_validate_raster",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 330
-    },
-    {
-      "name": "cmd_atlas_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 344
-    },
-    {
-      "name": "execute_compiled_production_job",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 368
-    },
-    {
-      "name": "_write_production_inputs",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 422
-    },
-    {
-      "name": "_persist_enriched_production_report",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 438
-    },
-    {
-      "name": "_enrich_engine_handoff",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 451
-    },
-    {
-      "name": "parser",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 532
+      "file": "remote_batch.py",
+      "line": 77
     },
     {
       "name": "main",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 746
-    },
-    {
-      "name": "LodGenerationError",
-      "kind": "class",
-      "file": "lod_3d.py",
-      "line": 13
-    },
-    {
-      "name": "_ratios_for_profile",
-      "kind": "function",
-      "file": "lod_3d.py",
-      "line": 17
-    },
-    {
-      "name": "generate_lod_chain",
-      "kind": "function",
-      "file": "lod_3d.py",
-      "line": 25
-    },
-    {
-      "name": "ProductionExecutionError",
-      "kind": "class",
-      "file": "production_executor.py",
-      "line": 12
-    },
-    {
-      "name": "_safe_asset_id",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 16
-    },
-    {
-      "name": "_trusted_generated_source",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 30
-    },
-    {
-      "name": "_provenance_from_manifest",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 47
-    },
-    {
-      "name": "_stage_provided_source",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 67
-    },
-    {
-      "name": "execute_generated_raster_job",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 93
-    },
-    {
-      "name": "execute_generated_vector_job",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 208
-    },
-    {
-      "name": "execute_generated_3d_job",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 312
+      "file": "remote_batch.py",
+      "line": 249
     },
     {
       "name": "job",
@@ -418,9 +263,70 @@
       "kind": "function",
       "file": "tests/test_production_executor.py",
       "line": 369
+    },
+    {
+      "name": "test_generated_3d_reports_lod_artifacts_when_enabled",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 382
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 393
+    },
+    {
+      "name": "lod_reporter",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 398
+    },
+    {
+      "name": "test_required_lod_toolchain_unavailable_blocks_3d_promotion",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 431
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 442
+    },
+    {
+      "name": "request",
+      "kind": "function",
+      "file": "tests/test_remote_batch.py",
+      "line": 10
+    },
+    {
+      "name": "RemoteBatchTests",
+      "kind": "class",
+      "file": "tests/test_remote_batch.py",
+      "line": 37
+    },
+    {
+      "name": "test_dependency_order_and_reference_are_preserved",
+      "kind": "function",
+      "file": "tests/test_remote_batch.py",
+      "line": 38
+    },
+    {
+      "name": "fake_run",
+      "kind": "function",
+      "file": "tests/test_remote_batch.py",
+      "line": 57
+    },
+    {
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_remote_batch.py",
+      "line": 79
     }
   ],
   "selected_tests": [
-    "tests/test_production_executor.py"
+    "tests/test_production_executor.py",
+    "tests/test_remote_batch.py"
   ]
 }

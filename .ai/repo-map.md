@@ -3013,6 +3013,14 @@ def test_asset_id_cannot_escape_job_output(self)
 bad = job()
 ⋮----
 def test_non_raster_target_fails_closed(self)
+⋮----
+def test_generated_3d_reports_lod_artifacts_when_enabled(self)
+⋮----
+def lod_reporter(source, output_dir, profile)
+⋮----
+lod = output_dir / "hero-run.lod1.glb"
+⋮----
+def test_required_lod_toolchain_unavailable_blocks_3d_promotion(self)
 ````
 
 ## File: tests/test_raster_backend.py
@@ -8940,6 +8948,23 @@ artifact = artifact.resolve()
 bundled = bundle_root / f"{item_id}{artifact.suffix.lower()}"
 ⋮----
 digest = hashlib.sha256(bundled.read_bytes()).hexdigest()
+⋮----
+additional_rows = []
+raw_additional = report.get("additionalArtifacts")
+⋮----
+raw_additional = []
+⋮----
+extra = Path(str(raw_path or ""))
+⋮----
+extra = item_root / extra
+extra = extra.resolve()
+⋮----
+extra_name = extra.name
+⋮----
+bundle_name = f"{item_id}{extra_name[len(artifact.stem):]}"
+⋮----
+bundle_name = f"{item_id}.extra{extra_index}{extra.suffix.lower()}"
+bundled_extra = bundle_root / bundle_name
 ⋮----
 generation = report.get("generation") if isinstance(report.get("generation"), dict) else {}
 validation = report.get("validation") if isinstance(report.get("validation"), dict) else {}

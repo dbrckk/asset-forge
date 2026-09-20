@@ -3,10 +3,10 @@
 - Index mode: incremental
 - Files indexed: 60
 - Files reparsed this run: 2
-- Symbols: 767
-- Internal import edges: 75
-- Impacted files: 4
-- Selected tests: 1
+- Symbols: 772
+- Internal import edges: 79
+- Impacted files: 3
+- Selected tests: 2
 
 ## Languages
 - python: 57 files
@@ -17,7 +17,7 @@
 - tests/test_raster_pack.py: 82 symbols
 - tests/test_generator_backends.py: 59 symbols
 - raster_pack.py: 51 symbols
-- tests/test_production_executor.py: 35 symbols
+- tests/test_production_executor.py: 40 symbols
 - tests/test_svg_tools.py: 22 symbols
 - tests/test_asset_forge.py: 20 symbols
 - asset_forge.py: 19 symbols
@@ -46,7 +46,7 @@
 - AST files reparsed this run: 2
 - outline files retained: 56
 - top-level items retained: 1005
-- direct members retained: 300
+- direct members retained: 302
 - symbol shards: 26
 - route named symbols via ast-routing.json, then fetch one ast-symbols/<initial>.json shard
 

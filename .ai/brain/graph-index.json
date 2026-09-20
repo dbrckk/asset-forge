@@ -15,6 +15,7 @@
     "godot-3d-delivery.py",
     "godot-export.py",
     "godot-handoff.py",
+    "lod-3d.py",
     "operational-status.py",
     "production-contract.py",
     "production-executor.py",
@@ -73,10 +74,11 @@
       "dependents": [
         "asset_forge.py",
         "godot_3d_delivery.py",
+        "lod_3d.py",
         "tests/test_gltf_binary_metrics.py",
         "tests/test_gltf_quality.py"
       ],
-      "in_degree": 4,
+      "in_degree": 5,
       "out_degree": 4,
       "path": "gltf_quality.py"
     },
@@ -196,6 +198,20 @@
       "path": "operational_status.py"
     },
     {
+      "dependencies": [
+        "art_quality.py",
+        "generator_backends.py",
+        "lod_3d.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_production_executor.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 3,
+      "path": "production_executor.py"
+    },
+    {
       "dependencies": [],
       "dependents": [
         "asset_forge.py",
@@ -245,19 +261,6 @@
       "path": "godot_handoff.py"
     },
     {
-      "dependencies": [
-        "art_quality.py",
-        "generator_backends.py"
-      ],
-      "dependents": [
-        "asset_forge.py",
-        "tests/test_production_executor.py"
-      ],
-      "in_degree": 2,
-      "out_degree": 2,
-      "path": "production_executor.py"
-    },
-    {
       "dependencies": [],
       "dependents": [
         "generator_backends.py",
@@ -303,6 +306,18 @@
       "path": "svg_tools.py"
     },
     {
+      "dependencies": [
+        "gltf_quality.py",
+        "runtime_3d_plan.py"
+      ],
+      "dependents": [
+        "production_executor.py"
+      ],
+      "in_degree": 1,
+      "out_degree": 2,
+      "path": "lod_3d.py"
+    },
+    {
       "dependencies": [],
       "dependents": [
         "asset_forge.py",
@@ -341,6 +356,16 @@
       "in_degree": 2,
       "out_degree": 0,
       "path": "raster_backend.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "godot_3d_delivery.py",
+        "lod_3d.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 0,
+      "path": "runtime_3d_plan.py"
     },
     {
       "dependencies": [],
@@ -441,15 +466,6 @@
       "in_degree": 1,
       "out_degree": 0,
       "path": "remote_batch.py"
-    },
-    {
-      "dependencies": [],
-      "dependents": [
-        "godot_3d_delivery.py"
-      ],
-      "in_degree": 1,
-      "out_degree": 0,
-      "path": "runtime_3d_plan.py"
     },
     {
       "dependencies": [
@@ -641,8 +657,8 @@
       "path": "tests/test_visual_similarity.py"
     }
   ],
-  "edge_count": 82,
+  "edge_count": 85,
   "generated_by": "dbrckk/repo-brain-v7-graph",
-  "node_count": 55,
+  "node_count": 56,
   "schema_version": 1
 }
