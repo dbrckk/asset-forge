@@ -21,6 +21,17 @@ jobs:
         run: python -m pip install --no-deps -e .
       - name: Smoke-test installed CLI
         run: asset-forge --help >/dev/null
+      - name: Build wheel
+        run: python -m pip wheel --no-deps . -w build/wheel
+      - name: Smoke-test wheel resources
+        run: |
+          python -m venv build/wheel-venv
+          build/wheel-venv/bin/python -m pip install --no-deps build/wheel/*.whl
+          (
+            cd /tmp
+            "$GITHUB_WORKSPACE/build/wheel-venv/bin/asset-forge" validate-engine-profiles
+            "$GITHUB_WORKSPACE/build/wheel-venv/bin/asset-forge" validate-asset-profiles
+          )
       - name: Compile
         run: python -m compileall -q asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
