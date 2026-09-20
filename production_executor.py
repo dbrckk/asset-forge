@@ -317,6 +317,7 @@ def execute_generated_3d_job(
     profile_validator: Callable,
     quality_reporter: Callable,
     godot_delivery_reporter: Callable,
+    lod_reporter: Callable = generate_lod_chain,
     generator: Callable = execute_generated_3d_asset,
     model: str = "microsoft/trellis-2",
     resolution: str = "low",
@@ -395,6 +396,31 @@ def execute_generated_3d_job(
         quality_errors = list(evaluation.get("errors") or [])
         quality_warnings = list(evaluation.get("warnings") or [])
 
+    constraints = manifest.get("constraints")
+    constraints = constraints if isinstance(constraints, dict) else {}
+    generate_lods = constraints.get("generateLods") is True
+    require_lods = constraints.get("requireLods") is True
+    lods = None
+    lod_errors = []
+    lod_warnings = []
+    if generate_lods and profile is not None:
+        try:
+            lods = lod_reporter(
+                final,
+                out / "lods",
+                profile=profile,
+            )
+        except (LodGenerationError, OSError, ValueError) as exc:
+            if require_lods:
+                lod_errors.append(f"LOD generation failed: {exc}")
+            else:
+                lod_warnings.append(f"LOD generation unavailable: {exc}")
+        if isinstance(lods, dict):
+            lod_warnings.extend(list(lods.get("warnings") or []))
+            lod_errors.extend(list(lods.get("errors") or []))
+            if require_lods and lods.get("required") is True and lods.get("available") is not True:
+                lod_errors.append("required LOD generation toolchain is unavailable")
+
     engine = str(target.get("engine") or "").lower()
     godot_delivery = None
     if engine in {"godot", "godot4", "godot-4"}:
@@ -408,8 +434,8 @@ def execute_generated_3d_job(
                 f"generated 3D Godot delivery validation failed: {exc}"
             ) from exc
 
-    combined_errors = list(errors) + quality_errors
-    combined_warnings = list(warnings) + quality_warnings
+    combined_errors = list(errors) + quality_errors + lod_errors
+    combined_warnings = list(warnings) + quality_warnings + lod_warnings
     if isinstance(godot_delivery, dict):
         combined_errors.extend(list(godot_delivery.get("errors") or []))
         combined_warnings.extend(list(godot_delivery.get("warnings") or []))
@@ -432,7 +458,13 @@ def execute_generated_3d_job(
             "warnings": combined_warnings,
             "quality": quality,
             "godot": godot_delivery,
+            "lods": lods,
         },
+        "additionalArtifacts": (
+            [str(item["path"]) for item in lods.get("outputs", [])]
+            if isinstance(lods, dict)
+            else []
+        ),
         "artifact": str(final) if not combined_errors else None,
     }
     report_path = out / "production-report.json"
