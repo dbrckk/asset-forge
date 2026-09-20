@@ -16,6 +16,7 @@ on:
           - auto
           - pollinations
           - qwen-colab
+          - cloudflare
       model:
         description: "Optional model override"
         required: false
@@ -34,6 +35,8 @@ jobs:
     timeout-minutes: 20
     env:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_REPOSITORY: ${{ github.repository }}
