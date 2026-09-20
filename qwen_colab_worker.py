@@ -82,6 +82,37 @@ def _put(path: str, data: bytes, message: str, sha: str | None = None) -> dict:
     return _request("PUT", f"contents/{urllib.parse.quote(path)}", payload)
 
 
+def _put_overwrite(path: str, data: bytes, message: str) -> dict:
+    sha = None
+    try:
+        current = _request(
+            "GET",
+            f"contents/{urllib.parse.quote(path)}?ref={urllib.parse.quote(BRANCH)}",
+        )
+        if isinstance(current, dict):
+            sha = str(current.get("sha") or "") or None
+    except urllib.error.HTTPError as exc:
+        if exc.code != 404:
+            raise
+    return _put(path, data, message, sha=sha)
+
+
+def heartbeat() -> None:
+    payload = {
+        "schema": "asset-forge/qwen-colab-worker-status/v1",
+        "repository": REPOSITORY,
+        "branch": BRANCH,
+        "model": MODEL_ID,
+        "timestamp": int(time.time()),
+        "online": True,
+    }
+    _put_overwrite(
+        "colab-queue/worker-status.json",
+        (json.dumps(payload, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+        "colab: worker heartbeat",
+    )
+
+
 def _delete(path: str, sha: str, message: str) -> None:
     _request(
         "DELETE",
@@ -217,6 +248,7 @@ def main() -> None:
     pipe = load_pipeline()
     print(f"Worker online for {REPOSITORY}@{BRANCH}.")
     while True:
+        heartbeat()
         worked = process_once(pipe)
         if not worked:
             time.sleep(POLL_SECONDS)
