@@ -369,7 +369,7 @@ def execute_compiled_production_job(
     job: dict,
     output_dir: Path,
     *,
-    backend: str = "pollinations",
+    backend: str = "auto",
     model: str | None = None,
     resolution: str = "low",
     timeout_seconds: float = 600.0,
@@ -547,14 +547,14 @@ def parser() -> argparse.ArgumentParser:
     generate = sub.add_parser("generate", help="execute a generated-asset production job")
     generate.add_argument("job", type=Path)
     generate.add_argument("output_dir", type=Path)
-    generate.add_argument("--backend", choices=["pollinations", "imagen-codex"], default="pollinations")
+    generate.add_argument("--backend", choices=["auto", "pollinations", "imagen-codex"], default="auto")
     generate.add_argument("--model")
     generate.add_argument("--timeout", type=float, default=180.0)
 
     produce = sub.add_parser("produce", help="generate, process, validate, and report a raster production job")
     produce.add_argument("job", type=Path)
     produce.add_argument("--output-dir", type=Path)
-    produce.add_argument("--backend", choices=["pollinations", "imagen-codex"], default="pollinations")
+    produce.add_argument("--backend", choices=["auto", "pollinations", "imagen-codex"], default="auto")
     produce.add_argument("--model")
     produce.add_argument("--resolution", choices=["low", "medium", "high"], default="low")
     produce.add_argument("--timeout", type=float, default=600.0)
@@ -563,7 +563,7 @@ def parser() -> argparse.ArgumentParser:
     fulfill = sub.add_parser("fulfill", help="compile and execute a generated production request end to end")
     fulfill.add_argument("request", type=Path)
     fulfill.add_argument("--output-dir", type=Path)
-    fulfill.add_argument("--backend", choices=["pollinations", "imagen-codex"], default="pollinations")
+    fulfill.add_argument("--backend", choices=["auto", "pollinations", "imagen-codex"], default="auto")
     fulfill.add_argument("--model")
     fulfill.add_argument("--resolution", choices=["low", "medium", "high"], default="low")
     fulfill.add_argument("--timeout", type=float, default=600.0)
