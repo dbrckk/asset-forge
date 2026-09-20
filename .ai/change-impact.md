@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 088adeae0855ee03f35fe54df837429d610adb64
-Head: 2a04cafa0e11ad3bd509e438362bf1b46101a3ff
+Base: b3c7bdb65bbc5e52b72af6428339b84e0c1d59e6
+Head: 9f9e505761429c233ab22119dcd7527c8db99538
 
 ## Changed files
-- A .github/workflows/deadline-zero-live-pilot.yml
+- M godot_3d_delivery.py
 
 ## Affected areas
-- .github
+- (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_godot_3d_delivery.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

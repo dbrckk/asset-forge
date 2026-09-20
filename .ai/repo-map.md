@@ -93,6 +93,7 @@ schemas/
 tests/
   runtime_atlas_web.test.mjs
   test_animation_infer.py
+  test_art_quality.py
   test_asset_forge.py
   test_asset_profile_validation.py
   test_blender_adapter.py
@@ -122,6 +123,7 @@ web/
 .repo-standards.yml
 AGENTS.md
 animation_infer.py
+art_quality.py
 asset_forge.py
 asset_profile_validation.py
 blender_adapter.py
@@ -142,6 +144,7 @@ raster_backend.py
 raster_pack.py
 README.md
 remote_batch.py
+runtime_3d_plan.py
 runtime_atlas.py
 starlist_bridge.py
 svg_tools.py
@@ -220,6 +223,11 @@ jobs:
 
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
+
+      - name: Authenticate Pollinations CLI
+        if: env.POLLINATIONS_API_KEY != ''
+        shell: bash
+        run: printf '%s' "$POLLINATIONS_API_KEY" | polli auth login --with-token
 
       - name: Inspect production readiness
         run: asset-forge operational-status
@@ -408,6 +416,11 @@ jobs:
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
 
+      - name: Authenticate Pollinations CLI
+        if: env.POLLINATIONS_API_KEY != ''
+        shell: bash
+        run: printf '%s' "$POLLINATIONS_API_KEY" | polli auth login --with-token
+
       - name: Materialize batch spec
         env:
           SPEC_JSON: ${{ inputs.spec_json }}
@@ -505,7 +518,8 @@ jobs:
     timeout-minutes: 20
     env:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
-      IMAGEN_API_KEY: ${{ secrets.IMAGEN_API_KEY }}
+      CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}
+      CHATGPT_ACCESS_TOKEN: ${{ secrets.CHATGPT_ACCESS_TOKEN }}
     steps:
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -525,6 +539,11 @@ jobs:
 
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
+
+      - name: Authenticate Pollinations CLI
+        if: env.POLLINATIONS_API_KEY != ''
+        shell: bash
+        run: printf '%s' "$POLLINATIONS_API_KEY" | polli auth login --with-token
 
       - name: Materialize request
         env:
@@ -2137,6 +2156,35 @@ result = infer_animations(metadata, default_loop=False)
 def test_rejects_invalid_fps(self)
 ````
 
+## File: tests/test_art_quality.py
+````python
+class ArtQualityTests(unittest.TestCase)
+⋮----
+def _image(self, path, *, box, color=(210, 70, 45, 255), size=(96, 96))
+⋮----
+image = Image.new("RGBA", size, (0, 0, 0, 0))
+draw = ImageDraw.Draw(image)
+⋮----
+def test_centered_transparent_sprite_passes_reasonable_quality_gate(self)
+⋮----
+path = Path(td) / "sprite.png"
+⋮----
+result = evaluate_raster_art(path, {
+⋮----
+def test_clipped_sprite_reports_border_warning(self)
+⋮----
+path = Path(td) / "clipped.png"
+⋮----
+def test_fully_opaque_raster_fails_alpha_requirement(self)
+⋮----
+path = Path(td) / "opaque.png"
+⋮----
+def test_unstable_sprite_sheet_frame_occupancy_reduces_consistency(self)
+⋮----
+path = Path(td) / "sheet.png"
+image = Image.new("RGBA", (192, 192), (0, 0, 0, 0))
+````
+
 ## File: tests/test_asset_forge.py
 ````python
 ROOT = Path(__file__).resolve().parents[1]
@@ -2509,6 +2557,14 @@ generation_calls = []
 def test_visual_similarity_fails_after_retry_budget(self)
 ⋮----
 value = job()
+⋮----
+def test_technical_quality_retries_without_visual_reference(self)
+⋮----
+scores = iter([0.31, 0.74])
+⋮----
+history = result["technicalQuality"]["attempts"]
+⋮----
+def test_technical_quality_rejects_after_retry_budget(self)
 ````
 
 ## File: tests/test_gltf_binary_metrics.py
@@ -2825,6 +2881,8 @@ mapping = {
 status = build_operational_status(
 ⋮----
 def test_missing_optional_tools_are_reported_without_crashing(self)
+⋮----
+def test_imagen_codex_reports_required_token_names(self)
 ````
 
 ## File: tests/test_production_contract.py
@@ -4431,6 +4489,98 @@ animations = []
 ordered = sorted(groups[name], key=lambda item: (item[0], item[1]))
 ````
 
+## File: art_quality.py
+````python
+class ArtQualityError(RuntimeError)
+⋮----
+def _percentile(values: list[int], fraction: float) -> float
+⋮----
+ordered = sorted(values)
+index = min(len(ordered) - 1, max(0, int(round((len(ordered) - 1) * fraction))))
+⋮----
+def _entropy(values: list[int]) -> float
+⋮----
+counts = [0] * 256
+⋮----
+total = float(len(values))
+result = 0.0
+⋮----
+probability = count / total
+⋮----
+def _grid(expected_frames: int) -> tuple[int, int]
+⋮----
+columns = max(1, math.ceil(math.sqrt(expected_frames)))
+⋮----
+def evaluate_raster_art(path: Path, manifest: dict) -> dict
+⋮----
+rgba = image.convert("RGBA")
+⋮----
+pixels = list(rgba.getdata())
+alpha = [value[3] for value in pixels]
+visible = [value for value in pixels if value[3] >= 32]
+occupancy = len(visible) / max(1, len(pixels))
+⋮----
+border = []
+⋮----
+border_alpha_ratio = sum(value >= 32 for value in border) / max(1, len(border))
+⋮----
+alpha_image = rgba.getchannel("A")
+bbox = alpha_image.getbbox()
+⋮----
+transparent_margin = min(left, top, width - right, height - bottom)
+⋮----
+transparent_margin = 0
+⋮----
+luminance = [
+contrast_span = _percentile(luminance, 0.95) - _percentile(luminance, 0.05)
+entropy = _entropy(luminance)
+⋮----
+border_score = max(0.0, 1.0 - border_alpha_ratio / 0.12)
+⋮----
+occupancy_score = 1.0
+⋮----
+occupancy_score = max(0.0, occupancy / 0.08)
+⋮----
+occupancy_score = max(0.0, 1.0 - (occupancy - 0.78) / 0.22)
+contrast_score = max(0.0, min(1.0, contrast_span / 110.0))
+entropy_score = max(0.0, min(1.0, entropy / 6.0))
+⋮----
+constraints = manifest.get("constraints") if isinstance(manifest, dict) else {}
+constraints = constraints if isinstance(constraints, dict) else {}
+expected_frames = constraints.get("expectedFrames")
+frame_consistency = 1.0
+frame_occupancies = []
+⋮----
+frame_width = width // columns
+frame_height = height // rows
+⋮----
+col = index % columns
+row = index // columns
+frame = rgba.crop((
+frame_alpha = list(frame.getchannel("A").getdata())
+⋮----
+mean = sum(frame_occupancies) / len(frame_occupancies)
+⋮----
+variance = sum((value - mean) ** 2 for value in frame_occupancies) / len(frame_occupancies)
+frame_consistency = max(0.0, 1.0 - math.sqrt(variance) / mean)
+⋮----
+score = (
+score = max(0.0, min(1.0, score))
+⋮----
+errors = []
+warnings = []
+⋮----
+max_border = constraints.get("maxBorderAlphaRatio", 0.08)
+⋮----
+max_border = float(max_border)
+⋮----
+max_border = 0.08
+⋮----
+min_score = constraints.get("technicalQualityMin")
+⋮----
+required = float(min_score)
+````
+
 ## File: asset_forge.py
 ````python
 #!/usr/bin/env python3
@@ -5025,18 +5175,30 @@ command = imagen_codex_command(
 ⋮----
 similarity_threshold = constraints.get("visualSimilarityMin", 0.42)
 similarity_retries = constraints.get("visualSimilarityRetries", 2)
+technical_threshold = constraints.get("technicalQualityMin")
+technical_retries = constraints.get(
 ⋮----
 similarity_threshold = float(similarity_threshold)
 similarity_retries = int(similarity_retries)
+technical_retries = int(technical_retries)
 ⋮----
+technical_threshold = float(technical_threshold)
+⋮----
+retry_budget = max(
 similarity_history = []
+technical_quality_history = []
 ⋮----
 transparency = None
 normalization = None
 final_output = output
 stdout = ""
 ⋮----
+previous_similarity_failed = False
+previous_technical_failed = False
+⋮----
 attempt_command = list(command)
+⋮----
+retry_guidance = []
 ⋮----
 stdout = str(completed.stdout or "").strip()
 ⋮----
@@ -5051,8 +5213,27 @@ normalization = raster_normalizer(current_output, final_output, job)
 ⋮----
 parsed = json.loads(stdout)
 ⋮----
+similarity_passed = True
+⋮----
 similarity = similarity_evaluator(final_output, references)
 score = similarity.get("score") if isinstance(similarity, dict) else None
+⋮----
+similarity_passed = float(score) >= similarity_threshold
+previous_similarity_failed = not similarity_passed
+⋮----
+technical_passed = True
+⋮----
+technical = technical_quality_evaluator(
+⋮----
+technical_score = (
+⋮----
+technical_passed = (
+previous_technical_failed = not technical_passed
+⋮----
+can_retry_similarity = (
+can_retry_technical = (
+⋮----
+failures = []
 ⋮----
 class _NoCredentialRedirect(urllib.request.HTTPRedirectHandler)
 ⋮----
@@ -5602,6 +5783,7 @@ found = []
 def godot_3d_delivery_report(path: Path, profile: str = "prop") -> dict
 ⋮----
 quality = quality_report(path, profile)
+runtime_plan = build_runtime_3d_plan(quality, profile)
 ⋮----
 errors: list[str] = []
 warnings: list[str] = []
@@ -5792,6 +5974,8 @@ tools_3d = detect_3d_tools()
 ⋮----
 pollinations = generation["pollinations"]
 imagen_codex = generation.get("imagenCodex", {})
+imagen_installed = bool(imagen_codex.get("installed"))
+imagen_authenticated = bool(imagen_codex.get("authenticated"))
 webp_encode = bool(
 godot_executable = which("godot4") or which("godot")
 ⋮----
@@ -5902,6 +6086,20 @@ processing = png_optimizer(source, final)
 ⋮----
 processing = webp_encoder(source, final, lossless=True)
 ⋮----
+technical_quality = None
+technical_errors = []
+technical_warnings = []
+⋮----
+technical_quality = art_quality_reporter(final, manifest)
+⋮----
+technical_errors = list(technical_quality.get("errors") or [])
+technical_warnings = list(technical_quality.get("warnings") or [])
+⋮----
+constraints = manifest.get("constraints")
+strict = (
+⋮----
+combined_errors = list(errors) + technical_errors
+⋮----
 report = {
 report_path = out / "production-report.json"
 ⋮----
@@ -5968,6 +6166,7 @@ asset-forge = "asset_forge:main"
 packages = ["config", "pipelines", "profiles", "schemas"]
 py-modules = [
   "animation_infer",
+  "art_quality",
   "asset_forge",
   "asset_profile_validation",
   "blender_adapter",
@@ -5987,6 +6186,7 @@ py-modules = [
   "raster_pack",
   "remote_batch",
   "runtime_atlas",
+  "runtime_3d_plan",
   "starlist_bridge",
   "svg_tools",
   "toolchain_3d",
@@ -8669,6 +8869,42 @@ parser = argparse.ArgumentParser(description="Run a dependency-aware Asset Forge
 ⋮----
 args = parser.parse_args(argv)
 result = run(
+````
+
+## File: runtime_3d_plan.py
+````python
+def build_runtime_3d_plan(report: dict, profile: str) -> dict
+⋮----
+geometry = report.get("geometry") if isinstance(report, dict) else {}
+materials = report.get("materials") if isinstance(report, dict) else {}
+attributes = report.get("attributes") if isinstance(report, dict) else {}
+textures = report.get("textures") if isinstance(report, dict) else {}
+geometry = geometry if isinstance(geometry, dict) else {}
+materials = materials if isinstance(materials, dict) else {}
+attributes = attributes if isinstance(attributes, dict) else {}
+textures = textures if isinstance(textures, dict) else {}
+⋮----
+triangles = max(0, int(geometry.get("triangles") or 0))
+meshes = max(0, int(geometry.get("meshes") or 0))
+material_count = max(0, int(materials.get("count") or 0))
+textured = max(0, int(attributes.get("texturedPrimitives") or 0))
+textured_uv = max(0, int(attributes.get("texturedPrimitivesWithUv0") or 0))
+pbr_materials = max(0, int(materials.get("pbrMetallicRoughness") or 0))
+⋮----
+lod_ratios = [1.0, 0.60, 0.30, 0.12]
+collision = {
+⋮----
+lod_ratios = [1.0, 0.50, 0.20, 0.08]
+⋮----
+lod_ratios = [1.0, 0.50, 0.20]
+⋮----
+lod = []
+⋮----
+target = int(round(triangles * ratio)) if triangles else 0
+⋮----
+pbr = {
+⋮----
+recommendations = []
 ````
 
 ## File: runtime_atlas.py

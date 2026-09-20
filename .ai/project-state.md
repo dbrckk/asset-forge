@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T16:02:00Z
+Generated: 2026-09-20T16:12:01Z
 
 ### Git
 - Branch: `main`
-- Head: `2a04cafa0e11`
-- Commit date: 2026-09-20T18:01:47+02:00
-- Commit: ci: run live Deadline Zero premium visual pilot
-- Tracked files: 254
+- Head: `9f9e50576142`
+- Commit date: 2026-09-20T18:11:45+02:00
+- Commit: feat: include LOD collision and PBR plan in Godot delivery
+- Tracked files: 259
 
 ### Recently changed files
-- `.github/workflows/deadline-zero-live-pilot.yml`
-- `examples/deadline-zero-live-pilot-batch.json`
-- `tests/test_remote_batch.py`
-- `.github/workflows/production-os-batch.yml`
+- `godot_3d_delivery.py`
 - `pyproject.toml`
+- `runtime_3d_plan.py`
+- `tests/test_operational_status.py`
+- `operational_status.py`
 
 ### Project signals
 - `pyproject.toml`

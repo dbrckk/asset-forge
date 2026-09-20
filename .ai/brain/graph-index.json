@@ -1,6 +1,7 @@
 {
   "areas": [
     "animation-infer.py",
+    "art-quality.py",
     "asset-forge.py",
     "asset-profile-validation.py",
     "benchmarks",
@@ -20,6 +21,7 @@
     "raster-backend.py",
     "raster-pack.py",
     "remote-batch.py",
+    "runtime-3d-plan.py",
     "runtime-atlas.py",
     "starlist-bridge.py",
     "svg-tools.py",
@@ -79,6 +81,22 @@
       "path": "gltf_quality.py"
     },
     {
+      "dependencies": [
+        "art_quality.py",
+        "tests/test_generator_backends.py",
+        "visual_similarity.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "operational_status.py",
+        "production_executor.py",
+        "tests/test_generator_backends.py"
+      ],
+      "in_degree": 4,
+      "out_degree": 3,
+      "path": "generator_backends.py"
+    },
+    {
       "dependencies": [],
       "dependents": [
         "asset_forge.py",
@@ -106,21 +124,6 @@
       "in_degree": 5,
       "out_degree": 1,
       "path": "raster_pack.py"
-    },
-    {
-      "dependencies": [
-        "tests/test_generator_backends.py",
-        "visual_similarity.py"
-      ],
-      "dependents": [
-        "asset_forge.py",
-        "operational_status.py",
-        "production_executor.py",
-        "tests/test_generator_backends.py"
-      ],
-      "in_degree": 4,
-      "out_degree": 2,
-      "path": "generator_backends.py"
     },
     {
       "dependencies": [
@@ -163,6 +166,20 @@
       "in_degree": 3,
       "out_degree": 2,
       "path": "toolchain_3d.py"
+    },
+    {
+      "dependencies": [
+        "gltf_quality.py",
+        "gltf_tools.py",
+        "runtime_3d_plan.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_godot_3d_delivery.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 3,
+      "path": "godot_3d_delivery.py"
     },
     {
       "dependencies": [
@@ -229,16 +246,27 @@
     },
     {
       "dependencies": [
-        "gltf_quality.py",
-        "gltf_tools.py"
+        "art_quality.py",
+        "generator_backends.py"
       ],
       "dependents": [
         "asset_forge.py",
-        "tests/test_godot_3d_delivery.py"
+        "tests/test_production_executor.py"
       ],
       "in_degree": 2,
       "out_degree": 2,
-      "path": "godot_3d_delivery.py"
+      "path": "production_executor.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "generator_backends.py",
+        "production_executor.py",
+        "tests/test_art_quality.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 0,
+      "path": "art_quality.py"
     },
     {
       "dependencies": [],
@@ -261,18 +289,6 @@
       "in_degree": 3,
       "out_degree": 0,
       "path": "engine_profile_validation.py"
-    },
-    {
-      "dependencies": [
-        "generator_backends.py"
-      ],
-      "dependents": [
-        "asset_forge.py",
-        "tests/test_production_executor.py"
-      ],
-      "in_degree": 2,
-      "out_degree": 1,
-      "path": "production_executor.py"
     },
     {
       "dependencies": [
@@ -427,6 +443,15 @@
       "path": "remote_batch.py"
     },
     {
+      "dependencies": [],
+      "dependents": [
+        "godot_3d_delivery.py"
+      ],
+      "in_degree": 1,
+      "out_degree": 0,
+      "path": "runtime_3d_plan.py"
+    },
+    {
       "dependencies": [
         "animation_infer.py"
       ],
@@ -434,6 +459,15 @@
       "in_degree": 0,
       "out_degree": 1,
       "path": "tests/test_animation_infer.py"
+    },
+    {
+      "dependencies": [
+        "art_quality.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_art_quality.py"
     },
     {
       "dependencies": [
@@ -607,8 +641,8 @@
       "path": "tests/test_visual_similarity.py"
     }
   ],
-  "edge_count": 76,
+  "edge_count": 82,
   "generated_by": "dbrckk/repo-brain-v7-graph",
-  "node_count": 52,
+  "node_count": 55,
   "schema_version": 1
 }

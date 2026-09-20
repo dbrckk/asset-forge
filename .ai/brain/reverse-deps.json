@@ -9,6 +9,16 @@
       "in_degree": 2,
       "out_degree": 0
     },
+    "art_quality.py": {
+      "dependencies": [],
+      "dependents": [
+        "generator_backends.py",
+        "production_executor.py",
+        "tests/test_art_quality.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 0
+    },
     "asset_forge.py": {
       "dependencies": [
         "animation_infer.py",
@@ -82,6 +92,7 @@
     },
     "generator_backends.py": {
       "dependencies": [
+        "art_quality.py",
         "tests/test_generator_backends.py",
         "visual_similarity.py"
       ],
@@ -92,7 +103,7 @@
         "tests/test_generator_backends.py"
       ],
       "in_degree": 4,
-      "out_degree": 2
+      "out_degree": 3
     },
     "gltf_binary_metrics.py": {
       "dependencies": [
@@ -152,14 +163,15 @@
     "godot_3d_delivery.py": {
       "dependencies": [
         "gltf_quality.py",
-        "gltf_tools.py"
+        "gltf_tools.py",
+        "runtime_3d_plan.py"
       ],
       "dependents": [
         "asset_forge.py",
         "tests/test_godot_3d_delivery.py"
       ],
       "in_degree": 2,
-      "out_degree": 2
+      "out_degree": 3
     },
     "godot_export.py": {
       "dependencies": [],
@@ -206,6 +218,7 @@
     },
     "production_executor.py": {
       "dependencies": [
+        "art_quality.py",
         "generator_backends.py"
       ],
       "dependents": [
@@ -213,7 +226,7 @@
         "tests/test_production_executor.py"
       ],
       "in_degree": 2,
-      "out_degree": 1
+      "out_degree": 2
     },
     "raster_backend.py": {
       "dependencies": [],
@@ -242,6 +255,14 @@
       "dependencies": [],
       "dependents": [
         "tests/test_remote_batch.py"
+      ],
+      "in_degree": 1,
+      "out_degree": 0
+    },
+    "runtime_3d_plan.py": {
+      "dependencies": [],
+      "dependents": [
+        "godot_3d_delivery.py"
       ],
       "in_degree": 1,
       "out_degree": 0
@@ -289,6 +310,14 @@
     "tests/test_animation_infer.py": {
       "dependencies": [
         "animation_infer.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1
+    },
+    "tests/test_art_quality.py": {
+      "dependencies": [
+        "art_quality.py"
       ],
       "dependents": [],
       "in_degree": 0,
