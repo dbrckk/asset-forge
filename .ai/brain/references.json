@@ -5,537 +5,1303 @@
   "semantic": false,
   "note": "Occurrences are lexical word matches; verify source/LSP/compiler data before relying on them.",
   "symbols": {
-    "VisualSimilarityTests": {
+    "RemoteBatchError": {
       "definition": {
-        "file": "tests/test_visual_similarity.py",
-        "line": 8,
+        "file": "remote_batch.py",
+        "line": 14,
         "kind": "class",
         "language": "python"
       },
       "occurrences": [
         {
-          "file": "tests/test_visual_similarity.py",
-          "line": 8,
-          "preview": "class VisualSimilarityTests(unittest.TestCase):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_identical_images_score_higher_than_different_images": {
-      "definition": {
-        "file": "tests/test_visual_similarity.py",
-        "line": 9,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_visual_similarity.py",
-          "line": 9,
-          "preview": "def test_identical_images_score_higher_than_different_images(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_subject_repositioning_stays_similar": {
-      "definition": {
-        "file": "tests/test_visual_similarity.py",
-        "line": 33,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_visual_similarity.py",
-          "line": 33,
-          "preview": "def test_subject_repositioning_stays_similar(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_shape_and_palette_change_is_penalized": {
-      "definition": {
-        "file": "tests/test_visual_similarity.py",
-        "line": 57,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_visual_similarity.py",
-          "line": 57,
-          "preview": "def test_shape_and_palette_change_is_penalized(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_sprite_sheet_scoring_is_frame_aware": {
-      "definition": {
-        "file": "tests/test_visual_similarity.py",
-        "line": 82,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_visual_similarity.py",
-          "line": 82,
-          "preview": "def test_sprite_sheet_scoring_is_frame_aware(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "VisualSimilarityError": {
-      "definition": {
-        "file": "visual_similarity.py",
-        "line": 6,
-        "kind": "class",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "visual_similarity.py",
-          "line": 6,
-          "preview": "class VisualSimilarityError(RuntimeError):",
+          "file": "remote_batch.py",
+          "line": 14,
+          "preview": "class RemoteBatchError(RuntimeError):",
           "definition_candidate": true
         },
         {
-          "file": "visual_similarity.py",
-          "line": 14,
-          "preview": "raise VisualSimilarityError(\"Pillow is required for visual similarity checks\") from exc",
+          "file": "remote_batch.py",
+          "line": 21,
+          "preview": "raise RemoteBatchError(\"batch item id must be filename-safe\")",
           "definition_candidate": false
         },
         {
-          "file": "visual_similarity.py",
-          "line": 20,
-          "preview": "raise VisualSimilarityError(f\"cannot inspect visual similarity image: {path}\") from exc",
+          "file": "remote_batch.py",
+          "line": 30,
+          "preview": "raise RemoteBatchError(\"batch item must be an object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 33,
+          "preview": "raise RemoteBatchError(\"batch item request is required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 36,
+          "preview": "raise RemoteBatchError(f\"duplicate batch item id: {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 43,
+          "preview": "raise RemoteBatchError(f\"depends_on for {item_id} must be a list\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 54,
+          "preview": "raise RemoteBatchError(f\"batch item cannot depend on itself: {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 56,
+          "preview": "raise RemoteBatchError(f\"unknown dependency for {item_id}: {dependency}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 73,
+          "preview": "raise RemoteBatchError(\"cyclic batch dependencies\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 88,
+          "preview": "raise RemoteBatchError(\"batch spec must contain a non-empty items list\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 103,
+          "preview": "raise RemoteBatchError(f\"unsafe target_path for {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 140,
+          "preview": "raise RemoteBatchError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 147,
+          "preview": "raise RemoteBatchError(f\"missing production report for {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 150,
+          "preview": "raise RemoteBatchError(f\"production report failed for {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 155,
+          "preview": "raise RemoteBatchError(f\"missing artifact for {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 158,
+          "preview": "raise RemoteBatchError(f\"artifact escapes item output for {item_id}\")",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 16
+    },
+    "_safe_id": {
+      "definition": {
+        "file": "remote_batch.py",
+        "line": 18,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "remote_batch.py",
+          "line": 18,
+          "preview": "def _safe_id(value: str) -> str:",
+          "definition_candidate": true
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 34,
+          "preview": "item_id = _safe_id(raw.get(\"id\") or request.get(\"requestId\") or f\"item-{index + 1}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 100,
+          "preview": "request_id = _safe_id(request.get(\"requestId\") or item_id)",
           "definition_candidate": false
         }
       ],
       "occurrence_count": 3
     },
-    "_load_rgba": {
+    "_ordered_items": {
       "definition": {
-        "file": "visual_similarity.py",
+        "file": "remote_batch.py",
+        "line": 25,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "remote_batch.py",
+          "line": 25,
+          "preview": "def _ordered_items(items: list[dict]) -> list[dict]:",
+          "definition_candidate": true
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 97,
+          "preview": "for item in _ordered_items(items):",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "run": {
+      "definition": {
+        "file": "remote_batch.py",
+        "line": 77,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 687,
+          "preview": "gltf_diagnose = sub.add_parser(\"diagnose-gltf\", help=\"run deep accessor, skinning, and animation diagnostics\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 704,
+          "preview": "godot_import = sub.add_parser(\"validate-godot-handoff\", help=\"run Godot headless import validation on a handoff\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 734,
+          "preview": "run3d = sub.add_parser(\"run-3d\", help=\"run Blender to GLB validation/optimization pipeline\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 1239,
+          "preview": "if args.command == \"run-3d\":",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 160,
+          "preview": "runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 482,
+          "preview": "runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 753,
+          "preview": "upload_runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
+          "definition_candidate": false
+        },
+        {
+          "file": "godot_handoff.py",
+          "line": 151,
+          "preview": "\"- Open this folder as a Godot project or run headless import validation.\\n\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "godot_handoff.py",
+          "line": 195,
+          "preview": "completed = subprocess.run(",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 77,
+          "preview": "def run(",
+          "definition_candidate": true
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 132,
+          "preview": "completed = subprocess.run(",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 217,
+          "preview": "result = run(",
+          "definition_candidate": false
+        },
+        {
+          "file": "starlist_bridge.py",
+          "line": 38,
+          "preview": "completed = subprocess.run(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 178,
+          "preview": "name: \"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 199,
+          "preview": "assert.equal(animated.animation(\"run\").fps, 10);",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 200,
+          "preview": "assert.equal(animationFrameAtTime(animated, \"run\", 0.05).frame.index, 0);",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 201,
+          "preview": "assert.equal(animationFrameAtTime(animated, \"run\", 0.15).frame.index, 1);",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 202,
+          "preview": "assert.equal(animationFrameAtTime(animated, \"run\", 0.35).frame.index, 0);",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 245,
+          "preview": "() => createAnimationPlayer(animated, \"run\", { playbackRate: 0 }),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 253,
+          "preview": "const loopPlayer = createAnimationPlayer(animated, \"run\", {",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 270,
+          "preview": "const drawPlayer = createAnimationPlayer(animated, \"run\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1952,
+          "preview": "\"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2011,
+          "preview": "() => entityAnimationSystem.bind(\"missing\", \"run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2068,
+          "preview": "\"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_animation_infer.py",
+          "line": 21,
+          "preview": "self.assertEqual(animations[\"run\"][\"frames\"], [1, 3])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 21,
+          "preview": "\"requestId\": \"hero-run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 21,
+          "preview": "animation_name=\"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 30,
+          "preview": "self.assertIn('\"name\": &\"run\"', rendered)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 150,
+          "preview": "animations=[{\"name\": \"run\", \"frames\": [2]}],",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 193,
+          "preview": "@patch(\"godot_handoff.subprocess.run\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 195,
+          "preview": "def test_available_godot_import_passes(self, detect, run):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 197,
+          "preview": "run.return_value.returncode = 0",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 198,
+          "preview": "run.return_value.stdout = \"imported\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 199,
+          "preview": "run.return_value.stderr = \"\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 17,
+          "preview": "\"assetId\": \"hero-run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 21,
+          "preview": "\"id\": \"hero-run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 42,
+          "preview": "self.assertEqual(path.name, \"hero-run.png\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 50,
+          "preview": "webp_encoder=lambda *a, **k: self.fail(\"webp encoder must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 55,
+          "preview": "self.assertEqual(report[\"artifact\"], str(root / \"hero-run.png\"))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 81,
+          "preview": "png_optimizer=lambda *a, **k: self.fail(\"png optimizer must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 148,
+          "preview": "generic_validator=lambda p: self.fail(\"generic validator must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 153,
+          "preview": "self.assertEqual(report[\"artifact\"], str(root / \"hero-run.svg\"))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 205,
+          "preview": "self.assertEqual(path.name, \"hero-run.glb\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 224,
+          "preview": "structural_validator=lambda p: self.fail(\"generic validator must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 232,
+          "preview": "self.assertEqual(report[\"artifact\"], str(root / \"hero-run.glb\"))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 290,
+          "preview": "webp_encoder=lambda *a, **k: self.fail(\"webp must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 291,
+          "preview": "generator=lambda *a, **k: self.fail(\"generator must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 299,
+          "preview": "self.assertEqual(report[\"artifact\"], str(root / \"hero-run.png\"))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 325,
+          "preview": "generator=lambda *a, **k: self.fail(\"generator must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 7,
+          "preview": "from remote_batch import run",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 44,
+          "preview": "\"id\": \"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 46,
+          "preview": "\"request\": request(\"run-request\", \"run\", 8),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 47,
+          "preview": "\"target_path\": \"assets/art/pilot/run.png\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 74,
+          "preview": "if payload[\"manifest\"][\"id\"] == \"run\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 85,
+          "preview": "with patch(\"remote_batch.subprocess.run\", side_effect=fake_run):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 86,
+          "preview": "result = run(spec, root / \"out\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 88,
+          "preview": "self.assertEqual(result[\"execution_order\"], [\"hero\", \"run\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 209,
+          "preview": "\"name\": \"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 221,
+          "preview": "\"name\": \"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 245,
+          "preview": "\"name\": \"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 370,
+          "preview": "\"name\": \"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "toolchain_3d.py",
+          "line": 319,
+          "preview": "completed = subprocess.run(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 62
+    },
+    "main": {
+      "definition": {
+        "file": "remote_batch.py",
+        "line": 210,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 746,
+          "preview": "def main() -> int:",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 1261,
+          "preview": "raise SystemExit(main())",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 210,
+          "preview": "def main(argv=None) -> int:",
+          "definition_candidate": true
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 228,
+          "preview": "raise SystemExit(main())",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_animation_infer.py",
+          "line": 56,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 238,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_profile_validation.py",
+          "line": 128,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_blender_adapter.py",
+          "line": 58,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_engine_profile_validation.py",
+          "line": 83,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_fulfill.py",
+          "line": 209,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 576,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_binary_metrics.py",
+          "line": 133,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 165,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 113,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_tools.py",
+          "line": 115,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_3d_delivery.py",
+          "line": 76,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 176,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 212,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 67,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 85,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 383,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_backend.py",
+          "line": 161,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1453,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 99,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 387,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_starlist_bridge.py",
+          "line": 68,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_svg_tools.py",
+          "line": 309,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_toolchain_3d.py",
+          "line": 218,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_visual_similarity.py",
+          "line": 116,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 825,
+          "preview": "void main() {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 868,
+          "preview": "void main() {",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 31
+    },
+    "request": {
+      "definition": {
+        "file": "tests/test_remote_batch.py",
         "line": 10,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
-          "file": "visual_similarity.py",
+          "file": "asset_forge.py",
+          "line": 542,
+          "preview": "production_job = sub.add_parser(\"production-job\", help=\"compile a Production OS/AI Dev Server asset request into an executable job\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 543,
+          "preview": "production_job.add_argument(\"request\", type=Path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 567,
+          "preview": "fulfill = sub.add_parser(\"fulfill\", help=\"compile and execute a generated production request end to end\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 568,
+          "preview": "fulfill.add_argument(\"request\", type=Path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 773,
+          "preview": "request = load_json(args.request)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 774,
+          "preview": "errors = validate_production_request(request, validate_manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 780,
+          "preview": "plan = build_plan(request[\"manifest\"], root)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 781,
+          "preview": "job = build_production_job(request, plan)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 846,
+          "preview": "request = load_json(args.request)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 847,
+          "preview": "errors = validate_production_request(request, validate_manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 853,
+          "preview": "plan = build_plan(request[\"manifest\"], root)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 854,
+          "preview": "job = build_production_job(request, plan)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
           "line": 10,
-          "preview": "def _load_rgba(path: Path, *, size: int = 32):",
-          "definition_candidate": true
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 164,
-          "preview": "parent_image = _load_rgba(Path(parent), size=64)",
+          "preview": "import urllib.request",
           "definition_candidate": false
         },
         {
-          "file": "visual_similarity.py",
-          "line": 165,
-          "preview": "child_image = _load_rgba(Path(child), size=64)",
+          "file": "generator_backends.py",
+          "line": 700,
+          "preview": "class _NoCredentialRedirect(urllib.request.HTTPRedirectHandler):",
           "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_crop_to_alpha_subject": {
-      "definition": {
-        "file": "visual_similarity.py",
-        "line": 24,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "visual_similarity.py",
-          "line": 24,
-          "preview": "def _crop_to_alpha_subject(image, *, padding_ratio: float = 0.08):",
-          "definition_candidate": true
         },
         {
-          "file": "visual_similarity.py",
+          "file": "generator_backends.py",
+          "line": 705,
+          "preview": "def _default_3d_opener(request, timeout):",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 706,
+          "preview": "return urllib.request.build_opener(_NoCredentialRedirect()).open(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 707,
+          "preview": "request,",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 818,
+          "preview": "request = urllib.request.Request(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 829,
+          "preview": "with opener(request, timeout) as response:",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 8,
+          "preview": "REQUEST_SCHEMA = \"asset-forge/production-request/v1\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 14,
+          "preview": "def validate_production_request(request: dict, validate_manifest: Callable[[dict], list[str]]) -> list[str]:",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 16,
+          "preview": "if request.get(\"schema\") != REQUEST_SCHEMA:",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 19,
+          "preview": "request_id = request.get(\"requestId\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 25,
+          "preview": "instruction = request.get(\"instruction\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 29,
+          "preview": "manifest = request.get(\"manifest\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 38,
+          "preview": "delivery = request.get(\"delivery\", {})",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 53,
+          "preview": "request: dict,",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 58,
+          "preview": "manifest = request[\"manifest\"]",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 60,
+          "preview": "delivery = request.get(\"delivery\") or {}",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 61,
+          "preview": "output_dir = delivery.get(\"outputDir\") or str(Path(default_output_dir) / request[\"requestId\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 66,
+          "preview": "\"requestId\": request[\"requestId\"],",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 70,
+          "preview": "\"instruction\": request[\"instruction\"],",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 31,
+          "preview": "request = raw.get(\"request\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 32,
+          "preview": "if not isinstance(request, dict):",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 33,
+          "preview": "raise RemoteBatchError(\"batch item request is required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 34,
+          "preview": "item_id = _safe_id(raw.get(\"id\") or request.get(\"requestId\") or f\"item-{index + 1}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 99,
+          "preview": "request = item[\"request\"]",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 100,
+          "preview": "request_id = _safe_id(request.get(\"requestId\") or item_id)",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 107,
+          "preview": "request_path = item_root / \"request.json\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 109,
+          "preview": "json.dumps(request, indent=2, sort_keys=True) + \"\\n\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_fulfill.py",
+          "line": 18,
+          "preview": "\"examples/production-request.json\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_fulfill.py",
+          "line": 26,
+          "preview": "self.assertEqual(args.request, Path(\"examples/production-request.json\"))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_fulfill.py",
+          "line": 34,
+          "preview": "\"examples/production-request.json\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_fulfill.py",
           "line": 42,
-          "preview": "subject = _crop_to_alpha_subject(image)",
+          "preview": "request = asset_forge.load_json(ROOT / \"examples/production-request.json\")",
           "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_subject_normalized": {
-      "definition": {
-        "file": "visual_similarity.py",
-        "line": 41,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
+        },
         {
-          "file": "visual_similarity.py",
-          "line": 41,
-          "preview": "def _subject_normalized(image, *, size: int = 32):",
+          "file": "tests/test_fulfill.py",
+          "line": 43,
+          "preview": "plan = asset_forge.build_plan(request[\"manifest\"], ROOT)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_fulfill.py",
+          "line": 44,
+          "preview": "job = asset_forge.build_production_job(request, plan)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_fulfill.py",
+          "line": 54,
+          "preview": "self.assertEqual(written_job[\"requestId\"], request[\"requestId\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_fulfill.py",
+          "line": 55,
+          "preview": "self.assertEqual(written_manifest[\"id\"], request[\"manifest\"][\"id\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_fulfill.py",
+          "line": 56,
+          "preview": "self.assertEqual(written_plan[\"assetId\"], request[\"manifest\"][\"id\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 360,
+          "preview": "def opener(request, timeout):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 361,
+          "preview": "seen[\"url\"] = request.full_url",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 362,
+          "preview": "seen[\"authorization\"] = request.get_header(\"Authorization\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 363,
+          "preview": "seen[\"body\"] = request.data",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 16,
+          "preview": "def request(self):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 28,
+          "preview": "request = self.request()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 30,
+          "preview": "validate_production_request(request, asset_forge.validate_manifest),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 33,
+          "preview": "plan = asset_forge.build_plan(request[\"manifest\"], Path(__file__).resolve().parents[1])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 34,
+          "preview": "job = build_production_job(request, plan)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 45,
+          "preview": "\"requestId\": \"request-1\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 59,
+          "preview": "\"requestId\": \"request-1\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 73,
+          "preview": "request = self.request()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 74,
+          "preview": "request[\"instruction\"] = \"\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 75,
+          "preview": "request[\"manifest\"][\"license\"][\"commercialUse\"] = False",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 76,
+          "preview": "errors = validate_production_request(request, asset_forge.validate_manifest)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 10,
+          "preview": "def request(request_id, asset_id, expected_frames=1):",
           "definition_candidate": true
         },
         {
-          "file": "visual_similarity.py",
-          "line": 130,
-          "preview": "parent_subject = _subject_normalized(parent_image, size=32)",
+          "file": "tests/test_remote_batch.py",
+          "line": 12,
+          "preview": "\"schema\": \"asset-forge/production-request/v1\",",
           "definition_candidate": false
         },
         {
-          "file": "visual_similarity.py",
-          "line": 131,
-          "preview": "child_subject = _subject_normalized(child_image, size=32)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_edge_signature": {
-      "definition": {
-        "file": "visual_similarity.py",
-        "line": 46,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "visual_similarity.py",
+          "file": "tests/test_remote_batch.py",
           "line": 46,
-          "preview": "def _edge_signature(image, width: int = 16, height: int = 16) -> list[int]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 141,
-          "preview": "_edge_signature(parent_subject),",
+          "preview": "\"request\": request(\"run-request\", \"run\", 8),",
           "definition_candidate": false
         },
         {
-          "file": "visual_similarity.py",
-          "line": 142,
-          "preview": "_edge_signature(child_subject),",
+          "file": "tests/test_remote_batch.py",
+          "line": 51,
+          "preview": "\"request\": request(\"hero-request\", \"hero\"),",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 3
+      "occurrence_count": 68
     },
-    "_histogram_signature": {
+    "RemoteBatchTests": {
       "definition": {
-        "file": "visual_similarity.py",
+        "file": "tests/test_remote_batch.py",
+        "line": 37,
+        "kind": "class",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 37,
+          "preview": "class RemoteBatchTests(unittest.TestCase):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_dependency_order_and_reference_are_preserved": {
+      "definition": {
+        "file": "tests/test_remote_batch.py",
+        "line": 38,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 38,
+          "preview": "def test_dependency_order_and_reference_are_preserved(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "fake_run": {
+      "definition": {
+        "file": "tests/test_remote_batch.py",
         "line": 57,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
-          "file": "visual_similarity.py",
+          "file": "tests/test_remote_batch.py",
           "line": 57,
-          "preview": "def _histogram_signature(image, bins: int = 8) -> list[float]:",
+          "preview": "def fake_run(cmd, **kwargs):",
           "definition_candidate": true
         },
         {
-          "file": "visual_similarity.py",
-          "line": 133,
-          "preview": "_histogram_signature(parent_subject),",
-          "definition_candidate": false
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 134,
-          "preview": "_histogram_signature(child_subject),",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_histogram_similarity": {
-      "definition": {
-        "file": "visual_similarity.py",
-        "line": 75,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "visual_similarity.py",
-          "line": 75,
-          "preview": "def _histogram_similarity(a: list[float], b: list[float]) -> float:",
-          "definition_candidate": true
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 132,
-          "preview": "palette = _histogram_similarity(",
+          "file": "tests/test_remote_batch.py",
+          "line": 85,
+          "preview": "with patch(\"remote_batch.subprocess.run\", side_effect=fake_run):",
           "definition_candidate": false
         }
       ],
       "occurrence_count": 2
     },
-    "_average_hash": {
+    "Result": {
       "definition": {
-        "file": "visual_similarity.py",
-        "line": 80,
-        "kind": "function",
+        "file": "tests/test_remote_batch.py",
+        "line": 79,
+        "kind": "class",
         "language": "python"
       },
       "occurrences": [
         {
-          "file": "visual_similarity.py",
-          "line": 50,
-          "preview": "return _average_hash(image, width, height)",
-          "definition_candidate": false
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 80,
-          "preview": "def _average_hash(image, width: int = 16, height: int = 16) -> list[int]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 137,
-          "preview": "_average_hash(parent_subject),",
-          "definition_candidate": false
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 138,
-          "preview": "_average_hash(child_subject),",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 4
-    },
-    "_hash_similarity": {
-      "definition": {
-        "file": "visual_similarity.py",
-        "line": 87,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "visual_similarity.py",
-          "line": 87,
-          "preview": "def _hash_similarity(a: list[int], b: list[int]) -> float:",
-          "definition_candidate": true
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 136,
-          "preview": "subject_structure = _hash_similarity(",
-          "definition_candidate": false
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 140,
-          "preview": "edge_structure = _hash_similarity(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_alpha_occupancy": {
-      "definition": {
-        "file": "visual_similarity.py",
-        "line": 94,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "visual_similarity.py",
+          "file": "tests/test_generator_backends.py",
           "line": 94,
-          "preview": "def _alpha_occupancy(image) -> float:",
+          "preview": "class Result:",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 101,
+          "preview": "return Result()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 134,
+          "preview": "class Result:",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 142,
+          "preview": "return Result()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 217,
+          "preview": "class Result:",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 222,
+          "preview": "return Result()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 294,
+          "preview": "class Result:",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 298,
+          "preview": "return Result()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 345,
+          "preview": "class Result:",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 349,
+          "preview": "return Result()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 79,
+          "preview": "class Result:",
           "definition_candidate": true
         },
         {
-          "file": "visual_similarity.py",
-          "line": 145,
-          "preview": "_alpha_occupancy(parent_image),",
-          "definition_candidate": false
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 146,
-          "preview": "_alpha_occupancy(child_image),",
+          "file": "tests/test_remote_batch.py",
+          "line": 83,
+          "preview": "return Result()",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 3
-    },
-    "_occupancy_similarity": {
-      "definition": {
-        "file": "visual_similarity.py",
-        "line": 100,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "visual_similarity.py",
-          "line": 100,
-          "preview": "def _occupancy_similarity(a: float, b: float) -> float:",
-          "definition_candidate": true
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 144,
-          "preview": "occupancy = _occupancy_similarity(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_sprite_sheet_frames": {
-      "definition": {
-        "file": "visual_similarity.py",
-        "line": 105,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "visual_similarity.py",
-          "line": 105,
-          "preview": "def _sprite_sheet_frames(image, *, max_frames: int = 4):",
-          "definition_candidate": true
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 167,
-          "preview": "parent_frames = _sprite_sheet_frames(parent_image)",
-          "definition_candidate": false
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 168,
-          "preview": "child_frames = _sprite_sheet_frames(child_image)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_single_image_similarity": {
-      "definition": {
-        "file": "visual_similarity.py",
-        "line": 129,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "visual_similarity.py",
-          "line": 129,
-          "preview": "def _single_image_similarity(parent_image, child_image) -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 172,
-          "preview": "_single_image_similarity(parent_frame, child_frame)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "compare_visuals": {
-      "definition": {
-        "file": "visual_similarity.py",
-        "line": 163,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_visual_similarity.py",
-          "line": 5,
-          "preview": "from visual_similarity import compare_visuals",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_visual_similarity.py",
-          "line": 25,
-          "preview": "same_score = compare_visuals(parent, same)[\"score\"]",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_visual_similarity.py",
-          "line": 26,
-          "preview": "different_score = compare_visuals(parent, different)[\"score\"]",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_visual_similarity.py",
-          "line": 54,
-          "preview": "score = compare_visuals(parent, moved)[\"score\"]",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_visual_similarity.py",
-          "line": 78,
-          "preview": "score = compare_visuals(parent, changed)[\"score\"]",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_visual_similarity.py",
-          "line": 108,
-          "preview": "result = compare_visuals(parent, child)",
-          "definition_candidate": false
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 163,
-          "preview": "def compare_visuals(parent: Path, child: Path) -> dict:",
-          "definition_candidate": true
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 200,
-          "preview": "comparisons = [compare_visuals(reference, child) for reference in references]",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 8
-    },
-    "compare_against_references": {
-      "definition": {
-        "file": "visual_similarity.py",
-        "line": 193,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "generator_backends.py",
-          "line": 14,
-          "preview": "from visual_similarity import compare_against_references",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 485,
-          "preview": "similarity_evaluator: Callable[[Path, list[Path]], dict] = compare_against_references,",
-          "definition_candidate": false
-        },
-        {
-          "file": "visual_similarity.py",
-          "line": 193,
-          "preview": "def compare_against_references(child: Path, references: list[Path]) -> dict:",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 3
+      "occurrence_count": 12
     }
   }
 }

@@ -1,259 +1,98 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "0d4c9dfaa9ee2cab77ca87855a521d17bc466eb6",
-  "head": "663a3494f032acc7acdb2e9aaba3823583e6a399",
+  "base": "663a3494f032acc7acdb2e9aaba3823583e6a399",
+  "head": "19207a2687205d5a0daa8138d93888c2e8dacfe7",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "tests/test_visual_similarity.py",
+      "path": ".github/workflows/production-os-batch.yml",
+      "status": "A"
+    },
+    {
+      "path": "pyproject.toml",
       "status": "M"
     },
     {
-      "path": "visual_similarity.py",
-      "status": "M"
+      "path": "remote_batch.py",
+      "status": "A"
+    },
+    {
+      "path": "tests/test_remote_batch.py",
+      "status": "A"
     }
   ],
   "changed_source_files": [
-    "tests/test_visual_similarity.py",
-    "visual_similarity.py"
+    "remote_batch.py",
+    "tests/test_remote_batch.py"
   ],
   "impacted_files": [
-    "generator_backends.py",
-    "tests/test_visual_similarity.py",
-    "visual_similarity.py"
+    "remote_batch.py",
+    "tests/test_remote_batch.py"
   ],
   "impacted_symbols": [
     {
-      "name": "_sanitize_metadata",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 34
-    },
-    {
-      "name": "GenerationError",
+      "name": "RemoteBatchError",
       "kind": "class",
-      "file": "generator_backends.py",
-      "line": 61
+      "file": "remote_batch.py",
+      "line": 14
     },
     {
-      "name": "generator_backend_status",
+      "name": "_safe_id",
       "kind": "function",
-      "file": "generator_backends.py",
-      "line": 65
+      "file": "remote_batch.py",
+      "line": 18
     },
     {
-      "name": "_sprite_sheet_geometry",
+      "name": "_ordered_items",
       "kind": "function",
-      "file": "generator_backends.py",
-      "line": 107
+      "file": "remote_batch.py",
+      "line": 25
     },
     {
-      "name": "_generation_dimensions",
+      "name": "run",
       "kind": "function",
-      "file": "generator_backends.py",
-      "line": 142
+      "file": "remote_batch.py",
+      "line": 77
     },
     {
-      "name": "_ensure_transparency",
+      "name": "main",
       "kind": "function",
-      "file": "generator_backends.py",
-      "line": 156
+      "file": "remote_batch.py",
+      "line": 210
     },
     {
-      "name": "_normalize_raster_geometry",
+      "name": "request",
       "kind": "function",
-      "file": "generator_backends.py",
-      "line": 236
-    },
-    {
-      "name": "build_generation_prompt",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 280
-    },
-    {
-      "name": "pollinations_command",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 332
-    },
-    {
-      "name": "select_generation_backend",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 373
-    },
-    {
-      "name": "imagen_codex_command",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 408
-    },
-    {
-      "name": "_imagen_output_path",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 438
-    },
-    {
-      "name": "execute_generated_asset",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 474
-    },
-    {
-      "name": "_NoCredentialRedirect",
-      "kind": "class",
-      "file": "generator_backends.py",
-      "line": 700
-    },
-    {
-      "name": "redirect_request",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 701
-    },
-    {
-      "name": "_default_3d_opener",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 705
-    },
-    {
-      "name": "_upload_reference_image",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 712
-    },
-    {
-      "name": "execute_generated_3d_asset",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 744
-    },
-    {
-      "name": "VisualSimilarityTests",
-      "kind": "class",
-      "file": "tests/test_visual_similarity.py",
-      "line": 8
-    },
-    {
-      "name": "test_identical_images_score_higher_than_different_images",
-      "kind": "function",
-      "file": "tests/test_visual_similarity.py",
-      "line": 9
-    },
-    {
-      "name": "test_subject_repositioning_stays_similar",
-      "kind": "function",
-      "file": "tests/test_visual_similarity.py",
-      "line": 33
-    },
-    {
-      "name": "test_shape_and_palette_change_is_penalized",
-      "kind": "function",
-      "file": "tests/test_visual_similarity.py",
-      "line": 57
-    },
-    {
-      "name": "test_sprite_sheet_scoring_is_frame_aware",
-      "kind": "function",
-      "file": "tests/test_visual_similarity.py",
-      "line": 82
-    },
-    {
-      "name": "VisualSimilarityError",
-      "kind": "class",
-      "file": "visual_similarity.py",
-      "line": 6
-    },
-    {
-      "name": "_load_rgba",
-      "kind": "function",
-      "file": "visual_similarity.py",
+      "file": "tests/test_remote_batch.py",
       "line": 10
     },
     {
-      "name": "_crop_to_alpha_subject",
-      "kind": "function",
-      "file": "visual_similarity.py",
-      "line": 24
+      "name": "RemoteBatchTests",
+      "kind": "class",
+      "file": "tests/test_remote_batch.py",
+      "line": 37
     },
     {
-      "name": "_subject_normalized",
+      "name": "test_dependency_order_and_reference_are_preserved",
       "kind": "function",
-      "file": "visual_similarity.py",
-      "line": 41
+      "file": "tests/test_remote_batch.py",
+      "line": 38
     },
     {
-      "name": "_edge_signature",
+      "name": "fake_run",
       "kind": "function",
-      "file": "visual_similarity.py",
-      "line": 46
-    },
-    {
-      "name": "_histogram_signature",
-      "kind": "function",
-      "file": "visual_similarity.py",
+      "file": "tests/test_remote_batch.py",
       "line": 57
     },
     {
-      "name": "_histogram_similarity",
-      "kind": "function",
-      "file": "visual_similarity.py",
-      "line": 75
-    },
-    {
-      "name": "_average_hash",
-      "kind": "function",
-      "file": "visual_similarity.py",
-      "line": 80
-    },
-    {
-      "name": "_hash_similarity",
-      "kind": "function",
-      "file": "visual_similarity.py",
-      "line": 87
-    },
-    {
-      "name": "_alpha_occupancy",
-      "kind": "function",
-      "file": "visual_similarity.py",
-      "line": 94
-    },
-    {
-      "name": "_occupancy_similarity",
-      "kind": "function",
-      "file": "visual_similarity.py",
-      "line": 100
-    },
-    {
-      "name": "_sprite_sheet_frames",
-      "kind": "function",
-      "file": "visual_similarity.py",
-      "line": 105
-    },
-    {
-      "name": "_single_image_similarity",
-      "kind": "function",
-      "file": "visual_similarity.py",
-      "line": 129
-    },
-    {
-      "name": "compare_visuals",
-      "kind": "function",
-      "file": "visual_similarity.py",
-      "line": 163
-    },
-    {
-      "name": "compare_against_references",
-      "kind": "function",
-      "file": "visual_similarity.py",
-      "line": 193
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_remote_batch.py",
+      "line": 79
     }
   ],
   "selected_tests": [
-    "tests/test_visual_similarity.py"
+    "tests/test_remote_batch.py"
   ]
 }

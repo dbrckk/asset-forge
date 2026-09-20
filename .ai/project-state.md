@@ -96,19 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T14:42:46Z
+Generated: 2026-09-20T15:59:21Z
 
 ### Git
 - Branch: `main`
-- Head: `663a3494f032`
-- Commit date: 2026-09-20T16:42:27+02:00
-- Commit: test: cover frame-aware sprite sheet scoring
-- Tracked files: 249
+- Head: `19207a268720`
+- Commit date: 2026-09-20T17:59:08+02:00
+- Commit: test: cover dependency-aware remote batch runner
+- Tracked files: 252
 
 ### Recently changed files
-- `tests/test_visual_similarity.py`
-- `visual_similarity.py`
+- `tests/test_remote_batch.py`
+- `.github/workflows/production-os-batch.yml`
 - `pyproject.toml`
+- `remote_batch.py`
+- `tests/test_visual_similarity.py`
 
 ### Project signals
 - `pyproject.toml`

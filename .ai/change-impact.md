@@ -1,10 +1,10 @@
 # Change impact
 
-Base: 577d69b0c601f2beee3271bbdac09744103918dc
-Head: 663a3494f032acc7acdb2e9aaba3823583e6a399
+Base: fb902912bbdafd326f889aebfa70af2ef460305a
+Head: 19207a2687205d5a0daa8138d93888c2e8dacfe7
 
 ## Changed files
-- M tests/test_visual_similarity.py
+- A tests/test_remote_batch.py
 
 ## Affected areas
 - tests

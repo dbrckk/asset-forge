@@ -42,6 +42,7 @@ The content is organized as follows:
   workflows/
     ai-repo-map.yml
     live-generation.yml
+    production-os-batch.yml
     production-os-dispatch.yml
     release.yml
     repo-standards.yml
@@ -108,6 +109,7 @@ tests/
   test_production_executor.py
   test_raster_backend.py
   test_raster_pack.py
+  test_remote_batch.py
   test_runtime_atlas.py
   test_starlist_bridge.py
   test_svg_tools.py
@@ -137,6 +139,7 @@ pyproject.toml
 raster_backend.py
 raster_pack.py
 README.md
+remote_batch.py
 runtime_atlas.py
 starlist_bridge.py
 svg_tools.py
@@ -233,6 +236,131 @@ jobs:
           path: build/live-vector-smoke/
           if-no-files-found: error
           retention-days: 7
+````
+
+## File: .github/workflows/production-os-batch.yml
+````yaml
+name: Production OS asset batch
+
+run-name: Asset Forge batch ${{ inputs.correlation_id }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      correlation_id:
+        description: "Unique Production OS correlation id"
+        required: true
+        type: string
+      spec_json:
+        description: "Transactional asset batch specification"
+        required: true
+        type: string
+      backend:
+        description: "Generation backend"
+        required: false
+        default: auto
+        type: choice
+        options:
+          - auto
+          - pollinations
+          - imagen-codex
+      model:
+        description: "Optional model override"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: asset-forge-batch-${{ inputs.correlation_id }}
+  cancel-in-progress: false
+
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+      CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}
+      CHATGPT_ACCESS_TOKEN: ${{ secrets.CHATGPT_ACCESS_TOKEN }}
+    steps:
+      - name: Checkout asset-forge
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22"
+
+      - name: Install Asset Forge
+        run: python -m pip install ".[generation]"
+
+      - name: Install Pollinations CLI
+        run: npm install --global @pollinations/cli@0.1.15
+
+      - name: Materialize batch spec
+        env:
+          SPEC_JSON: ${{ inputs.spec_json }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = json.loads(os.environ["SPEC_JSON"])
+          Path("build/remote-batch").mkdir(parents=True, exist_ok=True)
+          Path("build/remote-batch/spec.json").write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Execute dependency-aware batch
+        shell: bash
+        run: |
+          args=(
+            python remote_batch.py
+            --spec build/remote-batch/spec.json
+            --output-root build/remote-batch/output
+            --backend "${{ inputs.backend }}"
+          )
+          if [ -n "${{ inputs.model }}" ]; then
+            args+=(--model "${{ inputs.model }}")
+          fi
+          "${args[@]}"
+
+      - name: Validate batch result
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          root = Path("build/remote-batch/output").resolve()
+          result = json.loads((root / "batch-result.json").read_text(encoding="utf-8"))
+          assert result["schema_version"] == "asset-forge/remote-batch-result/v1"
+          assert result["success"] is True
+          assert result["count"] == len(result["items"])
+          for item in result["items"]:
+              artifact = (root / item["artifact"]).resolve()
+              assert artifact.is_relative_to(root)
+              assert artifact.is_file()
+              assert hashlib.sha256(artifact.read_bytes()).hexdigest() == item["sha256"]
+          PY
+
+      - name: Upload transactional batch bundle
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: asset-forge-batch-${{ inputs.correlation_id }}
+          path: build/remote-batch/output
+          if-no-files-found: error
+          retention-days: 14
 ````
 
 ## File: .github/workflows/production-os-dispatch.yml
@@ -3084,6 +3212,38 @@ def test_compact_atlas_rotation_is_disabled_by_default(self)
 def test_compact_atlas_rotation_metadata_counts_rotated_frames(self)
 ````
 
+## File: tests/test_remote_batch.py
+````python
+def request(request_id, asset_id, expected_frames=1)
+⋮----
+class RemoteBatchTests(unittest.TestCase)
+⋮----
+def test_dependency_order_and_reference_are_preserved(self)
+⋮----
+root = Path(td)
+spec = root / "spec.json"
+⋮----
+commands = []
+⋮----
+def fake_run(cmd, **kwargs)
+⋮----
+request_path = Path(cmd[cmd.index("fulfill") + 1])
+payload = json.loads(request_path.read_text())
+output = Path(cmd[cmd.index("--output-dir") + 1])
+⋮----
+artifact = output / (payload["manifest"]["id"] + ".png")
+⋮----
+class Result
+⋮----
+returncode = 0
+stdout = ""
+stderr = ""
+⋮----
+result = run(spec, root / "out")
+⋮----
+reference = Path(commands[1][commands[1].index("--reference") + 1])
+````
+
 ## File: tests/test_runtime_atlas.py
 ````python
 class RuntimeAtlasTests(unittest.TestCase)
@@ -5593,6 +5753,7 @@ py-modules = [
   "production_executor",
   "raster_backend",
   "raster_pack",
+  "remote_batch",
   "runtime_atlas",
   "starlist_bridge",
   "svg_tools",
@@ -8184,6 +8345,98 @@ runtime.duplicateSelection();
 Clipboard data uses the versioned `asset-forge-sprite-clipboard` format. Paste and duplicate operations select the newly created entities automatically. Cut stores the selected hierarchy payload before applying the configured hierarchy deletion policy.
 
 The controller can also import/export clipboard payloads with `get()` and `set()`, making browser/system clipboard adapters possible without coupling the runtime to DOM clipboard APIs.
+````
+
+## File: remote_batch.py
+````python
+RASTER_SUFFIXES = {".png", ".webp", ".jpg", ".jpeg"}
+⋮----
+class RemoteBatchError(RuntimeError)
+⋮----
+def _safe_id(value: str) -> str
+⋮----
+value = str(value or "").strip()
+⋮----
+def _ordered_items(items: list[dict]) -> list[dict]
+⋮----
+indexed: dict[str, dict] = {}
+order: list[str] = []
+⋮----
+request = raw.get("request")
+⋮----
+item_id = _safe_id(raw.get("id") or request.get("requestId") or f"item-{index + 1}")
+⋮----
+item = dict(raw)
+⋮----
+deps = item.get("depends_on") or []
+⋮----
+deps = [deps]
+⋮----
+indegree = {item_id: 0 for item_id in indexed}
+dependents = {item_id: [] for item_id in indexed}
+⋮----
+seen = set()
+⋮----
+ready = [item_id for item_id in order if indegree[item_id] == 0]
+result: list[dict] = []
+⋮----
+current = ready.pop(0)
+⋮----
+payload = json.loads(Path(spec_path).read_text(encoding="utf-8"))
+items = payload.get("items", payload) if isinstance(payload, dict) else payload
+⋮----
+output_root = Path(output_root)
+⋮----
+bundle_root = output_root / "bundle"
+⋮----
+artifacts: dict[str, Path] = {}
+results = []
+⋮----
+item_id = item["_id"]
+request = item["request"]
+request_id = _safe_id(request.get("requestId") or item_id)
+target_path = str(item.get("target_path") or "").strip().replace("\\", "/").lstrip("/")
+⋮----
+item_root = output_root / "jobs" / request_id
+⋮----
+request_path = item_root / "request.json"
+⋮----
+cmd = [
+⋮----
+source_path = str(item.get("source_path") or "").strip()
+⋮----
+parent = artifacts.get(dependency)
+⋮----
+completed = subprocess.run(
+⋮----
+detail = (completed.stderr or completed.stdout or "").strip()
+⋮----
+report_path = item_root / "production-report.json"
+⋮----
+report = json.loads(report_path.read_text(encoding="utf-8"))
+⋮----
+artifact = Path(str(report.get("artifact") or ""))
+⋮----
+artifact = item_root / artifact
+⋮----
+artifact = artifact.resolve()
+⋮----
+bundled = bundle_root / f"{item_id}{artifact.suffix.lower()}"
+⋮----
+digest = hashlib.sha256(bundled.read_bytes()).hexdigest()
+⋮----
+generation = report.get("generation") if isinstance(report.get("generation"), dict) else {}
+⋮----
+quality = [item["visual_similarity"] for item in results if item["visual_similarity"]]
+scores = [
+result = {
+⋮----
+def main(argv=None) -> int
+⋮----
+parser = argparse.ArgumentParser(description="Run a dependency-aware Asset Forge batch")
+⋮----
+args = parser.parse_args(argv)
+result = run(
 ````
 
 ## File: runtime_atlas.py
