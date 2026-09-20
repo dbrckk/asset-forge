@@ -428,6 +428,40 @@ class ProductionExecutorTests(unittest.TestCase):
             self.assertTrue(report["additionalArtifacts"][0].endswith(".lod1.glb"))
             self.assertTrue(report["validation"]["lods"]["available"])
 
+    def test_required_collision_blocks_godot_prop_without_collision_node(self):
+        three_d = job("glb")
+        three_d["assetType"] = "prop"
+        three_d["manifest"]["target"]["engine"] = "godot4"
+        three_d["manifest"]["constraints"] = {"requireCollision": True}
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+
+            def generator(value, output_dir, **kwargs):
+                source = Path(output_dir) / "generated-source.glb"
+                source.write_bytes(b"glTF" + b"\x00" * 16)
+                return {"success": True, "sourcePath": str(source)}
+
+            report = execute_generated_3d_job(
+                three_d,
+                root,
+                structural_validator=lambda p: ({}, [], []),
+                profile_validator=lambda p, profile: ({}, [], []),
+                quality_reporter=lambda p, profile: {
+                    "evaluation": {"passed": True, "errors": [], "warnings": []}
+                },
+                godot_delivery_reporter=lambda p, profile: {
+                    "ready": True,
+                    "errors": [],
+                    "warnings": [],
+                    "scene": {"collisionNodes": 0},
+                },
+                generator=generator,
+            )
+
+            self.assertFalse(report["success"])
+            self.assertIn("required runtime collision is missing", report["validation"]["errors"])
+
     def test_required_lod_toolchain_unavailable_blocks_3d_promotion(self):
         three_d = job("glb")
         three_d["assetType"] = "prop"
