@@ -22,6 +22,8 @@ jobs:
     timeout-minutes: 35
     env:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+      CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}
+      CHATGPT_ACCESS_TOKEN: ${{ secrets.CHATGPT_ACCESS_TOKEN }}
     steps:
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -50,11 +52,34 @@ jobs:
       - name: Inspect production readiness
         run: asset-forge operational-status
 
-      - name: Produce Rex premium pilot
+      - name: Check live pilot credential
+        id: credential
+        shell: bash
         run: |
-          python remote_batch.py             --spec examples/deadline-zero-live-pilot-batch.json             --output-root build/deadline-zero-live-pilot             --backend pollinations
+          if [ -n "$POLLINATIONS_API_KEY" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "backend=pollinations" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Deadline Zero dependent-reference pilot requires POLLINATIONS_API_KEY."
+          fi
+
+      - name: Produce Rex premium pilot
+        if: steps.credential.outputs.ready == 'true'
+        run: |
+          python remote_batch.py \
+            --spec examples/deadline-zero-live-pilot-batch.json \
+            --output-root build/deadline-zero-live-pilot \
+            --backend "${{ steps.credential.outputs.backend }}"
+
+      - name: Persist blocked pilot status
+        if: steps.credential.outputs.ready != 'true'
+        run: |
+          mkdir -p build/deadline-zero-live-pilot
+          printf '%s\n' '{"schema_version":"asset-forge/live-pilot/v1","success":false,"status":"credential_required","required_secret":"POLLINATIONS_API_KEY"}' > build/deadline-zero-live-pilot/pilot-status.json
 
       - name: Validate pilot bundle
+        if: steps.credential.outputs.ready == 'true'
         run: |
           python - <<'PY'
           import hashlib
@@ -79,6 +104,7 @@ jobs:
           PY
 
       - name: Publish quality summary
+        if: steps.credential.outputs.ready == 'true'
         run: |
           python - <<'PY'
           import json
