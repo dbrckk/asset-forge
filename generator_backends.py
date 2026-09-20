@@ -63,9 +63,17 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
     env = os.environ if environ is None else environ
     home_dir = Path.home() if home is None else Path(home)
     polli = shutil.which("polli")
+    imagen = shutil.which("imagen")
     credentials = home_dir / ".pollinations" / "credentials.json"
     api_key_available = bool(str(env.get("POLLINATIONS_API_KEY") or "").strip())
     authenticated = api_key_available or credentials.is_file()
+    codex_token_available = bool(
+        str(
+            env.get("CODEX_ACCESS_TOKEN")
+            or env.get("CHATGPT_ACCESS_TOKEN")
+            or ""
+        ).strip()
+    )
     return {
         "pollinations": {
             "installed": polli is not None,
@@ -80,7 +88,16 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
                 if credentials.is_file()
                 else None
             ),
-        }
+        },
+        "imagenCodex": {
+            "installed": imagen is not None,
+            "executable": imagen,
+            "authenticated": codex_token_available,
+            "rasterReady": imagen is not None and codex_token_available,
+            "vectorSvgReady": False,
+            "threeDReady": False,
+            "credentialSource": "environment" if codex_token_available else None,
+        },
     }
 
 
@@ -340,6 +357,72 @@ def pollinations_command(
     return command
 
 
+def imagen_codex_command(
+    job: dict,
+    output_dir: Path,
+    *,
+    model: str | None = None,
+    executable: str = "imagen",
+) -> list[str]:
+    asset_type = str(job.get("assetType") or "")
+    if asset_type not in RASTER_GENERATED_TYPES:
+        raise GenerationError(
+            "imagen-codex currently supports raster generated assets only"
+        )
+    prompt = build_generation_prompt(job)
+    constraints = job.get("manifest", {}).get("constraints", {})
+    command = [
+        executable,
+        "-m",
+        str(model or "codex-2"),
+        "-o",
+        "generated-source",
+        "-d",
+        str(Path(output_dir)),
+        "--json",
+    ]
+    if isinstance(constraints, dict) and constraints.get("requiresAlpha") is True:
+        command.append("-t")
+    command.append(prompt)
+    return command
+
+
+def _imagen_output_path(output_dir: Path, stdout: str) -> tuple[Path, dict | None]:
+    metadata = None
+    try:
+        parsed = json.loads(stdout or "")
+        if isinstance(parsed, dict):
+            metadata = _sanitize_metadata(parsed)
+            files = parsed.get("files")
+            if isinstance(files, list) and files:
+                first = files[0]
+                if isinstance(first, str) and first.strip():
+                    candidate = Path(first)
+                    if not candidate.is_absolute():
+                        candidate = Path(output_dir) / candidate
+                    resolved_root = Path(output_dir).resolve()
+                    resolved_candidate = candidate.resolve()
+                    if (
+                        resolved_candidate == resolved_root
+                        or resolved_root not in resolved_candidate.parents
+                    ):
+                        raise GenerationError(
+                            "imagen output path escapes output directory"
+                        )
+                    if resolved_candidate.is_file():
+                        return resolved_candidate, metadata
+    except json.JSONDecodeError:
+        metadata = None
+
+    fallback = Path(output_dir) / "generated-source.png"
+    if fallback.is_file():
+        return fallback, metadata
+    matches = sorted(Path(output_dir).glob("generated-source*.png"))
+    if matches:
+        return matches[0], metadata
+    raise GenerationError("imagen-codex did not produce a PNG output")
+
+
 def execute_generated_asset(
     job: dict,
     output_dir: Path,
@@ -353,15 +436,18 @@ def execute_generated_asset(
 ) -> dict:
     if job.get("requiresGenerator") is not True:
         raise GenerationError("production job does not require a generator")
-    if backend != "pollinations":
+    if backend not in {"pollinations", "imagen-codex"}:
         raise GenerationError(f"unsupported generator backend: {backend}")
     asset_type = str(job.get("assetType") or "")
     if asset_type not in SUPPORTED_GENERATED_TYPES:
         raise GenerationError(f"unsupported generated asset type: {asset_type or '<missing>'}")
 
-    executable = shutil.which("polli")
+    executable_name = "polli" if backend == "pollinations" else "imagen"
+    executable = shutil.which(executable_name)
     if not executable:
-        raise GenerationError("polli executable not found; install @pollinations/cli")
+        if backend == "pollinations":
+            raise GenerationError("polli executable not found; install @pollinations/cli")
+        raise GenerationError("imagen executable not found")
 
     try:
         timeout = float(timeout_seconds)
@@ -384,8 +470,30 @@ def execute_generated_asset(
         if constrained_raster
         else "generated-source.png"
     )
-    effective_model = model or (DEFAULT_VECTOR_MODEL if vector else None)
-    command = pollinations_command(job, output, model=effective_model, executable=executable)
+    if backend == "imagen-codex" and vector:
+        raise GenerationError(
+            "imagen-codex does not emit editable SVG; use a raster target"
+        )
+
+    effective_model = model or (
+        DEFAULT_VECTOR_MODEL if backend == "pollinations" and vector else
+        "codex-2" if backend == "imagen-codex" else
+        None
+    )
+    if backend == "pollinations":
+        command = pollinations_command(
+            job,
+            output,
+            model=effective_model,
+            executable=executable,
+        )
+    else:
+        command = imagen_codex_command(
+            job,
+            output_dir,
+            model=effective_model,
+            executable=executable,
+        )
     completed = runner(
         command,
         check=False,
@@ -396,10 +504,15 @@ def execute_generated_asset(
     if completed.returncode != 0:
         stderr = str(completed.stderr or "").strip()
         raise GenerationError(
-            "pollinations generation failed"
+            f"{backend} generation failed"
             + (f": {stderr[:1000]}" if stderr else "")
         )
-    if not output.is_file() or output.stat().st_size <= 0:
+
+    stdout = str(completed.stdout or "").strip()
+    metadata = None
+    if backend == "imagen-codex":
+        output, metadata = _imagen_output_path(output_dir, stdout)
+    elif not output.is_file() or output.stat().st_size <= 0:
         raise GenerationError("pollinations generation did not produce an output file")
 
     transparency = None
@@ -418,15 +531,15 @@ def execute_generated_asset(
         if not final_output.is_file() or final_output.stat().st_size <= 0:
             raise GenerationError("raster normalization did not produce an output file")
 
-    stdout = str(completed.stdout or "").strip()
-    metadata = None
-    if stdout:
-        try:
-            parsed = json.loads(stdout)
-            if isinstance(parsed, dict):
-                metadata = _sanitize_metadata(parsed)
-        except json.JSONDecodeError:
-            metadata = None
+    if backend == "pollinations":
+        metadata = None
+        if stdout:
+            try:
+                parsed = json.loads(stdout)
+                if isinstance(parsed, dict):
+                    metadata = _sanitize_metadata(parsed)
+            except json.JSONDecodeError:
+                metadata = None
 
     return {
         "success": True,
