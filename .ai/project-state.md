@@ -96,20 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T08:50:26Z
+Generated: 2026-09-20T10:30:15Z
 
 ### Git
 - Branch: `main`
-- Head: `7cd615b9b429`
-- Commit date: 2026-09-20T10:50:17+02:00
-- Commit: test: keep explicit Pollinations unit paths deterministic
-- Tracked files: 244
+- Head: `aba6b9d1d110`
+- Commit date: 2026-09-20T12:30:05+02:00
+- Commit: feat: add Production OS workflow dispatch entrypoint
+- Tracked files: 245
 
 ### Recently changed files
+- `.github/workflows/production-os-dispatch.yml`
 - `tests/test_generator_backends.py`
 - `production_executor.py`
 - `asset_forge.py`
-- `generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`

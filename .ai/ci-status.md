@@ -2,10 +2,10 @@
 
 Summary: 1 success / 2 failure / 1 active
 
-- Validate asset-forge: in_progress / pending (7cd615b9)
+- Validate asset-forge: in_progress / pending (aba6b9d1)
+- Validate asset-forge: completed / success (7cd615b9)
 - Validate asset-forge: completed / failure (61088cda)
 - Validate asset-forge: completed / failure (d672ec5b)
-- Live generation smoke: completed / success (d672ec5b)
 
 ## Latest failed run structure
 - Job: test
