@@ -247,6 +247,73 @@ class GeneratorBackendsTests(unittest.TestCase):
             self.assertEqual(result["model"], "codex-2")
             self.assertEqual(result["metadata"]["provider"], "codex")
 
+    def test_imagen_codex_command_accepts_local_visual_references(self):
+        raster_job = job()
+        raster_job["assetType"] = "sprite"
+        command = imagen_codex_command(
+            raster_job,
+            Path("out"),
+            executable="/usr/bin/imagen",
+            reference_paths=[Path("parent.png"), Path("palette.webp")],
+        )
+
+        self.assertEqual(command.count("--input-ref"), 2)
+        self.assertIn("parent.png", command)
+        self.assertIn("palette.webp", command)
+        self.assertIn("strict visual identity anchor", command[-1])
+
+    def test_execute_generated_asset_supports_imagen_visual_reference_and_retry(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            reference = out / "parent.png"
+            reference.write_bytes(b"PNG")
+            scores = iter([0.2, 0.83])
+            calls = []
+
+            def runner(command, **kwargs):
+                calls.append(command)
+                target = out / "generated-source.png"
+                target.write_bytes(b"PNG")
+
+                class Result:
+                    returncode = 0
+                    stdout = '{"files":["generated-source.png"],"provider":"codex"}'
+                    stderr = ""
+
+                return Result()
+
+            with patch("generator_backends.shutil.which", return_value="/usr/bin/imagen"):
+                result = execute_generated_asset(
+                    job(),
+                    out,
+                    backend="imagen-codex",
+                    reference_paths=[reference],
+                    timeout_seconds=30,
+                    runner=runner,
+                    raster_normalizer=lambda raw, output, value: (
+                        output.write_bytes(raw.read_bytes())
+                        and {
+                            "width": 64,
+                            "height": 64,
+                            "columns": 2,
+                            "rows": 2,
+                        }
+                    ),
+                    similarity_evaluator=lambda child, refs: {
+                        "score": next(scores),
+                        "bestReference": str(refs[0]),
+                        "comparisons": [],
+                    },
+                )
+
+            self.assertEqual(len(calls), 2)
+            self.assertIn("--input-ref", calls[0])
+            self.assertEqual(calls[0][calls[0].index("--input-ref") + 1], str(reference))
+            self.assertIn("drifted too far", calls[1][-1])
+            self.assertTrue(result["visualSimilarity"]["passed"])
+            self.assertEqual(result["references"][0]["transport"], "local-input-ref")
+            self.assertIsNone(result["references"][0]["url"])
+
     def test_auto_backend_prefers_pollinations_for_raster_when_ready(self):
         with patch(
             "generator_backends.generator_backend_status",
