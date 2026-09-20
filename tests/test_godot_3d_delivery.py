@@ -32,6 +32,21 @@ class Godot3DDeliveryTests(unittest.TestCase):
 
         self.assertEqual(report["scene"]["godotNameSuffixes"]["rigid"], 1)
 
+    def test_detects_collision_import_hints(self):
+        data = self.base()
+        data["nodes"] = [
+            {"name": "Crate-convcol"},
+            {"name": "LevelCollision-colonly"},
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            report = godot_3d_delivery_report(
+                self.write(Path(tmp), data),
+                "prop",
+            )
+
+        self.assertEqual(report["scene"]["godotNameSuffixes"]["convcol"], 1)
+        self.assertEqual(report["scene"]["godotNameSuffixes"]["colonly"], 1)
+
     def test_duplicate_node_names_warn(self):
         data = self.base()
         data["nodes"] = [{"name": "Bone"}, {"name": "Bone"}]
@@ -83,6 +98,7 @@ class Godot3DDeliveryTests(unittest.TestCase):
         self.assertEqual(plan["profile"], "prop")
         self.assertIn("levels", plan["lod"])
         self.assertIn("strategy", plan["collision"])
+        self.assertEqual(plan["collision"]["godotImportHint"], "-convcol")
         self.assertIn("allMaterialsPbr", plan["pbr"])
 
 if __name__ == "__main__":
