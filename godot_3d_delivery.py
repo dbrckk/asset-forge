@@ -9,6 +9,12 @@ from runtime_3d_plan import build_runtime_3d_plan
 
 GODOT_IMPORT_SUFFIXES = {
     "noimp",
+    "col",
+    "convcol",
+    "colonly",
+    "convcolonly",
+    "occ",
+    "occonly",
     "navmesh",
     "vehicle",
     "wheel",
