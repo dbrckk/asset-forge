@@ -485,6 +485,20 @@ def execute_generated_3d_job(
         if godot_delivery.get("ready") is not True and not godot_delivery.get("errors"):
             combined_errors.append("Godot delivery report is not ready")
 
+    runtime_sidecar = None
+    runtime_plan = (
+        godot_delivery.get("runtimePlan")
+        if isinstance(godot_delivery, dict)
+        and isinstance(godot_delivery.get("runtimePlan"), dict)
+        else None
+    )
+    if runtime_plan is not None:
+        runtime_sidecar = out / f"{asset_id}.runtime-3d.json"
+        runtime_sidecar.write_text(
+            json.dumps(runtime_plan, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+
     report = {
         "schema": "asset-forge/production-report/v1",
         "requestId": job.get("requestId"),
@@ -504,9 +518,12 @@ def execute_generated_3d_job(
             "lods": lods,
         },
         "additionalArtifacts": (
-            [str(item["path"]) for item in lods.get("outputs", [])]
-            if isinstance(lods, dict)
-            else []
+            (
+                [str(item["path"]) for item in lods.get("outputs", [])]
+                if isinstance(lods, dict)
+                else []
+            )
+            + ([str(runtime_sidecar)] if runtime_sidecar is not None else [])
         ),
         "artifact": str(final) if not combined_errors else None,
     }
