@@ -4,17 +4,51 @@
     "expand_to": 12,
     "max_files": 6,
     "requested_max_files": 12,
-    "score_margin": 2,
+    "score_margin": 1,
     "tier": "bounded",
-    "top_score": 29
+    "top_score": 30
   },
   "cache": {
-    "fingerprint": "1a0efa87d5cb6e5249f2034082d256ff8b90f16ac4539e861ec882f7c6600c35",
+    "fingerprint": "40047b8f19290ca5ddc460f11752c9f6495a831da1700bbcd783602d708495b3",
     "hit": false
   },
-  "candidate_count": 15,
+  "candidate_count": 17,
   "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
   "files": [
+    {
+      "learning_score": 0,
+      "matched_terms": [
+        "engine"
+      ],
+      "path": "asset_forge.py",
+      "reasons": [
+        "impact",
+        "recently-changed",
+        "search-index"
+      ],
+      "score": 30,
+      "symbols": [
+        "_enrich_engine_handoff",
+        "_persist_enriched_production_report",
+        "_write_production_inputs",
+        "build_atlas_manifest",
+        "build_plan",
+        "cmd_atlas_manifest",
+        "cmd_plan",
+        "cmd_validate",
+        "cmd_validate_raster",
+        "execute_compiled_production_job",
+        "is_power_of_two",
+        "load_json",
+        "load_valid_manifest",
+        "main",
+        "parser",
+        "select_tools",
+        "sprite_grid",
+        "validate_manifest",
+        "validate_raster_file"
+      ]
+    },
     {
       "learning_score": 0,
       "matched_terms": [
@@ -80,43 +114,12 @@
       "matched_terms": [
         "engine"
       ],
-      "path": "asset_forge.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 21,
-      "symbols": [
-        "_enrich_engine_handoff",
-        "_persist_enriched_production_report",
-        "_write_production_inputs",
-        "build_atlas_manifest",
-        "build_plan",
-        "cmd_atlas_manifest",
-        "cmd_plan",
-        "cmd_validate",
-        "cmd_validate_raster",
-        "execute_compiled_production_job",
-        "is_power_of_two",
-        "load_json",
-        "load_valid_manifest",
-        "main",
-        "parser",
-        "select_tools",
-        "sprite_grid",
-        "validate_manifest",
-        "validate_raster_file"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine"
-      ],
       "path": "tests/test_fulfill.py",
       "reasons": [
+        "impact",
         "search-index"
       ],
-      "score": 21,
+      "score": 27,
       "symbols": [
         "FulfillCommandTests",
         "test_compiled_job_forwards_provided_source",
@@ -133,14 +136,22 @@
       "matched_terms": [
         "engine"
       ],
-      "path": "godot_3d_delivery.py",
+      "path": "production_executor.py",
       "reasons": [
+        "impact",
+        "recently-changed",
         "search-index"
       ],
-      "score": 17,
+      "score": 26,
       "symbols": [
-        "_name_suffixes",
-        "godot_3d_delivery_report"
+        "ProductionExecutionError",
+        "_provenance_from_manifest",
+        "_safe_asset_id",
+        "_stage_provided_source",
+        "_trusted_generated_source",
+        "execute_generated_3d_job",
+        "execute_generated_raster_job",
+        "execute_generated_vector_job"
       ]
     }
   ],

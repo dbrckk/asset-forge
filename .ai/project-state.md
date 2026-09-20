@@ -96,19 +96,18 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T10:30:15Z
+Generated: 2026-09-20T13:56:09Z
 
 ### Git
 - Branch: `main`
-- Head: `aba6b9d1d110`
-- Commit date: 2026-09-20T12:30:05+02:00
-- Commit: feat: add Production OS workflow dispatch entrypoint
+- Head: `c60b44dd7b92`
+- Commit date: 2026-09-20T15:53:19+02:00
+- Commit: test: verify identity-consistency reference prompt
 - Tracked files: 245
 
 ### Recently changed files
-- `.github/workflows/production-os-dispatch.yml`
 - `tests/test_generator_backends.py`
-- `production_executor.py`
+- `generator_backends.py`
 - `asset_forge.py`
 
 ### Project signals

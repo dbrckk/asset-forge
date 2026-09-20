@@ -29,6 +29,7 @@
         "runtime_atlas.py",
         "starlist_bridge.py",
         "svg_tools.py",
+        "tests/test_generator_backends.py",
         "toolchain_3d.py",
         "web/runtime_atlas.mjs"
       ],
@@ -38,7 +39,7 @@
         "tests/test_production_contract.py"
       ],
       "in_degree": 3,
-      "out_degree": 20
+      "out_degree": 21
     },
     "asset_profile_validation.py": {
       "dependencies": [],
@@ -195,13 +196,15 @@
       "out_degree": 3
     },
     "production_contract.py": {
-      "dependencies": [],
+      "dependencies": [
+        "tests/test_generator_backends.py"
+      ],
       "dependents": [
         "asset_forge.py",
         "tests/test_production_contract.py"
       ],
       "in_degree": 2,
-      "out_degree": 0
+      "out_degree": 1
     },
     "production_executor.py": {
       "dependencies": [
@@ -330,9 +333,12 @@
         "generator_backends.py"
       ],
       "dependents": [
-        "generator_backends.py"
+        "asset_forge.py",
+        "generator_backends.py",
+        "production_contract.py",
+        "tests/test_production_contract.py"
       ],
-      "in_degree": 1,
+      "in_degree": 4,
       "out_degree": 1
     },
     "tests/test_gltf_binary_metrics.py": {
@@ -403,11 +409,12 @@
     "tests/test_production_contract.py": {
       "dependencies": [
         "asset_forge.py",
-        "production_contract.py"
+        "production_contract.py",
+        "tests/test_generator_backends.py"
       ],
       "dependents": [],
       "in_degree": 0,
-      "out_degree": 2
+      "out_degree": 3
     },
     "tests/test_production_executor.py": {
       "dependencies": [

@@ -2120,6 +2120,24 @@ def test_3d_generation_requires_server_api_key(self)
 def test_unsupported_generated_type_fails_closed(self)
 ⋮----
 bad = job()
+⋮----
+def test_raster_generation_uploads_and_passes_visual_reference(self)
+⋮----
+reference = out / "parent.png"
+⋮----
+seen = []
+⋮----
+class Upload
+⋮----
+stdout = '{"url":"https://media.pollinations.ai/parent-ref"}'
+⋮----
+class Generate
+⋮----
+generate = [command for command in seen if command[1:3] == ["gen", "image"]][0]
+⋮----
+def test_visual_reference_rejects_vector_generation(self)
+⋮----
+reference = root / "parent.png"
 ````
 
 ## File: tests/test_gltf_binary_metrics.py
@@ -4405,6 +4423,7 @@ VECTOR_GENERATED_TYPES = {"vector", "svg", "icon", "ui-vector", "logo"}
 THREE_D_GENERATED_TYPES = {"mesh", "prop", "environment", "character-3d"}
 SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES | THREE_D_GENERATED_TYPES
 DEFAULT_VECTOR_MODEL = "recraft/recraft-v4.1-vector"
+DEFAULT_REFERENCE_MODEL = "kontext"
 DEFAULT_3D_MODEL = "microsoft/trellis-2"
 MAX_3D_BYTES = 100 * 1024 * 1024
 MAX_METADATA_ITEMS = 64
@@ -4542,7 +4561,10 @@ vector = asset_type in VECTOR_GENERATED_TYPES
 constrained_raster = (
 output = output_dir / (
 ⋮----
+references = [Path(path) for path in (reference_paths or [])]
+⋮----
 effective_model = model or (
+reference_urls = []
 ⋮----
 command = pollinations_command(
 ⋮----
