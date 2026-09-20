@@ -34,7 +34,8 @@ jobs:
     timeout-minutes: 20
     env:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
-      IMAGEN_API_KEY: ${{ secrets.IMAGEN_API_KEY }}
+      CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}
+      CHATGPT_ACCESS_TOKEN: ${{ secrets.CHATGPT_ACCESS_TOKEN }}
     steps:
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -54,6 +55,11 @@ jobs:
 
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
+
+      - name: Authenticate Pollinations CLI
+        if: env.POLLINATIONS_API_KEY != ''
+        shell: bash
+        run: printf '%s' "$POLLINATIONS_API_KEY" | polli auth login --with-token
 
       - name: Materialize request
         env:
