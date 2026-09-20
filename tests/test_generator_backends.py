@@ -438,6 +438,11 @@ class GeneratorBackendsTests(unittest.TestCase):
                         output.write_bytes(raw.read_bytes())
                         and {"width": 64, "height": 64, "columns": 2, "rows": 2}
                     ),
+                    similarity_evaluator=lambda child, refs: {
+                        "score": 0.91,
+                        "bestReference": str(refs[0]),
+                        "comparisons": [],
+                    },
                 )
 
             generate = [command for command in seen if command[1:3] == ["gen", "image"]][0]
