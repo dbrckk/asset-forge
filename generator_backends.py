@@ -11,6 +11,8 @@ import urllib.request
 from pathlib import Path
 from typing import Callable
 
+from visual_similarity import compare_against_references
+
 
 RASTER_GENERATED_TYPES = {"sprite", "sprite-sheet", "tileset", "pixel-art"}
 VECTOR_GENERATED_TYPES = {"vector", "svg", "icon", "ui-vector", "logo"}
@@ -480,6 +482,7 @@ def execute_generated_asset(
     runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,
     raster_normalizer: Callable[[Path, Path, dict], dict | None] = _normalize_raster_geometry,
     transparency_processor: Callable[..., dict | None] = _ensure_transparency,
+    similarity_evaluator: Callable[[Path, list[Path]], dict] = compare_against_references,
 ) -> dict:
     if job.get("requiresGenerator") is not True:
         raise GenerationError("production job does not require a generator")
@@ -565,52 +568,107 @@ def execute_generated_asset(
             model=effective_model,
             executable=executable,
         )
-    completed = runner(
-        command,
-        check=False,
-        capture_output=True,
-        text=True,
-        timeout=timeout,
-    )
-    if completed.returncode != 0:
-        stderr = str(completed.stderr or "").strip()
-        raise GenerationError(
-            f"{backend} generation failed"
-            + (f": {stderr[:1000]}" if stderr else "")
-        )
 
-    stdout = str(completed.stdout or "").strip()
+    constraints = job.get("manifest", {}).get("constraints", {})
+    if not isinstance(constraints, dict):
+        constraints = {}
+    similarity_threshold = constraints.get("visualSimilarityMin", 0.42)
+    similarity_retries = constraints.get("visualSimilarityRetries", 2)
+    try:
+        similarity_threshold = float(similarity_threshold)
+        similarity_retries = int(similarity_retries)
+    except (TypeError, ValueError) as exc:
+        raise GenerationError("visual similarity controls must be numeric") from exc
+    if not 0.0 <= similarity_threshold <= 1.0:
+        raise GenerationError("visualSimilarityMin must be between 0 and 1")
+    if not 0 <= similarity_retries <= 4:
+        raise GenerationError("visualSimilarityRetries must be between 0 and 4")
+
+    similarity_history = []
     metadata = None
-    if backend == "imagen-codex":
-        output, metadata = _imagen_output_path(output_dir, stdout)
-    elif not output.is_file() or output.stat().st_size <= 0:
-        raise GenerationError("pollinations generation did not produce an output file")
-
     transparency = None
-    if asset_type in RASTER_GENERATED_TYPES:
-        transparency = transparency_processor(
-            output,
-            job,
-            timeout_seconds=min(timeout, 180.0),
-        )
-
     normalization = None
     final_output = output
-    if constrained_raster:
-        final_output = output_dir / "generated-source.png"
-        normalization = raster_normalizer(output, final_output, job)
-        if not final_output.is_file() or final_output.stat().st_size <= 0:
-            raise GenerationError("raster normalization did not produce an output file")
+    stdout = ""
 
-    if backend == "pollinations":
+    for attempt in range(similarity_retries + 1):
+        attempt_command = list(command)
+        if attempt > 0 and backend == "pollinations":
+            attempt_command[3] = (
+                attempt_command[3]
+                + " The previous generated variant drifted too far from the reference. "
+                "Match the reference identity and art direction more closely."
+            )
+        completed = runner(
+            attempt_command,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+        if completed.returncode != 0:
+            stderr = str(completed.stderr or "").strip()
+            raise GenerationError(
+                f"{backend} generation failed"
+                + (f": {stderr[:1000]}" if stderr else "")
+            )
+
+        stdout = str(completed.stdout or "").strip()
         metadata = None
-        if stdout:
-            try:
-                parsed = json.loads(stdout)
-                if isinstance(parsed, dict):
-                    metadata = _sanitize_metadata(parsed)
-            except json.JSONDecodeError:
-                metadata = None
+        current_output = output
+        if backend == "imagen-codex":
+            current_output, metadata = _imagen_output_path(output_dir, stdout)
+        elif not current_output.is_file() or current_output.stat().st_size <= 0:
+            raise GenerationError("pollinations generation did not produce an output file")
+
+        transparency = None
+        if asset_type in RASTER_GENERATED_TYPES:
+            transparency = transparency_processor(
+                current_output,
+                job,
+                timeout_seconds=min(timeout, 180.0),
+            )
+
+        normalization = None
+        final_output = current_output
+        if constrained_raster:
+            final_output = output_dir / "generated-source.png"
+            normalization = raster_normalizer(current_output, final_output, job)
+            if not final_output.is_file() or final_output.stat().st_size <= 0:
+                raise GenerationError("raster normalization did not produce an output file")
+
+        if backend == "pollinations":
+            metadata = None
+            if stdout:
+                try:
+                    parsed = json.loads(stdout)
+                    if isinstance(parsed, dict):
+                        metadata = _sanitize_metadata(parsed)
+                except json.JSONDecodeError:
+                    metadata = None
+
+        if not references:
+            break
+
+        similarity = similarity_evaluator(final_output, references)
+        score = similarity.get("score") if isinstance(similarity, dict) else None
+        if not isinstance(score, (int, float)):
+            raise GenerationError("visual similarity evaluator returned no numeric score")
+        similarity_history.append({
+            "attempt": attempt + 1,
+            "score": round(float(score), 6),
+            "threshold": similarity_threshold,
+            "passed": float(score) >= similarity_threshold,
+            "bestReference": similarity.get("bestReference"),
+            "comparisons": similarity.get("comparisons", []),
+        })
+        if float(score) >= similarity_threshold:
+            break
+        if attempt >= similarity_retries:
+            raise GenerationError(
+                f"visual consistency score {float(score):.3f} is below required "
+                f"{similarity_threshold:.3f} after {attempt + 1} attempts"
+            )
 
     return {
         "success": True,
@@ -626,6 +684,15 @@ def execute_generated_asset(
             {"path": str(path), "url": url}
             for path, url in zip(references, reference_urls)
         ],
+        "visualSimilarity": {
+            "threshold": similarity_threshold if references else None,
+            "attempts": similarity_history,
+            "passed": (
+                similarity_history[-1]["passed"]
+                if similarity_history
+                else None
+            ),
+        },
     }
 
 
