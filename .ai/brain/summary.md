@@ -2,11 +2,11 @@
 
 - Index mode: incremental
 - Files indexed: 59
-- Files reparsed this run: 9
-- Symbols: 759
-- Internal import edges: 77
-- Impacted files: 12
-- Selected tests: 5
+- Files reparsed this run: 6
+- Symbols: 764
+- Internal import edges: 73
+- Impacted files: 15
+- Selected tests: 6
 
 ## Languages
 - python: 56 files
@@ -26,13 +26,13 @@
 - visual_similarity.py: 15 symbols
 - tests/test_godot_export.py: 14 symbols
 - tests/test_godot_handoff.py: 13 symbols
+- tests/test_gltf_quality.py: 12 symbols
 - gltf_binary_metrics.py: 11 symbols
 - svg_tools.py: 11 symbols
 - tests/test_gltf_tools.py: 11 symbols
 - tests/test_toolchain_3d.py: 11 symbols
 - toolchain_3d.py: 11 symbols
 - tests/test_engine_profile_validation.py: 10 symbols
-- tests/test_gltf_quality.py: 10 symbols
 
 ## Agent routing
 - Read impact.json first after project/change context.
@@ -43,10 +43,10 @@
 ## ast-grep enrichment
 - ast-grep outline: available
 - AST index mode: incremental
-- AST files reparsed this run: 9
+- AST files reparsed this run: 6
 - outline files retained: 55
-- top-level items retained: 993
-- direct members retained: 297
+- top-level items retained: 995
+- direct members retained: 300
 - symbol shards: 26
 - route named symbols via ast-routing.json, then fetch one ast-symbols/<initial>.json shard
 

@@ -1,16 +1,16 @@
 # Change impact
 
-Base: b3c7bdb65bbc5e52b72af6428339b84e0c1d59e6
-Head: 9f9e505761429c233ab22119dcd7527c8db99538
+Base: e9e2999640822656d8843b562f90e385f0f9b323
+Head: 2136d6489512b4f7afe8aca82698996a135c3dd7
 
 ## Changed files
-- M godot_3d_delivery.py
+- M remote_batch.py
 
 ## Affected areas
 - (root)
 
 ## Related test candidates
-- tests/test_godot_3d_delivery.py
+- tests/test_remote_batch.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

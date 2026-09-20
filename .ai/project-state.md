@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T16:12:01Z
+Generated: 2026-09-20T16:14:28Z
 
 ### Git
 - Branch: `main`
-- Head: `9f9e50576142`
-- Commit date: 2026-09-20T18:11:45+02:00
-- Commit: feat: include LOD collision and PBR plan in Godot delivery
-- Tracked files: 259
+- Head: `2136d6489512`
+- Commit date: 2026-09-20T18:14:16+02:00
+- Commit: feat: include technical art fingerprints in remote batches
+- Tracked files: 263
 
 ### Recently changed files
-- `godot_3d_delivery.py`
-- `pyproject.toml`
-- `runtime_3d_plan.py`
-- `tests/test_operational_status.py`
-- `operational_status.py`
+- `remote_batch.py`
+- `art_quality.py`
+- `tests/test_godot_3d_delivery.py`
+- `tests/test_gltf_quality.py`
+- `profiles/3d/environment.json`
 
 ### Project signals
 - `pyproject.toml`

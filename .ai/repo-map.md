@@ -1344,7 +1344,9 @@ updates:
     "requireUvWhenTextured": true,
     "maxTextureDimension": 4096,
     "maxEstimatedTextureMipBytes": 268435456,
-    "maxJointsPerSkin": 128
+    "maxJointsPerSkin": 128,
+    "strictBudgets": true,
+    "requirePbrMaterials": true
   }
 }
 ````
@@ -1369,7 +1371,9 @@ updates:
     "requireUvWhenTextured": true,
     "maxTextureDimension": 8192,
     "maxEstimatedTextureMipBytes": 1073741824,
-    "maxJointsPerSkin": 0
+    "maxJointsPerSkin": 0,
+    "strictBudgets": true,
+    "requirePbrMaterials": true
   }
 }
 ````
@@ -1395,7 +1399,9 @@ updates:
     "requireUvWhenTextured": true,
     "maxTextureDimension": 4096,
     "maxEstimatedTextureMipBytes": 134217728,
-    "maxJointsPerSkin": 0
+    "maxJointsPerSkin": 0,
+    "strictBudgets": true,
+    "requirePbrMaterials": true
   }
 }
 ````
@@ -2691,6 +2697,13 @@ def test_external_image_is_reported(self)
 report = quality_report(self.write(Path(tmp), self.base()), "prop")
 ⋮----
 def test_untextured_primitive_does_not_require_uv(self)
+⋮----
+def test_strict_prop_budget_is_blocking(self)
+⋮----
+report = {
+evaluation = evaluate_quality(report, "prop")
+⋮----
+def test_prop_rejects_non_pbr_materials_and_animations(self)
 ````
 
 ## File: tests/test_gltf_tools.py
@@ -2760,6 +2773,13 @@ def test_loop_animation_hint_detected(self)
 def test_remote_image_blocks_delivery(self)
 ⋮----
 def test_double_sided_material_warns(self)
+⋮----
+def test_delivery_report_includes_runtime_lod_collision_and_pbr_plan(self)
+⋮----
+path = self.write(Path(tmp), data)
+result = godot_3d_delivery_report(path, "prop")
+⋮----
+plan = result["runtimePlan"]
 ````
 
 ## File: tests/test_godot_export.py
@@ -4511,12 +4531,30 @@ def _grid(expected_frames: int) -> tuple[int, int]
 ⋮----
 columns = max(1, math.ceil(math.sqrt(expected_frames)))
 ⋮----
+def _subject_perceptual_hash(image, *, size: int = 16) -> str
+⋮----
+alpha = image.getchannel("A")
+bbox = alpha.getbbox()
+subject = image.crop(bbox) if bbox else image
+gray = subject.convert("L").resize((size, size))
+values = list(gray.getdata())
+average = sum(values) / max(1, len(values))
+bits = "".join("1" if value >= average else "0" for value in values)
+⋮----
+def _average_visible_rgb(pixels) -> list[int]
+⋮----
+visible = [(r, g, b) for r, g, b, a in pixels if a >= 32]
+⋮----
+count = len(visible)
+⋮----
 def evaluate_raster_art(path: Path, manifest: dict) -> dict
 ⋮----
 rgba = image.convert("RGBA")
 ⋮----
 pixels = list(rgba.getdata())
 alpha = [value[3] for value in pixels]
+perceptual_hash = _subject_perceptual_hash(rgba)
+average_rgb = _average_visible_rgb(pixels)
 visible = [value for value in pixels if value[3] >= 32]
 occupancy = len(visible) / max(1, len(pixels))
 ⋮----
@@ -5670,6 +5708,8 @@ textures = report["textures"]
 errors: list[str] = []
 warnings: list[str] = []
 primitive_count = geometry["primitives"]
+⋮----
+budget_messages = []
 ⋮----
 rig = report.get("rigAnimation", {})
 diagnostics = report.get("diagnostics", {})
@@ -8858,6 +8898,7 @@ bundled = bundle_root / f"{item_id}{artifact.suffix.lower()}"
 digest = hashlib.sha256(bundled.read_bytes()).hexdigest()
 ⋮----
 generation = report.get("generation") if isinstance(report.get("generation"), dict) else {}
+validation = report.get("validation") if isinstance(report.get("validation"), dict) else {}
 ⋮----
 quality = [item["visual_similarity"] for item in results if item["visual_similarity"]]
 scores = [
