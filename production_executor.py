@@ -5,6 +5,7 @@ import shutil
 from pathlib import Path
 from typing import Callable
 
+from art_quality import ArtQualityError, evaluate_raster_art
 from generator_backends import THREE_D_GENERATED_TYPES, VECTOR_GENERATED_TYPES, execute_generated_3d_asset, execute_generated_asset
 
 
@@ -102,6 +103,7 @@ def execute_generated_raster_job(
     timeout_seconds: float = 180.0,
     source_path: Path | None = None,
     reference_paths: list[Path] | None = None,
+    art_quality_reporter: Callable = evaluate_raster_art,
 ) -> dict:
     if job.get("schema") != "asset-forge/production-job/v1":
         raise ProductionExecutionError("unsupported production job schema")
@@ -155,21 +157,44 @@ def execute_generated_raster_job(
     except (OSError, ValueError) as exc:
         raise ProductionExecutionError(f"generated asset validation failed: {exc}") from exc
 
+    technical_quality = None
+    technical_errors = []
+    technical_warnings = []
+    try:
+        technical_quality = art_quality_reporter(final, manifest)
+        if isinstance(technical_quality, dict):
+            technical_errors = list(technical_quality.get("errors") or [])
+            technical_warnings = list(technical_quality.get("warnings") or [])
+    except (ArtQualityError, OSError, ValueError) as exc:
+        constraints = manifest.get("constraints")
+        strict = (
+            isinstance(constraints, dict)
+            and constraints.get("technicalQualityMin") is not None
+        )
+        if strict:
+            technical_errors.append(f"technical art quality check failed: {exc}")
+        else:
+            technical_warnings.append(f"technical art quality unavailable: {type(exc).__name__}")
+
+    combined_errors = list(errors) + technical_errors
+
     report = {
         "schema": "asset-forge/production-report/v1",
         "requestId": job.get("requestId"),
         "assetId": asset_id,
         "assetType": job.get("assetType"),
         "provenance": _provenance_from_manifest(manifest),
-        "success": not errors,
+        "success": not combined_errors,
         "generation": generation,
         "processing": processing,
         "validation": {
             "file": str(final),
             "info": info,
-            "errors": errors,
+            "errors": combined_errors,
+            "warnings": technical_warnings,
+            "technicalArt": technical_quality,
         },
-        "artifact": str(final) if not errors else None,
+        "artifact": str(final) if not combined_errors else None,
     }
     report_path = out / "production-report.json"
     report_path.write_text(
