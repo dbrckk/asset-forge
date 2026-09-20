@@ -88,5 +88,57 @@ class ArtQualityTests(unittest.TestCase):
             self.assertLess(result["metrics"]["frameConsistency"], 0.8)
 
 
+    def test_duplicate_animation_frames_can_fail_strict_diversity_gate(self):
+        try:
+            from PIL import Image, ImageDraw
+        except ImportError:
+            self.skipTest("Pillow unavailable")
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "duplicate-sheet.png"
+            image = Image.new("RGBA", (192, 192), (0, 0, 0, 0))
+            for row in range(2):
+                for col in range(2):
+                    draw = ImageDraw.Draw(image)
+                    x = col * 96
+                    y = row * 96
+                    draw.rectangle((x + 20, y + 16, x + 74, y + 82), fill=(220, 80, 40, 255))
+            image.save(path)
+            result = evaluate_raster_art(path, {
+                "constraints": {
+                    "expectedFrames": 4,
+                    "frameWidth": 96,
+                    "frameHeight": 96,
+                    "minUniqueFrameRatio": 0.75,
+                }
+            })
+            self.assertFalse(result["passed"])
+            self.assertEqual(result["metrics"]["uniqueFrameRatio"], 0.25)
+            self.assertTrue(any("unique frame ratio" in value for value in result["errors"]))
+
+    def test_unstable_animation_center_can_fail_pivot_gate(self):
+        try:
+            from PIL import Image, ImageDraw
+        except ImportError:
+            self.skipTest("Pillow unavailable")
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "drift-sheet.png"
+            image = Image.new("RGBA", (192, 96), (0, 0, 0, 0))
+            draw = ImageDraw.Draw(image)
+            draw.rectangle((8, 24, 34, 72), fill=(220, 80, 40, 255))
+            draw.rectangle((96 + 58, 24, 96 + 86, 72), fill=(220, 80, 40, 255))
+            image.save(path)
+            result = evaluate_raster_art(path, {
+                "constraints": {
+                    "expectedFrames": 2,
+                    "frameWidth": 96,
+                    "frameHeight": 96,
+                    "maxFrameCenterDrift": 0.15,
+                }
+            })
+            self.assertFalse(result["passed"])
+            self.assertGreater(result["metrics"]["maxFrameCenterDrift"], 0.15)
+            self.assertTrue(any("center drift" in value for value in result["errors"]))
+
+
 if __name__ == "__main__":
     unittest.main()
