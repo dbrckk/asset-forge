@@ -90,9 +90,19 @@
       "in_degree": 3,
       "out_degree": 0
     },
+    "cloudflare_backend.py": {
+      "dependencies": [
+        "tests/test_cloudflare_backend.py"
+      ],
+      "dependents": [
+        "tests/test_cloudflare_backend.py"
+      ],
+      "in_degree": 1,
+      "out_degree": 1
+    },
     "colab_queue.py": {
       "dependencies": [
-        "tests/test_generator_backends.py"
+        "tests/test_cloudflare_backend.py"
       ],
       "dependents": [
         "generator_backends.py",
@@ -115,7 +125,7 @@
       "dependencies": [
         "art_quality.py",
         "colab_queue.py",
-        "tests/test_generator_backends.py",
+        "tests/test_cloudflare_backend.py",
         "visual_similarity.py"
       ],
       "dependents": [
@@ -266,7 +276,7 @@
     },
     "qwen_colab_worker.py": {
       "dependencies": [
-        "tests/test_generator_backends.py"
+        "tests/test_cloudflare_backend.py"
       ],
       "dependents": [],
       "in_degree": 0,
@@ -324,15 +334,13 @@
       "out_degree": 0
     },
     "semantic_art_review.py": {
-      "dependencies": [
-        "tests/test_generator_backends.py"
-      ],
+      "dependencies": [],
       "dependents": [
         "production_executor.py",
         "tests/test_semantic_art_review.py"
       ],
       "in_degree": 2,
-      "out_degree": 1
+      "out_degree": 0
     },
     "starlist_bridge.py": {
       "dependencies": [],
@@ -411,6 +419,19 @@
       "in_degree": 0,
       "out_degree": 1
     },
+    "tests/test_cloudflare_backend.py": {
+      "dependencies": [
+        "cloudflare_backend.py"
+      ],
+      "dependents": [
+        "cloudflare_backend.py",
+        "colab_queue.py",
+        "generator_backends.py",
+        "qwen_colab_worker.py"
+      ],
+      "in_degree": 4,
+      "out_degree": 1
+    },
     "tests/test_colab_queue.py": {
       "dependencies": [
         "colab_queue.py"
@@ -439,13 +460,8 @@
       "dependencies": [
         "generator_backends.py"
       ],
-      "dependents": [
-        "colab_queue.py",
-        "generator_backends.py",
-        "qwen_colab_worker.py",
-        "semantic_art_review.py"
-      ],
-      "in_degree": 4,
+      "dependents": [],
+      "in_degree": 0,
       "out_degree": 1
     },
     "tests/test_gltf_binary_metrics.py": {

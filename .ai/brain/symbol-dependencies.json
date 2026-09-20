@@ -5,37 +5,151 @@
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
   "symbols": {
-    "ColabQueueError": {
+    "CloudflareGenerationError": {
       "source": {
-        "file": "colab_queue.py",
-        "start": 13,
-        "end": 14
+        "file": "cloudflare_backend.py",
+        "start": 14,
+        "end": 15
       },
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "job_id": {
+    "status": {
       "source": {
-        "file": "colab_queue.py",
+        "file": "cloudflare_backend.py",
+        "start": 18,
+        "end": 30
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_extract_image_bytes": {
+      "source": {
+        "file": "cloudflare_backend.py",
+        "start": 33,
+        "end": 76
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "CloudflareGenerationError",
+          "definitions": [
+            {
+              "file": "cloudflare_backend.py",
+              "line": 14,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "generate": {
+      "source": {
+        "file": "cloudflare_backend.py",
+        "start": 79,
+        "end": 164
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "CloudflareGenerationError",
+          "definitions": [
+            {
+              "file": "cloudflare_backend.py",
+              "line": 14,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_extract_image_bytes",
+          "definitions": [
+            {
+              "file": "cloudflare_backend.py",
+              "line": 33,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "Headers": {
+      "source": {
+        "file": "tests/test_cloudflare_backend.py",
+        "start": 16,
+        "end": 20
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "__init__",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 24,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "get",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 19,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "__init__": {
+      "source": {
+        "file": "tests/test_cloudflare_backend.py",
         "start": 17,
-        "end": 19
+        "end": 18
       },
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "build_colab_job": {
+    "get": {
       "source": {
-        "file": "colab_queue.py",
-        "start": 22,
-        "end": 47
+        "file": "tests/test_cloudflare_backend.py",
+        "start": 19,
+        "end": 20
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "Response": {
+      "source": {
+        "file": "tests/test_cloudflare_backend.py",
+        "start": 23,
+        "end": 32
       },
       "symbol_dependencies": [
         {
-          "symbol": "ColabQueueError",
+          "symbol": "Headers",
           "definitions": [
             {
-              "file": "colab_queue.py",
-              "line": 13,
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 16,
               "kind": "class",
               "language": "python"
             }
@@ -43,54 +157,41 @@
           "relation": "same_file"
         },
         {
-          "symbol": "job_id",
+          "symbol": "__enter__",
           "definitions": [
             {
-              "file": "colab_queue.py",
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 27,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__exit__",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 29,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "__init__",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
               "line": 17,
               "kind": "function",
               "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "_github_request": {
-      "source": {
-        "file": "colab_queue.py",
-        "start": 50,
-        "end": 66
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "submit": {
-      "source": {
-        "file": "colab_queue.py",
-        "start": 69,
-        "end": 118
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "ColabQueueError",
-          "definitions": [
+            },
             {
-              "file": "colab_queue.py",
-              "line": 13,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_github_request",
-          "definitions": [
-            {
-              "file": "colab_queue.py",
-              "line": 50,
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 24,
               "kind": "function",
               "language": "python"
             }
@@ -98,965 +199,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "build_colab_job",
+          "symbol": "read",
           "definitions": [
             {
-              "file": "colab_queue.py",
-              "line": 22,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "job_id",
-          "definitions": [
-            {
-              "file": "colab_queue.py",
-              "line": 17,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 4
-    },
-    "wait_result": {
-      "source": {
-        "file": "colab_queue.py",
-        "start": 121,
-        "end": 157
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "ColabQueueError",
-          "definitions": [
-            {
-              "file": "colab_queue.py",
-              "line": 13,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_github_request",
-          "definitions": [
-            {
-              "file": "colab_queue.py",
-              "line": 50,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "download_result_asset": {
-      "source": {
-        "file": "colab_queue.py",
-        "start": 160,
-        "end": 187
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "ColabQueueError",
-          "definitions": [
-            {
-              "file": "colab_queue.py",
-              "line": 13,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_github_request",
-          "definitions": [
-            {
-              "file": "colab_queue.py",
-              "line": 50,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "_sanitize_metadata": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 41,
-        "end": 65
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "GenerationError": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 68,
-        "end": 69
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "generator_backend_status": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 72,
-        "end": 125
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_sprite_sheet_geometry": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 128,
-        "end": 160
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_generation_dimensions": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 163,
-        "end": 174
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_sprite_sheet_geometry",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 128,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_ensure_transparency": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 177,
-        "end": 254
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 68,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_normalize_raster_geometry": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 257,
-        "end": 298
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 68,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_sprite_sheet_geometry",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 128,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "build_generation_prompt": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 301,
-        "end": 350
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 68,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_sprite_sheet_geometry",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 128,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "pollinations_command": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 353,
-        "end": 391
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_generation_dimensions",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 163,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "build_generation_prompt",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 301,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "select_generation_backend": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 394,
-        "end": 423
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 68,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "generator_backend_status",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 72,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "imagen_codex_command": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 426,
-        "end": 465
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 68,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "build_generation_prompt",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 301,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "_imagen_output_path": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 468,
-        "end": 501
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 68,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_sanitize_metadata",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 41,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "execute_generated_asset": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 504,
-        "end": 903
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "ArtQualityError",
-          "definitions": [
-            {
-              "file": "art_quality.py",
-              "line": 7,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "ColabQueueError",
-          "definitions": [
-            {
-              "file": "colab_queue.py",
-              "line": 13,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 68,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_ensure_transparency",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 177,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_imagen_output_path",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 468,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_normalize_raster_geometry",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 257,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_sanitize_metadata",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 41,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_sprite_sheet_geometry",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 128,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_upload_reference_image",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 919,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "compare_against_references",
-          "definitions": [
-            {
-              "file": "visual_similarity.py",
-              "line": 193,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "download_result_asset",
-          "definitions": [
-            {
-              "file": "colab_queue.py",
-              "line": 160,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "evaluate_raster_art",
-          "definitions": [
-            {
-              "file": "art_quality.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "imagen_codex_command",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 426,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "pollinations_command",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 353,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "select_generation_backend",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 394,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 15
-    },
-    "_NoCredentialRedirect": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 907,
-        "end": 909
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 68,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "redirect_request",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 908,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "redirect_request": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 908,
-        "end": 909
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 68,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_default_3d_opener": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 912,
-        "end": 916
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_NoCredentialRedirect",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 907,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_upload_reference_image": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 919,
-        "end": 948
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 68,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "execute_generated_3d_asset": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 951,
-        "end": 1067
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 68,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_default_3d_opener",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 912,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_upload_reference_image",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 919,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "execute_generated_asset",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 504,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 4
-    },
-    "_token": {
-      "source": {
-        "file": "qwen_colab_worker.py",
-        "start": 21,
-        "end": 25
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_request": {
-      "source": {
-        "file": "qwen_colab_worker.py",
-        "start": 28,
-        "end": 45
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_token",
-          "definitions": [
-            {
-              "file": "qwen_colab_worker.py",
-              "line": 21,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "list_jobs": {
-      "source": {
-        "file": "qwen_colab_worker.py",
-        "start": 48,
-        "end": 60
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_request",
-          "definitions": [
-            {
-              "file": "qwen_colab_worker.py",
-              "line": 28,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_get_json": {
-      "source": {
-        "file": "qwen_colab_worker.py",
-        "start": 63,
-        "end": 71
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_request",
-          "definitions": [
-            {
-              "file": "qwen_colab_worker.py",
-              "line": 28,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_put": {
-      "source": {
-        "file": "qwen_colab_worker.py",
-        "start": 74,
-        "end": 82
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_request",
-          "definitions": [
-            {
-              "file": "qwen_colab_worker.py",
-              "line": 28,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_delete": {
-      "source": {
-        "file": "qwen_colab_worker.py",
-        "start": 85,
-        "end": 90
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_request",
-          "definitions": [
-            {
-              "file": "qwen_colab_worker.py",
-              "line": 28,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_download_reference": {
-      "source": {
-        "file": "qwen_colab_worker.py",
-        "start": 93,
-        "end": 109
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_request",
-          "definitions": [
-            {
-              "file": "qwen_colab_worker.py",
-              "line": 28,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "load_pipeline": {
-      "source": {
-        "file": "qwen_colab_worker.py",
-        "start": 112,
-        "end": 124
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "run_job": {
-      "source": {
-        "file": "qwen_colab_worker.py",
-        "start": 127,
-        "end": 169
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_download_reference",
-          "definitions": [
-            {
-              "file": "qwen_colab_worker.py",
-              "line": 93,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "process_once": {
-      "source": {
-        "file": "qwen_colab_worker.py",
-        "start": 172,
-        "end": 212
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_delete",
-          "definitions": [
-            {
-              "file": "qwen_colab_worker.py",
-              "line": 85,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_get_json",
-          "definitions": [
-            {
-              "file": "qwen_colab_worker.py",
-              "line": 63,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_put",
-          "definitions": [
-            {
-              "file": "qwen_colab_worker.py",
-              "line": 74,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "list_jobs",
-          "definitions": [
-            {
-              "file": "qwen_colab_worker.py",
-              "line": 48,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "run_job",
-          "definitions": [
-            {
-              "file": "qwen_colab_worker.py",
-              "line": 127,
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 31,
               "kind": "function",
               "language": "python"
             }
@@ -1066,19 +213,94 @@
       ],
       "dependency_count": 5
     },
-    "main": {
+    "__enter__": {
       "source": {
-        "file": "qwen_colab_worker.py",
-        "start": 215,
-        "end": 222
+        "file": "tests/test_cloudflare_backend.py",
+        "start": 27,
+        "end": 28
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "__exit__": {
+      "source": {
+        "file": "tests/test_cloudflare_backend.py",
+        "start": 29,
+        "end": 30
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "read": {
+      "source": {
+        "file": "tests/test_cloudflare_backend.py",
+        "start": 31,
+        "end": 32
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "CloudflareBackendTests": {
+      "source": {
+        "file": "tests/test_cloudflare_backend.py",
+        "start": 35,
+        "end": 84
       },
       "symbol_dependencies": [
         {
-          "symbol": "load_pipeline",
+          "symbol": "CloudflareGenerationError",
           "definitions": [
             {
-              "file": "qwen_colab_worker.py",
-              "line": 112,
+              "file": "cloudflare_backend.py",
+              "line": 14,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 23,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_extract_image_bytes",
+          "definitions": [
+            {
+              "file": "cloudflare_backend.py",
+              "line": 33,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generate",
+          "definitions": [
+            {
+              "file": "cloudflare_backend.py",
+              "line": 79,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "opener",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 55,
               "kind": "function",
               "language": "python"
             }
@@ -1086,16 +308,246 @@
           "relation": "same_file"
         },
         {
-          "symbol": "process_once",
+          "symbol": "status",
           "definitions": [
             {
-              "file": "qwen_colab_worker.py",
-              "line": 172,
+              "file": "cloudflare_backend.py",
+              "line": 18,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_extracts_base64_json_image",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 43,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "same_file"
+        },
+        {
+          "symbol": "test_generate_rejects_missing_credentials",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 82,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_generate_sends_img2img_payload",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 47,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_status_requires_both_credentials",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 36,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 10
+    },
+    "test_status_requires_both_credentials": {
+      "source": {
+        "file": "tests/test_cloudflare_backend.py",
+        "start": 36,
+        "end": 41
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "status",
+          "definitions": [
+            {
+              "file": "cloudflare_backend.py",
+              "line": 18,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_extracts_base64_json_image": {
+      "source": {
+        "file": "tests/test_cloudflare_backend.py",
+        "start": 43,
+        "end": 45
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_extract_image_bytes",
+          "definitions": [
+            {
+              "file": "cloudflare_backend.py",
+              "line": 33,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_generate_sends_img2img_payload": {
+      "source": {
+        "file": "tests/test_cloudflare_backend.py",
+        "start": 47,
+        "end": 80
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 23,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "generate",
+          "definitions": [
+            {
+              "file": "cloudflare_backend.py",
+              "line": 79,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "opener",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 55,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    },
+    "opener": {
+      "source": {
+        "file": "tests/test_cloudflare_backend.py",
+        "start": 55,
+        "end": 175
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "CloudflareGenerationError",
+          "definitions": [
+            {
+              "file": "cloudflare_backend.py",
+              "line": 14,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "Response",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 23,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "generate",
+          "definitions": [
+            {
+              "file": "cloudflare_backend.py",
+              "line": 79,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_generate_rejects_missing_credentials",
+          "definitions": [
+            {
+              "file": "tests/test_cloudflare_backend.py",
+              "line": 82,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "test_generate_rejects_missing_credentials": {
+      "source": {
+        "file": "tests/test_cloudflare_backend.py",
+        "start": 82,
+        "end": 84
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "CloudflareGenerationError",
+          "definitions": [
+            {
+              "file": "cloudflare_backend.py",
+              "line": 14,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generate",
+          "definitions": [
+            {
+              "file": "cloudflare_backend.py",
+              "line": 79,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
         }
       ],
       "dependency_count": 2

@@ -98,6 +98,7 @@ tests/
   test_asset_library.py
   test_asset_profile_validation.py
   test_blender_adapter.py
+  test_cloudflare_backend.py
   test_colab_queue.py
   test_engine_profile_validation.py
   test_fulfill.py
@@ -131,6 +132,7 @@ asset_forge.py
 asset_library.py
 asset_profile_validation.py
 blender_adapter.py
+cloudflare_backend.py
 colab_queue.py
 engine_profile_validation.py
 generator_backends.py
@@ -2487,6 +2489,43 @@ script = render_blender_python(job)
 def test_render_command_uses_background_mode(self)
 ⋮----
 command = render_blender_command("blender", Path("build/export.py"))
+````
+
+## File: tests/test_cloudflare_backend.py
+````python
+class Headers
+⋮----
+def __init__(self, content_type)
+def get(self, name)
+⋮----
+class Response
+⋮----
+def __init__(self, body, content_type="image/png")
+def __enter__(self)
+def __exit__(self, exc_type, exc, tb)
+def read(self)
+⋮----
+class CloudflareBackendTests(unittest.TestCase)
+⋮----
+def test_status_requires_both_credentials(self)
+⋮----
+def test_extracts_base64_json_image(self)
+⋮----
+raw = json.dumps({"result": {"image": base64.b64encode(b"PNG").decode()}}).encode()
+⋮----
+def test_generate_sends_img2img_payload(self)
+⋮----
+root = Path(td)
+ref = root / "ref.png"
+⋮----
+out = root / "out.png"
+seen = {}
+⋮----
+def opener(request, timeout)
+⋮----
+result = generate(
+⋮----
+def test_generate_rejects_missing_credentials(self)
 ````
 
 ## File: tests/test_colab_queue.py
@@ -5411,6 +5450,58 @@ def render_blender_command(blender_executable: str, script_path: Path) -> str
 def write_job_manifest(job: dict, path: Path) -> None
 ````
 
+## File: cloudflare_backend.py
+````python
+DEFAULT_MODEL = "@cf/stabilityai/stable-diffusion-xl-base-1.0"
+⋮----
+class CloudflareGenerationError(RuntimeError)
+⋮----
+def status(*, environ=None) -> dict
+⋮----
+env = os.environ if environ is None else environ
+token = str(env.get("CLOUDFLARE_API_TOKEN") or "").strip()
+account = str(env.get("CLOUDFLARE_ACCOUNT_ID") or "").strip()
+ready = bool(token and account)
+⋮----
+def _extract_image_bytes(raw: bytes, content_type: str) -> bytes
+⋮----
+payload = json.loads(raw.decode("utf-8"))
+⋮----
+errors = payload.get("errors")
+⋮----
+candidates = []
+⋮----
+result = payload.get("result")
+⋮----
+value = result.get(key)
+⋮----
+value = payload.get(key)
+⋮----
+value = candidate.strip()
+⋮----
+value = value.split(",", 1)[1]
+⋮----
+decoded = base64.b64decode(value, validate=True)
+⋮----
+width = max(256, min(2048, int(width)))
+height = max(256, min(2048, int(height)))
+steps = max(1, min(20, int(steps)))
+payload = {
+⋮----
+reference = Path(reference_path)
+⋮----
+url = (
+request = urllib.request.Request(
+⋮----
+raw = response.read()
+content_type = str(response.headers.get("Content-Type") or "").split(";", 1)[0].lower()
+⋮----
+detail = exc.read(4000).decode("utf-8", errors="replace")
+⋮----
+image = _extract_image_bytes(raw, content_type)
+output = Path(output)
+````
+
 ## File: colab_queue.py
 ````python
 class ColabQueueError(RuntimeError)
@@ -6739,6 +6830,7 @@ py-modules = [
   "asset_profile_validation",
   "blender_adapter",
   "colab_queue",
+  "cloudflare_backend",
   "engine_profile_validation",
   "generator_backends",
   "gltf_binary_metrics",

@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T22:49:13Z
+Generated: 2026-09-20T22:50:15Z
 
 ### Git
 - Branch: `main`
-- Head: `cce10c399585`
-- Commit date: 2026-09-21T00:49:03+02:00
-- Commit: fix: keep Colab Qwen explicit instead of unattended auto routing
-- Tracked files: 278
+- Head: `6c6cf30de434`
+- Commit date: 2026-09-21T00:50:01+02:00
+- Commit: test: cover Cloudflare image generation backend
+- Tracked files: 284
 
 ### Recently changed files
+- `tests/test_cloudflare_backend.py`
+- `pyproject.toml`
+- `cloudflare_backend.py`
 - `generator_backends.py`
 - `colab_queue.py`
-- `qwen_colab_worker.py`
-- `tests/test_generator_backends.py`
-- `.github/workflows/production-os-batch.yml`
 
 ### Project signals
 - `pyproject.toml`

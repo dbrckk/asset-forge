@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 9148dd1403ed81a4904c9e7f56986e1d183b68b7
-Head: cce10c3995859851de587e048530879c1b8c4c27
+Base: 0c29f93a4d82e3ad1e0828fe70adc0e5468a8e9e
+Head: 933ff762ba34d4ec5b5c667797c59698cb0cdcd3
 
 ## Changed files
-- M generator_backends.py
+- M pyproject.toml
 
 ## Affected areas
 - (root)
 
 ## Related test candidates
-- tests/test_generator_backends.py
+- No direct filename-based test match detected.
 
 ## Agent guidance
 - Read this file before broad repository exploration.
