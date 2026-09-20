@@ -264,18 +264,23 @@ def evaluate_quality(report: dict, profile: str) -> dict:
     warnings: list[str] = []
     primitive_count = geometry["primitives"]
 
-    if geometry["vertices"] > rules["maxVertices"]:
-        warnings.append(
-            f"vertices {geometry['vertices']} exceed profile budget {rules['maxVertices']}"
-        )
-    if geometry["triangles"] > rules["maxTriangles"]:
-        warnings.append(
-            f"triangles {geometry['triangles']} exceed profile budget {rules['maxTriangles']}"
-        )
-    if textures["count"] > rules["maxTextures"]:
-        warnings.append(
-            f"textures {textures['count']} exceed profile budget {rules['maxTextures']}"
-        )
+    budget_messages = []
+    for label, actual, maximum in (
+        ("meshes", geometry["meshes"], rules["maxMeshes"]),
+        ("primitives", geometry["primitives"], rules["maxPrimitives"]),
+        ("vertices", geometry["vertices"], rules["maxVertices"]),
+        ("triangles", geometry["triangles"], rules["maxTriangles"]),
+        ("materials", materials["count"], rules["maxMaterials"]),
+        ("textures", textures["count"], rules["maxTextures"]),
+    ):
+        if actual > maximum:
+            budget_messages.append(
+                f"{label} {actual} exceed profile budget {maximum}"
+            )
+    if rules["strictBudgets"]:
+        errors.extend(budget_messages)
+    else:
+        warnings.extend(budget_messages)
     if max(textures.get("maxWidth", 0), textures.get("maxHeight", 0)) > rules["maxTextureDimension"]:
         warnings.append(
             "texture dimension "
@@ -288,11 +293,6 @@ def evaluate_quality(report: dict, profile: str) -> dict:
             f"{textures['estimatedRgba8MipBytes']} exceeds profile budget "
             f"{rules['maxEstimatedTextureMipBytes']}"
         )
-    if materials["count"] > rules["maxMaterials"]:
-        warnings.append(
-            f"materials {materials['count']} exceed profile budget {rules['maxMaterials']}"
-        )
-
     if geometry["primitiveVerticesKnown"] != primitive_count:
         warnings.append("vertex count is incomplete because some POSITION accessor counts are unavailable")
     if geometry["primitiveTrianglesKnown"] != primitive_count:
@@ -317,11 +317,24 @@ def evaluate_quality(report: dict, profile: str) -> dict:
     if rules["requireSkin"] and primitive_count and attributes["skinned"] == 0:
         errors.append("character profile requires JOINTS_0 and WEIGHTS_0 on skinned geometry")
 
+    if (
+        rules["requirePbrMaterials"]
+        and materials["count"] > 0
+        and materials["pbrMetallicRoughness"] != materials["count"]
+    ):
+        errors.append(
+            "all runtime materials must declare glTF metallic-roughness PBR"
+        )
+
     rig = report.get("rigAnimation", {})
     diagnostics = report.get("diagnostics", {})
     accessor_diag = diagnostics.get("accessors", {})
     skin_diag = diagnostics.get("skinning", {})
     animation_diag = diagnostics.get("animations", {})
+    if not rules["allowAnimations"] and rig.get("animations", 0):
+        errors.append(
+            f"profile forbids animations but asset contains {rig['animations']} animation(s)"
+        )
     if rules["maxJointsPerSkin"] and rig.get("maxJointsPerSkin", 0) > rules["maxJointsPerSkin"]:
         warnings.append(
             f"max joints per skin {rig['maxJointsPerSkin']} exceed profile budget "
