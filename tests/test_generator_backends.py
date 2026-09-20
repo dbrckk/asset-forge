@@ -11,6 +11,7 @@ from generator_backends import (
     generator_backend_status,
     imagen_codex_command,
     pollinations_command,
+    select_generation_backend,
 )
 
 
@@ -238,6 +239,39 @@ class GeneratorBackendsTests(unittest.TestCase):
             self.assertEqual(result["backend"], "imagen-codex")
             self.assertEqual(result["model"], "codex-2")
             self.assertEqual(result["metadata"]["provider"], "codex")
+
+    def test_auto_backend_prefers_pollinations_for_raster_when_ready(self):
+        with patch(
+            "generator_backends.generator_backend_status",
+            return_value={
+                "pollinations": {"rasterVectorReady": True, "threeDReady": False},
+                "imagenCodex": {"rasterReady": True},
+            },
+        ):
+            self.assertEqual(select_generation_backend(job(), "auto"), "pollinations")
+
+    def test_auto_backend_falls_back_to_imagen_codex_for_raster(self):
+        with patch(
+            "generator_backends.generator_backend_status",
+            return_value={
+                "pollinations": {"rasterVectorReady": False, "threeDReady": False},
+                "imagenCodex": {"rasterReady": True},
+            },
+        ):
+            self.assertEqual(select_generation_backend(job(), "auto"), "imagen-codex")
+
+    def test_auto_backend_rejects_vector_when_only_imagen_is_ready(self):
+        vector_job = job()
+        vector_job["assetType"] = "icon"
+        with patch(
+            "generator_backends.generator_backend_status",
+            return_value={
+                "pollinations": {"rasterVectorReady": False, "threeDReady": False},
+                "imagenCodex": {"rasterReady": True},
+            },
+        ):
+            with self.assertRaisesRegex(GenerationError, "raster-only"):
+                select_generation_backend(vector_job, "auto")
 
     def test_required_alpha_runs_transparency_processor_before_normalization(self):
         alpha_job = job()
