@@ -79,6 +79,50 @@ def _reference_rows(reference_paths: list[Path] | None) -> list[dict]:
     return rows
 
 
+def reusable_content_fingerprint(
+    job: dict,
+    *,
+    backend: str = "auto",
+    model: str | None = None,
+    resolution: str = "low",
+) -> str:
+    manifest = job.get("manifest") if isinstance(job.get("manifest"), dict) else {}
+    target = manifest.get("target") if isinstance(manifest.get("target"), dict) else {}
+    constraints = manifest.get("constraints") if isinstance(manifest.get("constraints"), dict) else {}
+    reusable_constraints = {
+        key: value
+        for key, value in constraints.items()
+        if key not in {
+            "visualSimilarityMin",
+            "visualSimilarityRetries",
+            "semanticArtReview",
+            "semanticArtReviewRequired",
+            "semanticQualityMin",
+            "allowCrossProjectReuse",
+        }
+    }
+    payload = {
+        "schema": "asset-forge/reusable-content-key/v1",
+        "assetType": job.get("assetType"),
+        "instruction": job.get("instruction"),
+        "target": {
+            "format": target.get("format"),
+            "engine": target.get("engine"),
+        },
+        "constraints": reusable_constraints,
+        "backend": backend,
+        "model": model,
+        "resolution": resolution,
+    }
+    canonical = json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(canonical).hexdigest()
+
+
 def request_fingerprint(
     job: dict,
     *,
@@ -147,6 +191,20 @@ def lookup(
     return None
 
 
+def lookup_reusable(path: Path, content_fingerprint: str) -> dict | None:
+    library = load_library(path)
+    for entry in reversed(library["entries"]):
+        if not isinstance(entry, dict):
+            continue
+        if entry.get("contentFingerprint") != content_fingerprint:
+            continue
+        artifact = Path(str(entry.get("artifact") or ""))
+        expected = str(entry.get("sha256") or "")
+        if artifact.is_file() and expected and _sha256(artifact) == expected:
+            return dict(entry)
+    return None
+
+
 def _next_version(entries: list[dict], project: str, asset_id: str) -> int:
     versions = [
         int(item.get("version") or 0)
@@ -164,6 +222,7 @@ def record_success(
     fingerprint: str,
     job: dict,
     result: dict,
+    content_fingerprint: str | None = None,
 ) -> dict:
     artifact = Path(str(result.get("artifact") or ""))
     if result.get("success") is not True or not artifact.is_file():
@@ -212,6 +271,7 @@ def record_success(
         version = _next_version(library["entries"], project, asset_id)
         entry = {
             "fingerprint": fingerprint,
+            "contentFingerprint": content_fingerprint,
             "project": project,
             "assetId": asset_id,
             "assetType": job.get("assetType"),
