@@ -96,20 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T17:02:29Z
+Generated: 2026-09-20T17:04:00Z
 
 ### Git
 - Branch: `main`
-- Head: `eae91bfedd72`
-- Commit date: 2026-09-20T19:02:17+02:00
-- Commit: feat: let Deadline Zero premium pilot fall back to imagen-codex
+- Head: `c011b77c1d70`
+- Commit date: 2026-09-20T19:03:51+02:00
+- Commit: feat: persist validated asset library across live pilot runs
 - Tracked files: 274
 
 ### Recently changed files
 - `.github/workflows/deadline-zero-live-pilot.yml`
-- `tests/test_generator_backends.py`
-- `generator_backends.py`
 - `tests/test_asset_library.py`
+- `asset_library.py`
+- `tests/test_generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`

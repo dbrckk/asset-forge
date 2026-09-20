@@ -228,6 +228,14 @@ jobs:
       - name: Install Asset Forge
         run: python -m pip install ".[generation]"
 
+      - name: Restore Asset Forge library
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: ~/.cache/asset-forge
+          key: asset-forge-deadline-zero-${{ runner.os }}-v1
+          restore-keys: |
+            asset-forge-deadline-zero-${{ runner.os }}-
+
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
 
@@ -2412,6 +2420,21 @@ def test_cross_project_lookup_returns_content_compatible_asset(self)
 content_fp = reusable_content_fingerprint(
 ⋮----
 hit = lookup_reusable(library, content_fp)
+⋮----
+def test_higher_quality_near_duplicate_becomes_preferred_version(self)
+⋮----
+low = self.result(first, perceptual_hash="0f0f")
+⋮----
+high = self.result(second, perceptual_hash="0f0e")
+⋮----
+old = next(item for item in payload["entries"] if item["sha256"] == one["sha256"])
+new = next(item for item in payload["entries"] if item["sha256"] == two["sha256"])
+⋮----
+def test_lower_quality_near_duplicate_is_marked_duplicate(self)
+⋮----
+high = self.result(first, perceptual_hash="0f0f")
+⋮----
+low = self.result(second, perceptual_hash="0f0e")
 ⋮----
 def test_perceptual_deduplication_returns_near_matches(self)
 ⋮----
@@ -5258,11 +5281,32 @@ library = load_library(library_path)
 existing = next(
 ⋮----
 version = _next_version(library["entries"], project, asset_id)
+semantic = validation.get("semanticArt") if isinstance(validation.get("semanticArt"), dict) else {}
+semantic_score = semantic.get("score") if isinstance(semantic.get("score"), (int, float)) else None
+technical_score = technical.get("score") if isinstance(technical.get("score"), (int, float)) else None
+similarity_score = final_similarity if isinstance(final_similarity, (int, float)) else None
+quality_parts = [
+composite_quality = (
+⋮----
+near = []
+perceptual_hash = str(metrics.get("perceptualHash") or "")
+⋮----
+distance = hamming_hex(
+⋮----
+preferred_existing = None
+⋮----
+preferred_existing = max(
+⋮----
 entry = {
 ⋮----
 def hamming_hex(left: str, right: str) -> int
 ⋮----
 distance = hamming_hex(str(entry.get("perceptualHash") or ""), perceptual_hash)
+⋮----
+candidates = [
+⋮----
+artifact = Path(str(item.get("artifact") or ""))
+expected = str(item.get("sha256") or "")
 ````
 
 ## File: asset_profile_validation.py
