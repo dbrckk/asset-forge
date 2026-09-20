@@ -185,3 +185,43 @@ def download_result_asset(
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_bytes(raw)
     return destination
+
+
+def worker_status(
+    *,
+    repository: str | None = None,
+    branch: str = "main",
+    token: str | None = None,
+    max_age_seconds: int = 120,
+) -> dict:
+    import base64
+
+    repository = repository or os.environ.get("ASSET_FORGE_GITHUB_REPOSITORY", "dbrckk/asset-forge")
+    token = token or os.environ.get("GITHUB_TOKEN") or os.environ.get("ASSET_FORGE_GITHUB_TOKEN")
+    if not str(token or "").strip():
+        return {"online": False, "reason": "github_token_missing"}
+    try:
+        value = _github_request(
+            repository,
+            str(token),
+            "GET",
+            f"contents/{urllib.parse.quote('colab-queue/worker-status.json')}?ref={urllib.parse.quote(branch)}",
+        )
+    except urllib.error.HTTPError as exc:
+        if exc.code == 404:
+            return {"online": False, "reason": "heartbeat_missing"}
+        return {"online": False, "reason": f"github_http_{exc.code}"}
+    try:
+        payload = json.loads(
+            base64.b64decode(str(value.get("content") or "")).decode("utf-8")
+        )
+    except Exception:
+        return {"online": False, "reason": "heartbeat_invalid"}
+    timestamp = payload.get("timestamp")
+    age = time.time() - float(timestamp) if isinstance(timestamp, (int, float)) else 10**9
+    return {
+        "online": payload.get("online") is True and age <= max_age_seconds,
+        "age_seconds": round(age, 3),
+        "model": payload.get("model"),
+        "timestamp": timestamp,
+    }
