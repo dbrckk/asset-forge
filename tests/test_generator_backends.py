@@ -9,6 +9,7 @@ from generator_backends import (
     execute_generated_asset,
     execute_generated_3d_asset,
     generator_backend_status,
+    imagen_codex_command,
     pollinations_command,
 )
 
@@ -157,6 +158,86 @@ class GeneratorBackendsTests(unittest.TestCase):
         )
         self.assertNotIn("top-secret", repr(result))
         self.assertNotIn("also-secret", repr(result))
+
+
+
+    def test_backend_status_reports_imagen_codex_without_exposing_token(self):
+        def which(name):
+            return "/usr/bin/imagen" if name == "imagen" else None
+
+        with patch("generator_backends.shutil.which", side_effect=which):
+            status = generator_backend_status(
+                environ={"CODEX_ACCESS_TOKEN": "codex-secret"},
+                home=Path("/definitely/not/a/real/home"),
+            )
+
+        self.assertTrue(status["imagenCodex"]["installed"])
+        self.assertTrue(status["imagenCodex"]["authenticated"])
+        self.assertTrue(status["imagenCodex"]["rasterReady"])
+        self.assertFalse(status["imagenCodex"]["vectorSvgReady"])
+        self.assertNotIn("codex-secret", repr(status))
+
+    def test_imagen_codex_command_uses_raster_output_and_no_token_argument(self):
+        raster_job = job()
+        raster_job["assetType"] = "sprite"
+        command = imagen_codex_command(
+            raster_job,
+            Path("out"),
+            executable="/usr/bin/imagen",
+        )
+
+        self.assertEqual(command[0], "/usr/bin/imagen")
+        self.assertIn("codex-2", command)
+        self.assertIn("--json", command)
+        self.assertIn("generated-source", command)
+        self.assertFalse(any("TOKEN" in part or "secret" in part for part in command))
+
+    def test_imagen_codex_rejects_vector_generation(self):
+        vector_job = job()
+        vector_job["assetType"] = "icon"
+        with self.assertRaisesRegex(GenerationError, "raster generated assets only"):
+            imagen_codex_command(vector_job, Path("out"))
+
+    def test_execute_generated_asset_supports_imagen_codex_raster(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+
+            def runner(command, **kwargs):
+                target = out / "generated-source.png"
+                target.write_bytes(b"PNG")
+
+                class Result:
+                    returncode = 0
+                    stdout = '{"files":["generated-source.png"],"provider":"codex"}'
+                    stderr = ""
+
+                return Result()
+
+            def which(name):
+                return "/usr/bin/imagen" if name == "imagen" else None
+
+            with patch("generator_backends.shutil.which", side_effect=which):
+                result = execute_generated_asset(
+                    job(),
+                    out,
+                    backend="imagen-codex",
+                    timeout_seconds=30,
+                    runner=runner,
+                    raster_normalizer=lambda raw, output, value: (
+                        output.write_bytes(raw.read_bytes())
+                        and {
+                            "width": 64,
+                            "height": 64,
+                            "columns": 2,
+                            "rows": 2,
+                        }
+                    ),
+                )
+
+            self.assertTrue(result["success"])
+            self.assertEqual(result["backend"], "imagen-codex")
+            self.assertEqual(result["model"], "codex-2")
+            self.assertEqual(result["metadata"]["provider"], "codex")
 
     def test_required_alpha_runs_transparency_processor_before_normalization(self):
         alpha_job = job()
