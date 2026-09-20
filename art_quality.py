@@ -39,6 +39,32 @@ def _grid(expected_frames: int) -> tuple[int, int]:
     return columns, max(1, expected_frames // columns)
 
 
+
+def _subject_perceptual_hash(image, *, size: int = 16) -> str:
+    alpha = image.getchannel("A")
+    bbox = alpha.getbbox()
+    subject = image.crop(bbox) if bbox else image
+    gray = subject.convert("L").resize((size, size))
+    values = list(gray.getdata())
+    average = sum(values) / max(1, len(values))
+    bits = "".join("1" if value >= average else "0" for value in values)
+    return "".join(
+        f"{int(bits[index:index + 4], 2):x}"
+        for index in range(0, len(bits), 4)
+    )
+
+
+def _average_visible_rgb(pixels) -> list[int]:
+    visible = [(r, g, b) for r, g, b, a in pixels if a >= 32]
+    if not visible:
+        return [0, 0, 0]
+    count = len(visible)
+    return [
+        int(round(sum(value[index] for value in visible) / count))
+        for index in range(3)
+    ]
+
+
 def evaluate_raster_art(path: Path, manifest: dict) -> dict:
     try:
         from PIL import Image
@@ -55,6 +81,8 @@ def evaluate_raster_art(path: Path, manifest: dict) -> dict:
     width, height = rgba.size
     pixels = list(rgba.getdata())
     alpha = [value[3] for value in pixels]
+    perceptual_hash = _subject_perceptual_hash(rgba)
+    average_rgb = _average_visible_rgb(pixels)
     visible = [value for value in pixels if value[3] >= 32]
     occupancy = len(visible) / max(1, len(pixels))
 
@@ -169,6 +197,8 @@ def evaluate_raster_art(path: Path, manifest: dict) -> dict:
             "luminanceEntropy": round(entropy, 6),
             "frameConsistency": round(frame_consistency, 6),
             "frameOccupancies": [round(value, 6) for value in frame_occupancies],
+            "perceptualHash": perceptual_hash,
+            "averageRgb": average_rgb,
         },
         "errors": errors,
         "warnings": warnings,
