@@ -213,6 +213,11 @@ def run(
                 if isinstance(validation.get("technicalArt"), dict)
                 else None
             ),
+            "semantic_art": (
+                validation.get("semanticArt")
+                if isinstance(validation.get("semanticArt"), dict)
+                else None
+            ),
             "additional_artifacts": additional_rows,
         })
 
