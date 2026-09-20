@@ -72,5 +72,18 @@ class Godot3DDeliveryTests(unittest.TestCase):
         self.assertTrue(any("double-sided" in item for item in report["warnings"]))
 
 
+    def test_delivery_report_includes_runtime_lod_collision_and_pbr_plan(self):
+        data = self.base()
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self.write(Path(tmp), data)
+            result = godot_3d_delivery_report(path, "prop")
+
+        plan = result["runtimePlan"]
+        self.assertEqual(plan["schema"], "asset-forge/runtime-3d-plan/v1")
+        self.assertEqual(plan["profile"], "prop")
+        self.assertIn("levels", plan["lod"])
+        self.assertIn("strategy", plan["collision"])
+        self.assertIn("allMaterialsPbr", plan["pbr"])
+
 if __name__ == "__main__":
     unittest.main()
