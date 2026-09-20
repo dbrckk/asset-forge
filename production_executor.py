@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Callable
 
 from art_quality import ArtQualityError, evaluate_raster_art
+from semantic_art_review import SemanticArtReviewError, review_raster_art
 from generator_backends import THREE_D_GENERATED_TYPES, VECTOR_GENERATED_TYPES, execute_generated_3d_asset, execute_generated_asset
 from lod_3d import LodGenerationError, generate_lod_chain
 
@@ -105,6 +106,7 @@ def execute_generated_raster_job(
     source_path: Path | None = None,
     reference_paths: list[Path] | None = None,
     art_quality_reporter: Callable = evaluate_raster_art,
+    semantic_reviewer: Callable = review_raster_art,
 ) -> dict:
     if job.get("schema") != "asset-forge/production-job/v1":
         raise ProductionExecutionError("unsupported production job schema")
@@ -177,7 +179,43 @@ def execute_generated_raster_job(
         else:
             technical_warnings.append(f"technical art quality unavailable: {type(exc).__name__}")
 
-    combined_errors = list(errors) + technical_errors
+    semantic_quality = None
+    semantic_errors = []
+    semantic_warnings = []
+    constraints = manifest.get("constraints")
+    semantic_enabled = (
+        isinstance(constraints, dict)
+        and (
+            constraints.get("semanticArtReview") is True
+            or constraints.get("semanticArtReviewRequired") is True
+        )
+    )
+    if semantic_enabled and source_path is None:
+        try:
+            semantic_quality = semantic_reviewer(final, manifest)
+            if isinstance(semantic_quality, dict):
+                if semantic_quality.get("passed") is False:
+                    semantic_errors.append(
+                        "semantic art quality score is below required threshold"
+                    )
+                elif semantic_quality.get("available") is False:
+                    semantic_warnings.append(
+                        "semantic art quality review unavailable: "
+                        + str(semantic_quality.get("reason") or "unknown")
+                    )
+        except (SemanticArtReviewError, OSError, ValueError) as exc:
+            required = (
+                isinstance(constraints, dict)
+                and constraints.get("semanticArtReviewRequired") is True
+            )
+            if required:
+                semantic_errors.append(f"semantic art quality check failed: {exc}")
+            else:
+                semantic_warnings.append(
+                    f"semantic art quality unavailable: {type(exc).__name__}"
+                )
+
+    combined_errors = list(errors) + technical_errors + semantic_errors
 
     report = {
         "schema": "asset-forge/production-report/v1",
@@ -192,8 +230,9 @@ def execute_generated_raster_job(
             "file": str(final),
             "info": info,
             "errors": combined_errors,
-            "warnings": technical_warnings,
+            "warnings": technical_warnings + semantic_warnings,
             "technicalArt": technical_quality,
+            "semanticArt": semantic_quality,
         },
         "artifact": str(final) if not combined_errors else None,
     }
