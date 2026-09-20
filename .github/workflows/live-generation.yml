@@ -39,6 +39,12 @@ jobs:
       - name: Install Pollinations CLI
         if: steps.credential.outputs.configured == 'true'
         run: npm install --global @pollinations/cli@0.1.15
+      - name: Authenticate Pollinations CLI
+        if: steps.credential.outputs.configured == 'true'
+        env:
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+        run: printf '%s' "$POLLINATIONS_API_KEY" | polli auth login --with-token
+
       - name: Check Asset Forge readiness
         if: steps.credential.outputs.configured == 'true'
         env:
