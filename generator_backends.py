@@ -339,14 +339,6 @@ def pollinations_command(
     reference_urls: list[str] | None = None,
 ) -> list[str]:
     prompt = build_generation_prompt(job)
-    if reference_paths:
-        prompt += (
-            " Use the provided reference image as a strict visual identity anchor. "
-            "Preserve the same subject identity, silhouette language, proportions, core palette, "
-            "materials, camera language, and art direction while applying only the requested variant."
-        )
-    if extra_guidance:
-        prompt += " " + str(extra_guidance).strip()
     if reference_urls:
         prompt += (
             " Use the provided reference image as a strict visual identity anchor. "
@@ -429,6 +421,14 @@ def imagen_codex_command(
             "imagen-codex currently supports raster generated assets only"
         )
     prompt = build_generation_prompt(job)
+    if reference_paths:
+        prompt += (
+            " Use the provided reference image as a strict visual identity anchor. "
+            "Preserve the same subject identity, silhouette language, proportions, core palette, "
+            "materials, camera language, and art direction while applying only the requested variant."
+        )
+    if extra_guidance:
+        prompt += " " + str(extra_guidance).strip()
     constraints = job.get("manifest", {}).get("constraints", {})
     command = [
         executable,
