@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T16:42:41Z
+Generated: 2026-09-20T16:44:50Z
 
 ### Git
 - Branch: `main`
-- Head: `5670ba5d3ba8`
-- Commit date: 2026-09-20T18:41:52+02:00
-- Commit: fix: install pinned imagen CLI for Codex backend
+- Head: `0b57ab31e202`
+- Commit date: 2026-09-20T18:44:39+02:00
+- Commit: test: isolate UV rule from required PBR materials
 - Tracked files: 268
 
 ### Recently changed files
+- `tests/test_gltf_quality.py`
 - `.github/workflows/production-os-batch.yml`
 - `.github/workflows/production-os-dispatch.yml`
 - `tests/test_godot_3d_delivery.py`
 - `runtime_3d_plan.py`
-- `godot_3d_delivery.py`
 
 ### Project signals
 - `pyproject.toml`

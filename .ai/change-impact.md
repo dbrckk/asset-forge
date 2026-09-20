@@ -1,13 +1,13 @@
 # Change impact
 
-Base: 811841ce88a0e0044e6de93c197af189eab1c786
-Head: 41e026c480669636f8145524c270055056139de5
+Base: 310edb2220f63036699fa0ce52050a940e22e1a2
+Head: 0b57ab31e2029b99dc56cf53ef71a878c64d28b6
 
 ## Changed files
-- M .github/workflows/production-os-dispatch.yml
+- M tests/test_gltf_quality.py
 
 ## Affected areas
-- .github
+- tests
 
 ## Related test candidates
 - No direct filename-based test match detected.
