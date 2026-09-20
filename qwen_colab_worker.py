@@ -15,7 +15,7 @@ BRANCH = os.environ.get("ASSET_FORGE_GITHUB_BRANCH", "main")
 QUEUE_DIR = os.environ.get("ASSET_FORGE_COLAB_QUEUE_DIR", "colab-queue/jobs")
 RESULT_DIR = os.environ.get("ASSET_FORGE_COLAB_RESULT_DIR", "colab-queue/results")
 MODEL_ID = os.environ.get("QWEN_IMAGE_MODEL", "Qwen/Qwen-Image-2.1")
-POLL_SECONDS = max(5, int(os.environ.get("ASSET_FORGE_COLAB_POLL_SECONDS", "15")))
+MAX_JOBS = max(1, min(32, int(os.environ.get("ASSET_FORGE_COLAB_MAX_JOBS", "8"))))
 
 
 def _token() -> str:
@@ -80,37 +80,6 @@ def _put(path: str, data: bytes, message: str, sha: str | None = None) -> dict:
     if sha:
         payload["sha"] = sha
     return _request("PUT", f"contents/{urllib.parse.quote(path)}", payload)
-
-
-def _put_overwrite(path: str, data: bytes, message: str) -> dict:
-    sha = None
-    try:
-        current = _request(
-            "GET",
-            f"contents/{urllib.parse.quote(path)}?ref={urllib.parse.quote(BRANCH)}",
-        )
-        if isinstance(current, dict):
-            sha = str(current.get("sha") or "") or None
-    except urllib.error.HTTPError as exc:
-        if exc.code != 404:
-            raise
-    return _put(path, data, message, sha=sha)
-
-
-def heartbeat() -> None:
-    payload = {
-        "schema": "asset-forge/qwen-colab-worker-status/v1",
-        "repository": REPOSITORY,
-        "branch": BRANCH,
-        "model": MODEL_ID,
-        "timestamp": int(time.time()),
-        "online": True,
-    }
-    _put_overwrite(
-        "colab-queue/worker-status.json",
-        (json.dumps(payload, indent=2, sort_keys=True) + "\n").encode("utf-8"),
-        "colab: worker heartbeat",
-    )
 
 
 def _delete(path: str, sha: str, message: str) -> None:
@@ -246,12 +215,11 @@ def process_once(pipe) -> bool:
 def main() -> None:
     print(f"Loading {MODEL_ID}...")
     pipe = load_pipeline()
-    print(f"Worker online for {REPOSITORY}@{BRANCH}.")
-    while True:
-        heartbeat()
-        worked = process_once(pipe)
-        if not worked:
-            time.sleep(POLL_SECONDS)
+    print(f"Qwen Colab batch processor ready for {REPOSITORY}@{BRANCH}.")
+    processed = 0
+    while processed < MAX_JOBS and process_once(pipe):
+        processed += 1
+    print(f"Finished: {processed} queued job(s) processed.")
 
 
 if __name__ == "__main__":
