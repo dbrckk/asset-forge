@@ -5,12 +5,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import struct
 import sys
 import zlib
 from pathlib import Path
 
 from animation_infer import infer_animations
+from asset_library import default_library_path, lookup as lookup_asset_library, record_success as record_asset_success, request_fingerprint
 from asset_profile_validation import validate_all_asset_profiles
 from engine_profile_validation import validate_all_godot_profiles
 from blender_adapter import build_blender_export_job, render_blender_command, write_blender_export_script, write_job_manifest
@@ -859,6 +861,33 @@ def main() -> int:
                 configured = job.get("delivery", {}).get("outputDir")
                 output_dir = Path(configured) if isinstance(configured, str) and configured.strip() else Path("build/asset-forge") / str(job.get("requestId") or "job")
             _write_production_inputs(output_dir, job)
+            library_enabled = (
+                args.source is None
+                and job.get("requiresGenerator") is True
+                and os.environ.get("ASSET_FORGE_DISABLE_LIBRARY") != "1"
+            )
+            library_path = default_library_path() if library_enabled else None
+            fingerprint = (
+                request_fingerprint(
+                    job,
+                    backend=args.backend,
+                    model=args.model,
+                    resolution=args.resolution,
+                    reference_paths=args.reference,
+                )
+                if library_enabled
+                else None
+            )
+            library_hit = (
+                lookup_asset_library(library_path, fingerprint)
+                if library_enabled and library_path is not None and fingerprint is not None
+                else None
+            )
+            effective_source = (
+                Path(library_hit["artifact"])
+                if isinstance(library_hit, dict)
+                else args.source
+            )
             result = execute_compiled_production_job(
                 job,
                 output_dir,
@@ -866,10 +895,28 @@ def main() -> int:
                 model=args.model,
                 resolution=args.resolution,
                 timeout_seconds=args.timeout,
-                source_path=args.source,
-                reference_paths=args.reference,
+                source_path=effective_source,
+                reference_paths=([] if library_hit else args.reference),
             )
             result = _enrich_engine_handoff(job, result, output_dir)
+            if library_enabled and library_path is not None and fingerprint is not None and result.get("success") is True:
+                if library_hit is None:
+                    library_entry = record_asset_success(
+                        library_path,
+                        fingerprint=fingerprint,
+                        job=job,
+                        result=result,
+                    )
+                else:
+                    library_entry = library_hit
+                result["library"] = {
+                    "schema": "asset-forge/library-receipt/v1",
+                    "path": str(library_path),
+                    "cacheHit": library_hit is not None,
+                    "fingerprint": fingerprint,
+                    "entry": library_entry,
+                }
+                _persist_enriched_production_report(result)
             contract_errors = validate_production_report(result)
             if contract_errors:
                 raise ValueError(
