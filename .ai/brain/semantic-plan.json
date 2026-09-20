@@ -10,7 +10,15 @@
   "schema_version": 1,
   "scip": {
     "enabled_by_default": false,
-    "modes": [],
+    "modes": [
+      {
+        "command": "npx -y @sourcegraph/scip-python index . --project-name=repo-brain-project",
+        "cost": "medium",
+        "indexer": "scip-python",
+        "language": "python",
+        "status": "eligible"
+      }
+    ],
     "policy": "Generate precise SCIP only in a dedicated semantic refresh; keep routine context refresh fast."
   },
   "zoekt": {

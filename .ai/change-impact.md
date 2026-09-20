@@ -1,13 +1,13 @@
 # Change impact
 
-Base: fb2724a2bfc74843ed4055577e6a5b2c36da86da
-Head: f6415503eee593ed92535c8dff234bca357eaaa8
+Base: 9653be09360b2a9406eab952c428b07e03ba2b75
+Head: 1ffcee30cf08f48f3de929c954dede9633c5f25b
 
 ## Changed files
-- M tests/test_production_executor.py
+- M .github/workflows/validate.yml
 
 ## Affected areas
-- tests
+- .github
 
 ## Related test candidates
 - No direct filename-based test match detected.

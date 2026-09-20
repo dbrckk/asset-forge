@@ -127,6 +127,7 @@ godot_handoff.py
 operational_status.py
 production_contract.py
 production_executor.py
+pyproject.toml
 raster_backend.py
 raster_pack.py
 README.md
@@ -334,6 +335,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install Asset Forge CLI
+        run: python -m pip install --no-deps -e .
+      - name: Smoke-test installed CLI
+        run: asset-forge --help >/dev/null
       - name: Compile
         run: python -m compileall -q asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
@@ -5195,6 +5200,57 @@ godot_delivery = godot_delivery_reporter(
 ⋮----
 combined_errors = list(errors) + quality_errors
 combined_warnings = list(warnings) + quality_warnings
+````
+
+## File: pyproject.toml
+````toml
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "asset-forge"
+version = "0.1.0"
+description = "Production-grade visual asset pipeline for raster, vector, 3D, runtime atlases, and engine handoff."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "License terms are defined by the repository owner."}
+authors = [{name = "dbrckk"}]
+dependencies = []
+
+[project.optional-dependencies]
+webp = ["Pillow>=12.2,<13"]
+generation = ["Pillow>=12.2,<13", "rembg[cpu,cli]"]
+dev = ["Pillow>=12.2,<13"]
+
+[project.scripts]
+asset-forge = "asset_forge:main"
+
+[tool.setuptools]
+py-modules = [
+  "animation_infer",
+  "asset_forge",
+  "asset_profile_validation",
+  "blender_adapter",
+  "engine_profile_validation",
+  "generator_backends",
+  "gltf_binary_metrics",
+  "gltf_diagnostics",
+  "gltf_quality",
+  "gltf_tools",
+  "godot_3d_delivery",
+  "godot_export",
+  "godot_handoff",
+  "operational_status",
+  "production_contract",
+  "production_executor",
+  "raster_backend",
+  "raster_pack",
+  "runtime_atlas",
+  "starlist_bridge",
+  "svg_tools",
+  "toolchain_3d",
+]
 ````
 
 ## File: raster_backend.py
