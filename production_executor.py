@@ -479,6 +479,9 @@ def execute_generated_3d_job(
     if isinstance(godot_delivery, dict):
         combined_errors.extend(list(godot_delivery.get("errors") or []))
         combined_warnings.extend(list(godot_delivery.get("warnings") or []))
+        scene = godot_delivery.get("scene") if isinstance(godot_delivery.get("scene"), dict) else {}
+        if constraints.get("requireCollision") is True and int(scene.get("collisionNodes") or 0) <= 0:
+            combined_errors.append("required runtime collision is missing")
         if godot_delivery.get("ready") is not True and not godot_delivery.get("errors"):
             combined_errors.append("Godot delivery report is not ready")
 
