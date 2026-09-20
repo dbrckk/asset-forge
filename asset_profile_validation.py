@@ -21,6 +21,8 @@ THREED_RULE_TYPES = {
     "maxTextureDimension": int,
     "maxEstimatedTextureMipBytes": int,
     "maxJointsPerSkin": int,
+    "strictBudgets": bool,
+    "requirePbrMaterials": bool,
 }
 
 VECTOR_RULE_TYPES = {
