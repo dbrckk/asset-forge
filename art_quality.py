@@ -128,6 +128,10 @@ def evaluate_raster_art(path: Path, manifest: dict) -> dict:
     expected_frames = constraints.get("expectedFrames")
     frame_consistency = 1.0
     frame_occupancies = []
+    frame_hashes = []
+    frame_centers = []
+    unique_frame_ratio = 1.0
+    max_frame_center_drift = 0.0
     if isinstance(expected_frames, int) and expected_frames > 1:
         columns, rows = _grid(expected_frames)
         if width % columns == 0 and height % rows == 0:
@@ -142,14 +146,32 @@ def evaluate_raster_art(path: Path, manifest: dict) -> dict:
                     (col + 1) * frame_width,
                     (row + 1) * frame_height,
                 ))
-                frame_alpha = list(frame.getchannel("A").getdata())
+                frame_alpha_channel = frame.getchannel("A")
+                frame_alpha = list(frame_alpha_channel.getdata())
                 frame_occupancies.append(
                     sum(value >= 32 for value in frame_alpha) / max(1, len(frame_alpha))
                 )
+                frame_hashes.append(_subject_perceptual_hash(frame))
+                frame_bbox = frame_alpha_channel.getbbox()
+                if frame_bbox:
+                    left, top, right, bottom = frame_bbox
+                    frame_centers.append([
+                        ((left + right) / 2.0) / max(1, frame_width),
+                        ((top + bottom) / 2.0) / max(1, frame_height),
+                    ])
             mean = sum(frame_occupancies) / len(frame_occupancies)
             if mean > 0:
                 variance = sum((value - mean) ** 2 for value in frame_occupancies) / len(frame_occupancies)
                 frame_consistency = max(0.0, 1.0 - math.sqrt(variance) / mean)
+            if frame_hashes:
+                unique_frame_ratio = len(set(frame_hashes)) / len(frame_hashes)
+            if frame_centers:
+                center_x = sum(value[0] for value in frame_centers) / len(frame_centers)
+                center_y = sum(value[1] for value in frame_centers) / len(frame_centers)
+                max_frame_center_drift = max(
+                    math.dist((center_x, center_y), (value[0], value[1]))
+                    for value in frame_centers
+                )
 
     score = (
         0.30 * border_score
@@ -173,6 +195,40 @@ def evaluate_raster_art(path: Path, manifest: dict) -> dict:
         warnings.append(
             f"visible art touches image border too often ({border_alpha_ratio:.3f} > {max_border:.3f})"
         )
+    if isinstance(expected_frames, int) and expected_frames > 1:
+        min_unique = constraints.get("minUniqueFrameRatio")
+        if min_unique is not None:
+            try:
+                min_unique = float(min_unique)
+            except (TypeError, ValueError) as exc:
+                raise ArtQualityError("minUniqueFrameRatio must be numeric") from exc
+            if not 0.0 <= min_unique <= 1.0:
+                raise ArtQualityError("minUniqueFrameRatio must be between 0 and 1")
+            if unique_frame_ratio < min_unique:
+                errors.append(
+                    f"sprite-sheet unique frame ratio {unique_frame_ratio:.3f} is below required {min_unique:.3f}"
+                )
+        elif unique_frame_ratio < 0.5:
+            warnings.append(
+                f"sprite-sheet has low frame diversity ({unique_frame_ratio:.3f})"
+            )
+
+        max_center_drift = constraints.get("maxFrameCenterDrift")
+        if max_center_drift is not None:
+            try:
+                max_center_drift = float(max_center_drift)
+            except (TypeError, ValueError) as exc:
+                raise ArtQualityError("maxFrameCenterDrift must be numeric") from exc
+            if not 0.0 <= max_center_drift <= 1.0:
+                raise ArtQualityError("maxFrameCenterDrift must be between 0 and 1")
+            if max_frame_center_drift > max_center_drift:
+                errors.append(
+                    f"sprite-sheet center drift {max_frame_center_drift:.3f} exceeds allowed {max_center_drift:.3f}"
+                )
+        elif max_frame_center_drift > 0.22:
+            warnings.append(
+                f"sprite-sheet subject center drifts strongly across frames ({max_frame_center_drift:.3f})"
+            )
     min_score = constraints.get("technicalQualityMin")
     if min_score is not None:
         try:
@@ -197,6 +253,9 @@ def evaluate_raster_art(path: Path, manifest: dict) -> dict:
             "luminanceEntropy": round(entropy, 6),
             "frameConsistency": round(frame_consistency, 6),
             "frameOccupancies": [round(value, 6) for value in frame_occupancies],
+            "uniqueFrameRatio": round(unique_frame_ratio, 6),
+            "frameCenters": [[round(v, 6) for v in value] for value in frame_centers],
+            "maxFrameCenterDrift": round(max_frame_center_drift, 6),
             "perceptualHash": perceptual_hash,
             "averageRgb": average_rgb,
         },
