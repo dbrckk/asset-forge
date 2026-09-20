@@ -339,6 +339,14 @@ def pollinations_command(
     reference_urls: list[str] | None = None,
 ) -> list[str]:
     prompt = build_generation_prompt(job)
+    if reference_paths:
+        prompt += (
+            " Use the provided reference image as a strict visual identity anchor. "
+            "Preserve the same subject identity, silhouette language, proportions, core palette, "
+            "materials, camera language, and art direction while applying only the requested variant."
+        )
+    if extra_guidance:
+        prompt += " " + str(extra_guidance).strip()
     if reference_urls:
         prompt += (
             " Use the provided reference image as a strict visual identity anchor. "
@@ -412,6 +420,8 @@ def imagen_codex_command(
     *,
     model: str | None = None,
     executable: str = "imagen",
+    reference_paths: list[Path] | None = None,
+    extra_guidance: str | None = None,
 ) -> list[str]:
     asset_type = str(job.get("assetType") or "")
     if asset_type not in RASTER_GENERATED_TYPES:
@@ -432,6 +442,8 @@ def imagen_codex_command(
     ]
     if isinstance(constraints, dict) and constraints.get("requiresAlpha") is True:
         command.append("-t")
+    for reference in reference_paths or []:
+        command.extend(["--input-ref", str(Path(reference))])
     command.append(prompt)
     return command
 
@@ -529,8 +541,8 @@ def execute_generated_asset(
     references = [Path(path) for path in (reference_paths or [])]
     if references and asset_type not in RASTER_GENERATED_TYPES:
         raise GenerationError("visual references are currently supported for raster generation only")
-    if references and backend != "pollinations":
-        raise GenerationError("visual references currently require the pollinations backend")
+    if references and backend not in {"pollinations", "imagen-codex"}:
+        raise GenerationError("selected backend does not support visual references")
     if len(references) > 4:
         raise GenerationError("at most 4 visual references are supported")
     for reference in references:
@@ -544,7 +556,7 @@ def execute_generated_asset(
         None
     )
     reference_urls = []
-    if references:
+    if references and backend == "pollinations":
         for reference in references:
             reference_urls.append(
                 _upload_reference_image(
@@ -569,6 +581,7 @@ def execute_generated_asset(
             output_dir,
             model=effective_model,
             executable=executable,
+            reference_paths=references,
         )
 
     constraints = job.get("manifest", {}).get("constraints", {})
@@ -616,7 +629,7 @@ def execute_generated_asset(
     previous_technical_failed = False
     for attempt in range(retry_budget + 1):
         attempt_command = list(command)
-        if attempt > 0 and backend == "pollinations":
+        if attempt > 0:
             retry_guidance = []
             if previous_similarity_failed:
                 retry_guidance.append(
@@ -630,7 +643,11 @@ def execute_generated_asset(
                     "use a clean readable silhouette, stable frame occupancy, and stronger local contrast."
                 )
             if retry_guidance:
-                attempt_command[3] = attempt_command[3] + " " + " ".join(retry_guidance)
+                guidance = " ".join(retry_guidance)
+                if backend == "pollinations":
+                    attempt_command[3] = attempt_command[3] + " " + guidance
+                else:
+                    attempt_command[-1] = attempt_command[-1] + " " + guidance
         completed = runner(
             attempt_command,
             check=False,
@@ -777,8 +794,20 @@ def execute_generated_asset(
         "transparency": transparency,
         "metadata": metadata,
         "references": [
-            {"path": str(path), "url": url}
-            for path, url in zip(references, reference_urls)
+            {
+                "path": str(path),
+                "url": (
+                    reference_urls[index]
+                    if index < len(reference_urls)
+                    else None
+                ),
+                "transport": (
+                    "uploaded-url"
+                    if backend == "pollinations"
+                    else "local-input-ref"
+                ),
+            }
+            for index, path in enumerate(references)
         ],
         "visualSimilarity": {
             "threshold": similarity_threshold if references else None,
