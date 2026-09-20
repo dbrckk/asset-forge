@@ -14,6 +14,8 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
 
     pollinations = generation["pollinations"]
     imagen_codex = generation.get("imagenCodex", {})
+    imagen_installed = bool(imagen_codex.get("installed"))
+    imagen_authenticated = bool(imagen_codex.get("authenticated"))
     webp_encode = bool(
         raster.get("webp", {}).get("encode", {}).get("available", False)
     )
@@ -31,16 +33,21 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
         "vectorSvg": bool(pollinations.get("rasterVectorReady")),
         "threeDGlb": bool(pollinations.get("threeDReady")),
         "godotImport": godot_executable is not None,
+        "imagenCodexRaster": bool(imagen_codex.get("rasterReady")),
     }
 
     blockers = []
-    if not pollinations.get("installed") and not imagen_codex.get("installed"):
+    if not pollinations.get("installed") and not imagen_installed:
         blockers.append("no image generation CLI is installed (polli or imagen)")
     if (
         not pollinations.get("authenticated")
-        and not imagen_codex.get("authenticated")
+        and not imagen_authenticated
     ):
         blockers.append("no image generation backend is authenticated")
+    if imagen_installed and not imagen_authenticated:
+        blockers.append(
+            "imagen-codex requires CODEX_ACCESS_TOKEN or CHATGPT_ACCESS_TOKEN; IMAGEN_API_KEY is not used"
+        )
     if not webp_encode:
         blockers.append("Pillow/libwebp is unavailable for WebP output")
     if not pollinations.get("threeDReady"):
