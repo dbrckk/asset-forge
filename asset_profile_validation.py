@@ -48,7 +48,13 @@ def _load_json(path: Path) -> tuple[dict | None, list[str]]:
     return data, []
 
 
-def _validate_rule_types(rules, expected: dict[str, type], label: str) -> list[str]:
+def _validate_rule_types(
+    rules,
+    expected: dict[str, type],
+    label: str,
+    *,
+    optional: frozenset[str] = frozenset(),
+) -> list[str]:
     errors: list[str] = []
     if not isinstance(rules, dict):
         return [f"{label}: object required"]
@@ -59,7 +65,8 @@ def _validate_rule_types(rules, expected: dict[str, type], label: str) -> list[s
 
     for key, expected_type in expected.items():
         if key not in rules:
-            errors.append(f"{label}.{key}: required")
+            if key not in optional:
+                errors.append(f"{label}.{key}: required")
             continue
         if type(rules[key]) is not expected_type:
             errors.append(f"{label}.{key}: {expected_type.__name__} required")
@@ -90,7 +97,14 @@ def validate_3d_profile_data(data: dict, expected_profile: str | None = None) ->
         errors.append("assetTypes: non-empty string array required")
 
     rules = data.get("rules")
-    errors.extend(_validate_rule_types(rules, THREED_RULE_TYPES, "rules"))
+    errors.extend(
+        _validate_rule_types(
+            rules,
+            THREED_RULE_TYPES,
+            "rules",
+            optional=frozenset({"strictBudgets", "requirePbrMaterials"}),
+        )
+    )
     if isinstance(rules, dict):
         positive_or_zero = {
             "maxMeshes",
