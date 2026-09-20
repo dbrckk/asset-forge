@@ -319,7 +319,7 @@ def evaluate_quality(report: dict, profile: str) -> dict:
 
     if (
         rules.get("requirePbrMaterials", False)
-        and attributes["texturedPrimitives"] > 0
+        and materials["count"] > 0
         and materials["pbrMetallicRoughness"] != materials["count"]
     ):
         errors.append(
