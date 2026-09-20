@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T22:50:15Z
+Generated: 2026-09-20T22:51:05Z
 
 ### Git
 - Branch: `main`
-- Head: `6c6cf30de434`
-- Commit date: 2026-09-21T00:50:01+02:00
-- Commit: test: cover Cloudflare image generation backend
-- Tracked files: 284
+- Head: `808d9912897d`
+- Commit date: 2026-09-21T00:50:53+02:00
+- Commit: test: prefer Cloudflare in free automatic raster routing
+- Tracked files: 286
 
 ### Recently changed files
-- `tests/test_cloudflare_backend.py`
-- `pyproject.toml`
-- `cloudflare_backend.py`
+- `tests/test_generator_backends.py`
+- `.github/workflows/production-os-batch.yml`
+- `.github/workflows/production-os-dispatch.yml`
+- `asset_forge.py`
 - `generator_backends.py`
-- `colab_queue.py`
 
 ### Project signals
 - `pyproject.toml`

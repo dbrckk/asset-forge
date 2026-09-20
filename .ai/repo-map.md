@@ -431,6 +431,7 @@ on:
           - auto
           - pollinations
           - qwen-colab
+          - cloudflare
       model:
         description: "Optional model override"
         required: false
@@ -449,6 +450,8 @@ jobs:
     timeout-minutes: 35
     env:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_REPOSITORY: ${{ github.repository }}
@@ -556,6 +559,7 @@ on:
           - auto
           - pollinations
           - qwen-colab
+          - cloudflare
       model:
         description: "Optional model override"
         required: false
@@ -574,6 +578,8 @@ jobs:
     timeout-minutes: 20
     env:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_REPOSITORY: ${{ github.repository }}
@@ -2716,9 +2722,9 @@ reference = out / "parent.png"
 scores = iter([0.2, 0.83])
 calls = []
 ⋮----
-def test_auto_backend_prefers_pollinations_for_raster_when_ready(self)
+def test_auto_backend_prefers_cloudflare_for_raster_when_ready(self)
 ⋮----
-def test_auto_backend_uses_live_qwen_colab_when_pollinations_unavailable(self)
+def test_auto_backend_uses_pollinations_when_cloudflare_unavailable(self)
 ⋮----
 def test_auto_backend_does_not_fall_back_to_imagen_codex(self)
 ⋮----
@@ -5625,6 +5631,7 @@ credentials = home_dir / ".pollinations" / "credentials.json"
 api_key_available = bool(str(env.get("POLLINATIONS_API_KEY") or "").strip())
 authenticated = api_key_available or credentials.is_file()
 codex_token_available = bool(
+cloudflare = cloudflare_status(environ=env)
 ⋮----
 def _sprite_sheet_geometry(job: dict) -> tuple[int, int, int, int] | None
 ⋮----
@@ -5701,6 +5708,7 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str
 ⋮----
 status = generator_backend_status()
 pollinations = status.get("pollinations", {})
+cloudflare = status.get("cloudflare", {})
 imagen_codex = status.get("imagenCodex", {})
 ⋮----
 def _imagen_output_path(output_dir: Path, stdout: str) -> tuple[Path, dict | None]
@@ -5788,6 +5796,15 @@ submitted = submit_colab_job(
 colab_result = wait_colab_result(
 ⋮----
 metadata = _sanitize_metadata(colab_result.get("metadata") or {})
+⋮----
+prompt = build_generation_prompt(attempt_job)
+⋮----
+dimensions = _generation_dimensions(attempt_job) or (1024, 1024)
+⋮----
+metadata = cloudflare_generate(
+⋮----
+metadata = _sanitize_metadata(metadata)
+⋮----
 current_output = output
 ⋮----
 attempt_command = list(command)
