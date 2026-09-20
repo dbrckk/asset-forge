@@ -219,6 +219,11 @@ def run(
                 else None
             ),
             "additional_artifacts": additional_rows,
+            "library": (
+                report.get("library")
+                if isinstance(report.get("library"), dict)
+                else None
+            ),
         })
 
     quality = [item["visual_similarity"] for item in results if item["visual_similarity"]]
