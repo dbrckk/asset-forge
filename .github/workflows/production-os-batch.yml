@@ -62,6 +62,18 @@ jobs:
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
 
+      - name: Install Imagen Codex CLI
+        if: inputs.backend != 'pollinations' && (env.CODEX_ACCESS_TOKEN != '' || env.CHATGPT_ACCESS_TOKEN != '')
+        shell: bash
+        run: |
+          archive=/tmp/imagen-linux-amd64.tar.gz
+          curl -fsSL https://github.com/Leechael/imagen/releases/download/v0.1.2/imagen-linux-amd64.tar.gz -o "$archive"
+          echo "2ae06f466ba49898ff0c8a2afdd77b74481002d3036c247316138c727ceb7cb0  $archive" | sha256sum -c -
+          mkdir -p /tmp/imagen-install
+          tar -xzf "$archive" -C /tmp/imagen-install
+          sudo install -m 0755 /tmp/imagen-install/imagen /usr/local/bin/imagen
+          imagen --help >/dev/null
+
       - name: Authenticate Pollinations CLI
         if: env.POLLINATIONS_API_KEY != ''
         shell: bash
