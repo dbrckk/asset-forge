@@ -17,6 +17,7 @@ VECTOR_GENERATED_TYPES = {"vector", "svg", "icon", "ui-vector", "logo"}
 THREE_D_GENERATED_TYPES = {"mesh", "prop", "environment", "character-3d"}
 SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES | THREE_D_GENERATED_TYPES
 DEFAULT_VECTOR_MODEL = "recraft/recraft-v4.1-vector"
+DEFAULT_REFERENCE_MODEL = "kontext"
 DEFAULT_3D_MODEL = "microsoft/trellis-2"
 MAX_3D_BYTES = 100 * 1024 * 1024
 MAX_METADATA_ITEMS = 64
@@ -332,6 +333,7 @@ def pollinations_command(
     *,
     model: str | None = None,
     executable: str = "polli",
+    reference_urls: list[str] | None = None,
 ) -> list[str]:
     prompt = build_generation_prompt(job)
     asset_type = str(job.get("assetType") or "")
@@ -349,6 +351,8 @@ def pollinations_command(
     ]
     if effective_model:
         command.extend(["--model", str(effective_model)])
+    for reference_url in reference_urls or []:
+        command.extend(["--image", reference_url])
     dimensions = _generation_dimensions(job)
     if dimensions is not None:
         command.extend(
@@ -464,6 +468,7 @@ def execute_generated_asset(
     *,
     backend: str = "auto",
     model: str | None = None,
+    reference_paths: list[Path] | None = None,
     timeout_seconds: float = 180.0,
     runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,
     raster_normalizer: Callable[[Path, Path, dict], dict | None] = _normalize_raster_geometry,
@@ -509,17 +514,42 @@ def execute_generated_asset(
             "imagen-codex does not emit editable SVG; use a raster target"
         )
 
+    references = [Path(path) for path in (reference_paths or [])]
+    if references and asset_type not in RASTER_GENERATED_TYPES:
+        raise GenerationError("visual references are currently supported for raster generation only")
+    if references and backend != "pollinations":
+        raise GenerationError("visual references currently require the pollinations backend")
+    if len(references) > 4:
+        raise GenerationError("at most 4 visual references are supported")
+    for reference in references:
+        if not reference.is_file() or reference.stat().st_size <= 0:
+            raise GenerationError(f"visual reference file missing or empty: {reference}")
+
     effective_model = model or (
         DEFAULT_VECTOR_MODEL if backend == "pollinations" and vector else
+        DEFAULT_REFERENCE_MODEL if backend == "pollinations" and references else
         "codex-2" if backend == "imagen-codex" else
         None
     )
+    reference_urls = []
+    if references:
+        for reference in references:
+            reference_urls.append(
+                _upload_reference_image(
+                    reference,
+                    executable=executable,
+                    timeout_seconds=min(timeout, 120.0),
+                    runner=runner,
+                )
+            )
+
     if backend == "pollinations":
         command = pollinations_command(
             job,
             output,
             model=effective_model,
             executable=executable,
+            reference_urls=reference_urls,
         )
     else:
         command = imagen_codex_command(
@@ -585,6 +615,10 @@ def execute_generated_asset(
         "normalization": normalization,
         "transparency": transparency,
         "metadata": metadata,
+        "references": [
+            {"path": str(path), "url": url}
+            for path, url in zip(references, reference_urls)
+        ],
     }
 
 
