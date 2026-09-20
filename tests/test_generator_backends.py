@@ -324,15 +324,28 @@ class GeneratorBackendsTests(unittest.TestCase):
         ):
             self.assertEqual(select_generation_backend(job(), "auto"), "pollinations")
 
-    def test_auto_backend_falls_back_to_imagen_codex_for_raster(self):
+    def test_auto_backend_uses_live_qwen_colab_when_pollinations_unavailable(self):
         with patch(
             "generator_backends.generator_backend_status",
             return_value={
                 "pollinations": {"rasterVectorReady": False, "threeDReady": False},
+                "qwenColab": {"rasterReady": True},
                 "imagenCodex": {"rasterReady": True},
             },
         ):
-            self.assertEqual(select_generation_backend(job(), "auto"), "imagen-codex")
+            self.assertEqual(select_generation_backend(job(), "auto"), "qwen-colab")
+
+    def test_auto_backend_does_not_fall_back_to_imagen_codex(self):
+        with patch(
+            "generator_backends.generator_backend_status",
+            return_value={
+                "pollinations": {"rasterVectorReady": False, "threeDReady": False},
+                "qwenColab": {"rasterReady": False},
+                "imagenCodex": {"rasterReady": True},
+            },
+        ):
+            with self.assertRaisesRegex(GenerationError, "no authenticated raster"):
+                select_generation_backend(job(), "auto")
 
     def test_auto_backend_rejects_vector_when_only_imagen_is_ready(self):
         vector_job = job()
