@@ -3,6 +3,7 @@
     "animation-infer.py",
     "art-quality.py",
     "asset-forge.py",
+    "asset-library.py",
     "asset-profile-validation.py",
     "benchmarks",
     "blender-adapter.py",
@@ -24,6 +25,7 @@
     "remote-batch.py",
     "runtime-3d-plan.py",
     "runtime-atlas.py",
+    "semantic-art-review.py",
     "starlist-bridge.py",
     "svg-tools.py",
     "tests",
@@ -35,6 +37,7 @@
     {
       "dependencies": [
         "animation_infer.py",
+        "asset_library.py",
         "asset_profile_validation.py",
         "blender_adapter.py",
         "engine_profile_validation.py",
@@ -61,7 +64,7 @@
         "tests/test_production_contract.py"
       ],
       "in_degree": 3,
-      "out_degree": 20,
+      "out_degree": 21,
       "path": "asset_forge.py"
     },
     {
@@ -126,6 +129,21 @@
       "in_degree": 5,
       "out_degree": 1,
       "path": "raster_pack.py"
+    },
+    {
+      "dependencies": [
+        "art_quality.py",
+        "generator_backends.py",
+        "lod_3d.py",
+        "semantic_art_review.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_production_executor.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 4,
+      "path": "production_executor.py"
     },
     {
       "dependencies": [
@@ -196,20 +214,6 @@
       "in_degree": 2,
       "out_degree": 3,
       "path": "operational_status.py"
-    },
-    {
-      "dependencies": [
-        "art_quality.py",
-        "generator_backends.py",
-        "lod_3d.py"
-      ],
-      "dependents": [
-        "asset_forge.py",
-        "tests/test_production_executor.py"
-      ],
-      "in_degree": 2,
-      "out_degree": 3,
-      "path": "production_executor.py"
     },
     {
       "dependencies": [],
@@ -295,6 +299,18 @@
     },
     {
       "dependencies": [
+        "tests/test_generator_backends.py"
+      ],
+      "dependents": [
+        "production_executor.py",
+        "tests/test_semantic_art_review.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 1,
+      "path": "semantic_art_review.py"
+    },
+    {
+      "dependencies": [
         "asset_profile_validation.py"
       ],
       "dependents": [
@@ -304,6 +320,18 @@
       "in_degree": 2,
       "out_degree": 1,
       "path": "svg_tools.py"
+    },
+    {
+      "dependencies": [
+        "generator_backends.py"
+      ],
+      "dependents": [
+        "generator_backends.py",
+        "semantic_art_review.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 1,
+      "path": "tests/test_generator_backends.py"
     },
     {
       "dependencies": [
@@ -326,6 +354,16 @@
       "in_degree": 2,
       "out_degree": 0,
       "path": "animation_infer.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_asset_library.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 0,
+      "path": "asset_library.py"
     },
     {
       "dependencies": [],
@@ -386,17 +424,6 @@
       "in_degree": 2,
       "out_degree": 0,
       "path": "visual_similarity.py"
-    },
-    {
-      "dependencies": [
-        "generator_backends.py"
-      ],
-      "dependents": [
-        "generator_backends.py"
-      ],
-      "in_degree": 1,
-      "out_degree": 1,
-      "path": "tests/test_generator_backends.py"
     },
     {
       "dependencies": [
@@ -493,6 +520,15 @@
       "in_degree": 0,
       "out_degree": 1,
       "path": "tests/test_asset_forge.py"
+    },
+    {
+      "dependencies": [
+        "asset_library.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_asset_library.py"
     },
     {
       "dependencies": [
@@ -622,6 +658,15 @@
     },
     {
       "dependencies": [
+        "semantic_art_review.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_semantic_art_review.py"
+    },
+    {
+      "dependencies": [
         "starlist_bridge.py"
       ],
       "dependents": [],
@@ -657,8 +702,8 @@
       "path": "tests/test_visual_similarity.py"
     }
   ],
-  "edge_count": 85,
+  "edge_count": 93,
   "generated_by": "dbrckk/repo-brain-v7-graph",
-  "node_count": 56,
+  "node_count": 60,
   "schema_version": 1
 }

@@ -115,6 +115,7 @@ tests/
   test_raster_pack.py
   test_remote_batch.py
   test_runtime_atlas.py
+  test_semantic_art_review.py
   test_starlist_bridge.py
   test_svg_tools.py
   test_toolchain_3d.py
@@ -149,6 +150,7 @@ README.md
 remote_batch.py
 runtime_3d_plan.py
 runtime_atlas.py
+semantic_art_review.py
 starlist_bridge.py
 svg_tools.py
 toolchain_3d.py
@@ -3745,6 +3747,39 @@ def test_build_runtime_atlas_rejects_event_at_animation_end(self)
 def test_validator_rejects_unsorted_animation_events(self)
 ````
 
+## File: tests/test_semantic_art_review.py
+````python
+class SemanticArtReviewTests(unittest.TestCase)
+⋮----
+def manifest(self, *, required=False)
+⋮----
+def test_unavailable_provider_is_non_blocking_when_optional(self)
+⋮----
+root = Path(td)
+image = root / "asset.png"
+⋮----
+result = review_raster_art(
+⋮----
+def test_required_provider_fails_closed_when_unavailable(self)
+⋮----
+def test_structured_vision_review_is_scored(self)
+⋮----
+credentials = root / ".pollinations"
+⋮----
+calls = []
+⋮----
+def runner(command, **kwargs)
+⋮----
+class Result
+⋮----
+returncode = 0
+stderr = ""
+stdout = ""
+result = Result()
+⋮----
+def test_low_semantic_score_fails_threshold(self)
+````
+
 ## File: tests/test_starlist_bridge.py
 ````python
 FAKE_RECOMMENDER = r'''#!/usr/bin/env python3
@@ -6422,7 +6457,17 @@ technical_warnings = list(technical_quality.get("warnings") or [])
 constraints = manifest.get("constraints")
 strict = (
 ⋮----
-combined_errors = list(errors) + technical_errors
+semantic_quality = None
+semantic_errors = []
+semantic_warnings = []
+⋮----
+semantic_enabled = (
+⋮----
+semantic_quality = semantic_reviewer(final, manifest)
+⋮----
+required = (
+⋮----
+combined_errors = list(errors) + technical_errors + semantic_errors
 ⋮----
 report = {
 report_path = out / "production-report.json"
@@ -6521,6 +6566,7 @@ py-modules = [
   "raster_pack",
   "remote_batch",
   "runtime_atlas",
+  "semantic_art_review",
   "runtime_3d_plan",
   "starlist_bridge",
   "svg_tools",
@@ -9444,6 +9490,70 @@ event_time = event.get("timeSeconds")
 event_time = float(event_time)
 ⋮----
 previous_time = event_time
+````
+
+## File: semantic_art_review.py
+````python
+class SemanticArtReviewError(RuntimeError)
+⋮----
+def _credential_available(*, environ=None, home: Path | None = None) -> bool
+⋮----
+env = os.environ if environ is None else environ
+⋮----
+root = Path.home() if home is None else Path(home)
+⋮----
+def _json_from_text(value: str) -> dict | None
+⋮----
+raw = str(value or "").strip()
+⋮----
+candidates = [raw]
+fenced = re.search(r"\{[\s\S]*\}", raw)
+⋮----
+parsed = json.loads(candidate)
+⋮----
+def _extract_review(stdout: str) -> dict | None
+⋮----
+outer = _json_from_text(stdout)
+⋮----
+required = {"overall", "anatomy", "artifacts", "textReadability", "styleConsistency"}
+⋮----
+value = outer.get(key)
+⋮----
+nested = _json_from_text(value)
+⋮----
+def _number(value, name: str) -> float
+⋮----
+result = float(value)
+⋮----
+constraints = manifest.get("constraints") if isinstance(manifest, dict) else {}
+constraints = constraints if isinstance(constraints, dict) else {}
+enabled = constraints.get("semanticArtReview") is True
+required = constraints.get("semanticArtReviewRequired") is True
+threshold = _number(constraints.get("semanticQualityMin", 0.65), "semanticQualityMin")
+⋮----
+executable = shutil.which("polli")
+authenticated = _credential_available(environ=environ, home=home)
+⋮----
+path = Path(path)
+⋮----
+uploaded = runner(
+⋮----
+upload_payload = _json_from_text(str(uploaded.stdout or "")) or {}
+image_url = str(
+⋮----
+asset_type = str(manifest.get("type") or "visual asset")
+importance = str(manifest.get("importance") or "primary")
+prompt = (
+reviewed = runner(
+⋮----
+value = _extract_review(str(reviewed.stdout or ""))
+⋮----
+scores = {
+issues = value.get("issues")
+⋮----
+issues = []
+issues = [str(item)[:240] for item in issues[:12]]
+passed = scores["overall"] >= threshold
 ````
 
 ## File: starlist_bridge.py

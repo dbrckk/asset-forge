@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T16:46:41Z
+Generated: 2026-09-20T16:49:01Z
 
 ### Git
 - Branch: `main`
-- Head: `c5ab9d5ab552`
-- Commit date: 2026-09-20T18:46:31+02:00
-- Commit: fix: make live pilot fail-safe when generation credentials are absent
-- Tracked files: 268
+- Head: `ada952393ef2`
+- Commit date: 2026-09-20T18:48:51+02:00
+- Commit: test: cover optional semantic AAA art review
+- Tracked files: 270
 
 ### Recently changed files
+- `tests/test_semantic_art_review.py`
+- `pyproject.toml`
+- `production_executor.py`
+- `semantic_art_review.py`
 - `.github/workflows/deadline-zero-live-pilot.yml`
-- `tests/test_asset_library.py`
-- `asset_library.py`
-- `tests/test_gltf_quality.py`
-- `.github/workflows/production-os-batch.yml`
 
 ### Project signals
 - `pyproject.toml`

@@ -1,13 +1,13 @@
 # Change impact
 
-Base: c86061724c506dcfcf446c79b7dafc833050c36e
-Head: c5ab9d5ab552f61e11b4b5a88c0a6e1f2019bdeb
+Base: c94907e536d2cc3a58fcdac7710e4cb67082953c
+Head: ada952393ef2bd51b8f1761499f46228096d8ed0
 
 ## Changed files
-- M .github/workflows/deadline-zero-live-pilot.yml
+- A tests/test_semantic_art_review.py
 
 ## Affected areas
-- .github
+- tests
 
 ## Related test candidates
 - No direct filename-based test match detected.

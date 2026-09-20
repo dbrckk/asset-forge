@@ -5,64 +5,115 @@
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
   "symbols": {
-    "AssetLibraryError": {
+    "ProductionExecutionError": {
       "source": {
-        "file": "asset_library.py",
-        "start": 15,
-        "end": 16
+        "file": "production_executor.py",
+        "start": 14,
+        "end": 15
       },
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "_library_lock": {
+    "_safe_asset_id": {
       "source": {
-        "file": "asset_library.py",
-        "start": 21,
-        "end": 38
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_atomic_write_json": {
-      "source": {
-        "file": "asset_library.py",
-        "start": 41,
-        "end": 54
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "default_library_path": {
-      "source": {
-        "file": "asset_library.py",
-        "start": 57,
-        "end": 61
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_sha256": {
-      "source": {
-        "file": "asset_library.py",
-        "start": 64,
-        "end": 69
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_reference_rows": {
-      "source": {
-        "file": "asset_library.py",
-        "start": 72,
-        "end": 79
+        "file": "production_executor.py",
+        "start": 18,
+        "end": 29
       },
       "symbol_dependencies": [
         {
-          "symbol": "AssetLibraryError",
+          "symbol": "ProductionExecutionError",
           "definitions": [
             {
-              "file": "asset_library.py",
-              "line": 15,
+              "file": "production_executor.py",
+              "line": 14,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_trusted_generated_source": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 32,
+        "end": 46
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 14,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_provenance_from_manifest": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 49,
+        "end": 66
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_stage_provided_source": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 69,
+        "end": 92
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 14,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "execute_generated_raster_job": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 95,
+        "end": 245
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ArtQualityError",
+          "definitions": [
+            {
+              "file": "art_quality.py",
+              "line": 7,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 14,
               "kind": "class",
               "language": "python"
             }
@@ -70,33 +121,332 @@
           "relation": "same_file"
         },
         {
-          "symbol": "_sha256",
+          "symbol": "SemanticArtReviewError",
           "definitions": [
             {
-              "file": "asset_library.py",
-              "line": 64,
+              "file": "semantic_art_review.py",
+              "line": 12,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "_provenance_from_manifest",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 49,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "same_file"
+        },
+        {
+          "symbol": "_safe_asset_id",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 18,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_stage_provided_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 69,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_trusted_generated_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 32,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "evaluate_raster_art",
+          "definitions": [
+            {
+              "file": "art_quality.py",
+              "line": 68,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 475,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "review_raster_art",
+          "definitions": [
+            {
+              "file": "semantic_art_review.py",
+              "line": 72,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
         }
       ],
-      "dependency_count": 2
+      "dependency_count": 10
     },
-    "request_fingerprint": {
+    "execute_generated_vector_job": {
       "source": {
-        "file": "asset_library.py",
-        "start": 82,
-        "end": 108
+        "file": "production_executor.py",
+        "start": 248,
+        "end": 349
       },
       "symbol_dependencies": [
         {
-          "symbol": "_reference_rows",
+          "symbol": "ProductionExecutionError",
           "definitions": [
             {
-              "file": "asset_library.py",
-              "line": 72,
+              "file": "production_executor.py",
+              "line": 14,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_provenance_from_manifest",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 49,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_safe_asset_id",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 18,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_stage_provided_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 69,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_trusted_generated_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 32,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 475,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 6
+    },
+    "execute_generated_3d_job": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 352,
+        "end": 516
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "LodGenerationError",
+          "definitions": [
+            {
+              "file": "lod_3d.py",
+              "line": 13,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 14,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_provenance_from_manifest",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 49,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_safe_asset_id",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 18,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_stage_provided_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 69,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_trusted_generated_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 32,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 849,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generate_lod_chain",
+          "definitions": [
+            {
+              "file": "lod_3d.py",
+              "line": 25,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 8
+    },
+    "SemanticArtReviewError": {
+      "source": {
+        "file": "semantic_art_review.py",
+        "start": 12,
+        "end": 13
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_credential_available": {
+      "source": {
+        "file": "semantic_art_review.py",
+        "start": 16,
+        "end": 21
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_json_from_text": {
+      "source": {
+        "file": "semantic_art_review.py",
+        "start": 24,
+        "end": 39
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_extract_review": {
+      "source": {
+        "file": "semantic_art_review.py",
+        "start": 42,
+        "end": 57
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_json_from_text",
+          "definitions": [
+            {
+              "file": "semantic_art_review.py",
+              "line": 24,
               "kind": "function",
               "language": "python"
             }
@@ -106,28 +456,41 @@
       ],
       "dependency_count": 1
     },
-    "_empty": {
+    "_number": {
       "source": {
-        "file": "asset_library.py",
-        "start": 111,
-        "end": 112
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "load_library": {
-      "source": {
-        "file": "asset_library.py",
-        "start": 115,
-        "end": 128
+        "file": "semantic_art_review.py",
+        "start": 60,
+        "end": 69
       },
       "symbol_dependencies": [
         {
-          "symbol": "AssetLibraryError",
+          "symbol": "SemanticArtReviewError",
           "definitions": [
             {
-              "file": "asset_library.py",
-              "line": 15,
+              "file": "semantic_art_review.py",
+              "line": 12,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "review_raster_art": {
+      "source": {
+        "file": "semantic_art_review.py",
+        "start": 72,
+        "end": 212
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "SemanticArtReviewError",
+          "definitions": [
+            {
+              "file": "semantic_art_review.py",
+              "line": 12,
               "kind": "class",
               "language": "python"
             }
@@ -135,212 +498,10 @@
           "relation": "same_file"
         },
         {
-          "symbol": "_empty",
+          "symbol": "_credential_available",
           "definitions": [
             {
-              "file": "asset_library.py",
-              "line": 111,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "lookup": {
-      "source": {
-        "file": "asset_library.py",
-        "start": 131,
-        "end": 147
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_sha256",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 64,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "load_library",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 115,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "_next_version": {
-      "source": {
-        "file": "asset_library.py",
-        "start": 150,
-        "end": 158
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "record_success": {
-      "source": {
-        "file": "asset_library.py",
-        "start": 161,
-        "end": 231
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "AssetLibraryError",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 15,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_atomic_write_json",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 41,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_library_lock",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 21,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_next_version",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 150,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_sha256",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 64,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "load_library",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 115,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 6
-    },
-    "hamming_hex": {
-      "source": {
-        "file": "asset_library.py",
-        "start": 234,
-        "end": 240
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "similar_entries": {
-      "source": {
-        "file": "asset_library.py",
-        "start": 243,
-        "end": 262
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "hamming_hex",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 234,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "load_library",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 115,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "AssetLibraryTests": {
-      "source": {
-        "file": "tests/test_asset_library.py",
-        "start": 15,
-        "end": 181
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "hamming_hex",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 234,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "job",
-          "definitions": [
-            {
-              "file": "tests/test_asset_library.py",
+              "file": "semantic_art_review.py",
               "line": 16,
               "kind": "function",
               "language": "python"
@@ -349,47 +510,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "lookup",
+          "symbol": "_extract_review",
           "definitions": [
             {
-              "file": "asset_library.py",
-              "line": 131,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "record_success",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 161,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "request_fingerprint",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 82,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "result",
-          "definitions": [
-            {
-              "file": "tests/test_asset_library.py",
-              "line": 39,
+              "file": "semantic_art_review.py",
+              "line": 42,
               "kind": "function",
               "language": "python"
             }
@@ -397,23 +522,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "similar_entries",
+          "symbol": "_json_from_text",
           "definitions": [
             {
-              "file": "asset_library.py",
-              "line": 243,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "test_exact_fingerprint_reuses_validated_object",
-          "definitions": [
-            {
-              "file": "tests/test_asset_library.py",
-              "line": 61,
+              "file": "semantic_art_review.py",
+              "line": 24,
               "kind": "function",
               "language": "python"
             }
@@ -421,135 +534,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "test_new_validated_generation_increments_version",
+          "symbol": "_number",
           "definitions": [
             {
-              "file": "tests/test_asset_library.py",
-              "line": 82,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_perceptual_deduplication_returns_near_matches",
-          "definitions": [
-            {
-              "file": "tests/test_asset_library.py",
-              "line": 157,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_reference_sha_changes_cache_key",
-          "definitions": [
-            {
-              "file": "tests/test_asset_library.py",
-              "line": 139,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_repeated_success_record_is_idempotent",
-          "definitions": [
-            {
-              "file": "tests/test_asset_library.py",
-              "line": 113,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 12
-    },
-    "job": {
-      "source": {
-        "file": "tests/test_asset_library.py",
-        "start": 16,
-        "end": 37
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "result": {
-      "source": {
-        "file": "tests/test_asset_library.py",
-        "start": 39,
-        "end": 59
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "test_exact_fingerprint_reuses_validated_object": {
-      "source": {
-        "file": "tests/test_asset_library.py",
-        "start": 61,
-        "end": 80
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "job",
-          "definitions": [
-            {
-              "file": "tests/test_asset_library.py",
-              "line": 16,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "lookup",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 131,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "record_success",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 161,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "request_fingerprint",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 82,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "result",
-          "definitions": [
-            {
-              "file": "tests/test_asset_library.py",
-              "line": 39,
+              "file": "semantic_art_review.py",
+              "line": 60,
               "kind": "function",
               "language": "python"
             }
@@ -559,19 +548,49 @@
       ],
       "dependency_count": 5
     },
-    "test_new_validated_generation_increments_version": {
+    "SemanticArtReviewTests": {
       "source": {
-        "file": "tests/test_asset_library.py",
-        "start": 82,
-        "end": 111
+        "file": "tests/test_semantic_art_review.py",
+        "start": 10,
+        "end": 148
       },
       "symbol_dependencies": [
         {
-          "symbol": "job",
+          "symbol": "Result",
           "definitions": [
             {
-              "file": "tests/test_asset_library.py",
-              "line": 16,
+              "file": "tests/test_semantic_art_review.py",
+              "line": 67,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 117,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "SemanticArtReviewError",
+          "definitions": [
+            {
+              "file": "semantic_art_review.py",
+              "line": 12,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "manifest",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 11,
               "kind": "function",
               "language": "python"
             }
@@ -579,11 +598,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "record_success",
+          "symbol": "review_raster_art",
           "definitions": [
             {
-              "file": "asset_library.py",
-              "line": 161,
+              "file": "semantic_art_review.py",
+              "line": 72,
               "kind": "function",
               "language": "python"
             }
@@ -591,23 +610,65 @@
           "relation": "imported_module"
         },
         {
-          "symbol": "request_fingerprint",
+          "symbol": "runner",
           "definitions": [
             {
-              "file": "asset_library.py",
-              "line": 82,
+              "file": "tests/test_semantic_art_review.py",
+              "line": 65,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 116,
               "kind": "function",
               "language": "python"
             }
           ],
-          "relation": "imported_module"
+          "relation": "same_file"
         },
         {
-          "symbol": "result",
+          "symbol": "test_low_semantic_score_fails_threshold",
           "definitions": [
             {
-              "file": "tests/test_asset_library.py",
-              "line": 39,
+              "file": "tests/test_semantic_art_review.py",
+              "line": 107,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_required_provider_fails_closed_when_unavailable",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 38,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_structured_vision_review_is_scored",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 55,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_unavailable_provider_is_non_blocking_when_optional",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 22,
               "kind": "function",
               "language": "python"
             }
@@ -615,21 +676,30 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 4
+      "dependency_count": 9
     },
-    "test_repeated_success_record_is_idempotent": {
+    "manifest": {
       "source": {
-        "file": "tests/test_asset_library.py",
-        "start": 113,
-        "end": 137
+        "file": "tests/test_semantic_art_review.py",
+        "start": 11,
+        "end": 20
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "test_unavailable_provider_is_non_blocking_when_optional": {
+      "source": {
+        "file": "tests/test_semantic_art_review.py",
+        "start": 22,
+        "end": 36
       },
       "symbol_dependencies": [
         {
-          "symbol": "job",
+          "symbol": "manifest",
           "definitions": [
             {
-              "file": "tests/test_asset_library.py",
-              "line": 16,
+              "file": "tests/test_semantic_art_review.py",
+              "line": 11,
               "kind": "function",
               "language": "python"
             }
@@ -637,69 +707,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "record_success",
+          "symbol": "review_raster_art",
           "definitions": [
             {
-              "file": "asset_library.py",
-              "line": 161,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "request_fingerprint",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 82,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "result",
-          "definitions": [
-            {
-              "file": "tests/test_asset_library.py",
-              "line": 39,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 4
-    },
-    "test_reference_sha_changes_cache_key": {
-      "source": {
-        "file": "tests/test_asset_library.py",
-        "start": 139,
-        "end": 155
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "job",
-          "definitions": [
-            {
-              "file": "tests/test_asset_library.py",
-              "line": 16,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "request_fingerprint",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 82,
+              "file": "semantic_art_review.py",
+              "line": 72,
               "kind": "function",
               "language": "python"
             }
@@ -709,31 +721,31 @@
       ],
       "dependency_count": 2
     },
-    "test_perceptual_deduplication_returns_near_matches": {
+    "test_required_provider_fails_closed_when_unavailable": {
       "source": {
-        "file": "tests/test_asset_library.py",
-        "start": 157,
-        "end": 181
+        "file": "tests/test_semantic_art_review.py",
+        "start": 38,
+        "end": 53
       },
       "symbol_dependencies": [
         {
-          "symbol": "hamming_hex",
+          "symbol": "SemanticArtReviewError",
           "definitions": [
             {
-              "file": "asset_library.py",
-              "line": 234,
-              "kind": "function",
+              "file": "semantic_art_review.py",
+              "line": 12,
+              "kind": "class",
               "language": "python"
             }
           ],
           "relation": "imported_module"
         },
         {
-          "symbol": "job",
+          "symbol": "manifest",
           "definitions": [
             {
-              "file": "tests/test_asset_library.py",
-              "line": 16,
+              "file": "tests/test_semantic_art_review.py",
+              "line": 11,
               "kind": "function",
               "language": "python"
             }
@@ -741,47 +753,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "record_success",
+          "symbol": "review_raster_art",
           "definitions": [
             {
-              "file": "asset_library.py",
-              "line": 161,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "request_fingerprint",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 82,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "result",
-          "definitions": [
-            {
-              "file": "tests/test_asset_library.py",
-              "line": 39,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "similar_entries",
-          "definitions": [
-            {
-              "file": "asset_library.py",
-              "line": 243,
+              "file": "semantic_art_review.py",
+              "line": 72,
               "kind": "function",
               "language": "python"
             }
@@ -789,7 +765,275 @@
           "relation": "imported_module"
         }
       ],
-      "dependency_count": 6
+      "dependency_count": 3
+    },
+    "test_structured_vision_review_is_scored": {
+      "source": {
+        "file": "tests/test_semantic_art_review.py",
+        "start": 55,
+        "end": 105
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 67,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 117,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "manifest",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 11,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "review_raster_art",
+          "definitions": [
+            {
+              "file": "semantic_art_review.py",
+              "line": 72,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 65,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 116,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "runner": {
+      "source": {
+        "file": "tests/test_semantic_art_review.py",
+        "start": 65,
+        "end": 185
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 67,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 117,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "manifest",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 11,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "review_raster_art",
+          "definitions": [
+            {
+              "file": "semantic_art_review.py",
+              "line": 72,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_low_semantic_score_fails_threshold",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 107,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "Result": {
+      "source": {
+        "file": "tests/test_semantic_art_review.py",
+        "start": 67,
+        "end": 187
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "manifest",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 11,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "review_raster_art",
+          "definitions": [
+            {
+              "file": "semantic_art_review.py",
+              "line": 72,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 65,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 116,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_low_semantic_score_fails_threshold",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 107,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "test_low_semantic_score_fails_threshold": {
+      "source": {
+        "file": "tests/test_semantic_art_review.py",
+        "start": 107,
+        "end": 148
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 67,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 117,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "manifest",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 11,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "review_raster_art",
+          "definitions": [
+            {
+              "file": "semantic_art_review.py",
+              "line": 72,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "runner",
+          "definitions": [
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 65,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_semantic_art_review.py",
+              "line": 116,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
     }
   }
 }

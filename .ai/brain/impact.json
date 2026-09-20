@@ -1,31 +1,38 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "0b57ab31e2029b99dc56cf53ef71a878c64d28b6",
-  "head": "c5ab9d5ab552f61e11b4b5a88c0a6e1f2019bdeb",
+  "base": "c5ab9d5ab552f61e11b4b5a88c0a6e1f2019bdeb",
+  "head": "ada952393ef2bd51b8f1761499f46228096d8ed0",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": ".github/workflows/deadline-zero-live-pilot.yml",
+      "path": "production_executor.py",
       "status": "M"
     },
     {
-      "path": "asset_library.py",
+      "path": "pyproject.toml",
       "status": "M"
     },
     {
-      "path": "tests/test_asset_library.py",
-      "status": "M"
+      "path": "semantic_art_review.py",
+      "status": "A"
+    },
+    {
+      "path": "tests/test_semantic_art_review.py",
+      "status": "A"
     }
   ],
   "changed_source_files": [
-    "asset_library.py",
-    "tests/test_asset_library.py"
+    "production_executor.py",
+    "semantic_art_review.py",
+    "tests/test_semantic_art_review.py"
   ],
   "impacted_files": [
     "asset_forge.py",
-    "asset_library.py",
-    "tests/test_asset_library.py"
+    "production_executor.py",
+    "semantic_art_review.py",
+    "tests/test_production_executor.py",
+    "tests/test_semantic_art_review.py"
   ],
   "impacted_symbols": [
     {
@@ -143,139 +150,392 @@
       "line": 748
     },
     {
-      "name": "AssetLibraryError",
+      "name": "ProductionExecutionError",
       "kind": "class",
-      "file": "asset_library.py",
-      "line": 15
+      "file": "production_executor.py",
+      "line": 14
     },
     {
-      "name": "_library_lock",
+      "name": "_safe_asset_id",
       "kind": "function",
-      "file": "asset_library.py",
-      "line": 21
+      "file": "production_executor.py",
+      "line": 18
     },
     {
-      "name": "_atomic_write_json",
+      "name": "_trusted_generated_source",
       "kind": "function",
-      "file": "asset_library.py",
-      "line": 41
+      "file": "production_executor.py",
+      "line": 32
     },
     {
-      "name": "default_library_path",
+      "name": "_provenance_from_manifest",
       "kind": "function",
-      "file": "asset_library.py",
-      "line": 57
+      "file": "production_executor.py",
+      "line": 49
     },
     {
-      "name": "_sha256",
+      "name": "_stage_provided_source",
       "kind": "function",
-      "file": "asset_library.py",
-      "line": 64
+      "file": "production_executor.py",
+      "line": 69
     },
     {
-      "name": "_reference_rows",
+      "name": "execute_generated_raster_job",
       "kind": "function",
-      "file": "asset_library.py",
+      "file": "production_executor.py",
+      "line": 95
+    },
+    {
+      "name": "execute_generated_vector_job",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 248
+    },
+    {
+      "name": "execute_generated_3d_job",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 352
+    },
+    {
+      "name": "SemanticArtReviewError",
+      "kind": "class",
+      "file": "semantic_art_review.py",
+      "line": 12
+    },
+    {
+      "name": "_credential_available",
+      "kind": "function",
+      "file": "semantic_art_review.py",
+      "line": 16
+    },
+    {
+      "name": "_json_from_text",
+      "kind": "function",
+      "file": "semantic_art_review.py",
+      "line": 24
+    },
+    {
+      "name": "_extract_review",
+      "kind": "function",
+      "file": "semantic_art_review.py",
+      "line": 42
+    },
+    {
+      "name": "_number",
+      "kind": "function",
+      "file": "semantic_art_review.py",
+      "line": 60
+    },
+    {
+      "name": "review_raster_art",
+      "kind": "function",
+      "file": "semantic_art_review.py",
       "line": 72
-    },
-    {
-      "name": "request_fingerprint",
-      "kind": "function",
-      "file": "asset_library.py",
-      "line": 82
-    },
-    {
-      "name": "_empty",
-      "kind": "function",
-      "file": "asset_library.py",
-      "line": 111
-    },
-    {
-      "name": "load_library",
-      "kind": "function",
-      "file": "asset_library.py",
-      "line": 115
-    },
-    {
-      "name": "lookup",
-      "kind": "function",
-      "file": "asset_library.py",
-      "line": 131
-    },
-    {
-      "name": "_next_version",
-      "kind": "function",
-      "file": "asset_library.py",
-      "line": 150
-    },
-    {
-      "name": "record_success",
-      "kind": "function",
-      "file": "asset_library.py",
-      "line": 161
-    },
-    {
-      "name": "hamming_hex",
-      "kind": "function",
-      "file": "asset_library.py",
-      "line": 234
-    },
-    {
-      "name": "similar_entries",
-      "kind": "function",
-      "file": "asset_library.py",
-      "line": 243
-    },
-    {
-      "name": "AssetLibraryTests",
-      "kind": "class",
-      "file": "tests/test_asset_library.py",
-      "line": 15
     },
     {
       "name": "job",
       "kind": "function",
-      "file": "tests/test_asset_library.py",
-      "line": 16
+      "file": "tests/test_production_executor.py",
+      "line": 13
     },
     {
-      "name": "result",
-      "kind": "function",
-      "file": "tests/test_asset_library.py",
-      "line": 39
+      "name": "ProductionExecutorTests",
+      "kind": "class",
+      "file": "tests/test_production_executor.py",
+      "line": 27
     },
     {
-      "name": "test_exact_fingerprint_reuses_validated_object",
+      "name": "test_generated_png_flows_through_processing_validation_and_report",
       "kind": "function",
-      "file": "tests/test_asset_library.py",
-      "line": 61
+      "file": "tests/test_production_executor.py",
+      "line": 28
     },
     {
-      "name": "test_new_validated_generation_increments_version",
+      "name": "generator",
       "kind": "function",
-      "file": "tests/test_asset_library.py",
-      "line": 82
+      "file": "tests/test_production_executor.py",
+      "line": 32
     },
     {
-      "name": "test_repeated_success_record_is_idempotent",
+      "name": "optimizer",
       "kind": "function",
-      "file": "tests/test_asset_library.py",
-      "line": 113
+      "file": "tests/test_production_executor.py",
+      "line": 37
     },
     {
-      "name": "test_reference_sha_changes_cache_key",
+      "name": "validator",
       "kind": "function",
-      "file": "tests/test_asset_library.py",
-      "line": 139
+      "file": "tests/test_production_executor.py",
+      "line": 41
     },
     {
-      "name": "test_perceptual_deduplication_returns_near_matches",
+      "name": "test_webp_target_encodes_before_validation",
       "kind": "function",
-      "file": "tests/test_asset_library.py",
-      "line": 157
+      "file": "tests/test_production_executor.py",
+      "line": 59
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 63
+    },
+    {
+      "name": "encode",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 68
+    },
+    {
+      "name": "validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 73
+    },
+    {
+      "name": "test_validation_errors_block_artifact_promotion",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 87
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 91
+    },
+    {
+      "name": "optimizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 96
+    },
+    {
+      "name": "test_generated_vector_is_sanitized_normalized_and_validated",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 112
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 119
+    },
+    {
+      "name": "sanitizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 127
+    },
+    {
+      "name": "normalizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 131
+    },
+    {
+      "name": "profile_validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 138
+    },
+    {
+      "name": "test_vector_validation_errors_block_promotion",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 156
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 163
+    },
+    {
+      "name": "copy_step",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 168
+    },
+    {
+      "name": "test_generated_3d_flows_through_profile_quality_and_godot_gates",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 186
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 194
+    },
+    {
+      "name": "profile_validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 203
+    },
+    {
+      "name": "quality",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 208
+    },
+    {
+      "name": "godot",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 217
+    },
+    {
+      "name": "test_generated_character_3d_fails_when_profile_quality_fails",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 236
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 243
+    },
+    {
+      "name": "test_provided_png_source_skips_generator_and_is_staged",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 271
+    },
+    {
+      "name": "optimizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 280
+    },
+    {
+      "name": "test_provided_source_symlink_is_rejected",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 301
+    },
+    {
+      "name": "test_generator_source_must_stay_inside_job_output",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 329
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 335
+    },
+    {
+      "name": "test_asset_id_cannot_escape_job_output",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 351
+    },
+    {
+      "name": "test_non_raster_target_fails_closed",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 369
+    },
+    {
+      "name": "test_generated_3d_reports_lod_artifacts_when_enabled",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 382
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 393
+    },
+    {
+      "name": "lod_reporter",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 398
+    },
+    {
+      "name": "test_required_lod_toolchain_unavailable_blocks_3d_promotion",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 431
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 442
+    },
+    {
+      "name": "SemanticArtReviewTests",
+      "kind": "class",
+      "file": "tests/test_semantic_art_review.py",
+      "line": 10
+    },
+    {
+      "name": "manifest",
+      "kind": "function",
+      "file": "tests/test_semantic_art_review.py",
+      "line": 11
+    },
+    {
+      "name": "test_unavailable_provider_is_non_blocking_when_optional",
+      "kind": "function",
+      "file": "tests/test_semantic_art_review.py",
+      "line": 22
+    },
+    {
+      "name": "test_required_provider_fails_closed_when_unavailable",
+      "kind": "function",
+      "file": "tests/test_semantic_art_review.py",
+      "line": 38
+    },
+    {
+      "name": "test_structured_vision_review_is_scored",
+      "kind": "function",
+      "file": "tests/test_semantic_art_review.py",
+      "line": 55
+    },
+    {
+      "name": "runner",
+      "kind": "function",
+      "file": "tests/test_semantic_art_review.py",
+      "line": 65
+    },
+    {
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_semantic_art_review.py",
+      "line": 67
+    },
+    {
+      "name": "test_low_semantic_score_fails_threshold",
+      "kind": "function",
+      "file": "tests/test_semantic_art_review.py",
+      "line": 107
+    },
+    {
+      "name": "runner",
+      "kind": "function",
+      "file": "tests/test_semantic_art_review.py",
+      "line": 116
+    },
+    {
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_semantic_art_review.py",
+      "line": 117
     }
   ],
   "selected_tests": [
-    "tests/test_asset_library.py"
+    "tests/test_production_executor.py",
+    "tests/test_semantic_art_review.py"
   ]
 }
