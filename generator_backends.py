@@ -13,6 +13,12 @@ from typing import Callable
 
 from art_quality import ArtQualityError, evaluate_raster_art
 from visual_similarity import compare_against_references
+from cloudflare_backend import (
+    CloudflareGenerationError,
+    DEFAULT_MODEL as DEFAULT_CLOUDFLARE_MODEL,
+    generate as cloudflare_generate,
+    status as cloudflare_status,
+)
 from colab_queue import (
     ColabQueueError,
     download_result_asset,
@@ -84,7 +90,9 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
             or ""
         ).strip()
     )
+    cloudflare = cloudflare_status(environ=env)
     return {
+        "cloudflare": cloudflare,
         "pollinations": {
             "installed": polli is not None,
             "executable": polli,
@@ -392,7 +400,7 @@ def pollinations_command(
 
 
 def select_generation_backend(job: dict, requested: str = "auto") -> str:
-    if requested in {"pollinations", "imagen-codex", "qwen-colab"}:
+    if requested in {"pollinations", "imagen-codex", "qwen-colab", "cloudflare"}:
         return requested
     if requested != "auto":
         raise GenerationError(f"unsupported generator backend: {requested}")
@@ -400,8 +408,11 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str:
     asset_type = str(job.get("assetType") or "")
     status = generator_backend_status()
     pollinations = status.get("pollinations", {})
+    cloudflare = status.get("cloudflare", {})
     imagen_codex = status.get("imagenCodex", {})
     if asset_type in RASTER_GENERATED_TYPES:
+        if cloudflare.get("rasterReady") is True:
+            return "cloudflare"
         if pollinations.get("rasterVectorReady") is True:
             return "pollinations"
         raise GenerationError("no authenticated raster generation backend is ready")
@@ -523,7 +534,7 @@ def execute_generated_asset(
         raise GenerationError(f"unsupported generated asset type: {asset_type or '<missing>'}")
 
     executable = None
-    if backend != "qwen-colab":
+    if backend not in {"qwen-colab", "cloudflare"}:
         executable_name = "polli" if backend == "pollinations" else "imagen"
         executable = shutil.which(executable_name)
         if not executable:
@@ -560,7 +571,7 @@ def execute_generated_asset(
     references = [Path(path) for path in (reference_paths or [])]
     if references and asset_type not in RASTER_GENERATED_TYPES:
         raise GenerationError("visual references are currently supported for raster generation only")
-    if references and backend not in {"pollinations", "imagen-codex", "qwen-colab"}:
+    if references and backend not in {"pollinations", "imagen-codex", "qwen-colab", "cloudflare"}:
         raise GenerationError("selected backend does not support visual references")
     if len(references) > 4:
         raise GenerationError("at most 4 visual references are supported")
@@ -573,6 +584,7 @@ def execute_generated_asset(
         DEFAULT_REFERENCE_MODEL if backend == "pollinations" and references else
         "codex-2" if backend == "imagen-codex" else
         "Qwen/Qwen-Image-2.1" if backend == "qwen-colab" else
+        DEFAULT_CLOUDFLARE_MODEL if backend == "cloudflare" else
         None
     )
     reference_urls = []
@@ -587,7 +599,7 @@ def execute_generated_asset(
                 )
             )
 
-    if backend == "qwen-colab":
+    if backend in {"qwen-colab", "cloudflare"}:
         command = None
     elif backend == "pollinations":
         command = pollinations_command(
@@ -664,7 +676,7 @@ def execute_generated_asset(
                     "use a clean readable silhouette, stable frame occupancy, and stronger local contrast."
                 )
 
-        if backend == "qwen-colab":
+        if backend in {"qwen-colab", "cloudflare"}:
             attempt_command = None
             attempt_job = json.loads(json.dumps(job))
             if retry_guidance:
@@ -688,28 +700,55 @@ def execute_generated_asset(
             manifest_value = dict(manifest_value)
             manifest_value["constraints"] = constraint_value
             attempt_job["manifest"] = manifest_value
-            try:
-                submitted = submit_colab_job(
-                    attempt_job,
-                    reference_paths=references,
-                )
-                colab_result = wait_colab_result(
-                    submitted["id"],
-                    repository=submitted["repository"],
-                    branch=submitted["branch"],
-                    timeout_seconds=timeout,
-                    poll_seconds=min(10.0, max(2.0, timeout / 30.0)),
-                )
-                download_result_asset(
-                    colab_result,
-                    output,
-                    repository=submitted["repository"],
-                    branch=submitted["branch"],
-                )
-            except (ColabQueueError, TimeoutError, OSError, urllib.error.URLError) as exc:
-                raise GenerationError(f"qwen-colab generation failed: {exc}") from exc
+            if backend == "qwen-colab":
+                try:
+                    submitted = submit_colab_job(
+                        attempt_job,
+                        reference_paths=references,
+                    )
+                    colab_result = wait_colab_result(
+                        submitted["id"],
+                        repository=submitted["repository"],
+                        branch=submitted["branch"],
+                        timeout_seconds=timeout,
+                        poll_seconds=min(10.0, max(2.0, timeout / 30.0)),
+                    )
+                    download_result_asset(
+                        colab_result,
+                        output,
+                        repository=submitted["repository"],
+                        branch=submitted["branch"],
+                    )
+                except (ColabQueueError, TimeoutError, OSError, urllib.error.URLError) as exc:
+                    raise GenerationError(f"qwen-colab generation failed: {exc}") from exc
+                metadata = _sanitize_metadata(colab_result.get("metadata") or {})
+            else:
+                prompt = build_generation_prompt(attempt_job)
+                if references:
+                    prompt += (
+                        " Use the reference image as a strict identity and art-direction anchor. "
+                        "Preserve subject identity, silhouette, palette, materials, proportions, "
+                        "and camera language while applying only the requested change."
+                    )
+                dimensions = _generation_dimensions(attempt_job) or (1024, 1024)
+                try:
+                    metadata = cloudflare_generate(
+                        prompt,
+                        output,
+                        width=dimensions[0],
+                        height=dimensions[1],
+                        seed=int(constraint_value.get("seed") or 0),
+                        steps=int(constraint_value.get("generationSteps") or 20),
+                        reference_path=(references[0] if references else None),
+                        strength=float(constraint_value.get("referenceStrength") or 0.55),
+                        guidance=float(constraint_value.get("guidance") or 7.5),
+                        model=effective_model or DEFAULT_CLOUDFLARE_MODEL,
+                        timeout_seconds=timeout,
+                    )
+                except CloudflareGenerationError as exc:
+                    raise GenerationError(f"cloudflare generation failed: {exc}") from exc
+                metadata = _sanitize_metadata(metadata)
             stdout = ""
-            metadata = _sanitize_metadata(colab_result.get("metadata") or {})
             current_output = output
         else:
             attempt_command = list(command)
@@ -877,6 +916,8 @@ def execute_generated_asset(
                     if backend == "pollinations"
                     else "github-staged-reference"
                     if backend == "qwen-colab"
+                    else "cloudflare-inline-base64"
+                    if backend == "cloudflare"
                     else "local-input-ref"
                 ),
             }
