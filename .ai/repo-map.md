@@ -3196,6 +3196,8 @@ def lod_reporter(source, output_dir, profile)
 ⋮----
 lod = output_dir / "hero-run.lod1.glb"
 ⋮----
+def test_required_collision_blocks_godot_prop_without_collision_node(self)
+⋮----
 def test_required_lod_toolchain_unavailable_blocks_3d_promotion(self)
 ````
 

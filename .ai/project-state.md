@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T17:06:38Z
+Generated: 2026-09-20T17:07:24Z
 
 ### Git
 - Branch: `main`
-- Head: `f401ba6429d6`
-- Commit date: 2026-09-20T19:06:26+02:00
-- Commit: feat: enforce required collision readiness for 3D delivery
+- Head: `89f70b99ea0b`
+- Commit date: 2026-09-20T19:07:12+02:00
+- Commit: test: enforce required 3D collision readiness
 - Tracked files: 274
 
 ### Recently changed files
+- `tests/test_production_executor.py`
 - `production_executor.py`
 - `godot_3d_delivery.py`
 - `.github/workflows/deadline-zero-live-pilot.yml`
 - `tests/test_asset_library.py`
-- `asset_library.py`
 
 ### Project signals
 - `pyproject.toml`
