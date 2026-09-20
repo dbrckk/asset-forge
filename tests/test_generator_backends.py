@@ -399,10 +399,6 @@ class GeneratorBackendsTests(unittest.TestCase):
             build_generation_prompt(bad)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
     def test_raster_generation_uploads_and_passes_visual_reference(self):
         with tempfile.TemporaryDirectory() as td:
             out = Path(td)
@@ -471,3 +467,7 @@ if __name__ == "__main__":
                         backend="pollinations",
                         reference_paths=[reference],
                     )
+
+
+if __name__ == "__main__":
+    unittest.main()
