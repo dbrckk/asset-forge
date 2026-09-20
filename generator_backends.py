@@ -409,8 +409,6 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str:
             return "pollinations"
         if qwen_colab.get("rasterReady") is True:
             return "qwen-colab"
-        if imagen_codex.get("rasterReady") is True:
-            return "imagen-codex"
         raise GenerationError("no authenticated raster generation backend is ready")
 
     if asset_type in VECTOR_GENERATED_TYPES:
@@ -595,26 +593,6 @@ def execute_generated_asset(
             )
 
     if backend == "qwen-colab":
-        try:
-            submitted = submit_colab_job(
-                job,
-                reference_paths=references,
-            )
-            colab_result = wait_colab_result(
-                submitted["id"],
-                repository=submitted["repository"],
-                branch=submitted["branch"],
-                timeout_seconds=timeout,
-                poll_seconds=min(10.0, max(2.0, timeout / 30.0)),
-            )
-            download_result_asset(
-                colab_result,
-                output,
-                repository=submitted["repository"],
-                branch=submitted["branch"],
-            )
-        except (ColabQueueError, TimeoutError, OSError, urllib.error.URLError) as exc:
-            raise GenerationError(f"qwen-colab generation failed: {exc}") from exc
         command = None
     elif backend == "pollinations":
         command = pollinations_command(
@@ -677,12 +655,8 @@ def execute_generated_asset(
     previous_similarity_failed = False
     previous_technical_failed = False
     for attempt in range(retry_budget + 1):
-        if backend == "qwen-colab":
-            attempt_command = None
-        else:
-            attempt_command = list(command)
-        if attempt > 0 and attempt_command is not None:
-            retry_guidance = []
+        retry_guidance = []
+        if attempt > 0:
             if previous_similarity_failed:
                 retry_guidance.append(
                     "The previous generated variant drifted too far from the reference. "
@@ -694,17 +668,62 @@ def execute_generated_asset(
                     "Keep all visible art away from image borders, preserve transparent padding, "
                     "use a clean readable silhouette, stable frame occupancy, and stronger local contrast."
                 )
+
+        if backend == "qwen-colab":
+            attempt_command = None
+            attempt_job = json.loads(json.dumps(job))
+            if retry_guidance:
+                attempt_job["instruction"] = (
+                    str(attempt_job.get("instruction") or "")
+                    + " "
+                    + " ".join(retry_guidance)
+                ).strip()
+            manifest_value = (
+                attempt_job.get("manifest")
+                if isinstance(attempt_job.get("manifest"), dict)
+                else {}
+            )
+            constraint_value = (
+                manifest_value.get("constraints")
+                if isinstance(manifest_value.get("constraints"), dict)
+                else {}
+            )
+            constraint_value = dict(constraint_value)
+            constraint_value["seed"] = int(constraint_value.get("seed") or 0) + attempt
+            manifest_value = dict(manifest_value)
+            manifest_value["constraints"] = constraint_value
+            attempt_job["manifest"] = manifest_value
+            try:
+                submitted = submit_colab_job(
+                    attempt_job,
+                    reference_paths=references,
+                )
+                colab_result = wait_colab_result(
+                    submitted["id"],
+                    repository=submitted["repository"],
+                    branch=submitted["branch"],
+                    timeout_seconds=timeout,
+                    poll_seconds=min(10.0, max(2.0, timeout / 30.0)),
+                )
+                download_result_asset(
+                    colab_result,
+                    output,
+                    repository=submitted["repository"],
+                    branch=submitted["branch"],
+                )
+            except (ColabQueueError, TimeoutError, OSError, urllib.error.URLError) as exc:
+                raise GenerationError(f"qwen-colab generation failed: {exc}") from exc
+            stdout = ""
+            metadata = _sanitize_metadata(colab_result.get("metadata") or {})
+            current_output = output
+        else:
+            attempt_command = list(command)
             if retry_guidance:
                 guidance = " ".join(retry_guidance)
                 if backend == "pollinations":
                     attempt_command[3] = attempt_command[3] + " " + guidance
                 else:
                     attempt_command[-1] = attempt_command[-1] + " " + guidance
-        if backend == "qwen-colab":
-            stdout = ""
-            metadata = _sanitize_metadata(colab_result.get("metadata") or {})
-            current_output = output
-        else:
             completed = runner(
                 attempt_command,
                 check=False,
