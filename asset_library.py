@@ -4,6 +4,8 @@ import hashlib
 import json
 import os
 import shutil
+import tempfile
+from contextlib import contextmanager
 from pathlib import Path
 
 
@@ -12,6 +14,44 @@ LIBRARY_SCHEMA = "asset-forge/library/v1"
 
 class AssetLibraryError(RuntimeError):
     pass
+
+
+
+@contextmanager
+def _library_lock(path: Path):
+    lock_path = Path(str(path) + ".lock")
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    handle = lock_path.open("a+b")
+    try:
+        try:
+            import fcntl
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        except ImportError:
+            pass
+        yield
+    finally:
+        try:
+            import fcntl
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+        except ImportError:
+            pass
+        handle.close()
+
+
+def _atomic_write_json(path: Path, payload: dict) -> None:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, raw = tempfile.mkstemp(prefix=path.name + ".", suffix=".tmp", dir=str(path.parent))
+    temp = Path(raw)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temp, path)
+    finally:
+        if temp.exists():
+            temp.unlink()
 
 
 def default_library_path() -> Path:
@@ -141,8 +181,6 @@ def record_success(
 
     project = str(job.get("project") or "")
     asset_id = str(job.get("assetId") or "")
-    library = load_library(library_path)
-    version = _next_version(library["entries"], project, asset_id)
 
     validation = result.get("validation") if isinstance(result.get("validation"), dict) else {}
     technical = validation.get("technicalArt") if isinstance(validation.get("technicalArt"), dict) else {}
@@ -156,28 +194,41 @@ def record_success(
         else None
     )
 
-    entry = {
-        "fingerprint": fingerprint,
-        "project": project,
-        "assetId": asset_id,
-        "assetType": job.get("assetType"),
-        "version": version,
-        "sha256": digest,
-        "artifact": str(stored),
-        "bytes": stored.stat().st_size,
-        "backend": generation.get("backend"),
-        "model": generation.get("model"),
-        "technicalQuality": technical.get("score"),
-        "visualSimilarity": final_similarity,
-        "perceptualHash": metrics.get("perceptualHash"),
-        "averageRgb": metrics.get("averageRgb"),
-    }
-    library["entries"].append(entry)
-    library_path.write_text(
-        json.dumps(library, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-    return entry
+    with _library_lock(library_path):
+        library = load_library(library_path)
+        existing = next(
+            (
+                dict(item)
+                for item in reversed(library["entries"])
+                if isinstance(item, dict)
+                and item.get("fingerprint") == fingerprint
+                and item.get("sha256") == digest
+            ),
+            None,
+        )
+        if existing is not None:
+            return existing
+
+        version = _next_version(library["entries"], project, asset_id)
+        entry = {
+            "fingerprint": fingerprint,
+            "project": project,
+            "assetId": asset_id,
+            "assetType": job.get("assetType"),
+            "version": version,
+            "sha256": digest,
+            "artifact": str(stored),
+            "bytes": stored.stat().st_size,
+            "backend": generation.get("backend"),
+            "model": generation.get("model"),
+            "technicalQuality": technical.get("score"),
+            "visualSimilarity": final_similarity,
+            "perceptualHash": metrics.get("perceptualHash"),
+            "averageRgb": metrics.get("averageRgb"),
+        }
+        library["entries"].append(entry)
+        _atomic_write_json(library_path, library)
+        return entry
 
 
 def hamming_hex(left: str, right: str) -> int:
