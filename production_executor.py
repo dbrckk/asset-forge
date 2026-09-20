@@ -7,6 +7,7 @@ from typing import Callable
 
 from art_quality import ArtQualityError, evaluate_raster_art
 from generator_backends import THREE_D_GENERATED_TYPES, VECTOR_GENERATED_TYPES, execute_generated_3d_asset, execute_generated_asset
+from lod_3d import LodGenerationError, generate_lod_chain
 
 
 class ProductionExecutionError(RuntimeError):
