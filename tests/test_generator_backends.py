@@ -401,3 +401,73 @@ class GeneratorBackendsTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+    def test_raster_generation_uploads_and_passes_visual_reference(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            reference = out / "parent.png"
+            reference.write_bytes(b"PNG")
+            seen = []
+
+            def runner(command, **kwargs):
+                seen.append(command)
+                if command[1] == "upload":
+                    class Upload:
+                        returncode = 0
+                        stdout = '{"url":"https://media.pollinations.ai/parent-ref"}'
+                        stderr = ""
+                    return Upload()
+                target = Path(command[command.index("--output") + 1])
+                target.write_bytes(b"PNG")
+                class Generate:
+                    returncode = 0
+                    stdout = "{}"
+                    stderr = ""
+                return Generate()
+
+            with patch("generator_backends.shutil.which", return_value="/usr/bin/polli"):
+                result = execute_generated_asset(
+                    job(),
+                    out,
+                    backend="pollinations",
+                    reference_paths=[reference],
+                    runner=runner,
+                    raster_normalizer=lambda raw, output, value: (
+                        output.write_bytes(raw.read_bytes())
+                        and {"width": 64, "height": 64, "columns": 2, "rows": 2}
+                    ),
+                )
+
+            generate = [command for command in seen if command[1:3] == ["gen", "image"]][0]
+            self.assertIn("--image", generate)
+            self.assertEqual(
+                generate[generate.index("--image") + 1],
+                "https://media.pollinations.ai/parent-ref",
+            )
+            self.assertEqual(
+                generate[generate.index("--model") + 1],
+                "kontext",
+            )
+            self.assertEqual(result["references"][0]["path"], str(reference))
+            self.assertEqual(
+                result["references"][0]["url"],
+                "https://media.pollinations.ai/parent-ref",
+            )
+
+    def test_visual_reference_rejects_vector_generation(self):
+        vector_job = job()
+        vector_job["assetType"] = "icon"
+        vector_job["manifest"]["constraints"] = {}
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            reference = root / "parent.png"
+            reference.write_bytes(b"PNG")
+            with patch("generator_backends.shutil.which", return_value="/usr/bin/polli"):
+                with self.assertRaisesRegex(GenerationError, "raster generation only"):
+                    execute_generated_asset(
+                        vector_job,
+                        root / "out",
+                        backend="pollinations",
+                        reference_paths=[reference],
+                    )
