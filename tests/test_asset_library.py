@@ -11,6 +11,7 @@ from asset_library import (
     reusable_content_fingerprint,
     lookup_reusable,
     similar_entries,
+    preferred_entry,
 )
 
 
@@ -195,6 +196,82 @@ class AssetLibraryTests(unittest.TestCase):
 
             self.assertIsNotNone(hit)
             self.assertEqual(hit["contentFingerprint"], content_fp)
+
+    def test_higher_quality_near_duplicate_becomes_preferred_version(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            library = root / "library.json"
+            first = root / "first.png"
+            second = root / "second.png"
+            first.write_bytes(b"v1")
+            second.write_bytes(b"v2")
+
+            low = self.result(first, perceptual_hash="0f0f")
+            low["validation"]["technicalArt"]["score"] = 0.60
+            low["generation"]["visualSimilarity"]["attempts"][-1]["score"] = 0.65
+            one = record_success(
+                library,
+                fingerprint="a" * 64,
+                job=self.job(),
+                result=low,
+            )
+
+            high = self.result(second, perceptual_hash="0f0e")
+            high["validation"]["technicalArt"]["score"] = 0.95
+            high["generation"]["visualSimilarity"]["attempts"][-1]["score"] = 0.92
+            two = record_success(
+                library,
+                fingerprint="b" * 64,
+                job=self.job(),
+                result=high,
+            )
+
+            payload = json.loads(library.read_text())
+            old = next(item for item in payload["entries"] if item["sha256"] == one["sha256"])
+            new = next(item for item in payload["entries"] if item["sha256"] == two["sha256"])
+            self.assertFalse(old["preferred"])
+            self.assertEqual(old["supersededBy"], new["sha256"])
+            self.assertTrue(new["preferred"])
+            self.assertIsNone(new["duplicateOf"])
+            self.assertGreater(new["compositeQuality"], old["compositeQuality"])
+            self.assertEqual(preferred_entry(
+                library,
+                project="deadline-zero",
+                asset_id="rex",
+            )["sha256"], new["sha256"])
+
+    def test_lower_quality_near_duplicate_is_marked_duplicate(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            library = root / "library.json"
+            first = root / "first.png"
+            second = root / "second.png"
+            first.write_bytes(b"v1")
+            second.write_bytes(b"v2")
+
+            high = self.result(first, perceptual_hash="0f0f")
+            high["validation"]["technicalArt"]["score"] = 0.95
+            high["generation"]["visualSimilarity"]["attempts"][-1]["score"] = 0.93
+            one = record_success(
+                library,
+                fingerprint="c" * 64,
+                job=self.job(),
+                result=high,
+            )
+
+            low = self.result(second, perceptual_hash="0f0e")
+            low["validation"]["technicalArt"]["score"] = 0.55
+            low["generation"]["visualSimilarity"]["attempts"][-1]["score"] = 0.58
+            two = record_success(
+                library,
+                fingerprint="d" * 64,
+                job=self.job(),
+                result=low,
+            )
+
+            self.assertFalse(two["preferred"])
+            self.assertEqual(two["duplicateOf"], one["sha256"])
+            self.assertEqual(two["perceptualDistance"], 1)
 
     def test_perceptual_deduplication_returns_near_matches(self):
         with tempfile.TemporaryDirectory() as td:
