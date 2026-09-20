@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T15:59:21Z
+Generated: 2026-09-20T16:02:00Z
 
 ### Git
 - Branch: `main`
-- Head: `19207a268720`
-- Commit date: 2026-09-20T17:59:08+02:00
-- Commit: test: cover dependency-aware remote batch runner
-- Tracked files: 252
+- Head: `2a04cafa0e11`
+- Commit date: 2026-09-20T18:01:47+02:00
+- Commit: ci: run live Deadline Zero premium visual pilot
+- Tracked files: 254
 
 ### Recently changed files
+- `.github/workflows/deadline-zero-live-pilot.yml`
+- `examples/deadline-zero-live-pilot-batch.json`
 - `tests/test_remote_batch.py`
 - `.github/workflows/production-os-batch.yml`
 - `pyproject.toml`
-- `remote_batch.py`
-- `tests/test_visual_similarity.py`
 
 ### Project signals
 - `pyproject.toml`

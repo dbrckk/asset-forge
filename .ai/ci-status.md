@@ -1,10 +1,10 @@
 # CI status
 
-Summary: 3 success / 0 failure / 1 active
+Summary: 2 success / 0 failure / 2 active
 
-- Validate asset-forge: queued / pending (19207a26)
-- Validate asset-forge: completed / success (fb902912)
-- Validate asset-forge: completed / success (d5eb4887)
-- Validate asset-forge: completed / success (11abd0a5)
+- Validate asset-forge: in_progress / pending (2a04cafa)
+- Deadline Zero live premium pilot: in_progress / pending (2a04cafa)
+- Validate asset-forge: completed / success (088adeae)
+- Validate asset-forge: completed / success (19207a26)
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.

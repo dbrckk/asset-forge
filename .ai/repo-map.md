@@ -41,6 +41,7 @@ The content is organized as follows:
 .github/
   workflows/
     ai-repo-map.yml
+    deadline-zero-live-pilot.yml
     live-generation.yml
     production-os-batch.yml
     production-os-dispatch.yml
@@ -56,6 +57,7 @@ config/
   tooling.json
 examples/
   asset-manifest.json
+  deadline-zero-live-pilot-batch.json
   godot-animations.json
   production-request-live-vector.json
   production-request.json
@@ -171,6 +173,108 @@ concurrency:
 jobs:
   repository-standards:
     uses: dbrckk/repo-standards/.github/workflows/reusable-unified.yml@main
+````
+
+## File: .github/workflows/deadline-zero-live-pilot.yml
+````yaml
+name: Deadline Zero live premium pilot
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/deadline-zero-live-pilot.yml"
+      - "examples/deadline-zero-live-pilot-batch.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deadline-zero-live-premium-pilot
+  cancel-in-progress: true
+
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+    steps:
+      - name: Checkout asset-forge
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22"
+
+      - name: Install Asset Forge
+        run: python -m pip install ".[generation]"
+
+      - name: Install Pollinations CLI
+        run: npm install --global @pollinations/cli@0.1.15
+
+      - name: Inspect production readiness
+        run: asset-forge operational-status
+
+      - name: Produce Rex premium pilot
+        run: |
+          python remote_batch.py             --spec examples/deadline-zero-live-pilot-batch.json             --output-root build/deadline-zero-live-pilot             --backend pollinations
+
+      - name: Validate pilot bundle
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          root = Path("build/deadline-zero-live-pilot")
+          result = json.loads((root / "batch-result.json").read_text(encoding="utf-8"))
+          assert result["success"] is True
+          assert result["execution_order"] == [
+              "rex-pilot-anchor",
+              "rex-pilot-run",
+              "rex-pilot-attack",
+          ]
+          assert result["count"] == 3
+          assert result["quality_summary"]["checked"] == 2
+          assert result["quality_summary"]["minimum_score"] is not None
+          for item in result["items"]:
+              artifact = root / item["artifact"]
+              assert artifact.is_file() and artifact.stat().st_size > 0
+              assert hashlib.sha256(artifact.read_bytes()).hexdigest() == item["sha256"]
+          PY
+
+      - name: Publish quality summary
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          result = json.loads(Path("build/deadline-zero-live-pilot/batch-result.json").read_text())
+          with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8") as fh:
+              fh.write("## Deadline Zero live premium pilot\n\n")
+              fh.write(f"- Produced: {result['count']} assets\n")
+              fh.write(f"- Checked: {result['quality_summary']['checked']} dependent assets\n")
+              fh.write(f"- Regenerated: {result['quality_summary']['regenerated']}\n")
+              fh.write(f"- Minimum consistency score: {result['quality_summary']['minimum_score']}\n")
+          PY
+
+      - name: Upload live premium pilot
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: deadline-zero-live-premium-pilot
+          path: build/deadline-zero-live-pilot
+          if-no-files-found: error
+          retention-days: 14
 ````
 
 ## File: .github/workflows/live-generation.yml
@@ -810,6 +914,134 @@ updates:
     "frameHeight": 32,
     "interpolation": "nearest"
   }
+}
+````
+
+## File: examples/deadline-zero-live-pilot-batch.json
+````json
+{
+  "items": [
+    {
+      "id": "rex-pilot-anchor",
+      "request": {
+        "schema": "asset-forge/production-request/v1",
+        "requestId": "deadline-zero-rex-pilot-anchor",
+        "instruction": "Create a premium production-quality survivor identity anchor for Deadline Zero. Rex is a battle-worn near-future male survivor viewed from a slightly elevated 3/4 top-down gameplay camera, wearing a dark charcoal tactical jacket and armor, compact rifle clearly visible, restrained red-orange accent lights, realistic stylized proportions, strong readable silhouette at mobile scale, cinematic but game-ready lighting, transparent background, no text, no UI, no muzzle flash.",
+        "manifest": {
+          "schema": "asset-forge/manifest/v1",
+          "id": "rex-pilot-anchor",
+          "project": "deadline-zero",
+          "type": "sprite-sheet",
+          "importance": "primary",
+          "source": {
+            "mode": "generated"
+          },
+          "license": {
+            "id": "project-owned",
+            "commercialUse": true,
+            "derivatives": true,
+            "attributionRequired": false
+          },
+          "target": {
+            "format": "png",
+            "engine": "libgdx",
+            "maxBytes": 8388608
+          },
+          "constraints": {
+            "frameWidth": 96,
+            "frameHeight": 96,
+            "expectedFrames": 1,
+            "requiresAlpha": true,
+            "visualSimilarityMin": 0.55,
+            "visualSimilarityRetries": 2
+          }
+        }
+      },
+      "target_path": "assets/art/pilot/rex-anchor.png"
+    },
+    {
+      "id": "rex-pilot-run",
+      "depends_on": [
+        "rex-pilot-anchor"
+      ],
+      "request": {
+        "schema": "asset-forge/production-request/v1",
+        "requestId": "deadline-zero-rex-pilot-run",
+        "instruction": "Create an 8-frame run-cycle spritesheet for Rex in Deadline Zero. Keep the exact same survivor identity, face, tactical outfit, compact rifle, proportions, palette and top-down 3/4 gameplay camera as the provided reference. Frames must form a readable grounded run cycle with stable foot contact, stable center/pivot, transparent background, no text, no UI, no muzzle flash. Each frame must remain readable at 96x96 mobile gameplay scale.",
+        "manifest": {
+          "schema": "asset-forge/manifest/v1",
+          "id": "rex-pilot-run",
+          "project": "deadline-zero",
+          "type": "sprite-sheet",
+          "importance": "primary",
+          "source": {
+            "mode": "generated"
+          },
+          "license": {
+            "id": "project-owned",
+            "commercialUse": true,
+            "derivatives": true,
+            "attributionRequired": false
+          },
+          "target": {
+            "format": "png",
+            "engine": "libgdx",
+            "maxBytes": 8388608
+          },
+          "constraints": {
+            "frameWidth": 96,
+            "frameHeight": 96,
+            "expectedFrames": 8,
+            "requiresAlpha": true,
+            "visualSimilarityMin": 0.55,
+            "visualSimilarityRetries": 2
+          }
+        }
+      },
+      "target_path": "assets/art/pilot/rex-run.png"
+    },
+    {
+      "id": "rex-pilot-attack",
+      "depends_on": [
+        "rex-pilot-anchor"
+      ],
+      "request": {
+        "schema": "asset-forge/production-request/v1",
+        "requestId": "deadline-zero-rex-pilot-attack",
+        "instruction": "Create a 6-frame compact-rifle attack spritesheet for Rex in Deadline Zero. Preserve the exact reference identity, outfit, rifle design, proportions, palette and top-down 3/4 camera. Show anticipation, aim, recoil and recovery without baked muzzle flash. Stable feet/pivot, transparent background, no text or UI, readable at 96x96 mobile gameplay scale.",
+        "manifest": {
+          "schema": "asset-forge/manifest/v1",
+          "id": "rex-pilot-attack",
+          "project": "deadline-zero",
+          "type": "sprite-sheet",
+          "importance": "primary",
+          "source": {
+            "mode": "generated"
+          },
+          "license": {
+            "id": "project-owned",
+            "commercialUse": true,
+            "derivatives": true,
+            "attributionRequired": false
+          },
+          "target": {
+            "format": "png",
+            "engine": "libgdx",
+            "maxBytes": 8388608
+          },
+          "constraints": {
+            "frameWidth": 96,
+            "frameHeight": 96,
+            "expectedFrames": 6,
+            "requiresAlpha": true,
+            "visualSimilarityMin": 0.55,
+            "visualSimilarityRetries": 2
+          }
+        }
+      },
+      "target_path": "assets/art/pilot/rex-attack.png"
+    }
+  ]
 }
 ````
 
