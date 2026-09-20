@@ -5,6 +5,7 @@ from pathlib import Path
 
 from gltf_quality import quality_report
 from gltf_tools import load_gltf_json
+from runtime_3d_plan import build_runtime_3d_plan
 
 GODOT_IMPORT_SUFFIXES = {
     "noimp",
@@ -38,6 +39,7 @@ def _name_suffixes(name: str) -> list[str]:
 def godot_3d_delivery_report(path: Path, profile: str = "prop") -> dict:
     data, container = load_gltf_json(path)
     quality = quality_report(path, profile)
+    runtime_plan = build_runtime_3d_plan(quality, profile)
 
     errors: list[str] = []
     warnings: list[str] = []
@@ -203,4 +205,5 @@ def godot_3d_delivery_report(path: Path, profile: str = "prop") -> dict:
             "normalMapped": normal_mapped,
         },
         "quality": quality,
+        "runtimePlan": runtime_plan,
     }
