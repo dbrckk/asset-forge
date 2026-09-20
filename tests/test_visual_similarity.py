@@ -79,5 +79,38 @@ class VisualSimilarityTests(unittest.TestCase):
             self.assertLess(score, 0.75)
 
 
+    def test_sprite_sheet_scoring_is_frame_aware(self):
+        try:
+            from PIL import Image, ImageDraw
+        except ImportError:
+            self.skipTest("Pillow unavailable")
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            parent = root / "parent-sheet.png"
+            child = root / "child-sheet.png"
+
+            p = Image.new("RGBA", (128, 32), (0, 0, 0, 0))
+            draw = ImageDraw.Draw(p)
+            for i in range(4):
+                x = i * 32
+                draw.rectangle((x + 6, 6, x + 24, 26), fill=(210, 60, 40, 255))
+            p.save(parent)
+
+            q = Image.new("RGBA", (128, 32), (0, 0, 0, 0))
+            draw = ImageDraw.Draw(q)
+            for i in range(4):
+                x = i * 32
+                offset = (i % 2) * 3
+                draw.rectangle((x + 6 + offset, 5, x + 24 + offset, 27), fill=(210, 60, 40, 255))
+            q.save(child)
+
+            result = compare_visuals(parent, child)
+            self.assertEqual(result["parentFrameCount"], 4)
+            self.assertEqual(result["childFrameCount"], 4)
+            self.assertEqual(len(result["frameScores"]), 4)
+            self.assertGreaterEqual(result["score"], 0.75)
+
+
 if __name__ == "__main__":
     unittest.main()
