@@ -379,5 +379,96 @@ class ProductionExecutorTests(unittest.TestCase):
                 )
 
 
+    def test_generated_3d_reports_lod_artifacts_when_enabled(self):
+        three_d = job("glb")
+        three_d["assetType"] = "prop"
+        three_d["manifest"]["constraints"] = {
+            "generateLods": True,
+            "requireLods": False,
+        }
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+
+            def generator(value, output_dir, **kwargs):
+                source = Path(output_dir) / "generated-source.glb"
+                source.write_bytes(b"glTF" + b"\x00" * 16)
+                return {"success": True, "sourcePath": str(source)}
+
+            def lod_reporter(source, output_dir, profile):
+                output_dir.mkdir(parents=True, exist_ok=True)
+                lod = output_dir / "hero-run.lod1.glb"
+                lod.write_bytes(b"lod")
+                return {
+                    "schema": "asset-forge/lod-generation/v1",
+                    "required": True,
+                    "available": True,
+                    "outputs": [{"level": 1, "path": str(lod), "triangles": 100}],
+                    "errors": [],
+                    "warnings": [],
+                }
+
+            report = execute_generated_3d_job(
+                three_d,
+                root,
+                structural_validator=lambda p: ({}, [], []),
+                profile_validator=lambda p, profile: ({}, [], []),
+                quality_reporter=lambda p, profile: {
+                    "evaluation": {"passed": True, "errors": [], "warnings": []}
+                },
+                godot_delivery_reporter=lambda p, profile: {
+                    "ready": True, "errors": [], "warnings": []
+                },
+                lod_reporter=lod_reporter,
+                generator=generator,
+            )
+
+            self.assertTrue(report["success"])
+            self.assertEqual(len(report["additionalArtifacts"]), 1)
+            self.assertTrue(report["additionalArtifacts"][0].endswith(".lod1.glb"))
+            self.assertTrue(report["validation"]["lods"]["available"])
+
+    def test_required_lod_toolchain_unavailable_blocks_3d_promotion(self):
+        three_d = job("glb")
+        three_d["assetType"] = "prop"
+        three_d["manifest"]["constraints"] = {
+            "generateLods": True,
+            "requireLods": True,
+        }
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+
+            def generator(value, output_dir, **kwargs):
+                source = Path(output_dir) / "generated-source.glb"
+                source.write_bytes(b"glTF" + b"\x00" * 16)
+                return {"success": True, "sourcePath": str(source)}
+
+            report = execute_generated_3d_job(
+                three_d,
+                root,
+                structural_validator=lambda p: ({}, [], []),
+                profile_validator=lambda p, profile: ({}, [], []),
+                quality_reporter=lambda p, profile: {
+                    "evaluation": {"passed": True, "errors": [], "warnings": []}
+                },
+                godot_delivery_reporter=lambda p, profile: {
+                    "ready": True, "errors": [], "warnings": []
+                },
+                lod_reporter=lambda source, output_dir, profile: {
+                    "schema": "asset-forge/lod-generation/v1",
+                    "required": True,
+                    "available": False,
+                    "outputs": [],
+                    "errors": [],
+                    "warnings": ["gltf-transform unavailable"],
+                },
+                generator=generator,
+            )
+
+            self.assertFalse(report["success"])
+            self.assertIsNone(report["artifact"])
+            self.assertTrue(any("LOD" in value for value in report["validation"]["errors"]))
+
 if __name__ == "__main__":
     unittest.main()
