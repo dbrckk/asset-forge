@@ -96,19 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T17:11:53Z
+Generated: 2026-09-20T17:15:19Z
 
 ### Git
 - Branch: `main`
-- Head: `8ff176e30f44`
-- Commit date: 2026-09-20T19:11:37+02:00
-- Commit: test: cover runtime 3D delivery sidecar
+- Head: `8254c921cb37`
+- Commit date: 2026-09-20T19:15:07+02:00
+- Commit: feat: propagate asset library version metadata through remote batches
 - Tracked files: 274
 
 ### Recently changed files
+- `remote_batch.py`
 - `tests/test_production_executor.py`
 - `production_executor.py`
-- `godot_3d_delivery.py`
 
 ### Project signals
 - `pyproject.toml`

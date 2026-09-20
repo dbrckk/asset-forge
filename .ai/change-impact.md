@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 552da434d538c21f072f1d4d8261f499ccda2156
-Head: 8ff176e30f44353e2c9444be4907877ee01282d9
+Base: 64ebe153a4b821907ffc48c732d51bd9b4d7a865
+Head: 8254c921cb376cb2f75bd3256f3650e99215c270
 
 ## Changed files
-- M tests/test_production_executor.py
+- M remote_batch.py
 
 ## Affected areas
-- tests
+- (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_remote_batch.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.
