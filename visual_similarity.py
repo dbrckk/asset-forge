@@ -101,12 +101,34 @@ def _occupancy_similarity(a: float, b: float) -> float:
     return max(0.0, 1.0 - abs(a - b))
 
 
-def compare_visuals(parent: Path, child: Path) -> dict:
-    parent_image = _load_rgba(Path(parent), size=64)
-    child_image = _load_rgba(Path(child), size=64)
+
+def _sprite_sheet_frames(image, *, max_frames: int = 4):
+    width, height = image.size
+    if width <= 0 or height <= 0:
+        return [image]
+    frames = []
+    if width >= height * 2:
+        columns = min(max_frames, max(2, round(width / height)))
+        frame_width = width / columns
+        for index in range(columns):
+            left = int(round(index * frame_width))
+            right = int(round((index + 1) * frame_width))
+            if right > left:
+                frames.append(image.crop((left, 0, right, height)))
+    elif height >= width * 2:
+        rows = min(max_frames, max(2, round(height / width)))
+        frame_height = height / rows
+        for index in range(rows):
+            top = int(round(index * frame_height))
+            bottom = int(round((index + 1) * frame_height))
+            if bottom > top:
+                frames.append(image.crop((0, top, width, bottom)))
+    return frames or [image]
+
+
+def _single_image_similarity(parent_image, child_image) -> dict:
     parent_subject = _subject_normalized(parent_image, size=32)
     child_subject = _subject_normalized(child_image, size=32)
-
     palette = _histogram_similarity(
         _histogram_signature(parent_subject),
         _histogram_signature(child_subject),
@@ -130,13 +152,39 @@ def compare_visuals(parent: Path, child: Path) -> dict:
         + 0.10 * occupancy
     )
     return {
-        "score": round(max(0.0, min(1.0, score)), 6),
-        "components": {
-            "palette": round(palette, 6),
-            "subjectStructure": round(subject_structure, 6),
-            "edgeStructure": round(edge_structure, 6),
-            "occupancy": round(occupancy, 6),
-        },
+        "score": max(0.0, min(1.0, score)),
+        "palette": palette,
+        "subjectStructure": subject_structure,
+        "edgeStructure": edge_structure,
+        "occupancy": occupancy,
+    }
+
+
+def compare_visuals(parent: Path, child: Path) -> dict:
+    parent_image = _load_rgba(Path(parent), size=64)
+    child_image = _load_rgba(Path(child), size=64)
+
+    parent_frames = _sprite_sheet_frames(parent_image)
+    child_frames = _sprite_sheet_frames(child_image)
+    frame_scores = []
+    for child_frame in child_frames:
+        candidates = [
+            _single_image_similarity(parent_frame, child_frame)
+            for parent_frame in parent_frames
+        ]
+        frame_scores.append(max(candidates, key=lambda item: item["score"]))
+
+    best = sum(item["score"] for item in frame_scores) / max(1, len(frame_scores))
+    components = {
+        key: sum(item[key] for item in frame_scores) / max(1, len(frame_scores))
+        for key in ("palette", "subjectStructure", "edgeStructure", "occupancy")
+    }
+    return {
+        "score": round(max(0.0, min(1.0, best)), 6),
+        "components": {key: round(value, 6) for key, value in components.items()},
+        "frameScores": [round(item["score"], 6) for item in frame_scores],
+        "parentFrameCount": len(parent_frames),
+        "childFrameCount": len(child_frames),
         "parent": str(parent),
         "child": str(child),
     }
