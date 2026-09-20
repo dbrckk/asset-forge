@@ -13,6 +13,13 @@ from typing import Callable
 
 from art_quality import ArtQualityError, evaluate_raster_art
 from visual_similarity import compare_against_references
+from colab_queue import (
+    ColabQueueError,
+    download_result_asset,
+    submit as submit_colab_job,
+    wait_result as wait_colab_result,
+    worker_status as colab_worker_status,
+)
 
 
 RASTER_GENERATED_TYPES = {"sprite", "sprite-sheet", "tileset", "pixel-art"}
@@ -78,6 +85,9 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
             or ""
         ).strip()
     )
+    colab_status = colab_worker_status(
+        token=env.get("GITHUB_TOKEN") or env.get("ASSET_FORGE_GITHUB_TOKEN")
+    )
     return {
         "pollinations": {
             "installed": polli is not None,
@@ -101,6 +111,17 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
             "vectorSvgReady": False,
             "threeDReady": False,
             "credentialSource": "environment" if codex_token_available else None,
+        },
+        "qwenColab": {
+            "installed": True,
+            "authenticated": bool(
+                str(env.get("GITHUB_TOKEN") or env.get("ASSET_FORGE_GITHUB_TOKEN") or "").strip()
+            ),
+            "rasterReady": colab_status.get("online") is True,
+            "vectorSvgReady": False,
+            "threeDReady": False,
+            "worker": colab_status,
+            "model": "Qwen/Qwen-Image-2.1",
         },
     }
 
@@ -372,7 +393,7 @@ def pollinations_command(
 
 
 def select_generation_backend(job: dict, requested: str = "auto") -> str:
-    if requested in {"pollinations", "imagen-codex"}:
+    if requested in {"pollinations", "imagen-codex", "qwen-colab"}:
         return requested
     if requested != "auto":
         raise GenerationError(f"unsupported generator backend: {requested}")
@@ -381,10 +402,13 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str:
     status = generator_backend_status()
     pollinations = status.get("pollinations", {})
     imagen_codex = status.get("imagenCodex", {})
+    qwen_colab = status.get("qwenColab", {})
 
     if asset_type in RASTER_GENERATED_TYPES:
         if pollinations.get("rasterVectorReady") is True:
             return "pollinations"
+        if qwen_colab.get("rasterReady") is True:
+            return "qwen-colab"
         if imagen_codex.get("rasterReady") is True:
             return "imagen-codex"
         raise GenerationError("no authenticated raster generation backend is ready")
