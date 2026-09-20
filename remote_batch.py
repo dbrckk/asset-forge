@@ -163,6 +163,7 @@ def run(
         artifacts[item_id] = bundled
 
         generation = report.get("generation") if isinstance(report.get("generation"), dict) else {}
+        validation = report.get("validation") if isinstance(report.get("validation"), dict) else {}
         results.append({
             "id": item_id,
             "depends_on": list(item["_deps"]),
@@ -173,6 +174,11 @@ def run(
             "visual_similarity": (
                 generation.get("visualSimilarity")
                 if isinstance(generation.get("visualSimilarity"), dict)
+                else None
+            ),
+            "technical_art": (
+                validation.get("technicalArt")
+                if isinstance(validation.get("technicalArt"), dict)
                 else None
             ),
         })
