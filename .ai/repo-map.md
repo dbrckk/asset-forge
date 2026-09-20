@@ -4957,8 +4957,6 @@ def _load_json(path: Path) -> tuple[dict | None, list[str]]
 ⋮----
 data = json.loads(path.read_text(encoding="utf-8"))
 ⋮----
-def _validate_rule_types(rules, expected: dict[str, type], label: str) -> list[str]
-⋮----
 errors: list[str] = []
 ⋮----
 def validate_3d_profile_data(data: dict, expected_profile: str | None = None) -> list[str]

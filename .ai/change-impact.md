@@ -1,16 +1,16 @@
 # Change impact
 
-Base: e9e2999640822656d8843b562f90e385f0f9b323
-Head: 2136d6489512b4f7afe8aca82698996a135c3dd7
+Base: 4fd1b3aa53845c2dd3b6305baaa2ab637e13216c
+Head: 97f855baa01ea4c9ce6a53127750f6c482aa80ed
 
 ## Changed files
-- M remote_batch.py
+- M gltf_quality.py
 
 ## Affected areas
 - (root)
 
 ## Related test candidates
-- tests/test_remote_batch.py
+- tests/test_gltf_quality.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

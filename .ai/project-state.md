@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T16:14:28Z
+Generated: 2026-09-20T16:17:14Z
 
 ### Git
 - Branch: `main`
-- Head: `2136d6489512`
-- Commit date: 2026-09-20T18:14:16+02:00
-- Commit: feat: include technical art fingerprints in remote batches
+- Head: `97f855baa01e`
+- Commit date: 2026-09-20T18:17:03+02:00
+- Commit: fix: require explicit PBR only for textured runtime materials
 - Tracked files: 263
 
 ### Recently changed files
+- `gltf_quality.py`
+- `asset_profile_validation.py`
 - `remote_batch.py`
 - `art_quality.py`
 - `tests/test_godot_3d_delivery.py`
-- `tests/test_gltf_quality.py`
-- `profiles/3d/environment.json`
 
 ### Project signals
 - `pyproject.toml`
