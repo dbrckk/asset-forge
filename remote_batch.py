@@ -162,6 +162,38 @@ def run(
         digest = hashlib.sha256(bundled.read_bytes()).hexdigest()
         artifacts[item_id] = bundled
 
+        additional_rows = []
+        raw_additional = report.get("additionalArtifacts")
+        if raw_additional is None:
+            raw_additional = []
+        if not isinstance(raw_additional, list):
+            raise RemoteBatchError(f"invalid additionalArtifacts for {item_id}")
+        for extra_index, raw_path in enumerate(raw_additional, start=1):
+            extra = Path(str(raw_path or ""))
+            if not extra.is_absolute():
+                extra = item_root / extra
+            extra = extra.resolve()
+            if not extra.is_relative_to(item_root.resolve()):
+                raise RemoteBatchError(
+                    f"additional artifact escapes item output for {item_id}"
+                )
+            if not extra.is_file() or extra.stat().st_size <= 0:
+                raise RemoteBatchError(
+                    f"additional artifact missing for {item_id}"
+                )
+            extra_name = extra.name
+            if extra_name.startswith(artifact.stem + "."):
+                bundle_name = f"{item_id}{extra_name[len(artifact.stem):]}"
+            else:
+                bundle_name = f"{item_id}.extra{extra_index}{extra.suffix.lower()}"
+            bundled_extra = bundle_root / bundle_name
+            shutil.copyfile(extra, bundled_extra)
+            additional_rows.append({
+                "artifact": str(bundled_extra.relative_to(output_root)),
+                "sha256": hashlib.sha256(bundled_extra.read_bytes()).hexdigest(),
+                "source_name": extra_name,
+            })
+
         generation = report.get("generation") if isinstance(report.get("generation"), dict) else {}
         validation = report.get("validation") if isinstance(report.get("validation"), dict) else {}
         results.append({
@@ -181,6 +213,7 @@ def run(
                 if isinstance(validation.get("technicalArt"), dict)
                 else None
             ),
+            "additional_artifacts": additional_rows,
         })
 
     quality = [item["visual_similarity"] for item in results if item["visual_similarity"]]
