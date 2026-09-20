@@ -277,7 +277,7 @@ def evaluate_quality(report: dict, profile: str) -> dict:
             budget_messages.append(
                 f"{label} {actual} exceed profile budget {maximum}"
             )
-    if rules["strictBudgets"]:
+    if rules.get("strictBudgets", False):
         errors.extend(budget_messages)
     else:
         warnings.extend(budget_messages)
@@ -318,8 +318,8 @@ def evaluate_quality(report: dict, profile: str) -> dict:
         errors.append("character profile requires JOINTS_0 and WEIGHTS_0 on skinned geometry")
 
     if (
-        rules["requirePbrMaterials"]
-        and materials["count"] > 0
+        rules.get("requirePbrMaterials", False)
+        and attributes["texturedPrimitives"] > 0
         and materials["pbrMetallicRoughness"] != materials["count"]
     ):
         errors.append(
