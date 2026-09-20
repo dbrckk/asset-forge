@@ -336,6 +336,13 @@ def pollinations_command(
     reference_urls: list[str] | None = None,
 ) -> list[str]:
     prompt = build_generation_prompt(job)
+    if reference_urls:
+        prompt += (
+            " Use the provided reference image as a strict visual identity anchor. "
+            "Preserve the same subject identity, silhouette language, proportions, "
+            "core palette, materials, and art direction while applying only the "
+            "requested pose, animation, expression, or variant changes."
+        )
     asset_type = str(job.get("assetType") or "")
     effective_model = model
     if effective_model is None and asset_type in VECTOR_GENERATED_TYPES:
