@@ -11,6 +11,7 @@ import urllib.request
 from pathlib import Path
 from typing import Callable
 
+from art_quality import ArtQualityError, evaluate_raster_art
 from visual_similarity import compare_against_references
 
 
@@ -483,6 +484,7 @@ def execute_generated_asset(
     raster_normalizer: Callable[[Path, Path, dict], dict | None] = _normalize_raster_geometry,
     transparency_processor: Callable[..., dict | None] = _ensure_transparency,
     similarity_evaluator: Callable[[Path, list[Path]], dict] = compare_against_references,
+    technical_quality_evaluator: Callable[[Path, dict], dict] = evaluate_raster_art,
 ) -> dict:
     if job.get("requiresGenerator") is not True:
         raise GenerationError("production job does not require a generator")
@@ -574,31 +576,61 @@ def execute_generated_asset(
         constraints = {}
     similarity_threshold = constraints.get("visualSimilarityMin", 0.42)
     similarity_retries = constraints.get("visualSimilarityRetries", 2)
+    technical_threshold = constraints.get("technicalQualityMin")
+    technical_retries = constraints.get(
+        "technicalQualityRetries",
+        similarity_retries,
+    )
     try:
         similarity_threshold = float(similarity_threshold)
         similarity_retries = int(similarity_retries)
+        technical_retries = int(technical_retries)
+        if technical_threshold is not None:
+            technical_threshold = float(technical_threshold)
     except (TypeError, ValueError) as exc:
-        raise GenerationError("visual similarity controls must be numeric") from exc
+        raise GenerationError("visual and technical quality controls must be numeric") from exc
     if not 0.0 <= similarity_threshold <= 1.0:
         raise GenerationError("visualSimilarityMin must be between 0 and 1")
     if not 0 <= similarity_retries <= 4:
         raise GenerationError("visualSimilarityRetries must be between 0 and 4")
+    if technical_threshold is not None and not 0.0 <= technical_threshold <= 1.0:
+        raise GenerationError("technicalQualityMin must be between 0 and 1")
+    if not 0 <= technical_retries <= 4:
+        raise GenerationError("technicalQualityRetries must be between 0 and 4")
 
+    retry_budget = max(
+        similarity_retries if references else 0,
+        technical_retries
+        if technical_threshold is not None and asset_type in RASTER_GENERATED_TYPES
+        else 0,
+    )
     similarity_history = []
+    technical_quality_history = []
     metadata = None
     transparency = None
     normalization = None
     final_output = output
     stdout = ""
 
-    for attempt in range(similarity_retries + 1):
+    previous_similarity_failed = False
+    previous_technical_failed = False
+    for attempt in range(retry_budget + 1):
         attempt_command = list(command)
         if attempt > 0 and backend == "pollinations":
-            attempt_command[3] = (
-                attempt_command[3]
-                + " The previous generated variant drifted too far from the reference. "
-                "Match the reference identity and art direction more closely."
-            )
+            retry_guidance = []
+            if previous_similarity_failed:
+                retry_guidance.append(
+                    "The previous generated variant drifted too far from the reference. "
+                    "Match the reference identity and art direction more closely."
+                )
+            if previous_technical_failed:
+                retry_guidance.append(
+                    "The previous variant failed technical game-art quality. "
+                    "Keep all visible art away from image borders, preserve transparent padding, "
+                    "use a clean readable silhouette, stable frame occupancy, and stronger local contrast."
+                )
+            if retry_guidance:
+                attempt_command[3] = attempt_command[3] + " " + " ".join(retry_guidance)
         completed = runner(
             attempt_command,
             check=False,
@@ -647,28 +679,92 @@ def execute_generated_asset(
                 except json.JSONDecodeError:
                     metadata = None
 
-        if not references:
+        similarity_passed = True
+        previous_similarity_failed = False
+        if references:
+            similarity = similarity_evaluator(final_output, references)
+            score = similarity.get("score") if isinstance(similarity, dict) else None
+            if not isinstance(score, (int, float)):
+                raise GenerationError("visual similarity evaluator returned no numeric score")
+            similarity_passed = float(score) >= similarity_threshold
+            previous_similarity_failed = not similarity_passed
+            similarity_history.append({
+                "attempt": attempt + 1,
+                "score": round(float(score), 6),
+                "threshold": similarity_threshold,
+                "passed": similarity_passed,
+                "bestReference": similarity.get("bestReference"),
+                "comparisons": similarity.get("comparisons", []),
+            })
+
+        technical_passed = True
+        previous_technical_failed = False
+        if (
+            technical_threshold is not None
+            and asset_type in RASTER_GENERATED_TYPES
+        ):
+            try:
+                technical = technical_quality_evaluator(
+                    final_output,
+                    job.get("manifest", {}),
+                )
+            except (ArtQualityError, OSError, ValueError) as exc:
+                raise GenerationError(
+                    f"technical art quality evaluation failed: {exc}"
+                ) from exc
+            technical_score = (
+                technical.get("score")
+                if isinstance(technical, dict)
+                else None
+            )
+            if not isinstance(technical_score, (int, float)):
+                raise GenerationError(
+                    "technical art quality evaluator returned no numeric score"
+                )
+            technical_passed = (
+                float(technical_score) >= technical_threshold
+                and not list(technical.get("errors") or [])
+            )
+            previous_technical_failed = not technical_passed
+            technical_quality_history.append({
+                "attempt": attempt + 1,
+                "score": round(float(technical_score), 6),
+                "threshold": technical_threshold,
+                "passed": technical_passed,
+                "metrics": technical.get("metrics", {}),
+                "errors": list(technical.get("errors") or []),
+                "warnings": list(technical.get("warnings") or []),
+            })
+
+        if similarity_passed and technical_passed:
             break
 
-        similarity = similarity_evaluator(final_output, references)
-        score = similarity.get("score") if isinstance(similarity, dict) else None
-        if not isinstance(score, (int, float)):
-            raise GenerationError("visual similarity evaluator returned no numeric score")
-        similarity_history.append({
-            "attempt": attempt + 1,
-            "score": round(float(score), 6),
-            "threshold": similarity_threshold,
-            "passed": float(score) >= similarity_threshold,
-            "bestReference": similarity.get("bestReference"),
-            "comparisons": similarity.get("comparisons", []),
-        })
-        if float(score) >= similarity_threshold:
-            break
-        if attempt >= similarity_retries:
-            raise GenerationError(
-                f"visual consistency score {float(score):.3f} is below required "
-                f"{similarity_threshold:.3f} after {attempt + 1} attempts"
+        can_retry_similarity = (
+            previous_similarity_failed and attempt < similarity_retries
+        )
+        can_retry_technical = (
+            previous_technical_failed and attempt < technical_retries
+        )
+        if can_retry_similarity or can_retry_technical:
+            continue
+
+        failures = []
+        if previous_similarity_failed and similarity_history:
+            failures.append(
+                "visual consistency score "
+                f"{similarity_history[-1]['score']:.3f} is below required "
+                f"{similarity_threshold:.3f}"
             )
+        if previous_technical_failed and technical_quality_history:
+            failures.append(
+                "technical art quality score "
+                f"{technical_quality_history[-1]['score']:.3f} is below required "
+                f"{technical_threshold:.3f}"
+            )
+        raise GenerationError(
+            "; ".join(failures)
+            + f" after {attempt + 1} attempts"
+        )
 
     return {
         "success": True,
@@ -690,6 +786,15 @@ def execute_generated_asset(
             "passed": (
                 similarity_history[-1]["passed"]
                 if similarity_history
+                else None
+            ),
+        },
+        "technicalQuality": {
+            "threshold": technical_threshold,
+            "attempts": technical_quality_history,
+            "passed": (
+                technical_quality_history[-1]["passed"]
+                if technical_quality_history
                 else None
             ),
         },
