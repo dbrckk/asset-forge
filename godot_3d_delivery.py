@@ -84,6 +84,7 @@ def godot_3d_delivery_report(path: Path, profile: str = "prop") -> dict:
     duplicate_names: dict[str, int] = {}
     suffix_usage: dict[str, int] = {}
     suspicious_names = []
+    collision_nodes = 0
 
     for node in nodes:
         if not isinstance(node, dict):
@@ -95,8 +96,11 @@ def godot_3d_delivery_report(path: Path, profile: str = "prop") -> dict:
         duplicate_names[name] = duplicate_names.get(name, 0) + 1
         if not SAFE_NAME.match(name):
             suspicious_names.append(name)
-        for suffix in _name_suffixes(name):
+        suffixes = _name_suffixes(name)
+        for suffix in suffixes:
             suffix_usage[suffix] = suffix_usage.get(suffix, 0) + 1
+        if any(suffix in {"col", "convcol", "colonly", "convcolonly"} for suffix in suffixes):
+            collision_nodes += 1
 
     duplicates = sorted(name for name, count in duplicate_names.items() if count > 1)
     if unnamed_nodes:
@@ -169,6 +173,15 @@ def godot_3d_delivery_report(path: Path, profile: str = "prop") -> dict:
             f"{external_local_images} external local image(s) make this GLB delivery less self-contained"
         )
 
+    collision_required = profile in {"prop", "environment"}
+    if collision_required and collision_nodes == 0:
+        warnings.append(
+            "no Godot collision import hint detected; runtime collision should be generated or authored"
+        )
+        recommendations.append(
+            "author a -col/-convcol collision node or generate collision during engine handoff"
+        )
+
     if profile == "character":
         rig = quality.get("rigAnimation", {})
         if not rig.get("skins"):
@@ -204,6 +217,8 @@ def godot_3d_delivery_report(path: Path, profile: str = "prop") -> dict:
             "unnamedAnimations": unnamed_animations,
             "loopingAnimationHints": looping_hints,
             "godotNameSuffixes": suffix_usage,
+            "collisionNodes": collision_nodes,
+            "collisionRequired": collision_required,
         },
         "materials": {
             "pbrMetallicRoughness": pbr_materials,
