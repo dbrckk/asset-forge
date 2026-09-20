@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import math
 from pathlib import Path
 
 
@@ -19,6 +18,40 @@ def _load_rgba(path: Path, *, size: int = 32):
             return image.convert("RGBA").resize((size, size), Image.Resampling.LANCZOS)
     except (OSError, ValueError) as exc:
         raise VisualSimilarityError(f"cannot inspect visual similarity image: {path}") from exc
+
+
+
+def _crop_to_alpha_subject(image, *, padding_ratio: float = 0.08):
+    alpha = image.getchannel("A")
+    bbox = alpha.getbbox()
+    if bbox is None:
+        return image
+    left, top, right, bottom = bbox
+    width = max(1, right - left)
+    height = max(1, bottom - top)
+    pad_x = max(1, int(round(width * padding_ratio)))
+    pad_y = max(1, int(round(height * padding_ratio)))
+    left = max(0, left - pad_x)
+    top = max(0, top - pad_y)
+    right = min(image.width, right + pad_x)
+    bottom = min(image.height, bottom + pad_y)
+    return image.crop((left, top, right, bottom))
+
+
+def _subject_normalized(image, *, size: int = 32):
+    subject = _crop_to_alpha_subject(image)
+    return subject.resize((size, size))
+
+
+def _edge_signature(image, width: int = 16, height: int = 16) -> list[int]:
+    try:
+        from PIL import ImageFilter
+    except ImportError:
+        return _average_hash(image, width, height)
+    edges = image.convert("L").filter(ImageFilter.FIND_EDGES).resize((width, height))
+    pixels = list(edges.getdata())
+    average = sum(pixels) / max(1, len(pixels))
+    return [1 if value >= average else 0 for value in pixels]
 
 
 def _histogram_signature(image, bins: int = 8) -> list[float]:
@@ -69,26 +102,39 @@ def _occupancy_similarity(a: float, b: float) -> float:
 
 
 def compare_visuals(parent: Path, child: Path) -> dict:
-    parent_image = _load_rgba(Path(parent))
-    child_image = _load_rgba(Path(child))
-    histogram = _histogram_similarity(
-        _histogram_signature(parent_image),
-        _histogram_signature(child_image),
+    parent_image = _load_rgba(Path(parent), size=64)
+    child_image = _load_rgba(Path(child), size=64)
+    parent_subject = _subject_normalized(parent_image, size=32)
+    child_subject = _subject_normalized(child_image, size=32)
+
+    palette = _histogram_similarity(
+        _histogram_signature(parent_subject),
+        _histogram_signature(child_subject),
     )
-    structure = _hash_similarity(
-        _average_hash(parent_image),
-        _average_hash(child_image),
+    subject_structure = _hash_similarity(
+        _average_hash(parent_subject),
+        _average_hash(child_subject),
+    )
+    edge_structure = _hash_similarity(
+        _edge_signature(parent_subject),
+        _edge_signature(child_subject),
     )
     occupancy = _occupancy_similarity(
         _alpha_occupancy(parent_image),
         _alpha_occupancy(child_image),
     )
-    score = 0.50 * histogram + 0.35 * structure + 0.15 * occupancy
+    score = (
+        0.45 * palette
+        + 0.20 * subject_structure
+        + 0.25 * edge_structure
+        + 0.10 * occupancy
+    )
     return {
         "score": round(max(0.0, min(1.0, score)), 6),
         "components": {
-            "palette": round(histogram, 6),
-            "structure": round(structure, 6),
+            "palette": round(palette, 6),
+            "subjectStructure": round(subject_structure, 6),
+            "edgeStructure": round(edge_structure, 6),
             "occupancy": round(occupancy, 6),
         },
         "parent": str(parent),
