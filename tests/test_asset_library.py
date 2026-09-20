@@ -8,6 +8,8 @@ from asset_library import (
     lookup,
     record_success,
     request_fingerprint,
+    reusable_content_fingerprint,
+    lookup_reusable,
     similar_entries,
 )
 
@@ -153,6 +155,46 @@ class AssetLibraryTests(unittest.TestCase):
                 reference_paths=[ref],
             )
             self.assertNotEqual(a, b)
+
+    def test_reusable_content_key_ignores_project_identity(self):
+        first = self.job()
+        second = self.job()
+        second["project"] = "another-game"
+        second["assetId"] = "other-rex"
+        second["manifest"] = dict(second["manifest"])
+        second["manifest"]["project"] = "another-game"
+        second["manifest"]["id"] = "other-rex"
+
+        a = reusable_content_fingerprint(first, backend="pollinations")
+        b = reusable_content_fingerprint(second, backend="pollinations")
+
+        self.assertEqual(a, b)
+
+    def test_cross_project_lookup_returns_content_compatible_asset(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            library = root / "library.json"
+            artifact = root / "rex.png"
+            artifact.write_bytes(b"reusable-secondary")
+            content_fp = reusable_content_fingerprint(
+                self.job(),
+                backend="pollinations",
+            )
+            record_success(
+                library,
+                fingerprint=request_fingerprint(
+                    self.job(),
+                    backend="pollinations",
+                ),
+                content_fingerprint=content_fp,
+                job=self.job(),
+                result=self.result(artifact),
+            )
+
+            hit = lookup_reusable(library, content_fp)
+
+            self.assertIsNotNone(hit)
+            self.assertEqual(hit["contentFingerprint"], content_fp)
 
     def test_perceptual_deduplication_returns_near_matches(self):
         with tempfile.TemporaryDirectory() as td:
