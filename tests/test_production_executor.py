@@ -233,6 +233,53 @@ class ProductionExecutorTests(unittest.TestCase):
             self.assertIn("quality warning", report["validation"]["warnings"])
             self.assertTrue((root / "production-report.json").is_file())
 
+    def test_godot_3d_emits_runtime_plan_sidecar(self):
+        three_d = job("glb")
+        three_d["assetType"] = "prop"
+        three_d["manifest"]["target"]["engine"] = "godot4"
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+
+            def generator(value, output_dir, **kwargs):
+                source = Path(output_dir) / "generated-source.glb"
+                source.write_bytes(b"glTF" + b"\x00" * 16)
+                return {"success": True, "sourcePath": str(source)}
+
+            runtime_plan = {
+                "schema": "asset-forge/runtime-3d-plan/v1",
+                "profile": "prop",
+                "lod": {"required": False, "levels": []},
+                "collision": {"strategy": "convex-or-simplified-static"},
+                "pbr": {"allMaterialsPbr": True},
+                "recommendations": [],
+            }
+            report = execute_generated_3d_job(
+                three_d,
+                root,
+                structural_validator=lambda p: ({}, [], []),
+                profile_validator=lambda p, profile: ({}, [], []),
+                quality_reporter=lambda p, profile: {
+                    "evaluation": {"passed": True, "errors": [], "warnings": []}
+                },
+                godot_delivery_reporter=lambda p, profile: {
+                    "ready": True,
+                    "errors": [],
+                    "warnings": [],
+                    "scene": {"collisionNodes": 1},
+                    "runtimePlan": runtime_plan,
+                },
+                generator=generator,
+            )
+
+            sidecars = [Path(value) for value in report["additionalArtifacts"] if value.endswith(".runtime-3d.json")]
+            self.assertEqual(len(sidecars), 1)
+            self.assertTrue(sidecars[0].is_file())
+            self.assertEqual(
+                __import__("json").loads(sidecars[0].read_text())["collision"]["strategy"],
+                "convex-or-simplified-static",
+            )
+
     def test_generated_character_3d_fails_when_profile_quality_fails(self):
         three_d = job("glb")
         three_d["assetType"] = "character-3d"
