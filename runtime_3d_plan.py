@@ -23,6 +23,7 @@ def build_runtime_3d_plan(report: dict, profile: str) -> dict:
         collision = {
             "strategy": "capsule-or-compound",
             "meshCollisionRecommended": False,
+            "godotImportHint": None,
             "reason": "animated characters should use stable primitive collision rather than render-mesh collision",
         }
     elif profile == "environment":
@@ -30,6 +31,8 @@ def build_runtime_3d_plan(report: dict, profile: str) -> dict:
         collision = {
             "strategy": "simplified-static-mesh",
             "meshCollisionRecommended": True,
+            "godotImportHint": "-colonly",
+            "fallbackGodotImportHint": "-col",
             "reason": "large static environments benefit from dedicated simplified collision geometry",
         }
     else:
@@ -37,6 +40,8 @@ def build_runtime_3d_plan(report: dict, profile: str) -> dict:
         collision = {
             "strategy": "convex-or-simplified-static",
             "meshCollisionRecommended": triangles <= 5000,
+            "godotImportHint": "-convcol",
+            "fallbackGodotImportHint": "-col",
             "reason": "props should prefer convex or simplified static collision; full mesh is acceptable only for small static geometry",
         }
 
