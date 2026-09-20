@@ -21,6 +21,7 @@ dev = ["Pillow>=12.2,<13"]
 asset-forge = "asset_forge:main"
 
 [tool.setuptools]
+packages = ["config", "pipelines", "profiles", "schemas"]
 py-modules = [
   "animation_infer",
   "asset_forge",
@@ -45,3 +46,10 @@ py-modules = [
   "svg_tools",
   "toolchain_3d",
 ]
+
+
+[tool.setuptools.package-data]
+config = ["*.json"]
+pipelines = ["*.json"]
+profiles = ["**/*.json"]
+schemas = ["*.json"]
