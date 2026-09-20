@@ -99,7 +99,7 @@ class GltfQualityTests(unittest.TestCase):
 
     def test_untextured_primitive_does_not_require_uv(self):
         data = self.base()
-        data["materials"] = [{}]
+        data["materials"] = [{"pbrMetallicRoughness": {}}]
         data["textures"] = []
         data["images"] = []
         del data["meshes"][0]["primitives"][0]["attributes"]["TEXCOORD_0"]
