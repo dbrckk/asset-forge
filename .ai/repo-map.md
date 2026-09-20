@@ -1913,6 +1913,24 @@ def test_generator_metadata_redacts_credentials_before_reporting(self)
 ⋮----
 stdout = (
 ⋮----
+def test_backend_status_reports_imagen_codex_without_exposing_token(self)
+⋮----
+def which(name)
+⋮----
+def test_imagen_codex_command_uses_raster_output_and_no_token_argument(self)
+⋮----
+raster_job = job()
+⋮----
+command = imagen_codex_command(
+⋮----
+def test_imagen_codex_rejects_vector_generation(self)
+⋮----
+def test_execute_generated_asset_supports_imagen_codex_raster(self)
+⋮----
+target = out / "generated-source.png"
+⋮----
+stdout = '{"files":["generated-source.png"],"provider":"codex"}'
+⋮----
 def test_required_alpha_runs_transparency_processor_before_normalization(self)
 ⋮----
 alpha_job = job()
@@ -4267,9 +4285,11 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict
 env = os.environ if environ is None else environ
 home_dir = Path.home() if home is None else Path(home)
 polli = shutil.which("polli")
+imagen = shutil.which("imagen")
 credentials = home_dir / ".pollinations" / "credentials.json"
 api_key_available = bool(str(env.get("POLLINATIONS_API_KEY") or "").strip())
 authenticated = api_key_available or credentials.is_file()
+codex_token_available = bool(
 ⋮----
 def _sprite_sheet_geometry(job: dict) -> tuple[int, int, int, int] | None
 ⋮----
@@ -4342,7 +4362,29 @@ command = [
 ⋮----
 dimensions = _generation_dimensions(job)
 ⋮----
-executable = shutil.which("polli")
+def _imagen_output_path(output_dir: Path, stdout: str) -> tuple[Path, dict | None]
+⋮----
+metadata = None
+⋮----
+parsed = json.loads(stdout or "")
+⋮----
+metadata = _sanitize_metadata(parsed)
+files = parsed.get("files")
+⋮----
+first = files[0]
+⋮----
+candidate = Path(first)
+⋮----
+candidate = Path(output_dir) / candidate
+resolved_root = Path(output_dir).resolve()
+resolved_candidate = candidate.resolve()
+⋮----
+fallback = Path(output_dir) / "generated-source.png"
+⋮----
+matches = sorted(Path(output_dir).glob("generated-source*.png"))
+⋮----
+executable_name = "polli" if backend == "pollinations" else "imagen"
+executable = shutil.which(executable_name)
 ⋮----
 timeout = float(timeout_seconds)
 ⋮----
@@ -4351,8 +4393,14 @@ output_dir = Path(output_dir)
 vector = asset_type in VECTOR_GENERATED_TYPES
 constrained_raster = (
 output = output_dir / (
-effective_model = model or (DEFAULT_VECTOR_MODEL if vector else None)
-command = pollinations_command(job, output, model=effective_model, executable=executable)
+⋮----
+effective_model = model or (
+⋮----
+command = pollinations_command(
+⋮----
+command = imagen_codex_command(
+⋮----
+stdout = str(completed.stdout or "").strip()
 ⋮----
 transparency = None
 ⋮----
@@ -4364,12 +4412,7 @@ final_output = output
 final_output = output_dir / "generated-source.png"
 normalization = raster_normalizer(output, final_output, job)
 ⋮----
-stdout = str(completed.stdout or "").strip()
-metadata = None
-⋮----
 parsed = json.loads(stdout)
-⋮----
-metadata = _sanitize_metadata(parsed)
 ⋮----
 class _NoCredentialRedirect(urllib.request.HTTPRedirectHandler)
 ⋮----
@@ -4382,6 +4425,8 @@ payload = json.loads(str(completed.stdout or ""))
 url = payload.get("url")
 ⋮----
 api_key = str(env.get("POLLINATIONS_API_KEY") or "").strip()
+⋮----
+executable = shutil.which("polli")
 ⋮----
 out = Path(output_dir)
 ⋮----
@@ -5106,6 +5151,7 @@ raster = raster_backend_status()
 tools_3d = detect_3d_tools()
 ⋮----
 pollinations = generation["pollinations"]
+imagen_codex = generation.get("imagenCodex", {})
 webp_encode = bool(
 godot_executable = which("godot4") or which("godot")
 ⋮----

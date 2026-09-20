@@ -285,84 +285,98 @@
       "language": "python",
       "kind": "function",
       "name": "_sprite_sheet_geometry",
-      "line": 87
+      "line": 104
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "_generation_dimensions",
-      "line": 122
+      "line": 139
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "_ensure_transparency",
-      "line": 136
+      "line": 153
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "_normalize_raster_geometry",
-      "line": 216
+      "line": 233
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "build_generation_prompt",
-      "line": 260
+      "line": 277
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "pollinations_command",
-      "line": 312
+      "line": 329
+    },
+    {
+      "file": "generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "imagen_codex_command",
+      "line": 360
+    },
+    {
+      "file": "generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "_imagen_output_path",
+      "line": 390
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "execute_generated_asset",
-      "line": 343
+      "line": 426
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "_NoCredentialRedirect",
-      "line": 445
+      "line": 558
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "redirect_request",
-      "line": 446
+      "line": 559
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "_default_3d_opener",
-      "line": 450
+      "line": 563
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "_upload_reference_image",
-      "line": 457
+      "line": 570
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "execute_generated_3d_asset",
-      "line": 489
+      "line": 602
     },
     {
       "file": "gltf_binary_metrics.py",
@@ -1678,203 +1692,259 @@
       "language": "python",
       "kind": "function",
       "name": "job",
-      "line": 16
+      "line": 17
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "GeneratorBackendsTests",
-      "line": 34
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "function",
-      "name": "test_prompt_preserves_hard_sprite_constraints",
       "line": 35
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
+      "name": "test_prompt_preserves_hard_sprite_constraints",
+      "line": 36
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
       "name": "test_pollinations_command_never_contains_api_key",
-      "line": 41
+      "line": 42
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_vector_generation_defaults_to_recraft_svg_model",
-      "line": 57
+      "line": 58
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_backend_status_reports_auth_without_secret_value",
-      "line": 74
+      "line": 75
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_execute_generated_asset_uses_bounded_subprocess_and_output",
-      "line": 86
+      "line": 87
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "runner",
-      "line": 89
+      "line": 90
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Result",
-      "line": 92
+      "line": 93
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_generator_metadata_redacts_credentials_before_reporting",
-      "line": 123
+      "line": 124
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "runner",
-      "line": 127
+      "line": 128
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Result",
-      "line": 131
+      "line": 132
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_backend_status_reports_imagen_codex_without_exposing_token",
+      "line": 164
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "which",
+      "line": 165
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_imagen_codex_command_uses_raster_output_and_no_token_argument",
+      "line": 180
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_imagen_codex_rejects_vector_generation",
+      "line": 195
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_execute_generated_asset_supports_imagen_codex_raster",
+      "line": 201
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "runner",
+      "line": 205
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "class",
+      "name": "Result",
+      "line": 209
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "which",
+      "line": 216
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_required_alpha_runs_transparency_processor_before_normalization",
-      "line": 161
+      "line": 242
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "runner",
-      "line": 169
+      "line": 250
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Result",
-      "line": 172
+      "line": 253
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "transparency",
-      "line": 178
+      "line": 259
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "normalize",
-      "line": 182
+      "line": 263
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_3d_prompt_is_reference_image_oriented",
-      "line": 200
+      "line": 281
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
-      "line": 208
+      "line": 289
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "generator",
-      "line": 213
+      "line": 294
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "upload_runner",
-      "line": 219
+      "line": 300
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Result",
-      "line": 222
+      "line": 303
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Response",
-      "line": 228
+      "line": 309
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "__enter__",
-      "line": 230
+      "line": 311
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "__exit__",
-      "line": 232
+      "line": 313
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "read",
-      "line": 234
+      "line": 315
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "opener",
-      "line": 237
+      "line": 318
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_3d_generation_requires_server_api_key",
-      "line": 267
+      "line": 348
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_unsupported_generated_type_fails_closed",
-      "line": 277
+      "line": 358
     },
     {
       "file": "tests/test_gltf_binary_metrics.py",

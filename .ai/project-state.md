@@ -96,19 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T08:32:15Z
+Generated: 2026-09-20T08:36:18Z
 
 ### Git
 - Branch: `main`
-- Head: `307bb556d282`
-- Commit date: 2026-09-20T10:31:57+02:00
-- Commit: ci: skip live generation cleanly without credential
+- Head: `9fc828fafb50`
+- Commit date: 2026-09-20T10:36:01+02:00
+- Commit: test: cover Codex image generation backend
 - Tracked files: 244
 
 ### Recently changed files
+- `tests/test_generator_backends.py`
+- `asset_forge.py`
+- `operational_status.py`
+- `generator_backends.py`
 - `.github/workflows/live-generation.yml`
-- `.github/workflows/release.yml`
-- `.github/workflows/validate.yml`
 
 ### Project signals
 - `pyproject.toml`

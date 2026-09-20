@@ -1,13 +1,13 @@
 # Change impact
 
-Base: 846d90a47e8afe0d983e67fbbeaba09a4fd58078
-Head: 307bb556d282938be9a7e9706ee8086ba30dffc0
+Base: 9ecdbd3e5324b7293441816b4665177e7997616f
+Head: 9fc828fafb50572d07d2ee747b0643c3fdcfd324
 
 ## Changed files
-- M .github/workflows/live-generation.yml
+- M tests/test_generator_backends.py
 
 ## Affected areas
-- .github
+- tests
 
 ## Related test candidates
 - No direct filename-based test match detected.
