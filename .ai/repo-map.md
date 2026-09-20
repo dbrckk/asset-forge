@@ -246,9 +246,14 @@ jobs:
           if [ -n "$POLLINATIONS_API_KEY" ]; then
             echo "ready=true" >> "$GITHUB_OUTPUT"
             echo "backend=pollinations" >> "$GITHUB_OUTPUT"
+            echo "credential=POLLINATIONS_API_KEY" >> "$GITHUB_OUTPUT"
+          elif [ -n "$CODEX_ACCESS_TOKEN" ] || [ -n "$CHATGPT_ACCESS_TOKEN" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "backend=imagen-codex" >> "$GITHUB_OUTPUT"
+            echo "credential=CODEX_ACCESS_TOKEN/CHATGPT_ACCESS_TOKEN" >> "$GITHUB_OUTPUT"
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Deadline Zero dependent-reference pilot requires POLLINATIONS_API_KEY."
+            echo "::notice::Deadline Zero live pilot requires Pollinations or Imagen/Codex credentials."
           fi
 
       - name: Produce Rex premium pilot
@@ -263,7 +268,7 @@ jobs:
         if: steps.credential.outputs.ready != 'true'
         run: |
           mkdir -p build/deadline-zero-live-pilot
-          printf '%s\n' '{"schema_version":"asset-forge/live-pilot/v1","success":false,"status":"credential_required","required_secret":"POLLINATIONS_API_KEY"}' > build/deadline-zero-live-pilot/pilot-status.json
+          printf '%s\n' '{"schema_version":"asset-forge/live-pilot/v1","success":false,"status":"credential_required","required_secret":"POLLINATIONS_API_KEY or CODEX_ACCESS_TOKEN/CHATGPT_ACCESS_TOKEN"}' > build/deadline-zero-live-pilot/pilot-status.json
 
       - name: Validate pilot bundle
         if: steps.credential.outputs.ready == 'true'
@@ -2623,6 +2628,15 @@ target = out / "generated-source.png"
 ⋮----
 stdout = '{"files":["generated-source.png"],"provider":"codex"}'
 ⋮----
+def test_imagen_codex_command_accepts_local_visual_references(self)
+⋮----
+def test_execute_generated_asset_supports_imagen_visual_reference_and_retry(self)
+⋮----
+reference = out / "parent.png"
+⋮----
+scores = iter([0.2, 0.83])
+calls = []
+⋮----
 def test_auto_backend_prefers_pollinations_for_raster_when_ready(self)
 ⋮----
 def test_auto_backend_falls_back_to_imagen_codex_for_raster(self)
@@ -2632,8 +2646,6 @@ def test_auto_backend_rejects_vector_when_only_imagen_is_ready(self)
 def test_required_alpha_runs_transparency_processor_before_normalization(self)
 ⋮----
 alpha_job = job()
-⋮----
-calls = []
 ⋮----
 stdout = "{}"
 ⋮----
@@ -2680,8 +2692,6 @@ def test_unsupported_generated_type_fails_closed(self)
 bad = job()
 ⋮----
 def test_raster_generation_uploads_and_passes_visual_reference(self)
-⋮----
-reference = out / "parent.png"
 ⋮----
 seen = []
 ⋮----
@@ -5546,6 +5556,8 @@ previous_technical_failed = False
 attempt_command = list(command)
 ⋮----
 retry_guidance = []
+⋮----
+guidance = " ".join(retry_guidance)
 ⋮----
 stdout = str(completed.stdout or "").strip()
 ⋮----

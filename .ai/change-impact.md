@@ -1,13 +1,13 @@
 # Change impact
 
-Base: 5aa3cfa7380199fa25dd5fcb0aa20f793f53945d
-Head: c961dcc42c959c142af00f503ae1daa7514d68d0
+Base: b50c7069d9a7b47b2166509fcf153c49320070ed
+Head: eae91bfedd7218d9c50172f7da5905e4f395cd29
 
 ## Changed files
-- M tests/test_asset_library.py
+- M .github/workflows/deadline-zero-live-pilot.yml
 
 ## Affected areas
-- tests
+- .github
 
 ## Related test candidates
 - No direct filename-based test match detected.

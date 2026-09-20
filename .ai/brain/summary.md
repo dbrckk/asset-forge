@@ -2,11 +2,11 @@
 
 - Index mode: incremental
 - Files indexed: 64
-- Files reparsed this run: 3
-- Symbols: 817
-- Internal import edges: 84
-- Impacted files: 6
-- Selected tests: 4
+- Files reparsed this run: 2
+- Symbols: 821
+- Internal import edges: 80
+- Impacted files: 5
+- Selected tests: 1
 
 ## Languages
 - python: 61 files
@@ -15,7 +15,7 @@
 ## Highest-density symbol files
 - web/runtime_atlas.mjs: 139 symbols
 - tests/test_raster_pack.py: 82 symbols
-- tests/test_generator_backends.py: 59 symbols
+- tests/test_generator_backends.py: 63 symbols
 - raster_pack.py: 51 symbols
 - tests/test_production_executor.py: 40 symbols
 - tests/test_svg_tools.py: 22 symbols
@@ -43,10 +43,10 @@
 ## ast-grep enrichment
 - ast-grep outline: available
 - AST index mode: incremental
-- AST files reparsed this run: 3
+- AST files reparsed this run: 2
 - outline files retained: 60
 - top-level items retained: 1058
-- direct members retained: 319
+- direct members retained: 321
 - symbol shards: 26
 - route named symbols via ast-routing.json, then fetch one ast-symbols/<initial>.json shard
 
