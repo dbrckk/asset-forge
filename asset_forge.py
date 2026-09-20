@@ -377,6 +377,8 @@ def execute_compiled_production_job(
     reference_paths: list[Path] | None = None,
 ) -> dict:
     asset_type = str(job.get("assetType") or "")
+    if reference_paths and asset_type in THREE_D_GENERATED_TYPES | VECTOR_GENERATED_TYPES:
+        raise ValueError("visual references are currently supported for raster production only")
     if asset_type in THREE_D_GENERATED_TYPES:
         return execute_generated_3d_job(
             job,
@@ -865,6 +867,7 @@ def main() -> int:
                 resolution=args.resolution,
                 timeout_seconds=args.timeout,
                 source_path=args.source,
+                reference_paths=args.reference,
             )
             result = _enrich_engine_handoff(job, result, output_dir)
             contract_errors = validate_production_report(result)
