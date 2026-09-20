@@ -101,6 +101,7 @@ def execute_generated_raster_job(
     model: str | None = None,
     timeout_seconds: float = 180.0,
     source_path: Path | None = None,
+    reference_paths: list[Path] | None = None,
 ) -> dict:
     if job.get("schema") != "asset-forge/production-job/v1":
         raise ProductionExecutionError("unsupported production job schema")
@@ -130,6 +131,7 @@ def execute_generated_raster_job(
             backend=backend,
             model=model,
             timeout_seconds=timeout_seconds,
+            reference_paths=reference_paths,
         )
         source = _trusted_generated_source(out, generation)
     else:
