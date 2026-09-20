@@ -357,6 +357,41 @@ def pollinations_command(
     return command
 
 
+def select_generation_backend(job: dict, requested: str = "auto") -> str:
+    if requested in {"pollinations", "imagen-codex"}:
+        return requested
+    if requested != "auto":
+        raise GenerationError(f"unsupported generator backend: {requested}")
+
+    asset_type = str(job.get("assetType") or "")
+    status = generator_backend_status()
+    pollinations = status.get("pollinations", {})
+    imagen_codex = status.get("imagenCodex", {})
+
+    if asset_type in RASTER_GENERATED_TYPES:
+        if pollinations.get("rasterVectorReady") is True:
+            return "pollinations"
+        if imagen_codex.get("rasterReady") is True:
+            return "imagen-codex"
+        raise GenerationError("no authenticated raster generation backend is ready")
+
+    if asset_type in VECTOR_GENERATED_TYPES:
+        if pollinations.get("rasterVectorReady") is True:
+            return "pollinations"
+        raise GenerationError(
+            "no authenticated SVG generation backend is ready; imagen-codex is raster-only"
+        )
+
+    if asset_type in THREE_D_GENERATED_TYPES:
+        if pollinations.get("threeDReady") is True:
+            return "pollinations"
+        raise GenerationError(
+            "no authenticated 3D generation backend is ready; POLLINATIONS_API_KEY is required"
+        )
+
+    raise GenerationError(f"unsupported generated asset type: {asset_type or '<missing>'}")
+
+
 def imagen_codex_command(
     job: dict,
     output_dir: Path,
@@ -427,7 +462,7 @@ def execute_generated_asset(
     job: dict,
     output_dir: Path,
     *,
-    backend: str = "pollinations",
+    backend: str = "auto",
     model: str | None = None,
     timeout_seconds: float = 180.0,
     runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,
@@ -436,8 +471,7 @@ def execute_generated_asset(
 ) -> dict:
     if job.get("requiresGenerator") is not True:
         raise GenerationError("production job does not require a generator")
-    if backend not in {"pollinations", "imagen-codex"}:
-        raise GenerationError(f"unsupported generator backend: {backend}")
+    backend = select_generation_backend(job, backend)
     asset_type = str(job.get("assetType") or "")
     if asset_type not in SUPPORTED_GENERATED_TYPES:
         raise GenerationError(f"unsupported generated asset type: {asset_type or '<missing>'}")
