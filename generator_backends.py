@@ -18,7 +18,6 @@ from colab_queue import (
     download_result_asset,
     submit as submit_colab_job,
     wait_result as wait_colab_result,
-    worker_status as colab_worker_status,
 )
 
 
@@ -85,9 +84,6 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
             or ""
         ).strip()
     )
-    colab_status = colab_worker_status(
-        token=env.get("GITHUB_TOKEN") or env.get("ASSET_FORGE_GITHUB_TOKEN")
-    )
     return {
         "pollinations": {
             "installed": polli is not None,
@@ -117,10 +113,13 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
             "authenticated": bool(
                 str(env.get("GITHUB_TOKEN") or env.get("ASSET_FORGE_GITHUB_TOKEN") or "").strip()
             ),
-            "rasterReady": colab_status.get("online") is True,
+            "rasterReady": False,
+            "queueReady": bool(
+                str(env.get("GITHUB_TOKEN") or env.get("ASSET_FORGE_GITHUB_TOKEN") or "").strip()
+            ),
+            "mode": "interactive-colab-batch",
             "vectorSvgReady": False,
             "threeDReady": False,
-            "worker": colab_status,
             "model": "Qwen/Qwen-Image-2.1",
         },
     }
@@ -402,13 +401,9 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str:
     status = generator_backend_status()
     pollinations = status.get("pollinations", {})
     imagen_codex = status.get("imagenCodex", {})
-    qwen_colab = status.get("qwenColab", {})
-
     if asset_type in RASTER_GENERATED_TYPES:
         if pollinations.get("rasterVectorReady") is True:
             return "pollinations"
-        if qwen_colab.get("rasterReady") is True:
-            return "qwen-colab"
         raise GenerationError("no authenticated raster generation backend is ready")
 
     if asset_type in VECTOR_GENERATED_TYPES:
