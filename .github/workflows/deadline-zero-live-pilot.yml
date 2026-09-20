@@ -42,6 +42,11 @@ jobs:
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
 
+      - name: Authenticate Pollinations CLI
+        if: env.POLLINATIONS_API_KEY != ''
+        shell: bash
+        run: printf '%s' "$POLLINATIONS_API_KEY" | polli auth login --with-token
+
       - name: Inspect production readiness
         run: asset-forge operational-status
 
