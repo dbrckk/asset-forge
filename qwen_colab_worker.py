@@ -90,8 +90,19 @@ def _delete(path: str, sha: str, message: str) -> None:
     )
 
 
-def _download_reference(url: str):
+def _download_reference(value):
     from PIL import Image
+
+    if isinstance(value, dict) and str(value.get("github_path") or "").strip():
+        remote_path = str(value["github_path"])
+        payload = _request(
+            "GET",
+            f"contents/{urllib.parse.quote(remote_path)}?ref={urllib.parse.quote(BRANCH)}",
+        )
+        raw = base64.b64decode(str(payload.get("content") or ""))
+        return Image.open(io.BytesIO(raw)).convert("RGBA")
+
+    url = str(value or "")
     request = urllib.request.Request(url, headers={"User-Agent": "asset-forge-colab-worker"})
     with urllib.request.urlopen(request, timeout=90) as response:
         raw = response.read()
@@ -124,7 +135,15 @@ def run_job(pipe, job: dict):
     steps = int(job.get("steps") or 28)
     seed = int(job.get("seed") or 0)
     refs = job.get("references") if isinstance(job.get("references"), list) else []
-    images = [_download_reference(str(url)) for url in refs[:10] if str(url).startswith("https://")]
+    images = [
+        _download_reference(value)
+        for value in refs[:10]
+        if (
+            isinstance(value, dict)
+            and str(value.get("github_path") or "").strip()
+        )
+        or str(value).startswith("https://")
+    ]
 
     kwargs = {
         "prompt": prompt,
