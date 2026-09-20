@@ -109,5 +109,94 @@ class GltfQualityTests(unittest.TestCase):
         self.assertTrue(report["evaluation"]["passed"])
 
 
+    def test_strict_prop_budget_is_blocking(self):
+        report = {
+            "geometry": {
+                "meshes": 9,
+                "primitives": 1,
+                "vertices": 10,
+                "triangles": 10,
+                "primitiveVerticesKnown": 1,
+                "primitiveTrianglesKnown": 1,
+            },
+            "attributes": {
+                "normals": 1,
+                "uv0": 0,
+                "skinned": 0,
+                "texturedPrimitives": 0,
+                "texturedPrimitivesWithUv0": 0,
+                "normalMappedPrimitives": 0,
+                "normalMappedPrimitivesWithTangent": 0,
+            },
+            "materials": {
+                "count": 0,
+                "pbrMetallicRoughness": 0,
+            },
+            "textures": {
+                "count": 0,
+                "maxWidth": 0,
+                "maxHeight": 0,
+                "estimatedRgba8MipBytes": 0,
+                "externalImages": 0,
+            },
+            "rigAnimation": {
+                "animations": 0,
+                "maxJointsPerSkin": 0,
+            },
+            "diagnostics": {
+                "accessors": {"errors": [], "warnings": []},
+                "skinning": {"errors": [], "warnings": []},
+                "animations": {"errors": [], "warnings": []},
+            },
+        }
+        evaluation = evaluate_quality(report, "prop")
+        self.assertFalse(evaluation["passed"])
+        self.assertTrue(any("meshes 9 exceed" in value for value in evaluation["errors"]))
+
+    def test_prop_rejects_non_pbr_materials_and_animations(self):
+        report = {
+            "geometry": {
+                "meshes": 1,
+                "primitives": 1,
+                "vertices": 10,
+                "triangles": 10,
+                "primitiveVerticesKnown": 1,
+                "primitiveTrianglesKnown": 1,
+            },
+            "attributes": {
+                "normals": 1,
+                "uv0": 0,
+                "skinned": 0,
+                "texturedPrimitives": 0,
+                "texturedPrimitivesWithUv0": 0,
+                "normalMappedPrimitives": 0,
+                "normalMappedPrimitivesWithTangent": 0,
+            },
+            "materials": {
+                "count": 1,
+                "pbrMetallicRoughness": 0,
+            },
+            "textures": {
+                "count": 0,
+                "maxWidth": 0,
+                "maxHeight": 0,
+                "estimatedRgba8MipBytes": 0,
+                "externalImages": 0,
+            },
+            "rigAnimation": {
+                "animations": 1,
+                "maxJointsPerSkin": 0,
+            },
+            "diagnostics": {
+                "accessors": {"errors": [], "warnings": []},
+                "skinning": {"errors": [], "warnings": []},
+                "animations": {"errors": [], "warnings": []},
+            },
+        }
+        evaluation = evaluate_quality(report, "prop")
+        self.assertFalse(evaluation["passed"])
+        self.assertTrue(any("metallic-roughness PBR" in value for value in evaluation["errors"]))
+        self.assertTrue(any("forbids animations" in value for value in evaluation["errors"]))
+
 if __name__ == "__main__":
     unittest.main()
