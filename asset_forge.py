@@ -12,7 +12,7 @@ import zlib
 from pathlib import Path
 
 from animation_infer import infer_animations
-from asset_library import default_library_path, lookup as lookup_asset_library, record_success as record_asset_success, request_fingerprint
+from asset_library import default_library_path, lookup as lookup_asset_library, lookup_reusable as lookup_reusable_asset, record_success as record_asset_success, request_fingerprint, reusable_content_fingerprint
 from asset_profile_validation import validate_all_asset_profiles
 from engine_profile_validation import validate_all_godot_profiles
 from blender_adapter import build_blender_export_job, render_blender_command, write_blender_export_script, write_job_manifest
@@ -883,9 +883,39 @@ def main() -> int:
                 if library_enabled and library_path is not None and fingerprint is not None
                 else None
             )
+            constraints = (
+                job.get("manifest", {}).get("constraints", {})
+                if isinstance(job.get("manifest"), dict)
+                else {}
+            )
+            allow_cross_project_reuse = (
+                isinstance(constraints, dict)
+                and constraints.get("allowCrossProjectReuse") is True
+            )
+            content_fingerprint = (
+                reusable_content_fingerprint(
+                    job,
+                    backend=args.backend,
+                    model=args.model,
+                    resolution=args.resolution,
+                )
+                if library_enabled
+                else None
+            )
+            reusable_hit = (
+                lookup_reusable_asset(library_path, content_fingerprint)
+                if (
+                    library_hit is None
+                    and allow_cross_project_reuse
+                    and library_path is not None
+                    and content_fingerprint is not None
+                )
+                else None
+            )
+            selected_library_hit = library_hit or reusable_hit
             effective_source = (
-                Path(library_hit["artifact"])
-                if isinstance(library_hit, dict)
+                Path(selected_library_hit["artifact"])
+                if isinstance(selected_library_hit, dict)
                 else args.source
             )
             result = execute_compiled_production_job(
@@ -896,24 +926,33 @@ def main() -> int:
                 resolution=args.resolution,
                 timeout_seconds=args.timeout,
                 source_path=effective_source,
-                reference_paths=([] if library_hit else args.reference),
+                reference_paths=([] if selected_library_hit else args.reference),
             )
             result = _enrich_engine_handoff(job, result, output_dir)
             if library_enabled and library_path is not None and fingerprint is not None and result.get("success") is True:
-                if library_hit is None:
+                if selected_library_hit is None:
                     library_entry = record_asset_success(
                         library_path,
                         fingerprint=fingerprint,
+                        content_fingerprint=content_fingerprint,
                         job=job,
                         result=result,
                     )
                 else:
-                    library_entry = library_hit
+                    library_entry = selected_library_hit
                 result["library"] = {
                     "schema": "asset-forge/library-receipt/v1",
                     "path": str(library_path),
-                    "cacheHit": library_hit is not None,
+                    "cacheHit": selected_library_hit is not None,
+                    "reuseScope": (
+                        "cross-project"
+                        if reusable_hit is not None
+                        else "exact"
+                        if library_hit is not None
+                        else "new"
+                    ),
                     "fingerprint": fingerprint,
+                    "contentFingerprint": content_fingerprint,
                     "entry": library_entry,
                 }
                 _persist_enriched_production_report(result)
