@@ -104,6 +104,7 @@ class GeneratorBackendsTests(unittest.TestCase):
                 result = execute_generated_asset(
                     job(),
                     out,
+                    backend="pollinations",
                     timeout_seconds=30,
                     runner=runner,
                     raster_normalizer=lambda raw, output, value: (
@@ -144,6 +145,7 @@ class GeneratorBackendsTests(unittest.TestCase):
                 result = execute_generated_asset(
                     job(),
                     out,
+                    backend="pollinations",
                     runner=runner,
                     raster_normalizer=lambda raw, output, value: (
                         output.write_bytes(raw.read_bytes())
@@ -303,6 +305,7 @@ class GeneratorBackendsTests(unittest.TestCase):
                 result = execute_generated_asset(
                     alpha_job,
                     out,
+                    backend="pollinations",
                     runner=runner,
                     transparency_processor=transparency,
                     raster_normalizer=normalize,
