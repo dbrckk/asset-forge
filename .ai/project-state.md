@@ -96,20 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T07:29:04Z
+Generated: 2026-09-20T07:31:09Z
 
 ### Git
 - Branch: `main`
-- Head: `1ffcee30cf08`
-- Commit date: 2026-09-20T09:28:52+02:00
-- Commit: fix: normalize install smoke steps in workflow
-- Tracked files: 239
+- Head: `7587bd6a5ddd`
+- Commit date: 2026-09-20T09:30:49+02:00
+- Commit: release: publish installable Asset Forge wheel
+- Tracked files: 244
 
 ### Recently changed files
+- `.github/workflows/release.yml`
 - `.github/workflows/validate.yml`
 - `pyproject.toml`
-- `tests/test_production_executor.py`
-- `schemas/production-report.schema.json`
+- `schemas/__init__.py`
+- `profiles/__init__.py`
 
 ### Project signals
 - `pyproject.toml`

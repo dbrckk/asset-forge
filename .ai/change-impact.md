@@ -1,10 +1,10 @@
 # Change impact
 
-Base: 9653be09360b2a9406eab952c428b07e03ba2b75
-Head: 1ffcee30cf08f48f3de929c954dede9633c5f25b
+Base: f768881fa2b0dd763963cc1c49863630ec0b05d3
+Head: 7587bd6a5ddd7d2aa55c9d8e8532d62cab66afdf
 
 ## Changed files
-- M .github/workflows/validate.yml
+- M .github/workflows/release.yml
 
 ## Affected areas
 - .github

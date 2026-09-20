@@ -1,15 +1,15 @@
 # Repo Brain
 
 - Index mode: incremental
-- Files indexed: 48
-- Files reparsed this run: 0
+- Files indexed: 52
+- Files reparsed this run: 4
 - Symbols: 682
-- Internal import edges: 70
-- Impacted files: 0
+- Internal import edges: 66
+- Impacted files: 4
 - Selected tests: 0
 
 ## Languages
-- python: 45 files
+- python: 49 files
 - javascript: 3 files
 
 ## Highest-density symbol files
@@ -43,7 +43,7 @@
 ## ast-grep enrichment
 - ast-grep outline: available
 - AST index mode: incremental
-- AST files reparsed this run: 0
+- AST files reparsed this run: 4
 - outline files retained: 48
 - top-level items retained: 931
 - direct members retained: 273

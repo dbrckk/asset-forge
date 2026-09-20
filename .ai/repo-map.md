@@ -50,6 +50,7 @@ The content is organized as follows:
 benchmarks/
   runtime_atlas_web.bench.mjs
 config/
+  __init__.py
   tooling.json
 examples/
   asset-manifest.json
@@ -58,6 +59,7 @@ examples/
   production-request.json
   runtime-atlas.json
 pipelines/
+  __init__.py
   model-3d.json
   sprite-2d.json
   vector-svg.json
@@ -74,7 +76,9 @@ profiles/
     icon.json
     logo.json
     ui.json
+  __init__.py
 schemas/
+  __init__.py
   3d-quality-profile.schema.json
   asset-manifest.schema.json
   godot4-handoff-profile.schema.json
@@ -246,6 +250,8 @@ jobs:
           python -m unittest discover -s tests -v
           python asset_forge.py validate-engine-profiles
           python asset_forge.py validate-asset-profiles
+      - name: Build installable wheel
+        run: python -m pip wheel --no-deps . -w dist
       - name: Build source bundle
         run: |
           mkdir -p dist
@@ -254,15 +260,16 @@ jobs:
             --prefix="asset-forge-${GITHUB_REF_NAME}/" \
             -o "dist/asset-forge-${GITHUB_REF_NAME}.tar.gz" \
             HEAD
-          sha256sum "dist/asset-forge-${GITHUB_REF_NAME}.tar.gz" \
-            > "dist/asset-forge-${GITHUB_REF_NAME}.tar.gz.sha256"
+          sha256sum dist/*.whl "dist/asset-forge-${GITHUB_REF_NAME}.tar.gz" \
+            > dist/SHA256SUMS
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
+            dist/*.whl \
             "dist/asset-forge-${GITHUB_REF_NAME}.tar.gz" \
-            "dist/asset-forge-${GITHUB_REF_NAME}.tar.gz.sha256" \
+            dist/SHA256SUMS \
             --verify-tag \
             --generate-notes
 ````
@@ -339,6 +346,17 @@ jobs:
         run: python -m pip install --no-deps -e .
       - name: Smoke-test installed CLI
         run: asset-forge --help >/dev/null
+      - name: Build wheel
+        run: python -m pip wheel --no-deps . -w build/wheel
+      - name: Smoke-test wheel resources
+        run: |
+          python -m venv build/wheel-venv
+          build/wheel-venv/bin/python -m pip install --no-deps build/wheel/*.whl
+          (
+            cd /tmp
+            "$GITHUB_WORKSPACE/build/wheel-venv/bin/asset-forge" validate-engine-profiles
+            "$GITHUB_WORKSPACE/build/wheel-venv/bin/asset-forge" validate-asset-profiles
+          )
       - name: Compile
         run: python -m compileall -q asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
@@ -405,6 +423,11 @@ updates:
 ## File: benchmarks/runtime_atlas_web.bench.mjs
 ````javascript
 
+````
+
+## File: config/__init__.py
+````python
+"""Packaged Asset Forge runtime resources."""
 ````
 
 ## File: config/tooling.json
@@ -686,6 +709,11 @@ updates:
     }
   ]
 }
+````
+
+## File: pipelines/__init__.py
+````python
+"""Packaged Asset Forge runtime resources."""
 ````
 
 ## File: pipelines/model-3d.json
@@ -975,6 +1003,16 @@ updates:
     "maxDepth": 64
   }
 }
+````
+
+## File: profiles/__init__.py
+````python
+"""Packaged Asset Forge runtime resources."""
+````
+
+## File: schemas/__init__.py
+````python
+"""Packaged Asset Forge runtime resources."""
 ````
 
 ## File: schemas/3d-quality-profile.schema.json
@@ -5227,6 +5265,7 @@ dev = ["Pillow>=12.2,<13"]
 asset-forge = "asset_forge:main"
 
 [tool.setuptools]
+packages = ["config", "pipelines", "profiles", "schemas"]
 py-modules = [
   "animation_infer",
   "asset_forge",
@@ -5251,6 +5290,13 @@ py-modules = [
   "svg_tools",
   "toolchain_3d",
 ]
+
+
+[tool.setuptools.package-data]
+config = ["*.json"]
+pipelines = ["*.json"]
+profiles = ["**/*.json"]
+schemas = ["*.json"]
 ````
 
 ## File: raster_backend.py

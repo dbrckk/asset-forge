@@ -1,10 +1,10 @@
 # CI status
 
-Summary: 1 success / 2 failure / 1 active
+Summary: 3 success / 0 failure / 1 active
 
-- Validate asset-forge: in_progress / pending (1ffcee30)
-- .github/workflows/validate.yml: completed / failure (9653be09)
-- .github/workflows/validate.yml: completed / failure (bf4de8fe)
-- Validate asset-forge: completed / success (4c2e92cf)
+- Validate asset-forge: in_progress / pending (7587bd6a)
+- Validate asset-forge: completed / success (f768881f)
+- Validate asset-forge: completed / success (9ca70f13)
+- Validate asset-forge: completed / success (386c8c41)
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.
