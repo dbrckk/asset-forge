@@ -207,6 +207,8 @@ jobs:
     timeout-minutes: 35
     env:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+      CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}
+      CHATGPT_ACCESS_TOKEN: ${{ secrets.CHATGPT_ACCESS_TOKEN }}
     steps:
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -235,11 +237,34 @@ jobs:
       - name: Inspect production readiness
         run: asset-forge operational-status
 
-      - name: Produce Rex premium pilot
+      - name: Check live pilot credential
+        id: credential
+        shell: bash
         run: |
-          python remote_batch.py             --spec examples/deadline-zero-live-pilot-batch.json             --output-root build/deadline-zero-live-pilot             --backend pollinations
+          if [ -n "$POLLINATIONS_API_KEY" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "backend=pollinations" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Deadline Zero dependent-reference pilot requires POLLINATIONS_API_KEY."
+          fi
+
+      - name: Produce Rex premium pilot
+        if: steps.credential.outputs.ready == 'true'
+        run: |
+          python remote_batch.py \
+            --spec examples/deadline-zero-live-pilot-batch.json \
+            --output-root build/deadline-zero-live-pilot \
+            --backend "${{ steps.credential.outputs.backend }}"
+
+      - name: Persist blocked pilot status
+        if: steps.credential.outputs.ready != 'true'
+        run: |
+          mkdir -p build/deadline-zero-live-pilot
+          printf '%s\n' '{"schema_version":"asset-forge/live-pilot/v1","success":false,"status":"credential_required","required_secret":"POLLINATIONS_API_KEY"}' > build/deadline-zero-live-pilot/pilot-status.json
 
       - name: Validate pilot bundle
+        if: steps.credential.outputs.ready == 'true'
         run: |
           python - <<'PY'
           import hashlib
@@ -264,6 +289,7 @@ jobs:
           PY
 
       - name: Publish quality summary
+        if: steps.credential.outputs.ready == 'true'
         run: |
           python - <<'PY'
           import json
@@ -2355,6 +2381,8 @@ one = record_success(
 two = record_success(
 ⋮----
 payload = json.loads(library.read_text())
+⋮----
+def test_repeated_success_record_is_idempotent(self)
 ⋮----
 def test_reference_sha_changes_cache_key(self)
 ⋮----
@@ -5089,6 +5117,19 @@ LIBRARY_SCHEMA = "asset-forge/library/v1"
 ⋮----
 class AssetLibraryError(RuntimeError)
 ⋮----
+@contextmanager
+def _library_lock(path: Path)
+⋮----
+lock_path = Path(str(path) + ".lock")
+⋮----
+handle = lock_path.open("a+b")
+⋮----
+def _atomic_write_json(path: Path, payload: dict) -> None
+⋮----
+path = Path(path)
+⋮----
+temp = Path(raw)
+⋮----
 def default_library_path() -> Path
 ⋮----
 configured = str(os.environ.get("ASSET_FORGE_LIBRARY") or "").strip()
@@ -5109,8 +5150,6 @@ canonical = json.dumps(
 def _empty() -> dict
 ⋮----
 def load_library(path: Path) -> dict
-⋮----
-path = Path(path)
 ⋮----
 payload = json.loads(path.read_text(encoding="utf-8"))
 ⋮----
@@ -5136,8 +5175,6 @@ stored = store / (digest + artifact.suffix.lower())
 ⋮----
 project = str(job.get("project") or "")
 asset_id = str(job.get("assetId") or "")
-library = load_library(library_path)
-version = _next_version(library["entries"], project, asset_id)
 ⋮----
 validation = result.get("validation") if isinstance(result.get("validation"), dict) else {}
 technical = validation.get("technicalArt") if isinstance(validation.get("technicalArt"), dict) else {}
@@ -5147,6 +5184,10 @@ visual = generation.get("visualSimilarity") if isinstance(generation.get("visual
 attempts = visual.get("attempts") if isinstance(visual.get("attempts"), list) else []
 final_similarity = (
 ⋮----
+library = load_library(library_path)
+existing = next(
+⋮----
+version = _next_version(library["entries"], project, asset_id)
 entry = {
 ⋮----
 def hamming_hex(left: str, right: str) -> int

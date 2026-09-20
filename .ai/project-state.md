@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T16:44:50Z
+Generated: 2026-09-20T16:46:41Z
 
 ### Git
 - Branch: `main`
-- Head: `0b57ab31e202`
-- Commit date: 2026-09-20T18:44:39+02:00
-- Commit: test: isolate UV rule from required PBR materials
+- Head: `c5ab9d5ab552`
+- Commit date: 2026-09-20T18:46:31+02:00
+- Commit: fix: make live pilot fail-safe when generation credentials are absent
 - Tracked files: 268
 
 ### Recently changed files
+- `.github/workflows/deadline-zero-live-pilot.yml`
+- `tests/test_asset_library.py`
+- `asset_library.py`
 - `tests/test_gltf_quality.py`
 - `.github/workflows/production-os-batch.yml`
-- `.github/workflows/production-os-dispatch.yml`
-- `tests/test_godot_3d_delivery.py`
-- `runtime_3d_plan.py`
 
 ### Project signals
 - `pyproject.toml`

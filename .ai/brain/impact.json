@@ -1,96 +1,281 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "5670ba5d3ba84141b7a47c15572fbb786d3e8be2",
-  "head": "0b57ab31e2029b99dc56cf53ef71a878c64d28b6",
+  "base": "0b57ab31e2029b99dc56cf53ef71a878c64d28b6",
+  "head": "c5ab9d5ab552f61e11b4b5a88c0a6e1f2019bdeb",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "tests/test_gltf_quality.py",
+      "path": ".github/workflows/deadline-zero-live-pilot.yml",
+      "status": "M"
+    },
+    {
+      "path": "asset_library.py",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_asset_library.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
-    "tests/test_gltf_quality.py"
+    "asset_library.py",
+    "tests/test_asset_library.py"
   ],
   "impacted_files": [
-    "tests/test_gltf_quality.py"
+    "asset_forge.py",
+    "asset_library.py",
+    "tests/test_asset_library.py"
   ],
   "impacted_symbols": [
     {
-      "name": "GltfQualityTests",
+      "name": "load_json",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 72
+    },
+    {
+      "name": "validate_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 80
+    },
+    {
+      "name": "is_power_of_two",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 138
+    },
+    {
+      "name": "sprite_grid",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 142
+    },
+    {
+      "name": "build_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 163
+    },
+    {
+      "name": "validate_raster_file",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 194
+    },
+    {
+      "name": "select_tools",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 253
+    },
+    {
+      "name": "build_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 271
+    },
+    {
+      "name": "load_valid_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 300
+    },
+    {
+      "name": "cmd_validate",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 316
+    },
+    {
+      "name": "cmd_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 324
+    },
+    {
+      "name": "cmd_validate_raster",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 332
+    },
+    {
+      "name": "cmd_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 346
+    },
+    {
+      "name": "execute_compiled_production_job",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 370
+    },
+    {
+      "name": "_write_production_inputs",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 424
+    },
+    {
+      "name": "_persist_enriched_production_report",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 440
+    },
+    {
+      "name": "_enrich_engine_handoff",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 453
+    },
+    {
+      "name": "parser",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 534
+    },
+    {
+      "name": "main",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 748
+    },
+    {
+      "name": "AssetLibraryError",
       "kind": "class",
-      "file": "tests/test_gltf_quality.py",
-      "line": 9
-    },
-    {
-      "name": "write",
-      "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 10
-    },
-    {
-      "name": "base",
-      "kind": "function",
-      "file": "tests/test_gltf_quality.py",
+      "file": "asset_library.py",
       "line": 15
     },
     {
-      "name": "test_counts_vertices_and_triangles",
+      "name": "_library_lock",
       "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 50
+      "file": "asset_library.py",
+      "line": 21
     },
     {
-      "name": "test_triangle_strip_count",
+      "name": "_atomic_write_json",
       "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 59
+      "file": "asset_library.py",
+      "line": 41
     },
     {
-      "name": "test_character_quality_requires_skin_attributes",
+      "name": "default_library_path",
       "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 68
+      "file": "asset_library.py",
+      "line": 57
     },
     {
-      "name": "test_textured_primitive_requires_uv",
+      "name": "_sha256",
       "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 76
+      "file": "asset_library.py",
+      "line": 64
     },
     {
-      "name": "test_normal_map_without_tangent_warns",
+      "name": "_reference_rows",
       "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 85
+      "file": "asset_library.py",
+      "line": 72
     },
     {
-      "name": "test_external_image_is_reported",
+      "name": "request_fingerprint",
       "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 93
+      "file": "asset_library.py",
+      "line": 82
     },
     {
-      "name": "test_untextured_primitive_does_not_require_uv",
+      "name": "_empty",
       "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 100
+      "file": "asset_library.py",
+      "line": 111
     },
     {
-      "name": "test_strict_prop_budget_is_blocking",
+      "name": "load_library",
       "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 112
+      "file": "asset_library.py",
+      "line": 115
     },
     {
-      "name": "test_prop_rejects_non_pbr_materials_and_animations",
+      "name": "lookup",
       "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 156
+      "file": "asset_library.py",
+      "line": 131
+    },
+    {
+      "name": "_next_version",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 150
+    },
+    {
+      "name": "record_success",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 161
+    },
+    {
+      "name": "hamming_hex",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 234
+    },
+    {
+      "name": "similar_entries",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 243
+    },
+    {
+      "name": "AssetLibraryTests",
+      "kind": "class",
+      "file": "tests/test_asset_library.py",
+      "line": 15
+    },
+    {
+      "name": "job",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 16
+    },
+    {
+      "name": "result",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 39
+    },
+    {
+      "name": "test_exact_fingerprint_reuses_validated_object",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 61
+    },
+    {
+      "name": "test_new_validated_generation_increments_version",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 82
+    },
+    {
+      "name": "test_repeated_success_record_is_idempotent",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 113
+    },
+    {
+      "name": "test_reference_sha_changes_cache_key",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 139
+    },
+    {
+      "name": "test_perceptual_deduplication_returns_near_matches",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 157
     }
   ],
   "selected_tests": [
-    "tests/test_gltf_quality.py"
+    "tests/test_asset_library.py"
   ]
 }

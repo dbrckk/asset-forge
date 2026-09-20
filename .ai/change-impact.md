@@ -1,13 +1,13 @@
 # Change impact
 
-Base: 310edb2220f63036699fa0ce52050a940e22e1a2
-Head: 0b57ab31e2029b99dc56cf53ef71a878c64d28b6
+Base: c86061724c506dcfcf446c79b7dafc833050c36e
+Head: c5ab9d5ab552f61e11b4b5a88c0a6e1f2019bdeb
 
 ## Changed files
-- M tests/test_gltf_quality.py
+- M .github/workflows/deadline-zero-live-pilot.yml
 
 ## Affected areas
-- tests
+- .github
 
 ## Related test candidates
 - No direct filename-based test match detected.
