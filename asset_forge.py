@@ -374,6 +374,7 @@ def execute_compiled_production_job(
     resolution: str = "low",
     timeout_seconds: float = 600.0,
     source_path: Path | None = None,
+    reference_paths: list[Path] | None = None,
 ) -> dict:
     asset_type = str(job.get("assetType") or "")
     if asset_type in THREE_D_GENERATED_TYPES:
@@ -412,6 +413,7 @@ def execute_compiled_production_job(
         model=model,
         timeout_seconds=min(timeout_seconds, 180.0),
         source_path=source_path,
+        reference_paths=reference_paths,
     )
 
 
@@ -568,6 +570,7 @@ def parser() -> argparse.ArgumentParser:
     fulfill.add_argument("--resolution", choices=["low", "medium", "high"], default="low")
     fulfill.add_argument("--timeout", type=float, default=600.0)
     fulfill.add_argument("--source", type=Path, help="local source for external/custom requests")
+    fulfill.add_argument("--reference", type=Path, action="append", default=[], help="validated local visual reference for raster generation; repeatable")
 
     raster = sub.add_parser("validate-raster", help="validate a PNG or WebP against an asset manifest")
     raster.add_argument("manifest", type=Path)
@@ -822,6 +825,7 @@ def main() -> int:
                 resolution=args.resolution,
                 timeout_seconds=args.timeout,
                 source_path=args.source,
+                reference_paths=args.reference,
             )
             result = _enrich_engine_handoff(job, result, output_dir)
             contract_errors = validate_production_report(result)
