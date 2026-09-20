@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 6bfb3e5ca80d2a190078526707a9b31d01197d66
-Head: 3f523c473dfff805ba74dd5bbfae40e2e3dc2e41
+Base: 811841ce88a0e0044e6de93c197af189eab1c786
+Head: 41e026c480669636f8145524c270055056139de5
 
 ## Changed files
-- M remote_batch.py
+- M .github/workflows/production-os-dispatch.yml
 
 ## Affected areas
-- (root)
+- .github
 
 ## Related test candidates
-- tests/test_remote_batch.py
+- No direct filename-based test match detected.
 
 ## Agent guidance
 - Read this file before broad repository exploration.

@@ -95,6 +95,7 @@ tests/
   test_animation_infer.py
   test_art_quality.py
   test_asset_forge.py
+  test_asset_library.py
   test_asset_profile_validation.py
   test_blender_adapter.py
   test_engine_profile_validation.py
@@ -125,6 +126,7 @@ AGENTS.md
 animation_infer.py
 art_quality.py
 asset_forge.py
+asset_library.py
 asset_profile_validation.py
 blender_adapter.py
 engine_profile_validation.py
@@ -417,6 +419,18 @@ jobs:
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
 
+      - name: Install Imagen Codex CLI
+        if: inputs.backend != 'pollinations' && (env.CODEX_ACCESS_TOKEN != '' || env.CHATGPT_ACCESS_TOKEN != '')
+        shell: bash
+        run: |
+          archive=/tmp/imagen-linux-amd64.tar.gz
+          curl -fsSL https://github.com/Leechael/imagen/releases/download/v0.1.2/imagen-linux-amd64.tar.gz -o "$archive"
+          echo "2ae06f466ba49898ff0c8a2afdd77b74481002d3036c247316138c727ceb7cb0  $archive" | sha256sum -c -
+          mkdir -p /tmp/imagen-install
+          tar -xzf "$archive" -C /tmp/imagen-install
+          sudo install -m 0755 /tmp/imagen-install/imagen /usr/local/bin/imagen
+          imagen --help >/dev/null
+
       - name: Authenticate Pollinations CLI
         if: env.POLLINATIONS_API_KEY != ''
         shell: bash
@@ -540,6 +554,18 @@ jobs:
 
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
+
+      - name: Install Imagen Codex CLI
+        if: inputs.backend != 'pollinations' && (env.CODEX_ACCESS_TOKEN != '' || env.CHATGPT_ACCESS_TOKEN != '')
+        shell: bash
+        run: |
+          archive=/tmp/imagen-linux-amd64.tar.gz
+          curl -fsSL https://github.com/Leechael/imagen/releases/download/v0.1.2/imagen-linux-amd64.tar.gz -o "$archive"
+          echo "2ae06f466ba49898ff0c8a2afdd77b74481002d3036c247316138c727ceb7cb0  $archive" | sha256sum -c -
+          mkdir -p /tmp/imagen-install
+          tar -xzf "$archive" -C /tmp/imagen-install
+          sudo install -m 0755 /tmp/imagen-install/imagen /usr/local/bin/imagen
+          imagen --help >/dev/null
 
       - name: Authenticate Pollinations CLI
         if: env.POLLINATIONS_API_KEY != ''
@@ -973,7 +999,9 @@ updates:
             "expectedFrames": 1,
             "requiresAlpha": true,
             "visualSimilarityMin": 0.55,
-            "visualSimilarityRetries": 2
+            "visualSimilarityRetries": 2,
+            "technicalQualityMin": 0.6,
+            "maxBorderAlphaRatio": 0.05
           }
         }
       },
@@ -1014,7 +1042,11 @@ updates:
             "expectedFrames": 8,
             "requiresAlpha": true,
             "visualSimilarityMin": 0.55,
-            "visualSimilarityRetries": 2
+            "visualSimilarityRetries": 2,
+            "technicalQualityMin": 0.6,
+            "maxBorderAlphaRatio": 0.05,
+            "minUniqueFrameRatio": 0.5,
+            "maxFrameCenterDrift": 0.2
           }
         }
       },
@@ -1055,7 +1087,11 @@ updates:
             "expectedFrames": 6,
             "requiresAlpha": true,
             "visualSimilarityMin": 0.55,
-            "visualSimilarityRetries": 2
+            "visualSimilarityRetries": 2,
+            "technicalQualityMin": 0.6,
+            "maxBorderAlphaRatio": 0.05,
+            "minUniqueFrameRatio": 0.5,
+            "maxFrameCenterDrift": 0.2
           }
         }
       },
@@ -2190,6 +2226,18 @@ def test_unstable_sprite_sheet_frame_occupancy_reduces_consistency(self)
 ⋮----
 path = Path(td) / "sheet.png"
 image = Image.new("RGBA", (192, 192), (0, 0, 0, 0))
+⋮----
+def test_duplicate_animation_frames_can_fail_strict_diversity_gate(self)
+⋮----
+path = Path(td) / "duplicate-sheet.png"
+⋮----
+x = col * 96
+y = row * 96
+⋮----
+def test_unstable_animation_center_can_fail_pivot_gate(self)
+⋮----
+path = Path(td) / "drift-sheet.png"
+image = Image.new("RGBA", (192, 96), (0, 0, 0, 0))
 ````
 
 ## File: tests/test_asset_forge.py
@@ -2272,6 +2320,55 @@ def test_invalid_png_crc_is_rejected(self)
 image = Path(tmp) / "bad.png"
 ⋮----
 data = bytearray(image.read_bytes())
+````
+
+## File: tests/test_asset_library.py
+````python
+class AssetLibraryTests(unittest.TestCase)
+⋮----
+def job(self)
+⋮----
+def result(self, artifact: Path, *, perceptual_hash="0f0f")
+⋮----
+def test_exact_fingerprint_reuses_validated_object(self)
+⋮----
+root = Path(td)
+library = root / "library.json"
+artifact = root / "rex.png"
+⋮----
+fingerprint = request_fingerprint(self.job(), backend="pollinations")
+entry = record_success(
+⋮----
+hit = lookup(library, fingerprint)
+⋮----
+def test_new_validated_generation_increments_version(self)
+⋮----
+first = root / "first.png"
+second = root / "second.png"
+⋮----
+first_fp = request_fingerprint(self.job(), backend="pollinations")
+second_job = self.job()
+⋮----
+second_fp = request_fingerprint(second_job, backend="pollinations")
+⋮----
+one = record_success(
+two = record_success(
+⋮----
+payload = json.loads(library.read_text())
+⋮----
+def test_reference_sha_changes_cache_key(self)
+⋮----
+ref = root / "parent.png"
+⋮----
+a = request_fingerprint(
+⋮----
+b = request_fingerprint(
+⋮----
+def test_perceptual_deduplication_returns_near_matches(self)
+⋮----
+fp = request_fingerprint(self.job())
+⋮----
+rows = similar_entries(
 ````
 
 ## File: tests/test_asset_profile_validation.py
@@ -2763,9 +2860,11 @@ def test_detects_godot_name_suffixes(self)
 ⋮----
 report = godot_3d_delivery_report(
 ⋮----
-def test_duplicate_node_names_warn(self)
+def test_detects_collision_import_hints(self)
 ⋮----
 data = self.base()
+⋮----
+def test_duplicate_node_names_warn(self)
 ⋮----
 report = godot_3d_delivery_report(self.write(Path(tmp), data), "prop")
 ⋮----
@@ -4597,6 +4696,10 @@ constraints = constraints if isinstance(constraints, dict) else {}
 expected_frames = constraints.get("expectedFrames")
 frame_consistency = 1.0
 frame_occupancies = []
+frame_hashes = []
+frame_centers = []
+unique_frame_ratio = 1.0
+max_frame_center_drift = 0.0
 ⋮----
 frame_width = width // columns
 frame_height = height // rows
@@ -4604,12 +4707,21 @@ frame_height = height // rows
 col = index % columns
 row = index // columns
 frame = rgba.crop((
-frame_alpha = list(frame.getchannel("A").getdata())
+frame_alpha_channel = frame.getchannel("A")
+frame_alpha = list(frame_alpha_channel.getdata())
+⋮----
+frame_bbox = frame_alpha_channel.getbbox()
 ⋮----
 mean = sum(frame_occupancies) / len(frame_occupancies)
 ⋮----
 variance = sum((value - mean) ** 2 for value in frame_occupancies) / len(frame_occupancies)
 frame_consistency = max(0.0, 1.0 - math.sqrt(variance) / mean)
+⋮----
+unique_frame_ratio = len(set(frame_hashes)) / len(frame_hashes)
+⋮----
+center_x = sum(value[0] for value in frame_centers) / len(frame_centers)
+center_y = sum(value[1] for value in frame_centers) / len(frame_centers)
+max_frame_center_drift = max(
 ⋮----
 score = (
 score = max(0.0, min(1.0, score))
@@ -4622,6 +4734,14 @@ max_border = constraints.get("maxBorderAlphaRatio", 0.08)
 max_border = float(max_border)
 ⋮----
 max_border = 0.08
+⋮----
+min_unique = constraints.get("minUniqueFrameRatio")
+⋮----
+min_unique = float(min_unique)
+⋮----
+max_center_drift = constraints.get("maxFrameCenterDrift")
+⋮----
+max_center_drift = float(max_center_drift)
 ⋮----
 min_score = constraints.get("technicalQualityMin")
 ⋮----
@@ -4881,6 +5001,16 @@ contract_errors = validate_production_report(result)
 ⋮----
 configured = job.get("delivery", {}).get("outputDir")
 ⋮----
+library_enabled = (
+library_path = default_library_path() if library_enabled else None
+fingerprint = (
+library_hit = (
+effective_source = (
+⋮----
+library_entry = record_asset_success(
+⋮----
+library_entry = library_hit
+⋮----
 metadata = pack_uniform_atlas(
 ⋮----
 rendered = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
@@ -4951,6 +5081,77 @@ result = {
 plan = build_3d_pipeline(
 ⋮----
 result = execute_3d_pipeline(plan, root)
+````
+
+## File: asset_library.py
+````python
+LIBRARY_SCHEMA = "asset-forge/library/v1"
+⋮----
+class AssetLibraryError(RuntimeError)
+⋮----
+def default_library_path() -> Path
+⋮----
+configured = str(os.environ.get("ASSET_FORGE_LIBRARY") or "").strip()
+⋮----
+def _sha256(path: Path) -> str
+⋮----
+digest = hashlib.sha256()
+⋮----
+def _reference_rows(reference_paths: list[Path] | None) -> list[dict]
+⋮----
+rows = []
+⋮----
+candidate = Path(path)
+⋮----
+payload = {
+canonical = json.dumps(
+⋮----
+def _empty() -> dict
+⋮----
+def load_library(path: Path) -> dict
+⋮----
+path = Path(path)
+⋮----
+payload = json.loads(path.read_text(encoding="utf-8"))
+⋮----
+entries = payload.get("entries")
+⋮----
+library = load_library(path)
+⋮----
+artifact = Path(str(entry.get("artifact") or ""))
+expected = str(entry.get("sha256") or "")
+⋮----
+def _next_version(entries: list[dict], project: str, asset_id: str) -> int
+⋮----
+versions = [
+⋮----
+artifact = Path(str(result.get("artifact") or ""))
+⋮----
+library_path = Path(library_path)
+⋮----
+store = library_path.parent / "objects"
+⋮----
+digest = _sha256(artifact)
+stored = store / (digest + artifact.suffix.lower())
+⋮----
+project = str(job.get("project") or "")
+asset_id = str(job.get("assetId") or "")
+library = load_library(library_path)
+version = _next_version(library["entries"], project, asset_id)
+⋮----
+validation = result.get("validation") if isinstance(result.get("validation"), dict) else {}
+technical = validation.get("technicalArt") if isinstance(validation.get("technicalArt"), dict) else {}
+metrics = technical.get("metrics") if isinstance(technical.get("metrics"), dict) else {}
+generation = result.get("generation") if isinstance(result.get("generation"), dict) else {}
+visual = generation.get("visualSimilarity") if isinstance(generation.get("visualSimilarity"), dict) else {}
+attempts = visual.get("attempts") if isinstance(visual.get("attempts"), list) else []
+final_similarity = (
+⋮----
+entry = {
+⋮----
+def hamming_hex(left: str, right: str) -> int
+⋮----
+distance = hamming_hex(str(entry.get("perceptualHash") or ""), perceptual_hash)
 ````
 
 ## File: asset_profile_validation.py
@@ -6259,6 +6460,7 @@ py-modules = [
   "animation_infer",
   "art_quality",
   "asset_forge",
+  "asset_library",
   "asset_profile_validation",
   "blender_adapter",
   "engine_profile_validation",

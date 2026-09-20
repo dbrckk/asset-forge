@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T16:21:13Z
+Generated: 2026-09-20T16:42:41Z
 
 ### Git
 - Branch: `main`
-- Head: `3f523c473dff`
-- Commit date: 2026-09-20T18:20:58+02:00
-- Commit: feat: bundle additional 3D LOD artifacts remotely
-- Tracked files: 264
+- Head: `5670ba5d3ba8`
+- Commit date: 2026-09-20T18:41:52+02:00
+- Commit: fix: install pinned imagen CLI for Codex backend
+- Tracked files: 268
 
 ### Recently changed files
-- `remote_batch.py`
-- `tests/test_production_executor.py`
-- `production_executor.py`
-- `pyproject.toml`
-- `lod_3d.py`
+- `.github/workflows/production-os-batch.yml`
+- `.github/workflows/production-os-dispatch.yml`
+- `tests/test_godot_3d_delivery.py`
+- `runtime_3d_plan.py`
+- `godot_3d_delivery.py`
 
 ### Project signals
 - `pyproject.toml`
