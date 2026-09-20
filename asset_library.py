@@ -269,6 +269,43 @@ def record_success(
             return existing
 
         version = _next_version(library["entries"], project, asset_id)
+        semantic = validation.get("semanticArt") if isinstance(validation.get("semanticArt"), dict) else {}
+        semantic_score = semantic.get("score") if isinstance(semantic.get("score"), (int, float)) else None
+        technical_score = technical.get("score") if isinstance(technical.get("score"), (int, float)) else None
+        similarity_score = final_similarity if isinstance(final_similarity, (int, float)) else None
+        quality_parts = [
+            float(value)
+            for value in (technical_score, similarity_score, semantic_score)
+            if value is not None
+        ]
+        composite_quality = (
+            sum(quality_parts) / len(quality_parts)
+            if quality_parts
+            else 0.0
+        )
+
+        near = []
+        perceptual_hash = str(metrics.get("perceptualHash") or "")
+        if perceptual_hash:
+            for item in library["entries"]:
+                if not isinstance(item, dict):
+                    continue
+                if item.get("project") != project or item.get("assetId") != asset_id:
+                    continue
+                distance = hamming_hex(
+                    str(item.get("perceptualHash") or ""),
+                    perceptual_hash,
+                )
+                if distance <= 8:
+                    near.append((distance, item))
+
+        preferred_existing = None
+        if near:
+            preferred_existing = max(
+                (item for _, item in near),
+                key=lambda item: float(item.get("compositeQuality") or 0.0),
+            )
+
         entry = {
             "fingerprint": fingerprint,
             "contentFingerprint": content_fingerprint,
@@ -281,11 +318,39 @@ def record_success(
             "bytes": stored.stat().st_size,
             "backend": generation.get("backend"),
             "model": generation.get("model"),
-            "technicalQuality": technical.get("score"),
-            "visualSimilarity": final_similarity,
+            "technicalQuality": technical_score,
+            "visualSimilarity": similarity_score,
+            "semanticQuality": semantic_score,
+            "compositeQuality": round(composite_quality, 6),
             "perceptualHash": metrics.get("perceptualHash"),
             "averageRgb": metrics.get("averageRgb"),
+            "preferred": (
+                preferred_existing is None
+                or composite_quality > float(preferred_existing.get("compositeQuality") or 0.0)
+            ),
+            "duplicateOf": (
+                preferred_existing.get("sha256")
+                if preferred_existing is not None
+                and composite_quality <= float(preferred_existing.get("compositeQuality") or 0.0)
+                else None
+            ),
+            "perceptualDistance": (
+                min(distance for distance, _ in near)
+                if near
+                else None
+            ),
         }
+        if entry["preferred"] and preferred_existing is not None:
+            for item in library["entries"]:
+                if not isinstance(item, dict):
+                    continue
+                if (
+                    item.get("project") == project
+                    and item.get("assetId") == asset_id
+                    and item.get("preferred") is True
+                ):
+                    item["preferred"] = False
+                    item["supersededBy"] = digest
         library["entries"].append(entry)
         _atomic_write_json(library_path, library)
         return entry
@@ -320,3 +385,35 @@ def similar_entries(
             rows.append({**entry, "perceptualDistance": distance})
     rows.sort(key=lambda item: (item["perceptualDistance"], -int(item.get("version") or 0)))
     return rows
+
+
+def preferred_entry(
+    library_path: Path,
+    *,
+    project: str,
+    asset_id: str,
+) -> dict | None:
+    library = load_library(library_path)
+    candidates = [
+        dict(item)
+        for item in library["entries"]
+        if isinstance(item, dict)
+        and item.get("project") == project
+        and item.get("assetId") == asset_id
+        and item.get("preferred") is True
+    ]
+    if not candidates:
+        return None
+    candidates.sort(
+        key=lambda item: (
+            float(item.get("compositeQuality") or 0.0),
+            int(item.get("version") or 0),
+        ),
+        reverse=True,
+    )
+    for item in candidates:
+        artifact = Path(str(item.get("artifact") or ""))
+        expected = str(item.get("sha256") or "")
+        if artifact.is_file() and expected and _sha256(artifact) == expected:
+            return item
+    return None
