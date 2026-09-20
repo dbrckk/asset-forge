@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "2136d6489512b4f7afe8aca82698996a135c3dd7",
-  "head": "97f855baa01ea4c9ce6a53127750f6c482aa80ed",
+  "base": "97f855baa01ea4c9ce6a53127750f6c482aa80ed",
+  "head": "9508a7b19b993a91977daa528fc032e39ee5a882",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "asset_profile_validation.py",
+      "path": "lod_3d.py",
+      "status": "A"
+    },
+    {
+      "path": "production_executor.py",
       "status": "M"
     },
     {
-      "path": "gltf_quality.py",
+      "path": "pyproject.toml",
       "status": "M"
     }
   ],
   "changed_source_files": [
-    "asset_profile_validation.py",
-    "gltf_quality.py"
+    "lod_3d.py",
+    "production_executor.py"
   ],
   "impacted_files": [
     "asset_forge.py",
-    "asset_profile_validation.py",
-    "gltf_quality.py",
-    "godot_3d_delivery.py",
-    "svg_tools.py",
-    "tests/test_asset_profile_validation.py",
-    "tests/test_gltf_binary_metrics.py",
-    "tests/test_gltf_quality.py"
+    "lod_3d.py",
+    "production_executor.py",
+    "tests/test_production_executor.py"
   ],
   "impacted_symbols": [
     {
@@ -144,333 +144,283 @@
       "line": 746
     },
     {
-      "name": "_load_json",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 39
+      "name": "LodGenerationError",
+      "kind": "class",
+      "file": "lod_3d.py",
+      "line": 13
     },
     {
-      "name": "_validate_rule_types",
+      "name": "_ratios_for_profile",
       "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 51
+      "file": "lod_3d.py",
+      "line": 17
     },
     {
-      "name": "validate_3d_profile_data",
+      "name": "generate_lod_chain",
       "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 77
-    },
-    {
-      "name": "validate_vector_profile_data",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 131
-    },
-    {
-      "name": "validate_profile_file",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 163
-    },
-    {
-      "name": "load_3d_profile",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 181
-    },
-    {
-      "name": "load_vector_profile",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 193
-    },
-    {
-      "name": "validate_all_asset_profiles",
-      "kind": "function",
-      "file": "asset_profile_validation.py",
-      "line": 205
-    },
-    {
-      "name": "_accessor_count",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 11
-    },
-    {
-      "name": "_triangle_count",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 23
-    },
-    {
-      "name": "build_quality_report",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 31
-    },
-    {
-      "name": "evaluate_quality",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 255
-    },
-    {
-      "name": "quality_report",
-      "kind": "function",
-      "file": "gltf_quality.py",
-      "line": 380
-    },
-    {
-      "name": "_name_suffixes",
-      "kind": "function",
-      "file": "godot_3d_delivery.py",
+      "file": "lod_3d.py",
       "line": 25
     },
     {
-      "name": "godot_3d_delivery_report",
-      "kind": "function",
-      "file": "godot_3d_delivery.py",
-      "line": 39
+      "name": "ProductionExecutionError",
+      "kind": "class",
+      "file": "production_executor.py",
+      "line": 12
     },
     {
-      "name": "_local_name",
+      "name": "_safe_asset_id",
       "kind": "function",
-      "file": "svg_tools.py",
-      "line": 21
+      "file": "production_executor.py",
+      "line": 16
     },
     {
-      "name": "_is_unsafe_reference",
+      "name": "_trusted_generated_source",
       "kind": "function",
-      "file": "svg_tools.py",
-      "line": 25
-    },
-    {
-      "name": "_unsafe_css_references",
-      "kind": "function",
-      "file": "svg_tools.py",
+      "file": "production_executor.py",
       "line": 30
     },
     {
-      "name": "_max_depth",
+      "name": "_provenance_from_manifest",
       "kind": "function",
-      "file": "svg_tools.py",
-      "line": 41
+      "file": "production_executor.py",
+      "line": 47
     },
     {
-      "name": "_parse_length",
+      "name": "_stage_provided_source",
       "kind": "function",
-      "file": "svg_tools.py",
-      "line": 51
+      "file": "production_executor.py",
+      "line": 67
     },
     {
-      "name": "_parse_viewbox",
+      "name": "execute_generated_raster_job",
       "kind": "function",
-      "file": "svg_tools.py",
-      "line": 60
-    },
-    {
-      "name": "inspect_svg",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 73
-    },
-    {
-      "name": "validate_svg_profile",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 182
-    },
-    {
-      "name": "normalize_viewbox",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 215
-    },
-    {
-      "name": "sanitize_svg",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 269
-    },
-    {
-      "name": "clean",
-      "kind": "function",
-      "file": "svg_tools.py",
-      "line": 298
-    },
-    {
-      "name": "AssetProfileValidationTests",
-      "kind": "class",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 15
-    },
-    {
-      "name": "test_repository_profiles_all_validate",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 16
-    },
-    {
-      "name": "test_3d_loader_reads_versioned_budget",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 21
-    },
-    {
-      "name": "test_vector_loader_reads_versioned_budget",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 26
-    },
-    {
-      "name": "test_invalid_3d_unknown_rule_fails",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 31
-    },
-    {
-      "name": "test_invalid_vector_type_fails",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 55
-    },
-    {
-      "name": "test_3d_loader_uses_file_as_source_of_truth",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 72
-    },
-    {
-      "name": "test_vector_loader_uses_file_as_source_of_truth",
-      "kind": "function",
-      "file": "tests/test_asset_profile_validation.py",
-      "line": 102
-    },
-    {
-      "name": "chunk",
-      "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 16
-    },
-    {
-      "name": "tiny_png",
-      "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 25
-    },
-    {
-      "name": "GltfBinaryMetricsTests",
-      "kind": "class",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 31
-    },
-    {
-      "name": "test_data_uri_png_dimensions_and_memory",
-      "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 32
-    },
-    {
-      "name": "test_local_external_png_dimensions",
-      "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 50
-    },
-    {
-      "name": "test_data_uri_webp_dimensions_use_shared_inspector",
-      "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 65
-    },
-    {
-      "name": "test_animation_and_rig_metrics",
-      "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 86
-    },
-    {
-      "name": "test_quality_report_includes_binary_metrics",
-      "kind": "function",
-      "file": "tests/test_gltf_binary_metrics.py",
-      "line": 112
-    },
-    {
-      "name": "GltfQualityTests",
-      "kind": "class",
-      "file": "tests/test_gltf_quality.py",
-      "line": 9
-    },
-    {
-      "name": "write",
-      "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 10
-    },
-    {
-      "name": "base",
-      "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 15
-    },
-    {
-      "name": "test_counts_vertices_and_triangles",
-      "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 50
-    },
-    {
-      "name": "test_triangle_strip_count",
-      "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 59
-    },
-    {
-      "name": "test_character_quality_requires_skin_attributes",
-      "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 68
-    },
-    {
-      "name": "test_textured_primitive_requires_uv",
-      "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 76
-    },
-    {
-      "name": "test_normal_map_without_tangent_warns",
-      "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 85
-    },
-    {
-      "name": "test_external_image_is_reported",
-      "kind": "function",
-      "file": "tests/test_gltf_quality.py",
+      "file": "production_executor.py",
       "line": 93
     },
     {
-      "name": "test_untextured_primitive_does_not_require_uv",
+      "name": "execute_generated_vector_job",
       "kind": "function",
-      "file": "tests/test_gltf_quality.py",
-      "line": 100
+      "file": "production_executor.py",
+      "line": 208
     },
     {
-      "name": "test_strict_prop_budget_is_blocking",
+      "name": "execute_generated_3d_job",
       "kind": "function",
-      "file": "tests/test_gltf_quality.py",
+      "file": "production_executor.py",
+      "line": 312
+    },
+    {
+      "name": "job",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 13
+    },
+    {
+      "name": "ProductionExecutorTests",
+      "kind": "class",
+      "file": "tests/test_production_executor.py",
+      "line": 27
+    },
+    {
+      "name": "test_generated_png_flows_through_processing_validation_and_report",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 28
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 32
+    },
+    {
+      "name": "optimizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 37
+    },
+    {
+      "name": "validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 41
+    },
+    {
+      "name": "test_webp_target_encodes_before_validation",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 59
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 63
+    },
+    {
+      "name": "encode",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 68
+    },
+    {
+      "name": "validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 73
+    },
+    {
+      "name": "test_validation_errors_block_artifact_promotion",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 87
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 91
+    },
+    {
+      "name": "optimizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 96
+    },
+    {
+      "name": "test_generated_vector_is_sanitized_normalized_and_validated",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
       "line": 112
     },
     {
-      "name": "test_prop_rejects_non_pbr_materials_and_animations",
+      "name": "generator",
       "kind": "function",
-      "file": "tests/test_gltf_quality.py",
+      "file": "tests/test_production_executor.py",
+      "line": 119
+    },
+    {
+      "name": "sanitizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 127
+    },
+    {
+      "name": "normalizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 131
+    },
+    {
+      "name": "profile_validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 138
+    },
+    {
+      "name": "test_vector_validation_errors_block_promotion",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
       "line": 156
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 163
+    },
+    {
+      "name": "copy_step",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 168
+    },
+    {
+      "name": "test_generated_3d_flows_through_profile_quality_and_godot_gates",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 186
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 194
+    },
+    {
+      "name": "profile_validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 203
+    },
+    {
+      "name": "quality",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 208
+    },
+    {
+      "name": "godot",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 217
+    },
+    {
+      "name": "test_generated_character_3d_fails_when_profile_quality_fails",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 236
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 243
+    },
+    {
+      "name": "test_provided_png_source_skips_generator_and_is_staged",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 271
+    },
+    {
+      "name": "optimizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 280
+    },
+    {
+      "name": "test_provided_source_symlink_is_rejected",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 301
+    },
+    {
+      "name": "test_generator_source_must_stay_inside_job_output",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 329
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 335
+    },
+    {
+      "name": "test_asset_id_cannot_escape_job_output",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 351
+    },
+    {
+      "name": "test_non_raster_target_fails_closed",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 369
     }
   ],
   "selected_tests": [
-    "tests/test_asset_profile_validation.py",
-    "tests/test_gltf_binary_metrics.py",
-    "tests/test_gltf_quality.py"
+    "tests/test_production_executor.py"
   ]
 }

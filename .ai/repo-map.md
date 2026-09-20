@@ -136,6 +136,7 @@ gltf_tools.py
 godot_3d_delivery.py
 godot_export.py
 godot_handoff.py
+lod_3d.py
 operational_status.py
 production_contract.py
 production_executor.py
@@ -6002,6 +6003,41 @@ command = godot_import_command(chosen, project_dir)
 completed = subprocess.run(
 ````
 
+## File: lod_3d.py
+````python
+class LodGenerationError(RuntimeError)
+⋮----
+def _ratios_for_profile(profile: str) -> list[float]
+⋮----
+source = Path(source)
+⋮----
+error = float(error)
+⋮----
+source_quality = quality_report(source, profile)
+plan = build_runtime_3d_plan(source_quality, profile)
+⋮----
+executable = executable or shutil.which("gltf-transform")
+⋮----
+output_dir = Path(output_dir)
+⋮----
+outputs = []
+warnings = []
+source_triangles = int(source_quality["geometry"]["triangles"])
+⋮----
+output = output_dir / f"{source.stem}.lod{level}.glb"
+command = [
+⋮----
+completed = runner(
+⋮----
+detail = (completed.stderr or completed.stdout or "").strip()
+⋮----
+quality = quality_report(output, profile)
+triangles = int(quality["geometry"]["triangles"])
+target = int(round(source_triangles * ratio))
+⋮----
+report = {
+````
+
 ## File: operational_status.py
 ````python
 def build_operational_status(*, environ=None, home=None, which=shutil.which) -> dict
@@ -6167,13 +6203,22 @@ quality_warnings = []
 quality_errors = list(evaluation.get("errors") or [])
 quality_warnings = list(evaluation.get("warnings") or [])
 ⋮----
+constraints = constraints if isinstance(constraints, dict) else {}
+generate_lods = constraints.get("generateLods") is True
+require_lods = constraints.get("requireLods") is True
+lods = None
+lod_errors = []
+lod_warnings = []
+⋮----
+lods = lod_reporter(
+⋮----
 engine = str(target.get("engine") or "").lower()
 godot_delivery = None
 ⋮----
 godot_delivery = godot_delivery_reporter(
 ⋮----
-combined_errors = list(errors) + quality_errors
-combined_warnings = list(warnings) + quality_warnings
+combined_errors = list(errors) + quality_errors + lod_errors
+combined_warnings = list(warnings) + quality_warnings + lod_warnings
 ````
 
 ## File: pyproject.toml
@@ -6213,6 +6258,7 @@ py-modules = [
   "gltf_binary_metrics",
   "gltf_diagnostics",
   "gltf_quality",
+  "lod_3d",
   "gltf_tools",
   "godot_3d_delivery",
   "godot_export",

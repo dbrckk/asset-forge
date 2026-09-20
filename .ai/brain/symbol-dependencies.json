@@ -5,81 +5,49 @@
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
   "symbols": {
-    "_load_json": {
+    "LodGenerationError": {
       "source": {
-        "file": "asset_profile_validation.py",
-        "start": 39,
-        "end": 48
+        "file": "lod_3d.py",
+        "start": 13,
+        "end": 14
       },
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "_validate_rule_types": {
+    "_ratios_for_profile": {
       "source": {
-        "file": "asset_profile_validation.py",
-        "start": 51,
-        "end": 74
+        "file": "lod_3d.py",
+        "start": 17,
+        "end": 22
       },
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "validate_3d_profile_data": {
+    "generate_lod_chain": {
       "source": {
-        "file": "asset_profile_validation.py",
-        "start": 77,
-        "end": 128
+        "file": "lod_3d.py",
+        "start": 25,
+        "end": 148
       },
       "symbol_dependencies": [
         {
-          "symbol": "_validate_rule_types",
+          "symbol": "LodGenerationError",
           "definitions": [
             {
-              "file": "asset_profile_validation.py",
-              "line": 51,
-              "kind": "function",
+              "file": "lod_3d.py",
+              "line": 13,
+              "kind": "class",
               "language": "python"
             }
           ],
           "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "validate_vector_profile_data": {
-      "source": {
-        "file": "asset_profile_validation.py",
-        "start": 131,
-        "end": 160
-      },
-      "symbol_dependencies": [
+        },
         {
-          "symbol": "_validate_rule_types",
+          "symbol": "_ratios_for_profile",
           "definitions": [
             {
-              "file": "asset_profile_validation.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "validate_profile_file": {
-      "source": {
-        "file": "asset_profile_validation.py",
-        "start": 163,
-        "end": 178
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_load_json",
-          "definitions": [
-            {
-              "file": "asset_profile_validation.py",
-              "line": 39,
+              "file": "lod_3d.py",
+              "line": 17,
               "kind": "function",
               "language": "python"
             }
@@ -87,189 +55,295 @@
           "relation": "same_file"
         },
         {
-          "symbol": "validate_3d_profile_data",
+          "symbol": "build_runtime_3d_plan",
           "definitions": [
             {
-              "file": "asset_profile_validation.py",
-              "line": 77,
+              "file": "runtime_3d_plan.py",
+              "line": 4,
               "kind": "function",
               "language": "python"
             }
           ],
-          "relation": "same_file"
+          "relation": "imported_module"
         },
         {
-          "symbol": "validate_vector_profile_data",
-          "definitions": [
-            {
-              "file": "asset_profile_validation.py",
-              "line": 131,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 3
-    },
-    "load_3d_profile": {
-      "source": {
-        "file": "asset_profile_validation.py",
-        "start": 181,
-        "end": 190
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "validate_profile_file",
-          "definitions": [
-            {
-              "file": "asset_profile_validation.py",
-              "line": 163,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "load_vector_profile": {
-      "source": {
-        "file": "asset_profile_validation.py",
-        "start": 193,
-        "end": 202
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "validate_profile_file",
-          "definitions": [
-            {
-              "file": "asset_profile_validation.py",
-              "line": 163,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "validate_all_asset_profiles": {
-      "source": {
-        "file": "asset_profile_validation.py",
-        "start": 205,
-        "end": 232
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "validate_profile_file",
-          "definitions": [
-            {
-              "file": "asset_profile_validation.py",
-              "line": 163,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_accessor_count": {
-      "source": {
-        "file": "gltf_quality.py",
-        "start": 11,
-        "end": 20
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_triangle_count": {
-      "source": {
-        "file": "gltf_quality.py",
-        "start": 23,
-        "end": 28
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "build_quality_report": {
-      "source": {
-        "file": "gltf_quality.py",
-        "start": 31,
-        "end": 252
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_accessor_count",
+          "symbol": "quality_report",
           "definitions": [
             {
               "file": "gltf_quality.py",
-              "line": 11,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_triangle_count",
-          "definitions": [
-            {
-              "file": "gltf_quality.py",
-              "line": 23,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "deep_gltf_diagnostics",
-          "definitions": [
-            {
-              "file": "gltf_diagnostics.py",
-              "line": 459,
+              "line": 380,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "imported_module"
-        },
+        }
+      ],
+      "dependency_count": 4
+    },
+    "ProductionExecutionError": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 12,
+        "end": 13
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_safe_asset_id": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 16,
+        "end": 27
+      },
+      "symbol_dependencies": [
         {
-          "symbol": "inspect_images",
+          "symbol": "ProductionExecutionError",
           "definitions": [
             {
-              "file": "gltf_binary_metrics.py",
-              "line": 175,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "inspect_rig_and_animation",
-          "definitions": [
-            {
-              "file": "gltf_binary_metrics.py",
-              "line": 241,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "load_gltf_json",
-          "definitions": [
-            {
-              "file": "gltf_tools.py",
+              "file": "production_executor.py",
               "line": 12,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_trusted_generated_source": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 30,
+        "end": 44
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 12,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_provenance_from_manifest": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 47,
+        "end": 64
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_stage_provided_source": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 67,
+        "end": 90
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 12,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "execute_generated_raster_job": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 93,
+        "end": 205
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ArtQualityError",
+          "definitions": [
+            {
+              "file": "art_quality.py",
+              "line": 7,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 12,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_provenance_from_manifest",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 47,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_safe_asset_id",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_stage_provided_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 67,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_trusted_generated_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 30,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "evaluate_raster_art",
+          "definitions": [
+            {
+              "file": "art_quality.py",
+              "line": 68,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 475,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 8
+    },
+    "execute_generated_vector_job": {
+      "source": {
+        "file": "production_executor.py",
+        "start": 208,
+        "end": 309
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "ProductionExecutionError",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 12,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_provenance_from_manifest",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 47,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_safe_asset_id",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 16,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_stage_provided_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 67,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_trusted_generated_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 30,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 475,
               "kind": "function",
               "language": "python"
             }
@@ -279,41 +353,43 @@
       ],
       "dependency_count": 6
     },
-    "evaluate_quality": {
+    "execute_generated_3d_job": {
       "source": {
-        "file": "gltf_quality.py",
-        "start": 255,
-        "end": 377
+        "file": "production_executor.py",
+        "start": 312,
+        "end": 476
       },
       "symbol_dependencies": [
         {
-          "symbol": "load_3d_profile",
+          "symbol": "LodGenerationError",
           "definitions": [
             {
-              "file": "asset_profile_validation.py",
-              "line": 181,
-              "kind": "function",
+              "file": "lod_3d.py",
+              "line": 13,
+              "kind": "class",
               "language": "python"
             }
           ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "quality_report": {
-      "source": {
-        "file": "gltf_quality.py",
-        "start": 380,
-        "end": 384
-      },
-      "symbol_dependencies": [
+          "relation": "class_like"
+        },
         {
-          "symbol": "build_quality_report",
+          "symbol": "ProductionExecutionError",
           "definitions": [
             {
-              "file": "gltf_quality.py",
-              "line": 31,
+              "file": "production_executor.py",
+              "line": 12,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_provenance_from_manifest",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 47,
               "kind": "function",
               "language": "python"
             }
@@ -321,19 +397,55 @@
           "relation": "same_file"
         },
         {
-          "symbol": "evaluate_quality",
+          "symbol": "_safe_asset_id",
           "definitions": [
             {
-              "file": "gltf_quality.py",
-              "line": 255,
+              "file": "production_executor.py",
+              "line": 16,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "same_file"
+        },
+        {
+          "symbol": "_stage_provided_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 67,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_trusted_generated_source",
+          "definitions": [
+            {
+              "file": "production_executor.py",
+              "line": 30,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "execute_generated_3d_asset",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 849,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
         }
       ],
-      "dependency_count": 2
+      "dependency_count": 7
     }
   }
 }

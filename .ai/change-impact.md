@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 4fd1b3aa53845c2dd3b6305baaa2ab637e13216c
-Head: 97f855baa01ea4c9ce6a53127750f6c482aa80ed
+Base: 020b59a42cdd2a21f965178dc4364a27397b7b4e
+Head: 9508a7b19b993a91977daa528fc032e39ee5a882
 
 ## Changed files
-- M gltf_quality.py
+- M production_executor.py
 
 ## Affected areas
 - (root)
 
 ## Related test candidates
-- tests/test_gltf_quality.py
+- tests/test_production_executor.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.
