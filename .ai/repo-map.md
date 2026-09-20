@@ -6212,8 +6212,11 @@ unnamed_nodes = 0
 duplicate_names: dict[str, int] = {}
 suffix_usage: dict[str, int] = {}
 suspicious_names = []
+collision_nodes = 0
 ⋮----
 name = node.get("name")
+⋮----
+suffixes = _name_suffixes(name)
 ⋮----
 duplicates = sorted(name for name, count in duplicate_names.items() if count > 1)
 ⋮----
@@ -6221,8 +6224,6 @@ unnamed_animations = 0
 looping_hints = 0
 ⋮----
 name = animation.get("name")
-⋮----
-suffixes = _name_suffixes(name)
 ⋮----
 pbr_materials = 0
 double_sided = 0
@@ -6232,6 +6233,8 @@ attributes = quality.get("attributes", {})
 ⋮----
 remote_images = 0
 external_local_images = 0
+⋮----
+collision_required = profile in {"prop", "environment"}
 ⋮----
 rig = quality.get("rigAnimation", {})
 ⋮----
@@ -6595,6 +6598,8 @@ godot_delivery = godot_delivery_reporter(
 ⋮----
 combined_errors = list(errors) + quality_errors + lod_errors
 combined_warnings = list(warnings) + quality_warnings + lod_warnings
+⋮----
+scene = godot_delivery.get("scene") if isinstance(godot_delivery.get("scene"), dict) else {}
 ````
 
 ## File: pyproject.toml

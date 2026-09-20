@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 215829ab30273946f37d51ba220dcf5269e3f045
-Head: c011b77c1d70d2b6b05c95466449032a56fbfc1e
+Base: c5398f3e85372c3e81c2ed6611556b3f27487895
+Head: f401ba6429d611d0b3a2d3f3beb449ea7ee4fbb1
 
 ## Changed files
-- M .github/workflows/deadline-zero-live-pilot.yml
+- M production_executor.py
 
 ## Affected areas
-- .github
+- (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_production_executor.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

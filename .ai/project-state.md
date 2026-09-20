@@ -96,20 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T17:04:00Z
+Generated: 2026-09-20T17:06:38Z
 
 ### Git
 - Branch: `main`
-- Head: `c011b77c1d70`
-- Commit date: 2026-09-20T19:03:51+02:00
-- Commit: feat: persist validated asset library across live pilot runs
+- Head: `f401ba6429d6`
+- Commit date: 2026-09-20T19:06:26+02:00
+- Commit: feat: enforce required collision readiness for 3D delivery
 - Tracked files: 274
 
 ### Recently changed files
+- `production_executor.py`
+- `godot_3d_delivery.py`
 - `.github/workflows/deadline-zero-live-pilot.yml`
 - `tests/test_asset_library.py`
 - `asset_library.py`
-- `tests/test_generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`
