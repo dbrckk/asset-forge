@@ -96,21 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T07:31:09Z
+Generated: 2026-09-20T08:32:15Z
 
 ### Git
 - Branch: `main`
-- Head: `7587bd6a5ddd`
-- Commit date: 2026-09-20T09:30:49+02:00
-- Commit: release: publish installable Asset Forge wheel
+- Head: `307bb556d282`
+- Commit date: 2026-09-20T10:31:57+02:00
+- Commit: ci: skip live generation cleanly without credential
 - Tracked files: 244
 
 ### Recently changed files
+- `.github/workflows/live-generation.yml`
 - `.github/workflows/release.yml`
 - `.github/workflows/validate.yml`
-- `pyproject.toml`
-- `schemas/__init__.py`
-- `profiles/__init__.py`
 
 ### Project signals
 - `pyproject.toml`

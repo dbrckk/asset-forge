@@ -172,6 +172,13 @@ jobs:
 name: Live generation smoke
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/live-generation.yml'
+      - 'generator_backends.py'
+      - 'production_executor.py'
+      - 'examples/production-request-live-vector.json'
   workflow_dispatch:
 
 permissions:
@@ -182,35 +189,42 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.12"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "22"
-      - name: Require explicit backend credential
+      - name: Detect backend credential
+        id: credential
         env:
           POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
         run: |
-          test -n "$POLLINATIONS_API_KEY" || {
-            echo "POLLINATIONS_API_KEY repository secret is required for this manual smoke." >&2
-            exit 2
-          }
+          if [ -n "$POLLINATIONS_API_KEY" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::POLLINATIONS_API_KEY is not configured; live generation smoke skipped."
+          fi
       - name: Install Pollinations CLI
+        if: steps.credential.outputs.configured == 'true'
         run: npm install --global @pollinations/cli@0.1.15
       - name: Check Asset Forge readiness
+        if: steps.credential.outputs.configured == 'true'
         env:
           POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
         run: python asset_forge.py operational-status
       - name: Generate and validate a real vector asset
+        if: steps.credential.outputs.configured == 'true'
         env:
           POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
         run: |
           python asset_forge.py fulfill examples/production-request-live-vector.json
           python asset_forge.py validate-production-report build/live-vector-smoke/production-report.json
       - name: Upload validated smoke artifact
-        uses: actions/upload-artifact@v4
+        if: steps.credential.outputs.configured == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: asset-forge-live-vector-smoke
           path: build/live-vector-smoke/

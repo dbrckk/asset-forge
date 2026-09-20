@@ -1,10 +1,10 @@
 # Change impact
 
-Base: f768881fa2b0dd763963cc1c49863630ec0b05d3
-Head: 7587bd6a5ddd7d2aa55c9d8e8532d62cab66afdf
+Base: 846d90a47e8afe0d983e67fbbeaba09a4fd58078
+Head: 307bb556d282938be9a7e9706ee8086ba30dffc0
 
 ## Changed files
-- M .github/workflows/release.yml
+- M .github/workflows/live-generation.yml
 
 ## Affected areas
 - .github
