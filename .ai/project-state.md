@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T16:50:25Z
+Generated: 2026-09-20T16:51:51Z
 
 ### Git
 - Branch: `main`
-- Head: `b76970cc2b03`
-- Commit date: 2026-09-20T18:50:07+02:00
-- Commit: feat: include semantic art QA in remote batch receipts
+- Head: `c961dcc42c95`
+- Commit date: 2026-09-20T18:51:37+02:00
+- Commit: test: cover safe cross-project secondary asset reuse
 - Tracked files: 274
 
 ### Recently changed files
+- `tests/test_asset_library.py`
+- `asset_forge.py`
+- `asset_library.py`
 - `remote_batch.py`
 - `tests/test_semantic_art_review.py`
-- `pyproject.toml`
-- `production_executor.py`
-- `semantic_art_review.py`
 
 ### Project signals
 - `pyproject.toml`

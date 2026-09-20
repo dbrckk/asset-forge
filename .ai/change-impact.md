@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 54c49feea4a8d6ed8816f104e11bc6b34e8684cf
-Head: b76970cc2b03d5b1e798b483c86d39042c4de84b
+Base: 5aa3cfa7380199fa25dd5fcb0aa20f793f53945d
+Head: c961dcc42c959c142af00f503ae1daa7514d68d0
 
 ## Changed files
-- M remote_batch.py
+- M tests/test_asset_library.py
 
 ## Affected areas
-- (root)
+- tests
 
 ## Related test candidates
-- tests/test_remote_batch.py
+- No direct filename-based test match detected.
 
 ## Agent guidance
 - Read this file before broad repository exploration.

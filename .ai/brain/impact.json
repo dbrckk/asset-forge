@@ -1,85 +1,516 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "ada952393ef2bd51b8f1761499f46228096d8ed0",
-  "head": "b76970cc2b03d5b1e798b483c86d39042c4de84b",
+  "base": "b76970cc2b03d5b1e798b483c86d39042c4de84b",
+  "head": "c961dcc42c959c142af00f503ae1daa7514d68d0",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "remote_batch.py",
+      "path": "asset_forge.py",
+      "status": "M"
+    },
+    {
+      "path": "asset_library.py",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_asset_library.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
-    "remote_batch.py"
+    "asset_forge.py",
+    "asset_library.py",
+    "tests/test_asset_library.py"
   ],
   "impacted_files": [
-    "remote_batch.py",
-    "tests/test_remote_batch.py"
+    "asset_forge.py",
+    "asset_library.py",
+    "tests/test_asset_forge.py",
+    "tests/test_asset_library.py",
+    "tests/test_fulfill.py",
+    "tests/test_production_contract.py"
   ],
   "impacted_symbols": [
     {
-      "name": "RemoteBatchError",
-      "kind": "class",
-      "file": "remote_batch.py",
-      "line": 14
+      "name": "load_json",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 72
     },
     {
-      "name": "_safe_id",
+      "name": "validate_manifest",
       "kind": "function",
-      "file": "remote_batch.py",
-      "line": 18
+      "file": "asset_forge.py",
+      "line": 80
     },
     {
-      "name": "_ordered_items",
+      "name": "is_power_of_two",
       "kind": "function",
-      "file": "remote_batch.py",
-      "line": 25
+      "file": "asset_forge.py",
+      "line": 138
     },
     {
-      "name": "run",
+      "name": "sprite_grid",
       "kind": "function",
-      "file": "remote_batch.py",
-      "line": 77
+      "file": "asset_forge.py",
+      "line": 142
+    },
+    {
+      "name": "build_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 163
+    },
+    {
+      "name": "validate_raster_file",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 194
+    },
+    {
+      "name": "select_tools",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 253
+    },
+    {
+      "name": "build_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 271
+    },
+    {
+      "name": "load_valid_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 300
+    },
+    {
+      "name": "cmd_validate",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 316
+    },
+    {
+      "name": "cmd_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 324
+    },
+    {
+      "name": "cmd_validate_raster",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 332
+    },
+    {
+      "name": "cmd_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 346
+    },
+    {
+      "name": "execute_compiled_production_job",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 370
+    },
+    {
+      "name": "_write_production_inputs",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 424
+    },
+    {
+      "name": "_persist_enriched_production_report",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 440
+    },
+    {
+      "name": "_enrich_engine_handoff",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 453
+    },
+    {
+      "name": "parser",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 534
     },
     {
       "name": "main",
       "kind": "function",
-      "file": "remote_batch.py",
-      "line": 254
+      "file": "asset_forge.py",
+      "line": 748
+    },
+    {
+      "name": "AssetLibraryError",
+      "kind": "class",
+      "file": "asset_library.py",
+      "line": 15
+    },
+    {
+      "name": "_library_lock",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 21
+    },
+    {
+      "name": "_atomic_write_json",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 41
+    },
+    {
+      "name": "default_library_path",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 57
+    },
+    {
+      "name": "_sha256",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 64
+    },
+    {
+      "name": "_reference_rows",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 72
+    },
+    {
+      "name": "reusable_content_fingerprint",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 82
+    },
+    {
+      "name": "request_fingerprint",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 126
+    },
+    {
+      "name": "_empty",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 155
+    },
+    {
+      "name": "load_library",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 159
+    },
+    {
+      "name": "lookup",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 175
+    },
+    {
+      "name": "lookup_reusable",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 194
+    },
+    {
+      "name": "_next_version",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 208
+    },
+    {
+      "name": "record_success",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 219
+    },
+    {
+      "name": "hamming_hex",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 294
+    },
+    {
+      "name": "similar_entries",
+      "kind": "function",
+      "file": "asset_library.py",
+      "line": 303
+    },
+    {
+      "name": "chunk",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 13
+    },
+    {
+      "name": "write_png",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 22
+    },
+    {
+      "name": "AssetForgeTests",
+      "kind": "class",
+      "file": "tests/test_asset_forge.py",
+      "line": 50
+    },
+    {
+      "name": "load_example",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 51
+    },
+    {
+      "name": "test_example_manifest_is_valid",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 54
+    },
+    {
+      "name": "test_pixel_art_rejects_non_nearest_interpolation",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 57
+    },
+    {
+      "name": "test_external_asset_requires_uri",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 65
+    },
+    {
+      "name": "test_incompatible_commercial_license_is_rejected",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 71
+    },
+    {
+      "name": "test_plan_routes_sprite_to_2d_pipeline",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 80
+    },
+    {
+      "name": "test_secondary_custom_asset_prompts_reuse_search",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 88
+    },
+    {
+      "name": "test_png_sprite_grid_validation_passes",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 97
+    },
+    {
+      "name": "test_png_sprite_grid_validation_rejects_bad_width",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 108
+    },
+    {
+      "name": "test_png_alpha_requirement",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 116
+    },
+    {
+      "name": "test_palette_transparency_and_max_colors",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 125
+    },
+    {
+      "name": "test_power_of_two_atlas",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 137
+    },
+    {
+      "name": "test_atlas_manifest_contains_frame_rectangles",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 148
+    },
+    {
+      "name": "test_webp_raster_validation_supports_dimensions_and_alpha",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 162
+    },
+    {
+      "name": "test_webp_max_colors_constraint_is_rejected",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 193
+    },
+    {
+      "name": "test_raster_target_format_mismatch_is_reported",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 215
+    },
+    {
+      "name": "test_invalid_png_crc_is_rejected",
+      "kind": "function",
+      "file": "tests/test_asset_forge.py",
+      "line": 226
+    },
+    {
+      "name": "AssetLibraryTests",
+      "kind": "class",
+      "file": "tests/test_asset_library.py",
+      "line": 17
+    },
+    {
+      "name": "job",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 18
+    },
+    {
+      "name": "result",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 41
+    },
+    {
+      "name": "test_exact_fingerprint_reuses_validated_object",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 63
+    },
+    {
+      "name": "test_new_validated_generation_increments_version",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 84
+    },
+    {
+      "name": "test_repeated_success_record_is_idempotent",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 115
+    },
+    {
+      "name": "test_reference_sha_changes_cache_key",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 141
+    },
+    {
+      "name": "test_reusable_content_key_ignores_project_identity",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 159
+    },
+    {
+      "name": "test_cross_project_lookup_returns_content_compatible_asset",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 173
+    },
+    {
+      "name": "test_perceptual_deduplication_returns_near_matches",
+      "kind": "function",
+      "file": "tests/test_asset_library.py",
+      "line": 199
+    },
+    {
+      "name": "FulfillCommandTests",
+      "kind": "class",
+      "file": "tests/test_fulfill.py",
+      "line": 13
+    },
+    {
+      "name": "test_parser_accepts_end_to_end_fulfill_command",
+      "kind": "function",
+      "file": "tests/test_fulfill.py",
+      "line": 14
+    },
+    {
+      "name": "test_parser_accepts_provided_source",
+      "kind": "function",
+      "file": "tests/test_fulfill.py",
+      "line": 30
+    },
+    {
+      "name": "test_production_inputs_are_persisted_for_handoff_and_audit",
+      "kind": "function",
+      "file": "tests/test_fulfill.py",
+      "line": 41
+    },
+    {
+      "name": "test_compiled_job_routes_raster_to_generated_raster_executor",
+      "kind": "function",
+      "file": "tests/test_fulfill.py",
+      "line": 58
+    },
+    {
+      "name": "test_compiled_job_forwards_provided_source",
+      "kind": "function",
+      "file": "tests/test_fulfill.py",
+      "line": 90
+    },
+    {
+      "name": "test_godot_sprite_sheet_gets_engine_handoff",
+      "kind": "function",
+      "file": "tests/test_fulfill.py",
+      "line": 116
+    },
+    {
+      "name": "test_godot_3d_gets_handoff_and_import_validation",
+      "kind": "function",
+      "file": "tests/test_fulfill.py",
+      "line": 161
+    },
+    {
+      "name": "ProductionContractTests",
+      "kind": "class",
+      "file": "tests/test_production_contract.py",
+      "line": 15
     },
     {
       "name": "request",
       "kind": "function",
-      "file": "tests/test_remote_batch.py",
-      "line": 10
+      "file": "tests/test_production_contract.py",
+      "line": 16
     },
     {
-      "name": "RemoteBatchTests",
-      "kind": "class",
-      "file": "tests/test_remote_batch.py",
-      "line": 37
-    },
-    {
-      "name": "test_dependency_order_and_reference_are_preserved",
+      "name": "test_valid_request_builds_machine_readable_job",
       "kind": "function",
-      "file": "tests/test_remote_batch.py",
-      "line": 38
+      "file": "tests/test_production_contract.py",
+      "line": 27
     },
     {
-      "name": "fake_run",
+      "name": "test_valid_production_report_contract",
       "kind": "function",
-      "file": "tests/test_remote_batch.py",
-      "line": 57
+      "file": "tests/test_production_contract.py",
+      "line": 42
     },
     {
-      "name": "Result",
-      "kind": "class",
-      "file": "tests/test_remote_batch.py",
-      "line": 79
+      "name": "test_failed_report_cannot_claim_an_artifact",
+      "kind": "function",
+      "file": "tests/test_production_contract.py",
+      "line": 56
+    },
+    {
+      "name": "test_invalid_request_is_rejected",
+      "kind": "function",
+      "file": "tests/test_production_contract.py",
+      "line": 72
     }
   ],
   "selected_tests": [
-    "tests/test_remote_batch.py"
+    "tests/test_asset_forge.py",
+    "tests/test_asset_library.py",
+    "tests/test_fulfill.py",
+    "tests/test_production_contract.py"
   ]
 }

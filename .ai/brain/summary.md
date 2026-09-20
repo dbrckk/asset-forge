@@ -2,11 +2,11 @@
 
 - Index mode: incremental
 - Files indexed: 64
-- Files reparsed this run: 1
-- Symbols: 813
-- Internal import edges: 80
-- Impacted files: 2
-- Selected tests: 1
+- Files reparsed this run: 3
+- Symbols: 817
+- Internal import edges: 84
+- Impacted files: 6
+- Selected tests: 4
 
 ## Languages
 - python: 61 files
@@ -23,8 +23,8 @@
 - asset_forge.py: 19 symbols
 - tests/test_runtime_atlas.py: 19 symbols
 - generator_backends.py: 18 symbols
+- asset_library.py: 16 symbols
 - visual_similarity.py: 15 symbols
-- asset_library.py: 14 symbols
 - tests/test_godot_export.py: 14 symbols
 - tests/test_godot_handoff.py: 13 symbols
 - tests/test_gltf_quality.py: 12 symbols
@@ -43,10 +43,10 @@
 ## ast-grep enrichment
 - ast-grep outline: available
 - AST index mode: incremental
-- AST files reparsed this run: 1
+- AST files reparsed this run: 3
 - outline files retained: 60
-- top-level items retained: 1056
-- direct members retained: 317
+- top-level items retained: 1058
+- direct members retained: 319
 - symbol shards: 26
 - route named symbols via ast-routing.json, then fetch one ast-symbols/<initial>.json shard
 

@@ -1,14 +1,10 @@
 # CI status
 
-Summary: 2 success / 1 failure / 1 active
+Summary: 3 success / 0 failure / 1 active
 
-- Validate asset-forge: in_progress / pending (b76970cc)
-- Validate asset-forge: completed / success (ada95239)
-- Validate asset-forge: completed / success (c94907e5)
-- Validate asset-forge: completed / failure (03291c62)
-
-## Latest failed run structure
-- Job: test
-  - Failed step: Smoke-test installed CLI
+- Validate asset-forge: queued / pending (c961dcc4)
+- Validate asset-forge: completed / success (5aa3cfa7)
+- Validate asset-forge: completed / success (f5f0d4db)
+- Validate asset-forge: completed / success (b76970cc)
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.

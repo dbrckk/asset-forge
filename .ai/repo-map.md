@@ -2394,6 +2394,20 @@ a = request_fingerprint(
 ⋮----
 b = request_fingerprint(
 ⋮----
+def test_reusable_content_key_ignores_project_identity(self)
+⋮----
+first = self.job()
+second = self.job()
+⋮----
+a = reusable_content_fingerprint(first, backend="pollinations")
+b = reusable_content_fingerprint(second, backend="pollinations")
+⋮----
+def test_cross_project_lookup_returns_content_compatible_asset(self)
+⋮----
+content_fp = reusable_content_fingerprint(
+⋮----
+hit = lookup_reusable(library, content_fp)
+⋮----
 def test_perceptual_deduplication_returns_near_matches(self)
 ⋮----
 fp = request_fingerprint(self.job())
@@ -5068,11 +5082,16 @@ library_enabled = (
 library_path = default_library_path() if library_enabled else None
 fingerprint = (
 library_hit = (
+constraints = (
+allow_cross_project_reuse = (
+content_fingerprint = (
+reusable_hit = (
+selected_library_hit = library_hit or reusable_hit
 effective_source = (
 ⋮----
 library_entry = record_asset_success(
 ⋮----
-library_entry = library_hit
+library_entry = selected_library_hit
 ⋮----
 metadata = pack_uniform_atlas(
 ⋮----
@@ -5179,6 +5198,10 @@ rows = []
 ⋮----
 candidate = Path(path)
 ⋮----
+manifest = job.get("manifest") if isinstance(job.get("manifest"), dict) else {}
+target = manifest.get("target") if isinstance(manifest.get("target"), dict) else {}
+constraints = manifest.get("constraints") if isinstance(manifest.get("constraints"), dict) else {}
+reusable_constraints = {
 payload = {
 canonical = json.dumps(
 ⋮----
@@ -5194,6 +5217,8 @@ library = load_library(path)
 ⋮----
 artifact = Path(str(entry.get("artifact") or ""))
 expected = str(entry.get("sha256") or "")
+⋮----
+def lookup_reusable(path: Path, content_fingerprint: str) -> dict | None
 ⋮----
 def _next_version(entries: list[dict], project: str, asset_id: str) -> int
 ⋮----
