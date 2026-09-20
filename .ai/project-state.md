@@ -96,16 +96,17 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T17:15:19Z
+Generated: 2026-09-20T17:17:16Z
 
 ### Git
 - Branch: `main`
-- Head: `8254c921cb37`
-- Commit date: 2026-09-20T19:15:07+02:00
-- Commit: feat: propagate asset library version metadata through remote batches
+- Head: `41d6260bdea0`
+- Commit date: 2026-09-20T19:17:05+02:00
+- Commit: test: propagate asset library version metadata through remote batch
 - Tracked files: 274
 
 ### Recently changed files
+- `tests/test_remote_batch.py`
 - `remote_batch.py`
 - `tests/test_production_executor.py`
 - `production_executor.py`

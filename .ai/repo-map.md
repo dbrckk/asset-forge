@@ -3745,6 +3745,10 @@ stderr = ""
 result = run(spec, root / "out")
 ⋮----
 reference = Path(commands[1][commands[1].index("--reference") + 1])
+⋮----
+def test_remote_batch_propagates_library_version_metadata(self)
+⋮----
+library = result["items"][0]["library"]
 ````
 
 ## File: tests/test_runtime_atlas.py

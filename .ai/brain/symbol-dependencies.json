@@ -5,50 +5,34 @@
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
   "symbols": {
-    "RemoteBatchError": {
+    "request": {
       "source": {
-        "file": "remote_batch.py",
-        "start": 14,
-        "end": 15
+        "file": "tests/test_remote_batch.py",
+        "start": 10,
+        "end": 34
       },
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "_safe_id": {
+    "RemoteBatchTests": {
       "source": {
-        "file": "remote_batch.py",
-        "start": 18,
-        "end": 22
+        "file": "tests/test_remote_batch.py",
+        "start": 37,
+        "end": 143
       },
       "symbol_dependencies": [
         {
-          "symbol": "RemoteBatchError",
+          "symbol": "Result",
           "definitions": [
             {
-              "file": "remote_batch.py",
-              "line": 14,
+              "file": "tests/test_remote_batch.py",
+              "line": 79,
               "kind": "class",
               "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_ordered_items": {
-      "source": {
-        "file": "remote_batch.py",
-        "start": 25,
-        "end": 74
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "RemoteBatchError",
-          "definitions": [
+            },
             {
-              "file": "remote_batch.py",
-              "line": 14,
+              "file": "tests/test_remote_batch.py",
+              "line": 131,
               "kind": "class",
               "language": "python"
             }
@@ -56,45 +40,17 @@
           "relation": "same_file"
         },
         {
-          "symbol": "_safe_id",
+          "symbol": "fake_run",
           "definitions": [
             {
-              "file": "remote_batch.py",
-              "line": 18,
+              "file": "tests/test_remote_batch.py",
+              "line": 57,
               "kind": "function",
               "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "run": {
-      "source": {
-        "file": "remote_batch.py",
-        "start": 77,
-        "end": 256
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "RemoteBatchError",
-          "definitions": [
+            },
             {
-              "file": "remote_batch.py",
-              "line": 14,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_ordered_items",
-          "definitions": [
-            {
-              "file": "remote_batch.py",
-              "line": 25,
+              "file": "tests/test_remote_batch.py",
+              "line": 107,
               "kind": "function",
               "language": "python"
             }
@@ -102,27 +58,17 @@
           "relation": "same_file"
         },
         {
-          "symbol": "_safe_id",
+          "symbol": "request",
           "definitions": [
             {
-              "file": "remote_batch.py",
-              "line": 18,
+              "file": "tests/test_remote_batch.py",
+              "line": 10,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "same_file"
-        }
-      ],
-      "dependency_count": 3
-    },
-    "main": {
-      "source": {
-        "file": "remote_batch.py",
-        "start": 259,
-        "end": 273
-      },
-      "symbol_dependencies": [
+        },
         {
           "symbol": "run",
           "definitions": [
@@ -133,10 +79,326 @@
               "language": "python"
             }
           ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_dependency_order_and_reference_are_preserved",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 38,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_remote_batch_propagates_library_version_metadata",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 97,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
           "relation": "same_file"
         }
       ],
-      "dependency_count": 1
+      "dependency_count": 6
+    },
+    "test_dependency_order_and_reference_are_preserved": {
+      "source": {
+        "file": "tests/test_remote_batch.py",
+        "start": 38,
+        "end": 95
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 79,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "fake_run",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 57,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 107,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "request",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "run",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 77,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "fake_run": {
+      "source": {
+        "file": "tests/test_remote_batch.py",
+        "start": 57,
+        "end": 177
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 79,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "main",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 259,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "request",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "run",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 77,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_remote_batch_propagates_library_version_metadata",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 97,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 5
+    },
+    "Result": {
+      "source": {
+        "file": "tests/test_remote_batch.py",
+        "start": 79,
+        "end": 199
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "fake_run",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 57,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 107,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "main",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 259,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "request",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "run",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 77,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_remote_batch_propagates_library_version_metadata",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 97,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 5
+    },
+    "test_remote_batch_propagates_library_version_metadata": {
+      "source": {
+        "file": "tests/test_remote_batch.py",
+        "start": 97,
+        "end": 143
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 79,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 131,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "fake_run",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 57,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 107,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "request",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "run",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 77,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 4
     }
   }
 }
