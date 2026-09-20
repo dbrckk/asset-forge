@@ -1,16 +1,16 @@
 # Change impact
 
-Base: a8006facefe7f818aef44b85e3e11ebd7ca5e966
-Head: f497bd36ae9978bc6a18e912e726f0ba5add980a
+Base: 9148dd1403ed81a4904c9e7f56986e1d183b68b7
+Head: cce10c3995859851de587e048530879c1b8c4c27
 
 ## Changed files
-- M tests/test_generator_backends.py
+- M generator_backends.py
 
 ## Affected areas
-- tests
+- (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_generator_backends.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

@@ -5459,11 +5459,6 @@ artifact = str(result.get("artifact") or "").strip()
 ⋮----
 raw = base64.b64decode(str(value.get("content") or ""))
 destination = Path(destination)
-⋮----
-payload = json.loads(
-⋮----
-timestamp = payload.get("timestamp")
-age = time.time() - float(timestamp) if isinstance(timestamp, (int, float)) else 10**9
 ````
 
 ## File: engine_profile_validation.py
@@ -5539,7 +5534,6 @@ credentials = home_dir / ".pollinations" / "credentials.json"
 api_key_available = bool(str(env.get("POLLINATIONS_API_KEY") or "").strip())
 authenticated = api_key_available or credentials.is_file()
 codex_token_available = bool(
-colab_status = colab_worker_status(
 ⋮----
 def _sprite_sheet_geometry(job: dict) -> tuple[int, int, int, int] | None
 ⋮----
@@ -5617,7 +5611,6 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str
 status = generator_backend_status()
 pollinations = status.get("pollinations", {})
 imagen_codex = status.get("imagenCodex", {})
-qwen_colab = status.get("qwenColab", {})
 ⋮----
 def _imagen_output_path(output_dir: Path, stdout: str) -> tuple[Path, dict | None]
 ⋮----
@@ -6787,7 +6780,7 @@ BRANCH = os.environ.get("ASSET_FORGE_GITHUB_BRANCH", "main")
 QUEUE_DIR = os.environ.get("ASSET_FORGE_COLAB_QUEUE_DIR", "colab-queue/jobs")
 RESULT_DIR = os.environ.get("ASSET_FORGE_COLAB_RESULT_DIR", "colab-queue/results")
 MODEL_ID = os.environ.get("QWEN_IMAGE_MODEL", "Qwen/Qwen-Image-2.1")
-POLL_SECONDS = max(5, int(os.environ.get("ASSET_FORGE_COLAB_POLL_SECONDS", "15")))
+MAX_JOBS = max(1, min(32, int(os.environ.get("ASSET_FORGE_COLAB_MAX_JOBS", "8"))))
 ⋮----
 def _token() -> str
 ⋮----
@@ -6815,16 +6808,6 @@ payload = json.loads(content)
 def _put(path: str, data: bytes, message: str, sha: str | None = None) -> dict
 ⋮----
 payload = {
-⋮----
-def _put_overwrite(path: str, data: bytes, message: str) -> dict
-⋮----
-sha = None
-⋮----
-current = _request(
-⋮----
-sha = str(current.get("sha") or "") or None
-⋮----
-def heartbeat() -> None
 ⋮----
 def _delete(path: str, sha: str, message: str) -> None
 ⋮----
@@ -6875,7 +6858,7 @@ def main() -> None
 ⋮----
 pipe = load_pipeline()
 ⋮----
-worked = process_once(pipe)
+processed = 0
 ````
 
 ## File: raster_backend.py

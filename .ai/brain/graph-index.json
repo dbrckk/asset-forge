@@ -7,6 +7,7 @@
     "asset-profile-validation.py",
     "benchmarks",
     "blender-adapter.py",
+    "colab-queue.py",
     "engine-profile-validation.py",
     "generator-backends.py",
     "gltf-binary-metrics.py",
@@ -20,6 +21,7 @@
     "operational-status.py",
     "production-contract.py",
     "production-executor.py",
+    "qwen-colab-worker.py",
     "raster-backend.py",
     "raster-pack.py",
     "remote-batch.py",
@@ -88,6 +90,7 @@
     {
       "dependencies": [
         "art_quality.py",
+        "colab_queue.py",
         "tests/test_generator_backends.py",
         "visual_similarity.py"
       ],
@@ -98,7 +101,7 @@
         "tests/test_generator_backends.py"
       ],
       "in_degree": 4,
-      "out_degree": 3,
+      "out_degree": 4,
       "path": "generator_backends.py"
     },
     {
@@ -144,6 +147,20 @@
       "in_degree": 2,
       "out_degree": 4,
       "path": "production_executor.py"
+    },
+    {
+      "dependencies": [
+        "generator_backends.py"
+      ],
+      "dependents": [
+        "colab_queue.py",
+        "generator_backends.py",
+        "qwen_colab_worker.py",
+        "semantic_art_review.py"
+      ],
+      "in_degree": 4,
+      "out_degree": 1,
+      "path": "tests/test_generator_backends.py"
     },
     {
       "dependencies": [
@@ -302,6 +319,18 @@
         "tests/test_generator_backends.py"
       ],
       "dependents": [
+        "generator_backends.py",
+        "tests/test_colab_queue.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 1,
+      "path": "colab_queue.py"
+    },
+    {
+      "dependencies": [
+        "tests/test_generator_backends.py"
+      ],
+      "dependents": [
         "production_executor.py",
         "tests/test_semantic_art_review.py"
       ],
@@ -320,18 +349,6 @@
       "in_degree": 2,
       "out_degree": 1,
       "path": "svg_tools.py"
-    },
-    {
-      "dependencies": [
-        "generator_backends.py"
-      ],
-      "dependents": [
-        "generator_backends.py",
-        "semantic_art_review.py"
-      ],
-      "in_degree": 2,
-      "out_degree": 1,
-      "path": "tests/test_generator_backends.py"
     },
     {
       "dependencies": [
@@ -496,6 +513,15 @@
     },
     {
       "dependencies": [
+        "tests/test_generator_backends.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "qwen_colab_worker.py"
+    },
+    {
+      "dependencies": [
         "animation_infer.py"
       ],
       "dependents": [],
@@ -547,6 +573,15 @@
       "in_degree": 0,
       "out_degree": 1,
       "path": "tests/test_blender_adapter.py"
+    },
+    {
+      "dependencies": [
+        "colab_queue.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_colab_queue.py"
     },
     {
       "dependencies": [
@@ -702,8 +737,8 @@
       "path": "tests/test_visual_similarity.py"
     }
   ],
-  "edge_count": 93,
+  "edge_count": 99,
   "generated_by": "dbrckk/repo-brain-v7-graph",
-  "node_count": 60,
+  "node_count": 63,
   "schema_version": 1
 }

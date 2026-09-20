@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T22:47:52Z
+Generated: 2026-09-20T22:49:13Z
 
 ### Git
 - Branch: `main`
-- Head: `f497bd36ae99`
-- Commit date: 2026-09-21T00:47:43+02:00
-- Commit: test: enforce free-only automatic raster backend policy
+- Head: `cce10c399585`
+- Commit date: 2026-09-21T00:49:03+02:00
+- Commit: fix: keep Colab Qwen explicit instead of unattended auto routing
 - Tracked files: 278
 
 ### Recently changed files
+- `generator_backends.py`
+- `colab_queue.py`
+- `qwen_colab_worker.py`
 - `tests/test_generator_backends.py`
 - `.github/workflows/production-os-batch.yml`
-- `.github/workflows/production-os-dispatch.yml`
-- `.github/workflows/live-generation.yml`
-- `generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`

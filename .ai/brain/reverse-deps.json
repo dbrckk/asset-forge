@@ -90,6 +90,17 @@
       "in_degree": 3,
       "out_degree": 0
     },
+    "colab_queue.py": {
+      "dependencies": [
+        "tests/test_generator_backends.py"
+      ],
+      "dependents": [
+        "generator_backends.py",
+        "tests/test_colab_queue.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 1
+    },
     "engine_profile_validation.py": {
       "dependencies": [],
       "dependents": [
@@ -103,6 +114,7 @@
     "generator_backends.py": {
       "dependencies": [
         "art_quality.py",
+        "colab_queue.py",
         "tests/test_generator_backends.py",
         "visual_similarity.py"
       ],
@@ -113,7 +125,7 @@
         "tests/test_generator_backends.py"
       ],
       "in_degree": 4,
-      "out_degree": 3
+      "out_degree": 4
     },
     "gltf_binary_metrics.py": {
       "dependencies": [
@@ -251,6 +263,14 @@
       ],
       "in_degree": 2,
       "out_degree": 4
+    },
+    "qwen_colab_worker.py": {
+      "dependencies": [
+        "tests/test_generator_backends.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1
     },
     "raster_backend.py": {
       "dependencies": [],
@@ -391,6 +411,14 @@
       "in_degree": 0,
       "out_degree": 1
     },
+    "tests/test_colab_queue.py": {
+      "dependencies": [
+        "colab_queue.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1
+    },
     "tests/test_engine_profile_validation.py": {
       "dependencies": [
         "engine_profile_validation.py"
@@ -412,10 +440,12 @@
         "generator_backends.py"
       ],
       "dependents": [
+        "colab_queue.py",
         "generator_backends.py",
+        "qwen_colab_worker.py",
         "semantic_art_review.py"
       ],
-      "in_degree": 2,
+      "in_degree": 4,
       "out_degree": 1
     },
     "tests/test_gltf_binary_metrics.py": {

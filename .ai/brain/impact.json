@@ -1,20 +1,12 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "d36634296bfd8ace2034a71a97dd18d0efaf959c",
-  "head": "f497bd36ae9978bc6a18e912e726f0ba5add980a",
+  "base": "f497bd36ae9978bc6a18e912e726f0ba5add980a",
+  "head": "cce10c3995859851de587e048530879c1b8c4c27",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": ".github/workflows/live-generation.yml",
-      "status": "M"
-    },
-    {
-      "path": ".github/workflows/production-os-batch.yml",
-      "status": "M"
-    },
-    {
-      "path": ".github/workflows/production-os-dispatch.yml",
+      "path": "colab_queue.py",
       "status": "M"
     },
     {
@@ -22,19 +14,23 @@
       "status": "M"
     },
     {
-      "path": "tests/test_generator_backends.py",
+      "path": "qwen_colab_worker.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
+    "colab_queue.py",
     "generator_backends.py",
-    "tests/test_generator_backends.py"
+    "qwen_colab_worker.py"
   ],
   "impacted_files": [
     "asset_forge.py",
+    "colab_queue.py",
     "generator_backends.py",
     "operational_status.py",
     "production_executor.py",
+    "qwen_colab_worker.py",
+    "tests/test_colab_queue.py",
     "tests/test_generator_backends.py"
   ],
   "impacted_symbols": [
@@ -153,112 +149,154 @@
       "line": 748
     },
     {
+      "name": "ColabQueueError",
+      "kind": "class",
+      "file": "colab_queue.py",
+      "line": 13
+    },
+    {
+      "name": "job_id",
+      "kind": "function",
+      "file": "colab_queue.py",
+      "line": 17
+    },
+    {
+      "name": "build_colab_job",
+      "kind": "function",
+      "file": "colab_queue.py",
+      "line": 22
+    },
+    {
+      "name": "_github_request",
+      "kind": "function",
+      "file": "colab_queue.py",
+      "line": 50
+    },
+    {
+      "name": "submit",
+      "kind": "function",
+      "file": "colab_queue.py",
+      "line": 69
+    },
+    {
+      "name": "wait_result",
+      "kind": "function",
+      "file": "colab_queue.py",
+      "line": 121
+    },
+    {
+      "name": "download_result_asset",
+      "kind": "function",
+      "file": "colab_queue.py",
+      "line": 160
+    },
+    {
       "name": "_sanitize_metadata",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 42
+      "line": 41
     },
     {
       "name": "GenerationError",
       "kind": "class",
       "file": "generator_backends.py",
-      "line": 69
+      "line": 68
     },
     {
       "name": "generator_backend_status",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 73
+      "line": 72
     },
     {
       "name": "_sprite_sheet_geometry",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 129
+      "line": 128
     },
     {
       "name": "_generation_dimensions",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 164
+      "line": 163
     },
     {
       "name": "_ensure_transparency",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 178
+      "line": 177
     },
     {
       "name": "_normalize_raster_geometry",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 258
+      "line": 257
     },
     {
       "name": "build_generation_prompt",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 302
+      "line": 301
     },
     {
       "name": "pollinations_command",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 354
+      "line": 353
     },
     {
       "name": "select_generation_backend",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 395
+      "line": 394
     },
     {
       "name": "imagen_codex_command",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 431
+      "line": 426
     },
     {
       "name": "_imagen_output_path",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 473
+      "line": 468
     },
     {
       "name": "execute_generated_asset",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 509
+      "line": 504
     },
     {
       "name": "_NoCredentialRedirect",
       "kind": "class",
       "file": "generator_backends.py",
-      "line": 912
+      "line": 907
     },
     {
       "name": "redirect_request",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 913
+      "line": 908
     },
     {
       "name": "_default_3d_opener",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 917
+      "line": 912
     },
     {
       "name": "_upload_reference_image",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 924
+      "line": 919
     },
     {
       "name": "execute_generated_3d_asset",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 956
+      "line": 951
     },
     {
       "name": "build_operational_status",
@@ -313,6 +351,114 @@
       "kind": "function",
       "file": "production_executor.py",
       "line": 352
+    },
+    {
+      "name": "_token",
+      "kind": "function",
+      "file": "qwen_colab_worker.py",
+      "line": 21
+    },
+    {
+      "name": "_request",
+      "kind": "function",
+      "file": "qwen_colab_worker.py",
+      "line": 28
+    },
+    {
+      "name": "list_jobs",
+      "kind": "function",
+      "file": "qwen_colab_worker.py",
+      "line": 48
+    },
+    {
+      "name": "_get_json",
+      "kind": "function",
+      "file": "qwen_colab_worker.py",
+      "line": 63
+    },
+    {
+      "name": "_put",
+      "kind": "function",
+      "file": "qwen_colab_worker.py",
+      "line": 74
+    },
+    {
+      "name": "_delete",
+      "kind": "function",
+      "file": "qwen_colab_worker.py",
+      "line": 85
+    },
+    {
+      "name": "_download_reference",
+      "kind": "function",
+      "file": "qwen_colab_worker.py",
+      "line": 93
+    },
+    {
+      "name": "load_pipeline",
+      "kind": "function",
+      "file": "qwen_colab_worker.py",
+      "line": 112
+    },
+    {
+      "name": "run_job",
+      "kind": "function",
+      "file": "qwen_colab_worker.py",
+      "line": 127
+    },
+    {
+      "name": "process_once",
+      "kind": "function",
+      "file": "qwen_colab_worker.py",
+      "line": 172
+    },
+    {
+      "name": "main",
+      "kind": "function",
+      "file": "qwen_colab_worker.py",
+      "line": 215
+    },
+    {
+      "name": "ColabQueueTests",
+      "kind": "class",
+      "file": "tests/test_colab_queue.py",
+      "line": 6
+    },
+    {
+      "name": "base_job",
+      "kind": "function",
+      "file": "tests/test_colab_queue.py",
+      "line": 7
+    },
+    {
+      "name": "test_build_job_is_deterministic",
+      "kind": "function",
+      "file": "tests/test_colab_queue.py",
+      "line": 20
+    },
+    {
+      "name": "test_build_job_limits_references_to_ten",
+      "kind": "function",
+      "file": "tests/test_colab_queue.py",
+      "line": 29
+    },
+    {
+      "name": "test_missing_instruction_is_rejected",
+      "kind": "function",
+      "file": "tests/test_colab_queue.py",
+      "line": 34
+    },
+    {
+      "name": "test_job_id_changes_with_semantic_input",
+      "kind": "function",
+      "file": "tests/test_colab_queue.py",
+      "line": 38
+    },
+    {
+      "name": "test_job_id_is_short_content_hash",
+      "kind": "function",
+      "file": "tests/test_colab_queue.py",
+      "line": 45
     },
     {
       "name": "job",
@@ -700,6 +846,7 @@
     }
   ],
   "selected_tests": [
+    "tests/test_colab_queue.py",
     "tests/test_generator_backends.py"
   ]
 }
