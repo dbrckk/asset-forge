@@ -572,5 +572,87 @@ class GeneratorBackendsTests(unittest.TestCase):
                     )
 
 
+    def test_technical_quality_retries_without_visual_reference(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            value = job()
+            value["manifest"]["constraints"]["technicalQualityMin"] = 0.6
+            value["manifest"]["constraints"]["technicalQualityRetries"] = 2
+            scores = iter([0.31, 0.74])
+            generation_calls = []
+
+            def runner(command, **kwargs):
+                generation_calls.append(command)
+                target = Path(command[command.index("--output") + 1])
+                target.write_bytes(b"PNG")
+                class Generate:
+                    returncode = 0
+                    stdout = "{}"
+                    stderr = ""
+                return Generate()
+
+            with patch("generator_backends.shutil.which", return_value="/usr/bin/polli"):
+                result = execute_generated_asset(
+                    value,
+                    out,
+                    backend="pollinations",
+                    runner=runner,
+                    raster_normalizer=lambda raw, output, job_value: (
+                        output.write_bytes(raw.read_bytes())
+                        and {"width": 64, "height": 64, "columns": 2, "rows": 2}
+                    ),
+                    technical_quality_evaluator=lambda child, manifest: {
+                        "score": next(scores),
+                        "metrics": {},
+                        "errors": [],
+                        "warnings": [],
+                    },
+                )
+
+            self.assertEqual(len(generation_calls), 2)
+            history = result["technicalQuality"]["attempts"]
+            self.assertFalse(history[0]["passed"])
+            self.assertTrue(history[1]["passed"])
+            self.assertTrue(result["technicalQuality"]["passed"])
+            self.assertIn("technical game-art quality", generation_calls[1][3])
+
+    def test_technical_quality_rejects_after_retry_budget(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            value = job()
+            value["manifest"]["constraints"]["technicalQualityMin"] = 0.75
+            value["manifest"]["constraints"]["technicalQualityRetries"] = 1
+            calls = []
+
+            def runner(command, **kwargs):
+                calls.append(command)
+                target = Path(command[command.index("--output") + 1])
+                target.write_bytes(b"PNG")
+                class Generate:
+                    returncode = 0
+                    stdout = "{}"
+                    stderr = ""
+                return Generate()
+
+            with patch("generator_backends.shutil.which", return_value="/usr/bin/polli"):
+                with self.assertRaisesRegex(GenerationError, "technical art quality score"):
+                    execute_generated_asset(
+                        value,
+                        out,
+                        backend="pollinations",
+                        runner=runner,
+                        raster_normalizer=lambda raw, output, job_value: (
+                            output.write_bytes(raw.read_bytes())
+                            and {"width": 64, "height": 64, "columns": 2, "rows": 2}
+                        ),
+                        technical_quality_evaluator=lambda child, manifest: {
+                            "score": 0.2,
+                            "metrics": {},
+                            "errors": [],
+                            "warnings": [],
+                        },
+                    )
+            self.assertEqual(len(calls), 2)
+
 if __name__ == "__main__":
     unittest.main()
