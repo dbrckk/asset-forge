@@ -96,20 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T14:41:49Z
+Generated: 2026-09-20T14:42:46Z
 
 ### Git
 - Branch: `main`
-- Head: `0d4c9dfaa9ee`
-- Commit date: 2026-09-20T16:41:36+02:00
-- Commit: test: cover pose-tolerant visual similarity
+- Head: `663a3494f032`
+- Commit date: 2026-09-20T16:42:27+02:00
+- Commit: test: cover frame-aware sprite sheet scoring
 - Tracked files: 249
 
 ### Recently changed files
 - `tests/test_visual_similarity.py`
 - `visual_similarity.py`
 - `pyproject.toml`
-- `tests/test_generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`

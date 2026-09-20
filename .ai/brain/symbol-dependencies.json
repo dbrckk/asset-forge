@@ -9,7 +9,7 @@
       "source": {
         "file": "tests/test_visual_similarity.py",
         "start": 8,
-        "end": 79
+        "end": 112
       },
       "symbol_dependencies": [
         {
@@ -17,7 +17,7 @@
           "definitions": [
             {
               "file": "visual_similarity.py",
-              "line": 104,
+              "line": 163,
               "kind": "function",
               "language": "python"
             }
@@ -49,6 +49,18 @@
           "relation": "same_file"
         },
         {
+          "symbol": "test_sprite_sheet_scoring_is_frame_aware",
+          "definitions": [
+            {
+              "file": "tests/test_visual_similarity.py",
+              "line": 82,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
           "symbol": "test_subject_repositioning_stays_similar",
           "definitions": [
             {
@@ -61,7 +73,7 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 4
+      "dependency_count": 5
     },
     "test_identical_images_score_higher_than_different_images": {
       "source": {
@@ -75,7 +87,7 @@
           "definitions": [
             {
               "file": "visual_similarity.py",
-              "line": 104,
+              "line": 163,
               "kind": "function",
               "language": "python"
             }
@@ -97,7 +109,7 @@
           "definitions": [
             {
               "file": "visual_similarity.py",
-              "line": 104,
+              "line": 163,
               "kind": "function",
               "language": "python"
             }
@@ -119,7 +131,29 @@
           "definitions": [
             {
               "file": "visual_similarity.py",
-              "line": 104,
+              "line": 163,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_sprite_sheet_scoring_is_frame_aware": {
+      "source": {
+        "file": "tests/test_visual_similarity.py",
+        "start": 82,
+        "end": 112
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "compare_visuals",
+          "definitions": [
+            {
+              "file": "visual_similarity.py",
+              "line": 163,
               "kind": "function",
               "language": "python"
             }
@@ -267,11 +301,20 @@
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "compare_visuals": {
+    "_sprite_sheet_frames": {
       "source": {
         "file": "visual_similarity.py",
-        "start": 104,
-        "end": 142
+        "start": 105,
+        "end": 126
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_single_image_similarity": {
+      "source": {
+        "file": "visual_similarity.py",
+        "start": 129,
+        "end": 160
       },
       "symbol_dependencies": [
         {
@@ -347,18 +390,6 @@
           "relation": "same_file"
         },
         {
-          "symbol": "_load_rgba",
-          "definitions": [
-            {
-              "file": "visual_similarity.py",
-              "line": 10,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
           "symbol": "_occupancy_similarity",
           "definitions": [
             {
@@ -383,13 +414,59 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 9
+      "dependency_count": 8
+    },
+    "compare_visuals": {
+      "source": {
+        "file": "visual_similarity.py",
+        "start": 163,
+        "end": 190
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_load_rgba",
+          "definitions": [
+            {
+              "file": "visual_similarity.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_single_image_similarity",
+          "definitions": [
+            {
+              "file": "visual_similarity.py",
+              "line": 129,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_sprite_sheet_frames",
+          "definitions": [
+            {
+              "file": "visual_similarity.py",
+              "line": 105,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
     },
     "compare_against_references": {
       "source": {
         "file": "visual_similarity.py",
-        "start": 145,
-        "end": 158
+        "start": 193,
+        "end": 206
       },
       "symbol_dependencies": [
         {
@@ -397,7 +474,7 @@
           "definitions": [
             {
               "file": "visual_similarity.py",
-              "line": 104,
+              "line": 163,
               "kind": "function",
               "language": "python"
             }

@@ -73,6 +73,23 @@
       ],
       "occurrence_count": 1
     },
+    "test_sprite_sheet_scoring_is_frame_aware": {
+      "definition": {
+        "file": "tests/test_visual_similarity.py",
+        "line": 82,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_visual_similarity.py",
+          "line": 82,
+          "preview": "def test_sprite_sheet_scoring_is_frame_aware(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
     "VisualSimilarityError": {
       "definition": {
         "file": "visual_similarity.py",
@@ -118,13 +135,13 @@
         },
         {
           "file": "visual_similarity.py",
-          "line": 105,
+          "line": 164,
           "preview": "parent_image = _load_rgba(Path(parent), size=64)",
           "definition_candidate": false
         },
         {
           "file": "visual_similarity.py",
-          "line": 106,
+          "line": 165,
           "preview": "child_image = _load_rgba(Path(child), size=64)",
           "definition_candidate": false
         }
@@ -170,13 +187,13 @@
         },
         {
           "file": "visual_similarity.py",
-          "line": 107,
+          "line": 130,
           "preview": "parent_subject = _subject_normalized(parent_image, size=32)",
           "definition_candidate": false
         },
         {
           "file": "visual_similarity.py",
-          "line": 108,
+          "line": 131,
           "preview": "child_subject = _subject_normalized(child_image, size=32)",
           "definition_candidate": false
         }
@@ -199,13 +216,13 @@
         },
         {
           "file": "visual_similarity.py",
-          "line": 119,
+          "line": 141,
           "preview": "_edge_signature(parent_subject),",
           "definition_candidate": false
         },
         {
           "file": "visual_similarity.py",
-          "line": 120,
+          "line": 142,
           "preview": "_edge_signature(child_subject),",
           "definition_candidate": false
         }
@@ -228,13 +245,13 @@
         },
         {
           "file": "visual_similarity.py",
-          "line": 111,
+          "line": 133,
           "preview": "_histogram_signature(parent_subject),",
           "definition_candidate": false
         },
         {
           "file": "visual_similarity.py",
-          "line": 112,
+          "line": 134,
           "preview": "_histogram_signature(child_subject),",
           "definition_candidate": false
         }
@@ -257,7 +274,7 @@
         },
         {
           "file": "visual_similarity.py",
-          "line": 110,
+          "line": 132,
           "preview": "palette = _histogram_similarity(",
           "definition_candidate": false
         }
@@ -286,13 +303,13 @@
         },
         {
           "file": "visual_similarity.py",
-          "line": 115,
+          "line": 137,
           "preview": "_average_hash(parent_subject),",
           "definition_candidate": false
         },
         {
           "file": "visual_similarity.py",
-          "line": 116,
+          "line": 138,
           "preview": "_average_hash(child_subject),",
           "definition_candidate": false
         }
@@ -315,13 +332,13 @@
         },
         {
           "file": "visual_similarity.py",
-          "line": 114,
+          "line": 136,
           "preview": "subject_structure = _hash_similarity(",
           "definition_candidate": false
         },
         {
           "file": "visual_similarity.py",
-          "line": 118,
+          "line": 140,
           "preview": "edge_structure = _hash_similarity(",
           "definition_candidate": false
         }
@@ -344,13 +361,13 @@
         },
         {
           "file": "visual_similarity.py",
-          "line": 123,
+          "line": 145,
           "preview": "_alpha_occupancy(parent_image),",
           "definition_candidate": false
         },
         {
           "file": "visual_similarity.py",
-          "line": 124,
+          "line": 146,
           "preview": "_alpha_occupancy(child_image),",
           "definition_candidate": false
         }
@@ -373,8 +390,60 @@
         },
         {
           "file": "visual_similarity.py",
-          "line": 122,
+          "line": 144,
           "preview": "occupancy = _occupancy_similarity(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "_sprite_sheet_frames": {
+      "definition": {
+        "file": "visual_similarity.py",
+        "line": 105,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "visual_similarity.py",
+          "line": 105,
+          "preview": "def _sprite_sheet_frames(image, *, max_frames: int = 4):",
+          "definition_candidate": true
+        },
+        {
+          "file": "visual_similarity.py",
+          "line": 167,
+          "preview": "parent_frames = _sprite_sheet_frames(parent_image)",
+          "definition_candidate": false
+        },
+        {
+          "file": "visual_similarity.py",
+          "line": 168,
+          "preview": "child_frames = _sprite_sheet_frames(child_image)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 3
+    },
+    "_single_image_similarity": {
+      "definition": {
+        "file": "visual_similarity.py",
+        "line": 129,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "visual_similarity.py",
+          "line": 129,
+          "preview": "def _single_image_similarity(parent_image, child_image) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "visual_similarity.py",
+          "line": 172,
+          "preview": "_single_image_similarity(parent_frame, child_frame)",
           "definition_candidate": false
         }
       ],
@@ -383,7 +452,7 @@
     "compare_visuals": {
       "definition": {
         "file": "visual_similarity.py",
-        "line": 104,
+        "line": 163,
         "kind": "function",
         "language": "python"
       },
@@ -419,24 +488,30 @@
           "definition_candidate": false
         },
         {
+          "file": "tests/test_visual_similarity.py",
+          "line": 108,
+          "preview": "result = compare_visuals(parent, child)",
+          "definition_candidate": false
+        },
+        {
           "file": "visual_similarity.py",
-          "line": 104,
+          "line": 163,
           "preview": "def compare_visuals(parent: Path, child: Path) -> dict:",
           "definition_candidate": true
         },
         {
           "file": "visual_similarity.py",
-          "line": 152,
+          "line": 200,
           "preview": "comparisons = [compare_visuals(reference, child) for reference in references]",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 7
+      "occurrence_count": 8
     },
     "compare_against_references": {
       "definition": {
         "file": "visual_similarity.py",
-        "line": 145,
+        "line": 193,
         "kind": "function",
         "language": "python"
       },
@@ -455,7 +530,7 @@
         },
         {
           "file": "visual_similarity.py",
-          "line": 145,
+          "line": 193,
           "preview": "def compare_against_references(child: Path, references: list[Path]) -> dict:",
           "definition_candidate": true
         }

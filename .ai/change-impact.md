@@ -1,7 +1,7 @@
 # Change impact
 
-Base: 8ee8589db7e78f9817dc189fe3dd3bc316f59e3b
-Head: 0d4c9dfaa9ee2cab77ca87855a521d17bc466eb6
+Base: 577d69b0c601f2beee3271bbdac09744103918dc
+Head: 663a3494f032acc7acdb2e9aaba3823583e6a399
 
 ## Changed files
 - M tests/test_visual_similarity.py

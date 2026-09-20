@@ -3318,6 +3318,23 @@ def test_shape_and_palette_change_is_penalized(self)
 changed = root / "changed.png"
 ⋮----
 score = compare_visuals(parent, changed)["score"]
+⋮----
+def test_sprite_sheet_scoring_is_frame_aware(self)
+⋮----
+parent = root / "parent-sheet.png"
+child = root / "child-sheet.png"
+⋮----
+p = Image.new("RGBA", (128, 32), (0, 0, 0, 0))
+draw = ImageDraw.Draw(p)
+⋮----
+x = i * 32
+⋮----
+q = Image.new("RGBA", (128, 32), (0, 0, 0, 0))
+draw = ImageDraw.Draw(q)
+⋮----
+offset = (i % 2) * 3
+⋮----
+result = compare_visuals(parent, child)
 ````
 
 ## File: web/runtime_atlas.mjs
@@ -8653,18 +8670,45 @@ pixels = list(alpha.getdata())
 ⋮----
 def _occupancy_similarity(a: float, b: float) -> float
 ⋮----
-def compare_visuals(parent: Path, child: Path) -> dict
+def _sprite_sheet_frames(image, *, max_frames: int = 4)
 ⋮----
-parent_image = _load_rgba(Path(parent), size=64)
-child_image = _load_rgba(Path(child), size=64)
+frames = []
+⋮----
+columns = min(max_frames, max(2, round(width / height)))
+frame_width = width / columns
+⋮----
+left = int(round(index * frame_width))
+right = int(round((index + 1) * frame_width))
+⋮----
+rows = min(max_frames, max(2, round(height / width)))
+frame_height = height / rows
+⋮----
+top = int(round(index * frame_height))
+bottom = int(round((index + 1) * frame_height))
+⋮----
+def _single_image_similarity(parent_image, child_image) -> dict
+⋮----
 parent_subject = _subject_normalized(parent_image, size=32)
 child_subject = _subject_normalized(child_image, size=32)
-⋮----
 palette = _histogram_similarity(
 subject_structure = _hash_similarity(
 edge_structure = _hash_similarity(
 occupancy = _occupancy_similarity(
 score = (
+⋮----
+def compare_visuals(parent: Path, child: Path) -> dict
+⋮----
+parent_image = _load_rgba(Path(parent), size=64)
+child_image = _load_rgba(Path(child), size=64)
+⋮----
+parent_frames = _sprite_sheet_frames(parent_image)
+child_frames = _sprite_sheet_frames(child_image)
+frame_scores = []
+⋮----
+candidates = [
+⋮----
+best = sum(item["score"] for item in frame_scores) / max(1, len(frame_scores))
+components = {
 ⋮----
 def compare_against_references(child: Path, references: list[Path]) -> dict
 ⋮----
