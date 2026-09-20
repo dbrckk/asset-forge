@@ -96,20 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T14:10:25Z
+Generated: 2026-09-20T14:41:49Z
 
 ### Git
 - Branch: `main`
-- Head: `705b5abfe249`
-- Commit date: 2026-09-20T16:10:15+02:00
-- Commit: fix: package visual similarity runtime module
-- Tracked files: 247
+- Head: `0d4c9dfaa9ee`
+- Commit date: 2026-09-20T16:41:36+02:00
+- Commit: test: cover pose-tolerant visual similarity
+- Tracked files: 249
 
 ### Recently changed files
-- `pyproject.toml`
 - `tests/test_visual_similarity.py`
+- `visual_similarity.py`
+- `pyproject.toml`
 - `tests/test_generator_backends.py`
-- `generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`

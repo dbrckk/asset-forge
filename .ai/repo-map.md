@@ -3300,6 +3300,24 @@ different = root / "different.png"
 ⋮----
 same_score = compare_visuals(parent, same)["score"]
 different_score = compare_visuals(parent, different)["score"]
+⋮----
+def test_subject_repositioning_stays_similar(self)
+⋮----
+moved = root / "moved.png"
+⋮----
+a = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+draw = ImageDraw.Draw(a)
+⋮----
+b = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+draw = ImageDraw.Draw(b)
+⋮----
+score = compare_visuals(parent, moved)["score"]
+⋮----
+def test_shape_and_palette_change_is_penalized(self)
+⋮----
+changed = root / "changed.png"
+⋮----
+score = compare_visuals(parent, changed)["score"]
 ````
 
 ## File: web/runtime_atlas.mjs
@@ -8582,6 +8600,30 @@ class VisualSimilarityError(RuntimeError)
 ⋮----
 def _load_rgba(path: Path, *, size: int = 32)
 ⋮----
+def _crop_to_alpha_subject(image, *, padding_ratio: float = 0.08)
+⋮----
+alpha = image.getchannel("A")
+bbox = alpha.getbbox()
+⋮----
+width = max(1, right - left)
+height = max(1, bottom - top)
+pad_x = max(1, int(round(width * padding_ratio)))
+pad_y = max(1, int(round(height * padding_ratio)))
+left = max(0, left - pad_x)
+top = max(0, top - pad_y)
+right = min(image.width, right + pad_x)
+bottom = min(image.height, bottom + pad_y)
+⋮----
+def _subject_normalized(image, *, size: int = 32)
+⋮----
+subject = _crop_to_alpha_subject(image)
+⋮----
+def _edge_signature(image, width: int = 16, height: int = 16) -> list[int]
+⋮----
+edges = image.convert("L").filter(ImageFilter.FIND_EDGES).resize((width, height))
+pixels = list(edges.getdata())
+average = sum(pixels) / max(1, len(pixels))
+⋮----
 def _histogram_signature(image, bins: int = 8) -> list[float]
 ⋮----
 rgba = list(image.getdata())
@@ -8600,7 +8642,6 @@ def _average_hash(image, width: int = 16, height: int = 16) -> list[int]
 ⋮----
 gray = image.convert("L").resize((width, height))
 pixels = list(gray.getdata())
-average = sum(pixels) / max(1, len(pixels))
 ⋮----
 def _hash_similarity(a: list[int], b: list[int]) -> float
 ⋮----
@@ -8608,19 +8649,22 @@ distance = sum(1 for x, y in zip(a, b) if x != y)
 ⋮----
 def _alpha_occupancy(image) -> float
 ⋮----
-alpha = image.getchannel("A")
 pixels = list(alpha.getdata())
 ⋮----
 def _occupancy_similarity(a: float, b: float) -> float
 ⋮----
 def compare_visuals(parent: Path, child: Path) -> dict
 ⋮----
-parent_image = _load_rgba(Path(parent))
-child_image = _load_rgba(Path(child))
-histogram = _histogram_similarity(
-structure = _hash_similarity(
+parent_image = _load_rgba(Path(parent), size=64)
+child_image = _load_rgba(Path(child), size=64)
+parent_subject = _subject_normalized(parent_image, size=32)
+child_subject = _subject_normalized(child_image, size=32)
+⋮----
+palette = _histogram_similarity(
+subject_structure = _hash_similarity(
+edge_structure = _hash_similarity(
 occupancy = _occupancy_similarity(
-score = 0.50 * histogram + 0.35 * structure + 0.15 * occupancy
+score = (
 ⋮----
 def compare_against_references(child: Path, references: list[Path]) -> dict
 ⋮----

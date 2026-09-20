@@ -1,13 +1,13 @@
 # Change impact
 
-Base: c71b62e8c4f04815d4647917668aac7879829784
-Head: 705b5abfe2490984b3459d726e6df3941826d8d2
+Base: 8ee8589db7e78f9817dc189fe3dd3bc316f59e3b
+Head: 0d4c9dfaa9ee2cab77ca87855a521d17bc466eb6
 
 ## Changed files
-- M pyproject.toml
+- M tests/test_visual_similarity.py
 
 ## Affected areas
-- (root)
+- tests
 
 ## Related test candidates
 - No direct filename-based test match detected.
