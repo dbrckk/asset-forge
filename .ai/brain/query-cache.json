@@ -2256,6 +2256,113 @@
       },
       "task": "game engine"
     },
+    "4692c572b4e6a0ee0b961f4b1715a91530cd0c8fda52b9cbca857d0ebf4dc987": {
+      "route": {
+        "budget": {
+          "confidence": "low",
+          "expand_to": 12,
+          "max_files": 6,
+          "requested_max_files": 12,
+          "score_margin": 0,
+          "tier": "broad",
+          "top_score": 9
+        },
+        "candidate_count": 3,
+        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
+        "files": [
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "production_executor.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "ProductionExecutionError",
+              "_provenance_from_manifest",
+              "_safe_asset_id",
+              "_stage_provided_source",
+              "_trusted_generated_source",
+              "execute_generated_3d_job",
+              "execute_generated_raster_job",
+              "execute_generated_vector_job"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "tests/test_production_executor.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "ProductionExecutorTests",
+              "copy_step",
+              "encode",
+              "generator",
+              "godot",
+              "job",
+              "lod_reporter",
+              "normalizer",
+              "optimizer",
+              "profile_validator",
+              "quality",
+              "sanitizer",
+              "test_asset_id_cannot_escape_job_output",
+              "test_generated_3d_flows_through_profile_quality_and_godot_gates",
+              "test_generated_3d_reports_lod_artifacts_when_enabled",
+              "test_generated_character_3d_fails_when_profile_quality_fails",
+              "test_generated_png_flows_through_processing_validation_and_report",
+              "test_generated_vector_is_sanitized_normalized_and_validated",
+              "test_generator_source_must_stay_inside_job_output",
+              "test_godot_3d_emits_runtime_plan_sidecar"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "asset_forge.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "_enrich_engine_handoff",
+              "_persist_enriched_production_report",
+              "_write_production_inputs",
+              "build_atlas_manifest",
+              "build_plan",
+              "cmd_atlas_manifest",
+              "cmd_plan",
+              "cmd_validate",
+              "cmd_validate_raster",
+              "execute_compiled_production_job",
+              "is_power_of_two",
+              "load_json",
+              "load_valid_manifest",
+              "main",
+              "parser",
+              "select_tools",
+              "sprite_grid",
+              "validate_manifest",
+              "validate_raster_file"
+            ]
+          }
+        ],
+        "generated_by": "dbrckk/repo-brain-v8",
+        "schema_version": 1,
+        "task": "offline progress",
+        "terms": [
+          "offline",
+          "progress"
+        ]
+      },
+      "task": "offline progress"
+    },
     "492aec7adb261358e6bcb063d8acbad1715272b514cd844cc1578c57ec86f10e": {
       "route": {
         "budget": {
@@ -2507,146 +2614,6 @@
       },
       "task": "offline progress"
     },
-    "53df36474c5166e1ece3ac364282848f23e92a826fd6fcea484bc27b89cc80f6": {
-      "route": {
-        "budget": {
-          "confidence": "low",
-          "expand_to": 12,
-          "max_files": 12,
-          "requested_max_files": 12,
-          "score_margin": 0,
-          "tier": "broad",
-          "top_score": 9
-        },
-        "candidate_count": 5,
-        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
-        "files": [
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "tests/runtime_atlas_web.test.mjs",
-            "reasons": [
-              "impact",
-              "recently-changed"
-            ],
-            "score": 9,
-            "symbols": [
-              "createMockCanvas",
-              "createMockWebGL2",
-              "fakeCreateImageBitmap",
-              "fakeFetch",
-              "object"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "web/runtime_atlas.mjs",
-            "reasons": [
-              "impact",
-              "recently-changed"
-            ],
-            "score": 9,
-            "symbols": [
-              "_compileWebGL2Shader",
-              "_linkWebGL2Program",
-              "_splitEntityHierarchyOptions",
-              "_stableSceneCacheKey",
-              "acquire",
-              "add",
-              "animationDurationSeconds",
-              "animationEventsBetween",
-              "animationFrameAtTime",
-              "applyCameraToSpriteInstances",
-              "assertActive",
-              "baseCamera",
-              "bind",
-              "build",
-              "buildInstancedSpriteBatch",
-              "buildSpriteBatch",
-              "buildSpriteEntityInstances",
-              "buildTexturePageBatches",
-              "cancel",
-              "capture"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "asset_forge.py",
-            "reasons": [
-              "impact"
-            ],
-            "score": 6,
-            "symbols": [
-              "build_atlas_manifest",
-              "build_plan",
-              "cmd_atlas_manifest",
-              "cmd_plan",
-              "cmd_validate",
-              "cmd_validate_raster",
-              "is_power_of_two",
-              "load_json",
-              "load_valid_manifest",
-              "main",
-              "parser",
-              "select_tools",
-              "sprite_grid",
-              "validate_manifest",
-              "validate_raster_file"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "tests/test_runtime_atlas.py",
-            "reasons": [
-              "impact"
-            ],
-            "score": 6,
-            "symbols": [
-              "RuntimeAtlasTests",
-              "test_build_runtime_atlas_normalizes_animation_events",
-              "test_build_runtime_atlas_normalizes_animations",
-              "test_build_runtime_atlas_rejects_event_at_animation_end",
-              "test_build_runtime_atlas_rejects_missing_animation_frame",
-              "test_defaults_non_rotated_source_region",
-              "test_exports_trim_and_rotation_semantics",
-              "test_rejects_duplicate_indices",
-              "test_rejects_rotation_dimension_mismatch",
-              "test_rejects_source_trim_out_of_bounds",
-              "test_validator_accepts_generated_runtime_atlas",
-              "test_validator_detects_frame_count_mismatch",
-              "test_validator_detects_uv_drift",
-              "test_validator_rejects_animation_frame_reference_drift",
-              "test_validator_rejects_boolean_integer_fields",
-              "test_validator_rejects_duplicate_animation_names",
-              "test_validator_rejects_unknown_fields",
-              "test_validator_rejects_unknown_nested_fields",
-              "test_validator_rejects_unsorted_animation_events"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "README.md",
-            "reasons": [
-              "recently-changed"
-            ],
-            "score": 3,
-            "symbols": []
-          }
-        ],
-        "generated_by": "dbrckk/repo-brain-v8",
-        "schema_version": 1,
-        "task": "privacy consent",
-        "terms": [
-          "privacy",
-          "consent"
-        ]
-      },
-      "task": "privacy consent"
-    },
     "552d7589f5e1f5eaf73e0a22dc2459f5cd692eabb08a22d55c92853717abc885": {
       "route": {
         "budget": {
@@ -2703,565 +2670,6 @@
         ]
       },
       "task": "offline progress"
-    },
-    "5575f0b33f70f986fad70ca70c2c5d596ac84264bae841bfeac9eec126d76787": {
-      "route": {
-        "budget": {
-          "confidence": "low",
-          "expand_to": 12,
-          "max_files": 12,
-          "requested_max_files": 12,
-          "score_margin": 0,
-          "tier": "broad",
-          "top_score": 9
-        },
-        "candidate_count": 5,
-        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
-        "files": [
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "tests/runtime_atlas_web.test.mjs",
-            "reasons": [
-              "impact",
-              "recently-changed"
-            ],
-            "score": 9,
-            "symbols": [
-              "createMockWebGL2",
-              "fakeCreateImageBitmap",
-              "fakeFetch",
-              "object"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "web/runtime_atlas.mjs",
-            "reasons": [
-              "impact",
-              "recently-changed"
-            ],
-            "score": 9,
-            "symbols": [
-              "_compileWebGL2Shader",
-              "_linkWebGL2Program",
-              "acquire",
-              "animationDurationSeconds",
-              "animationEventsBetween",
-              "animationFrameAtTime",
-              "assertActive",
-              "buildInstancedSpriteBatch",
-              "buildSpriteBatch",
-              "buildTexturePageBatches",
-              "clear",
-              "createAnimationPlayer",
-              "createInstancedSpriteRendererWebGL2",
-              "createRuntimeAtlasPages",
-              "createTextureFromSource",
-              "createWebGL2RuntimeAtlasScene",
-              "createWebGL2TextureCache",
-              "cullSpriteInstances",
-              "deleteTexture",
-              "dispose"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "asset_forge.py",
-            "reasons": [
-              "impact"
-            ],
-            "score": 6,
-            "symbols": [
-              "build_atlas_manifest",
-              "build_plan",
-              "cmd_atlas_manifest",
-              "cmd_plan",
-              "cmd_validate",
-              "cmd_validate_raster",
-              "is_power_of_two",
-              "load_json",
-              "load_valid_manifest",
-              "main",
-              "parser",
-              "select_tools",
-              "sprite_grid",
-              "validate_manifest",
-              "validate_raster_file"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "tests/test_runtime_atlas.py",
-            "reasons": [
-              "impact"
-            ],
-            "score": 6,
-            "symbols": [
-              "RuntimeAtlasTests",
-              "test_build_runtime_atlas_normalizes_animation_events",
-              "test_build_runtime_atlas_normalizes_animations",
-              "test_build_runtime_atlas_rejects_event_at_animation_end",
-              "test_build_runtime_atlas_rejects_missing_animation_frame",
-              "test_defaults_non_rotated_source_region",
-              "test_exports_trim_and_rotation_semantics",
-              "test_rejects_duplicate_indices",
-              "test_rejects_rotation_dimension_mismatch",
-              "test_rejects_source_trim_out_of_bounds",
-              "test_validator_accepts_generated_runtime_atlas",
-              "test_validator_detects_frame_count_mismatch",
-              "test_validator_detects_uv_drift",
-              "test_validator_rejects_animation_frame_reference_drift",
-              "test_validator_rejects_boolean_integer_fields",
-              "test_validator_rejects_duplicate_animation_names",
-              "test_validator_rejects_unknown_fields",
-              "test_validator_rejects_unknown_nested_fields",
-              "test_validator_rejects_unsorted_animation_events"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "README.md",
-            "reasons": [
-              "recently-changed"
-            ],
-            "score": 3,
-            "symbols": []
-          }
-        ],
-        "generated_by": "dbrckk/repo-brain-v8",
-        "schema_version": 1,
-        "task": "offline progress",
-        "terms": [
-          "offline",
-          "progress"
-        ]
-      },
-      "task": "offline progress"
-    },
-    "571906cf823e94b97af14d6bc77d0667deb818c76a06663b23b14dfe1d06d471": {
-      "route": {
-        "budget": {
-          "confidence": "low",
-          "expand_to": 12,
-          "max_files": 12,
-          "requested_max_files": 12,
-          "score_margin": 0,
-          "tier": "broad",
-          "top_score": 9
-        },
-        "candidate_count": 5,
-        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
-        "files": [
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "tests/runtime_atlas_web.test.mjs",
-            "reasons": [
-              "impact",
-              "recently-changed"
-            ],
-            "score": 9,
-            "symbols": [
-              "createMockCanvas",
-              "createMockWebGL2",
-              "fakeCreateImageBitmap",
-              "fakeFetch",
-              "object"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "web/runtime_atlas.mjs",
-            "reasons": [
-              "impact",
-              "recently-changed"
-            ],
-            "score": 9,
-            "symbols": [
-              "_compileWebGL2Shader",
-              "_linkWebGL2Program",
-              "_splitEntityHierarchyOptions",
-              "_stableSceneCacheKey",
-              "acquire",
-              "add",
-              "animationDurationSeconds",
-              "animationEventsBetween",
-              "animationFrameAtTime",
-              "assertActive",
-              "bind",
-              "build",
-              "buildInstancedSpriteBatch",
-              "buildSpriteBatch",
-              "buildSpriteEntityInstances",
-              "buildTexturePageBatches",
-              "clear",
-              "cloneEntity",
-              "createAnimationPlayer",
-              "createInstancedSpriteRendererWebGL2"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "asset_forge.py",
-            "reasons": [
-              "impact"
-            ],
-            "score": 6,
-            "symbols": [
-              "build_atlas_manifest",
-              "build_plan",
-              "cmd_atlas_manifest",
-              "cmd_plan",
-              "cmd_validate",
-              "cmd_validate_raster",
-              "is_power_of_two",
-              "load_json",
-              "load_valid_manifest",
-              "main",
-              "parser",
-              "select_tools",
-              "sprite_grid",
-              "validate_manifest",
-              "validate_raster_file"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "tests/test_runtime_atlas.py",
-            "reasons": [
-              "impact"
-            ],
-            "score": 6,
-            "symbols": [
-              "RuntimeAtlasTests",
-              "test_build_runtime_atlas_normalizes_animation_events",
-              "test_build_runtime_atlas_normalizes_animations",
-              "test_build_runtime_atlas_rejects_event_at_animation_end",
-              "test_build_runtime_atlas_rejects_missing_animation_frame",
-              "test_defaults_non_rotated_source_region",
-              "test_exports_trim_and_rotation_semantics",
-              "test_rejects_duplicate_indices",
-              "test_rejects_rotation_dimension_mismatch",
-              "test_rejects_source_trim_out_of_bounds",
-              "test_validator_accepts_generated_runtime_atlas",
-              "test_validator_detects_frame_count_mismatch",
-              "test_validator_detects_uv_drift",
-              "test_validator_rejects_animation_frame_reference_drift",
-              "test_validator_rejects_boolean_integer_fields",
-              "test_validator_rejects_duplicate_animation_names",
-              "test_validator_rejects_unknown_fields",
-              "test_validator_rejects_unknown_nested_fields",
-              "test_validator_rejects_unsorted_animation_events"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "README.md",
-            "reasons": [
-              "recently-changed"
-            ],
-            "score": 3,
-            "symbols": []
-          }
-        ],
-        "generated_by": "dbrckk/repo-brain-v8",
-        "schema_version": 1,
-        "task": "purchase billing",
-        "terms": [
-          "purchase",
-          "billing"
-        ]
-      },
-      "task": "purchase billing"
-    },
-    "58ea22322e94eeb3134abfab1f2fe947043f05790e269d3a73e1e2bed7355517": {
-      "route": {
-        "budget": {
-          "confidence": "low",
-          "expand_to": 12,
-          "max_files": 12,
-          "requested_max_files": 12,
-          "score_margin": 0,
-          "tier": "broad",
-          "top_score": 9
-        },
-        "candidate_count": 5,
-        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
-        "files": [
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "tests/runtime_atlas_web.test.mjs",
-            "reasons": [
-              "impact",
-              "recently-changed"
-            ],
-            "score": 9,
-            "symbols": [
-              "createMockCanvas",
-              "createMockWebGL2",
-              "fakeCreateImageBitmap",
-              "fakeFetch",
-              "object"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "web/runtime_atlas.mjs",
-            "reasons": [
-              "impact",
-              "recently-changed"
-            ],
-            "score": 9,
-            "symbols": [
-              "_compileWebGL2Shader",
-              "_linkWebGL2Program",
-              "_splitEntityHierarchyOptions",
-              "_stableSceneCacheKey",
-              "acquire",
-              "add",
-              "animationDurationSeconds",
-              "animationEventsBetween",
-              "animationFrameAtTime",
-              "applyCameraToSpriteInstances",
-              "applySelectionTransformHandleDrag",
-              "assertActive",
-              "baseCamera",
-              "bind",
-              "build",
-              "buildInstancedSpriteBatch",
-              "buildSpriteBatch",
-              "buildSpriteEntityInstances",
-              "buildTexturePageBatches",
-              "cancel"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "asset_forge.py",
-            "reasons": [
-              "impact"
-            ],
-            "score": 6,
-            "symbols": [
-              "build_atlas_manifest",
-              "build_plan",
-              "cmd_atlas_manifest",
-              "cmd_plan",
-              "cmd_validate",
-              "cmd_validate_raster",
-              "is_power_of_two",
-              "load_json",
-              "load_valid_manifest",
-              "main",
-              "parser",
-              "select_tools",
-              "sprite_grid",
-              "validate_manifest",
-              "validate_raster_file"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "tests/test_runtime_atlas.py",
-            "reasons": [
-              "impact"
-            ],
-            "score": 6,
-            "symbols": [
-              "RuntimeAtlasTests",
-              "test_build_runtime_atlas_normalizes_animation_events",
-              "test_build_runtime_atlas_normalizes_animations",
-              "test_build_runtime_atlas_rejects_event_at_animation_end",
-              "test_build_runtime_atlas_rejects_missing_animation_frame",
-              "test_defaults_non_rotated_source_region",
-              "test_exports_trim_and_rotation_semantics",
-              "test_rejects_duplicate_indices",
-              "test_rejects_rotation_dimension_mismatch",
-              "test_rejects_source_trim_out_of_bounds",
-              "test_validator_accepts_generated_runtime_atlas",
-              "test_validator_detects_frame_count_mismatch",
-              "test_validator_detects_uv_drift",
-              "test_validator_rejects_animation_frame_reference_drift",
-              "test_validator_rejects_boolean_integer_fields",
-              "test_validator_rejects_duplicate_animation_names",
-              "test_validator_rejects_unknown_fields",
-              "test_validator_rejects_unknown_nested_fields",
-              "test_validator_rejects_unsorted_animation_events"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "README.md",
-            "reasons": [
-              "recently-changed"
-            ],
-            "score": 3,
-            "symbols": []
-          }
-        ],
-        "generated_by": "dbrckk/repo-brain-v8",
-        "schema_version": 1,
-        "task": "income progression",
-        "terms": [
-          "income",
-          "progression"
-        ]
-      },
-      "task": "income progression"
-    },
-    "59fb5468a52a32545674a0edb37fffb1ec7dc91d8f05ce8812ba6af5b6bf0e72": {
-      "route": {
-        "budget": {
-          "confidence": "low",
-          "expand_to": 12,
-          "max_files": 12,
-          "requested_max_files": 12,
-          "score_margin": 0,
-          "tier": "broad",
-          "top_score": 9
-        },
-        "candidate_count": 5,
-        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
-        "files": [
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "tests/runtime_atlas_web.test.mjs",
-            "reasons": [
-              "impact",
-              "recently-changed"
-            ],
-            "score": 9,
-            "symbols": [
-              "createMockCanvas",
-              "createMockWebGL2",
-              "fakeCreateImageBitmap",
-              "fakeFetch",
-              "object"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "web/runtime_atlas.mjs",
-            "reasons": [
-              "impact",
-              "recently-changed"
-            ],
-            "score": 9,
-            "symbols": [
-              "_compileWebGL2Shader",
-              "_linkWebGL2Program",
-              "_splitEntityHierarchyOptions",
-              "_stableSceneCacheKey",
-              "acquire",
-              "add",
-              "animationDurationSeconds",
-              "animationEventsBetween",
-              "animationFrameAtTime",
-              "applyCameraToSpriteInstances",
-              "assertActive",
-              "baseCamera",
-              "bind",
-              "build",
-              "buildInstancedSpriteBatch",
-              "buildSpriteBatch",
-              "buildSpriteEntityInstances",
-              "buildTexturePageBatches",
-              "cancel",
-              "capture"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "asset_forge.py",
-            "reasons": [
-              "impact"
-            ],
-            "score": 6,
-            "symbols": [
-              "build_atlas_manifest",
-              "build_plan",
-              "cmd_atlas_manifest",
-              "cmd_plan",
-              "cmd_validate",
-              "cmd_validate_raster",
-              "is_power_of_two",
-              "load_json",
-              "load_valid_manifest",
-              "main",
-              "parser",
-              "select_tools",
-              "sprite_grid",
-              "validate_manifest",
-              "validate_raster_file"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "tests/test_runtime_atlas.py",
-            "reasons": [
-              "impact"
-            ],
-            "score": 6,
-            "symbols": [
-              "RuntimeAtlasTests",
-              "test_build_runtime_atlas_normalizes_animation_events",
-              "test_build_runtime_atlas_normalizes_animations",
-              "test_build_runtime_atlas_rejects_event_at_animation_end",
-              "test_build_runtime_atlas_rejects_missing_animation_frame",
-              "test_defaults_non_rotated_source_region",
-              "test_exports_trim_and_rotation_semantics",
-              "test_rejects_duplicate_indices",
-              "test_rejects_rotation_dimension_mismatch",
-              "test_rejects_source_trim_out_of_bounds",
-              "test_validator_accepts_generated_runtime_atlas",
-              "test_validator_detects_frame_count_mismatch",
-              "test_validator_detects_uv_drift",
-              "test_validator_rejects_animation_frame_reference_drift",
-              "test_validator_rejects_boolean_integer_fields",
-              "test_validator_rejects_duplicate_animation_names",
-              "test_validator_rejects_unknown_fields",
-              "test_validator_rejects_unknown_nested_fields",
-              "test_validator_rejects_unsorted_animation_events"
-            ]
-          },
-          {
-            "learning_score": 0,
-            "matched_terms": [],
-            "path": "README.md",
-            "reasons": [
-              "recently-changed"
-            ],
-            "score": 3,
-            "symbols": []
-          }
-        ],
-        "generated_by": "dbrckk/repo-brain-v8",
-        "schema_version": 1,
-        "task": "income progression",
-        "terms": [
-          "income",
-          "progression"
-        ]
-      },
-      "task": "income progression"
     },
     "5a52109256b96cd243b8808098bcf85d7b58dd0f2415f536c230c1ea70111f38": {
       "route": {
@@ -3682,6 +3090,113 @@
         ]
       },
       "task": "offline progress"
+    },
+    "5f8448d7e497a0f5f27570fe43b91f166f165a4627446f3642c6ab4f96087f0a": {
+      "route": {
+        "budget": {
+          "confidence": "low",
+          "expand_to": 12,
+          "max_files": 6,
+          "requested_max_files": 12,
+          "score_margin": 0,
+          "tier": "broad",
+          "top_score": 9
+        },
+        "candidate_count": 3,
+        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
+        "files": [
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "production_executor.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "ProductionExecutionError",
+              "_provenance_from_manifest",
+              "_safe_asset_id",
+              "_stage_provided_source",
+              "_trusted_generated_source",
+              "execute_generated_3d_job",
+              "execute_generated_raster_job",
+              "execute_generated_vector_job"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "tests/test_production_executor.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "ProductionExecutorTests",
+              "copy_step",
+              "encode",
+              "generator",
+              "godot",
+              "job",
+              "lod_reporter",
+              "normalizer",
+              "optimizer",
+              "profile_validator",
+              "quality",
+              "sanitizer",
+              "test_asset_id_cannot_escape_job_output",
+              "test_generated_3d_flows_through_profile_quality_and_godot_gates",
+              "test_generated_3d_reports_lod_artifacts_when_enabled",
+              "test_generated_character_3d_fails_when_profile_quality_fails",
+              "test_generated_png_flows_through_processing_validation_and_report",
+              "test_generated_vector_is_sanitized_normalized_and_validated",
+              "test_generator_source_must_stay_inside_job_output",
+              "test_godot_3d_emits_runtime_plan_sidecar"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "asset_forge.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "_enrich_engine_handoff",
+              "_persist_enriched_production_report",
+              "_write_production_inputs",
+              "build_atlas_manifest",
+              "build_plan",
+              "cmd_atlas_manifest",
+              "cmd_plan",
+              "cmd_validate",
+              "cmd_validate_raster",
+              "execute_compiled_production_job",
+              "is_power_of_two",
+              "load_json",
+              "load_valid_manifest",
+              "main",
+              "parser",
+              "select_tools",
+              "sprite_grid",
+              "validate_manifest",
+              "validate_raster_file"
+            ]
+          }
+        ],
+        "generated_by": "dbrckk/repo-brain-v8",
+        "schema_version": 1,
+        "task": "privacy consent",
+        "terms": [
+          "privacy",
+          "consent"
+        ]
+      },
+      "task": "privacy consent"
     },
     "6296dd65660dc0a9de4214d74274192dccd2f830e54939cd853b1dc7a1fafe1e": {
       "route": {
@@ -4238,6 +3753,166 @@
             "symbols": [
               "build_visual_discovery_report",
               "run_starlist_recommender"
+            ]
+          }
+        ],
+        "generated_by": "dbrckk/repo-brain-v8",
+        "schema_version": 1,
+        "task": "game engine",
+        "terms": [
+          "game",
+          "engine"
+        ]
+      },
+      "task": "game engine"
+    },
+    "6e49235fb0e6858da8f3057970cd4300657ae06dc56232a33d3cbf35cd31ec60": {
+      "route": {
+        "budget": {
+          "confidence": "medium",
+          "expand_to": 12,
+          "max_files": 6,
+          "requested_max_files": 12,
+          "score_margin": 0,
+          "tier": "bounded",
+          "top_score": 29
+        },
+        "candidate_count": 19,
+        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
+        "files": [
+          {
+            "learning_score": 0,
+            "matched_terms": [
+              "engine",
+              "game"
+            ],
+            "path": "godot_handoff.py",
+            "reasons": [
+              "search-index"
+            ],
+            "score": 29,
+            "symbols": [
+              "build_import_recommendations",
+              "detect_godot",
+              "godot_import_command",
+              "load_godot_profile",
+              "prepare_godot_handoff",
+              "validate_godot_handoff"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [
+              "engine",
+              "game"
+            ],
+            "path": "tests/test_remote_batch.py",
+            "reasons": [
+              "search-index"
+            ],
+            "score": 29,
+            "symbols": [
+              "RemoteBatchTests",
+              "Result",
+              "fake_run",
+              "request",
+              "test_dependency_order_and_reference_are_preserved"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [
+              "engine"
+            ],
+            "path": "asset_forge.py",
+            "reasons": [
+              "impact",
+              "search-index"
+            ],
+            "score": 27,
+            "symbols": [
+              "_enrich_engine_handoff",
+              "_persist_enriched_production_report",
+              "_write_production_inputs",
+              "build_atlas_manifest",
+              "build_plan",
+              "cmd_atlas_manifest",
+              "cmd_plan",
+              "cmd_validate",
+              "cmd_validate_raster",
+              "execute_compiled_production_job",
+              "is_power_of_two",
+              "load_json",
+              "load_valid_manifest",
+              "main",
+              "parser",
+              "select_tools",
+              "sprite_grid",
+              "validate_manifest",
+              "validate_raster_file"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [
+              "engine"
+            ],
+            "path": "engine_profile_validation.py",
+            "reasons": [
+              "search-index"
+            ],
+            "score": 27,
+            "symbols": [
+              "_validate_object_keys",
+              "validate_all_godot_profiles",
+              "validate_godot_profile_data",
+              "validate_godot_profile_file"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [
+              "engine"
+            ],
+            "path": "tests/test_engine_profile_validation.py",
+            "reasons": [
+              "search-index"
+            ],
+            "score": 27,
+            "symbols": [
+              "EngineProfileValidationTests",
+              "test_invalid_fps_fails",
+              "test_invalid_json_file_fails",
+              "test_missing_required_field_fails",
+              "test_profile_name_mismatch_fails",
+              "test_repository_profiles_all_validate",
+              "test_unknown_field_fails",
+              "test_valid_profile_passes",
+              "test_wrong_type_fails",
+              "valid_profile"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [
+              "engine"
+            ],
+            "path": "production_executor.py",
+            "reasons": [
+              "impact",
+              "recently-changed",
+              "search-index"
+            ],
+            "score": 26,
+            "symbols": [
+              "ProductionExecutionError",
+              "_provenance_from_manifest",
+              "_safe_asset_id",
+              "_stage_provided_source",
+              "_trusted_generated_source",
+              "execute_generated_3d_job",
+              "execute_generated_raster_job",
+              "execute_generated_vector_job"
             ]
           }
         ],
@@ -6104,6 +5779,113 @@
             ],
             "score": 3,
             "symbols": []
+          }
+        ],
+        "generated_by": "dbrckk/repo-brain-v8",
+        "schema_version": 1,
+        "task": "income progression",
+        "terms": [
+          "income",
+          "progression"
+        ]
+      },
+      "task": "income progression"
+    },
+    "882c50ab2ff75a626c6a592acb2c925758f417275b4f00b29f0cbdf4972e591f": {
+      "route": {
+        "budget": {
+          "confidence": "low",
+          "expand_to": 12,
+          "max_files": 6,
+          "requested_max_files": 12,
+          "score_margin": 0,
+          "tier": "broad",
+          "top_score": 9
+        },
+        "candidate_count": 3,
+        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
+        "files": [
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "production_executor.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "ProductionExecutionError",
+              "_provenance_from_manifest",
+              "_safe_asset_id",
+              "_stage_provided_source",
+              "_trusted_generated_source",
+              "execute_generated_3d_job",
+              "execute_generated_raster_job",
+              "execute_generated_vector_job"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "tests/test_production_executor.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "ProductionExecutorTests",
+              "copy_step",
+              "encode",
+              "generator",
+              "godot",
+              "job",
+              "lod_reporter",
+              "normalizer",
+              "optimizer",
+              "profile_validator",
+              "quality",
+              "sanitizer",
+              "test_asset_id_cannot_escape_job_output",
+              "test_generated_3d_flows_through_profile_quality_and_godot_gates",
+              "test_generated_3d_reports_lod_artifacts_when_enabled",
+              "test_generated_character_3d_fails_when_profile_quality_fails",
+              "test_generated_png_flows_through_processing_validation_and_report",
+              "test_generated_vector_is_sanitized_normalized_and_validated",
+              "test_generator_source_must_stay_inside_job_output",
+              "test_godot_3d_emits_runtime_plan_sidecar"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "asset_forge.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "_enrich_engine_handoff",
+              "_persist_enriched_production_report",
+              "_write_production_inputs",
+              "build_atlas_manifest",
+              "build_plan",
+              "cmd_atlas_manifest",
+              "cmd_plan",
+              "cmd_validate",
+              "cmd_validate_raster",
+              "execute_compiled_production_job",
+              "is_power_of_two",
+              "load_json",
+              "load_valid_manifest",
+              "main",
+              "parser",
+              "select_tools",
+              "sprite_grid",
+              "validate_manifest",
+              "validate_raster_file"
+            ]
           }
         ],
         "generated_by": "dbrckk/repo-brain-v8",
@@ -12993,6 +12775,113 @@
       },
       "task": "privacy consent"
     },
+    "dc62e2289cf501e66f520e418688fa70bde824a9ddb400ac1651f3af6270b23e": {
+      "route": {
+        "budget": {
+          "confidence": "low",
+          "expand_to": 12,
+          "max_files": 6,
+          "requested_max_files": 12,
+          "score_margin": 0,
+          "tier": "broad",
+          "top_score": 9
+        },
+        "candidate_count": 3,
+        "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
+        "files": [
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "production_executor.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "ProductionExecutionError",
+              "_provenance_from_manifest",
+              "_safe_asset_id",
+              "_stage_provided_source",
+              "_trusted_generated_source",
+              "execute_generated_3d_job",
+              "execute_generated_raster_job",
+              "execute_generated_vector_job"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "tests/test_production_executor.py",
+            "reasons": [
+              "impact",
+              "recently-changed"
+            ],
+            "score": 9,
+            "symbols": [
+              "ProductionExecutorTests",
+              "copy_step",
+              "encode",
+              "generator",
+              "godot",
+              "job",
+              "lod_reporter",
+              "normalizer",
+              "optimizer",
+              "profile_validator",
+              "quality",
+              "sanitizer",
+              "test_asset_id_cannot_escape_job_output",
+              "test_generated_3d_flows_through_profile_quality_and_godot_gates",
+              "test_generated_3d_reports_lod_artifacts_when_enabled",
+              "test_generated_character_3d_fails_when_profile_quality_fails",
+              "test_generated_png_flows_through_processing_validation_and_report",
+              "test_generated_vector_is_sanitized_normalized_and_validated",
+              "test_generator_source_must_stay_inside_job_output",
+              "test_godot_3d_emits_runtime_plan_sidecar"
+            ]
+          },
+          {
+            "learning_score": 0,
+            "matched_terms": [],
+            "path": "asset_forge.py",
+            "reasons": [
+              "impact"
+            ],
+            "score": 6,
+            "symbols": [
+              "_enrich_engine_handoff",
+              "_persist_enriched_production_report",
+              "_write_production_inputs",
+              "build_atlas_manifest",
+              "build_plan",
+              "cmd_atlas_manifest",
+              "cmd_plan",
+              "cmd_validate",
+              "cmd_validate_raster",
+              "execute_compiled_production_job",
+              "is_power_of_two",
+              "load_json",
+              "load_valid_manifest",
+              "main",
+              "parser",
+              "select_tools",
+              "sprite_grid",
+              "validate_manifest",
+              "validate_raster_file"
+            ]
+          }
+        ],
+        "generated_by": "dbrckk/repo-brain-v8",
+        "schema_version": 1,
+        "task": "purchase billing",
+        "terms": [
+          "purchase",
+          "billing"
+        ]
+      },
+      "task": "purchase billing"
+    },
     "dcfb2a36c8e3d88269dc70c6866f74f1ff8859365b6e1c6a7a1e7bfe6129a3f7": {
       "route": {
         "budget": {
@@ -16434,11 +16323,6 @@
   },
   "generated_by": "dbrckk/repo-brain-query-cache-v2",
   "order": [
-    "53df36474c5166e1ece3ac364282848f23e92a826fd6fcea484bc27b89cc80f6",
-    "5575f0b33f70f986fad70ca70c2c5d596ac84264bae841bfeac9eec126d76787",
-    "571906cf823e94b97af14d6bc77d0667deb818c76a06663b23b14dfe1d06d471",
-    "58ea22322e94eeb3134abfab1f2fe947043f05790e269d3a73e1e2bed7355517",
-    "59fb5468a52a32545674a0edb37fffb1ec7dc91d8f05ce8812ba6af5b6bf0e72",
     "5a52109256b96cd243b8808098bcf85d7b58dd0f2415f536c230c1ea70111f38",
     "5a6cb67a3f7277a90d68ca54cf02e71261f6f2be8ad20a99a943a2903439de19",
     "5f1b664fb31458a1ef13b6fcc617976054f667f0c876bdd221d1e214ffac3504",
@@ -16561,7 +16445,12 @@
     "dcfb2a36c8e3d88269dc70c6866f74f1ff8859365b6e1c6a7a1e7bfe6129a3f7",
     "a95518bc6a90969f3e970a1864e7ea745e12fbb558a400f53eb79486f0f0cd19",
     "552d7589f5e1f5eaf73e0a22dc2459f5cd692eabb08a22d55c92853717abc885",
-    "e8a867056c1827cb01692dd55082c3c4a663098db9cbb1e1ee4d53c13fe24150"
+    "e8a867056c1827cb01692dd55082c3c4a663098db9cbb1e1ee4d53c13fe24150",
+    "dc62e2289cf501e66f520e418688fa70bde824a9ddb400ac1651f3af6270b23e",
+    "882c50ab2ff75a626c6a592acb2c925758f417275b4f00b29f0cbdf4972e591f",
+    "5f8448d7e497a0f5f27570fe43b91f166f165a4627446f3642c6ab4f96087f0a",
+    "4692c572b4e6a0ee0b961f4b1715a91530cd0c8fda52b9cbca857d0ebf4dc987",
+    "6e49235fb0e6858da8f3057970cd4300657ae06dc56232a33d3cbf35cd31ec60"
   ],
   "schema_version": 1
 }

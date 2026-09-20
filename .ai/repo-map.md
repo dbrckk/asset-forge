@@ -3164,6 +3164,12 @@ def godot(path, profile)
 ⋮----
 report = execute_generated_3d_job(
 ⋮----
+def test_godot_3d_emits_runtime_plan_sidecar(self)
+⋮----
+runtime_plan = {
+⋮----
+sidecars = [Path(value) for value in report["additionalArtifacts"] if value.endswith(".runtime-3d.json")]
+⋮----
 def test_generated_character_3d_fails_when_profile_quality_fails(self)
 ⋮----
 def test_provided_png_source_skips_generator_and_is_staged(self)
@@ -6602,6 +6608,11 @@ combined_errors = list(errors) + quality_errors + lod_errors
 combined_warnings = list(warnings) + quality_warnings + lod_warnings
 ⋮----
 scene = godot_delivery.get("scene") if isinstance(godot_delivery.get("scene"), dict) else {}
+⋮----
+runtime_sidecar = None
+runtime_plan = (
+⋮----
+runtime_sidecar = out / f"{asset_id}.runtime-3d.json"
 ````
 
 ## File: pyproject.toml

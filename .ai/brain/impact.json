@@ -1,22 +1,191 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "f401ba6429d611d0b3a2d3f3beb449ea7ee4fbb1",
-  "head": "89f70b99ea0baf2546094b04cb0d960ec9520edf",
+  "base": "89f70b99ea0baf2546094b04cb0d960ec9520edf",
+  "head": "8ff176e30f44353e2c9444be4907877ee01282d9",
   "index_mode": "incremental",
   "changed_files": [
+    {
+      "path": "production_executor.py",
+      "status": "M"
+    },
     {
       "path": "tests/test_production_executor.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
+    "production_executor.py",
     "tests/test_production_executor.py"
   ],
   "impacted_files": [
+    "asset_forge.py",
+    "production_executor.py",
     "tests/test_production_executor.py"
   ],
   "impacted_symbols": [
+    {
+      "name": "load_json",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 72
+    },
+    {
+      "name": "validate_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 80
+    },
+    {
+      "name": "is_power_of_two",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 138
+    },
+    {
+      "name": "sprite_grid",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 142
+    },
+    {
+      "name": "build_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 163
+    },
+    {
+      "name": "validate_raster_file",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 194
+    },
+    {
+      "name": "select_tools",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 253
+    },
+    {
+      "name": "build_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 271
+    },
+    {
+      "name": "load_valid_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 300
+    },
+    {
+      "name": "cmd_validate",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 316
+    },
+    {
+      "name": "cmd_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 324
+    },
+    {
+      "name": "cmd_validate_raster",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 332
+    },
+    {
+      "name": "cmd_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 346
+    },
+    {
+      "name": "execute_compiled_production_job",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 370
+    },
+    {
+      "name": "_write_production_inputs",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 424
+    },
+    {
+      "name": "_persist_enriched_production_report",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 440
+    },
+    {
+      "name": "_enrich_engine_handoff",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 453
+    },
+    {
+      "name": "parser",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 534
+    },
+    {
+      "name": "main",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 748
+    },
+    {
+      "name": "ProductionExecutionError",
+      "kind": "class",
+      "file": "production_executor.py",
+      "line": 14
+    },
+    {
+      "name": "_safe_asset_id",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 18
+    },
+    {
+      "name": "_trusted_generated_source",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 32
+    },
+    {
+      "name": "_provenance_from_manifest",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 49
+    },
+    {
+      "name": "_stage_provided_source",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 69
+    },
+    {
+      "name": "execute_generated_raster_job",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 95
+    },
+    {
+      "name": "execute_generated_vector_job",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 248
+    },
+    {
+      "name": "execute_generated_3d_job",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 352
+    },
     {
       "name": "job",
       "kind": "function",
@@ -174,7 +343,7 @@
       "line": 217
     },
     {
-      "name": "test_generated_character_3d_fails_when_profile_quality_fails",
+      "name": "test_godot_3d_emits_runtime_plan_sidecar",
       "kind": "function",
       "file": "tests/test_production_executor.py",
       "line": 236
@@ -183,73 +352,67 @@
       "name": "generator",
       "kind": "function",
       "file": "tests/test_production_executor.py",
-      "line": 243
+      "line": 244
+    },
+    {
+      "name": "test_generated_character_3d_fails_when_profile_quality_fails",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 283
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 290
     },
     {
       "name": "test_provided_png_source_skips_generator_and_is_staged",
       "kind": "function",
       "file": "tests/test_production_executor.py",
-      "line": 271
+      "line": 318
     },
     {
       "name": "optimizer",
       "kind": "function",
       "file": "tests/test_production_executor.py",
-      "line": 280
+      "line": 327
     },
     {
       "name": "test_provided_source_symlink_is_rejected",
       "kind": "function",
       "file": "tests/test_production_executor.py",
-      "line": 301
+      "line": 348
     },
     {
       "name": "test_generator_source_must_stay_inside_job_output",
       "kind": "function",
       "file": "tests/test_production_executor.py",
-      "line": 329
+      "line": 376
     },
     {
       "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 335
-    },
-    {
-      "name": "test_asset_id_cannot_escape_job_output",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 351
-    },
-    {
-      "name": "test_non_raster_target_fails_closed",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 369
-    },
-    {
-      "name": "test_generated_3d_reports_lod_artifacts_when_enabled",
       "kind": "function",
       "file": "tests/test_production_executor.py",
       "line": 382
     },
     {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 393
-    },
-    {
-      "name": "lod_reporter",
+      "name": "test_asset_id_cannot_escape_job_output",
       "kind": "function",
       "file": "tests/test_production_executor.py",
       "line": 398
     },
     {
-      "name": "test_required_collision_blocks_godot_prop_without_collision_node",
+      "name": "test_non_raster_target_fails_closed",
       "kind": "function",
       "file": "tests/test_production_executor.py",
-      "line": 431
+      "line": 416
+    },
+    {
+      "name": "test_generated_3d_reports_lod_artifacts_when_enabled",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 429
     },
     {
       "name": "generator",
@@ -258,16 +421,34 @@
       "line": 440
     },
     {
-      "name": "test_required_lod_toolchain_unavailable_blocks_3d_promotion",
+      "name": "lod_reporter",
       "kind": "function",
       "file": "tests/test_production_executor.py",
-      "line": 465
+      "line": 445
+    },
+    {
+      "name": "test_required_collision_blocks_godot_prop_without_collision_node",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 478
     },
     {
       "name": "generator",
       "kind": "function",
       "file": "tests/test_production_executor.py",
-      "line": 476
+      "line": 487
+    },
+    {
+      "name": "test_required_lod_toolchain_unavailable_blocks_3d_promotion",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 512
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 523
     }
   ],
   "selected_tests": [

@@ -9,7 +9,7 @@
     "top_score": 29
   },
   "cache": {
-    "fingerprint": "e8a867056c1827cb01692dd55082c3c4a663098db9cbb1e1ee4d53c13fe24150",
+    "fingerprint": "6e49235fb0e6858da8f3057970cd4300657ae06dc56232a33d3cbf35cd31ec60",
     "hit": false
   },
   "candidate_count": 19,
@@ -59,6 +59,39 @@
       "matched_terms": [
         "engine"
       ],
+      "path": "asset_forge.py",
+      "reasons": [
+        "impact",
+        "search-index"
+      ],
+      "score": 27,
+      "symbols": [
+        "_enrich_engine_handoff",
+        "_persist_enriched_production_report",
+        "_write_production_inputs",
+        "build_atlas_manifest",
+        "build_plan",
+        "cmd_atlas_manifest",
+        "cmd_plan",
+        "cmd_validate",
+        "cmd_validate_raster",
+        "execute_compiled_production_job",
+        "is_power_of_two",
+        "load_json",
+        "load_valid_manifest",
+        "main",
+        "parser",
+        "select_tools",
+        "sprite_grid",
+        "validate_manifest",
+        "validate_raster_file"
+      ]
+    },
+    {
+      "learning_score": 0,
+      "matched_terms": [
+        "engine"
+      ],
       "path": "engine_profile_validation.py",
       "reasons": [
         "search-index"
@@ -99,7 +132,7 @@
       "matched_terms": [
         "engine"
       ],
-      "path": "tests/test_production_executor.py",
+      "path": "production_executor.py",
       "reasons": [
         "impact",
         "recently-changed",
@@ -107,58 +140,14 @@
       ],
       "score": 26,
       "symbols": [
-        "ProductionExecutorTests",
-        "copy_step",
-        "encode",
-        "generator",
-        "godot",
-        "job",
-        "lod_reporter",
-        "normalizer",
-        "optimizer",
-        "profile_validator",
-        "quality",
-        "sanitizer",
-        "test_asset_id_cannot_escape_job_output",
-        "test_generated_3d_flows_through_profile_quality_and_godot_gates",
-        "test_generated_3d_reports_lod_artifacts_when_enabled",
-        "test_generated_character_3d_fails_when_profile_quality_fails",
-        "test_generated_png_flows_through_processing_validation_and_report",
-        "test_generated_vector_is_sanitized_normalized_and_validated",
-        "test_generator_source_must_stay_inside_job_output",
-        "test_non_raster_target_fails_closed"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine"
-      ],
-      "path": "asset_forge.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 21,
-      "symbols": [
-        "_enrich_engine_handoff",
-        "_persist_enriched_production_report",
-        "_write_production_inputs",
-        "build_atlas_manifest",
-        "build_plan",
-        "cmd_atlas_manifest",
-        "cmd_plan",
-        "cmd_validate",
-        "cmd_validate_raster",
-        "execute_compiled_production_job",
-        "is_power_of_two",
-        "load_json",
-        "load_valid_manifest",
-        "main",
-        "parser",
-        "select_tools",
-        "sprite_grid",
-        "validate_manifest",
-        "validate_raster_file"
+        "ProductionExecutionError",
+        "_provenance_from_manifest",
+        "_safe_asset_id",
+        "_stage_provided_source",
+        "_trusted_generated_source",
+        "execute_generated_3d_job",
+        "execute_generated_raster_job",
+        "execute_generated_vector_job"
       ]
     }
   ],

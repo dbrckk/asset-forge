@@ -1,7 +1,7 @@
 # Change impact
 
-Base: 39cb70e6c56aab1bd77ddcf0201f34bed3c3a33b
-Head: 89f70b99ea0baf2546094b04cb0d960ec9520edf
+Base: 552da434d538c21f072f1d4d8261f499ccda2156
+Head: 8ff176e30f44353e2c9444be4907877ee01282d9
 
 ## Changed files
 - M tests/test_production_executor.py
