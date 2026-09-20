@@ -1,16 +1,16 @@
 # Change impact
 
-Base: dac241bca03722cda9ec8dafc913f00a8416edab
-Head: 41d6260bdea08297e8c7b8697f368a43765e3734
+Base: d95772d2473d6551d0944379f4a156f4258c5bcd
+Head: d36634296bfd8ace2034a71a97dd18d0efaf959c
 
 ## Changed files
-- M tests/test_remote_batch.py
+- M asset_forge.py
 
 ## Affected areas
-- tests
+- (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_asset_forge.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

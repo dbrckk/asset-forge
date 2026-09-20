@@ -96,20 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T17:17:16Z
+Generated: 2026-09-20T22:46:20Z
 
 ### Git
 - Branch: `main`
-- Head: `41d6260bdea0`
-- Commit date: 2026-09-20T19:17:05+02:00
-- Commit: test: propagate asset library version metadata through remote batch
-- Tracked files: 274
+- Head: `d36634296bfd`
+- Commit date: 2026-09-21T00:46:09+02:00
+- Commit: feat: expose qwen-colab generation backend in CLI
+- Tracked files: 278
 
 ### Recently changed files
-- `tests/test_remote_batch.py`
-- `remote_batch.py`
-- `tests/test_production_executor.py`
-- `production_executor.py`
+- `asset_forge.py`
+- `generator_backends.py`
+- `colab_queue.py`
+- `qwen_colab_worker.py`
 
 ### Project signals
 - `pyproject.toml`

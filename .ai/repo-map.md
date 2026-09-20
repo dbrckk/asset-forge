@@ -98,6 +98,7 @@ tests/
   test_asset_library.py
   test_asset_profile_validation.py
   test_blender_adapter.py
+  test_colab_queue.py
   test_engine_profile_validation.py
   test_fulfill.py
   test_generator_backends.py
@@ -130,6 +131,7 @@ asset_forge.py
 asset_library.py
 asset_profile_validation.py
 blender_adapter.py
+colab_queue.py
 engine_profile_validation.py
 generator_backends.py
 gltf_binary_metrics.py
@@ -144,6 +146,7 @@ operational_status.py
 production_contract.py
 production_executor.py
 pyproject.toml
+qwen_colab_worker.py
 raster_backend.py
 raster_pack.py
 README.md
@@ -2500,6 +2503,36 @@ script = render_blender_python(job)
 def test_render_command_uses_background_mode(self)
 ⋮----
 command = render_blender_command("blender", Path("build/export.py"))
+````
+
+## File: tests/test_colab_queue.py
+````python
+class ColabQueueTests(unittest.TestCase)
+⋮----
+def base_job(self)
+⋮----
+def test_build_job_is_deterministic(self)
+⋮----
+one = build_colab_job(self.base_job())
+two = build_colab_job(self.base_job())
+⋮----
+def test_build_job_limits_references_to_ten(self)
+⋮----
+refs = [f"https://example.com/{index}.png" for index in range(12)]
+value = build_colab_job(self.base_job(), reference_urls=refs)
+⋮----
+def test_missing_instruction_is_rejected(self)
+⋮----
+def test_job_id_changes_with_semantic_input(self)
+⋮----
+first = build_colab_job(self.base_job())
+changed = self.base_job()
+⋮----
+second = build_colab_job(changed)
+⋮----
+def test_job_id_is_short_content_hash(self)
+⋮----
+value = job_id({"x": 1})
 ````
 
 ## File: tests/test_engine_profile_validation.py
@@ -5392,6 +5425,61 @@ def render_blender_command(blender_executable: str, script_path: Path) -> str
 def write_job_manifest(job: dict, path: Path) -> None
 ````
 
+## File: colab_queue.py
+````python
+class ColabQueueError(RuntimeError)
+⋮----
+def job_id(job: dict) -> str
+⋮----
+canonical = json.dumps(job, sort_keys=True, separators=(",", ":")).encode("utf-8")
+⋮----
+prompt = str(job.get("instruction") or "").strip()
+⋮----
+manifest = job.get("manifest") if isinstance(job.get("manifest"), dict) else {}
+constraints = manifest.get("constraints") if isinstance(manifest.get("constraints"), dict) else {}
+payload = {
+⋮----
+def _github_request(repository: str, token: str, method: str, path: str, payload: dict | None = None)
+⋮----
+body = None if payload is None else json.dumps(payload).encode("utf-8")
+request = urllib.request.Request(
+⋮----
+raw = response.read()
+⋮----
+repository = repository or os.environ.get("ASSET_FORGE_GITHUB_REPOSITORY", "dbrckk/asset-forge")
+token = token or os.environ.get("GITHUB_TOKEN") or os.environ.get("ASSET_FORGE_GITHUB_TOKEN")
+⋮----
+payload = build_colab_job(job)
+refs = []
+⋮----
+source = Path(raw_path)
+⋮----
+suffix = source.suffix.lower() or ".png"
+remote_path = f"{input_dir}/{payload['id']}/{index}{suffix}"
+encoded_ref = base64.b64encode(source.read_bytes()).decode("ascii")
+⋮----
+path = f"{queue_dir}/{payload['id']}.json"
+encoded = base64.b64encode((json.dumps(payload, indent=2, sort_keys=True) + "\n").encode("utf-8")).decode("ascii")
+⋮----
+deadline = time.monotonic() + timeout_seconds
+path = f"{result_dir}/{job_id_value}/result.json"
+⋮----
+value = _github_request(
+⋮----
+content = base64.b64decode(str(value.get("content") or "")).decode("utf-8")
+result = json.loads(content)
+⋮----
+artifact = str(result.get("artifact") or "").strip()
+⋮----
+raw = base64.b64decode(str(value.get("content") or ""))
+destination = Path(destination)
+⋮----
+payload = json.loads(
+⋮----
+timestamp = payload.get("timestamp")
+age = time.time() - float(timestamp) if isinstance(timestamp, (int, float)) else 10**9
+````
+
 ## File: engine_profile_validation.py
 ````python
 ALLOWED_PROFILES = {"prop", "environment", "character"}
@@ -5465,6 +5553,7 @@ credentials = home_dir / ".pollinations" / "credentials.json"
 api_key_available = bool(str(env.get("POLLINATIONS_API_KEY") or "").strip())
 authenticated = api_key_available or credentials.is_file()
 codex_token_available = bool(
+colab_status = colab_worker_status(
 ⋮----
 def _sprite_sheet_geometry(job: dict) -> tuple[int, int, int, int] | None
 ⋮----
@@ -5542,6 +5631,7 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str
 status = generator_backend_status()
 pollinations = status.get("pollinations", {})
 imagen_codex = status.get("imagenCodex", {})
+qwen_colab = status.get("qwenColab", {})
 ⋮----
 def _imagen_output_path(output_dir: Path, stdout: str) -> tuple[Path, dict | None]
 ⋮----
@@ -5566,6 +5656,8 @@ matches = sorted(Path(output_dir).glob("generated-source*.png"))
 ⋮----
 backend = select_generation_backend(job, backend)
 ⋮----
+executable = None
+⋮----
 executable_name = "polli" if backend == "pollinations" else "imagen"
 executable = shutil.which(executable_name)
 ⋮----
@@ -5581,6 +5673,11 @@ references = [Path(path) for path in (reference_paths or [])]
 ⋮----
 effective_model = model or (
 reference_urls = []
+⋮----
+submitted = submit_colab_job(
+colab_result = wait_colab_result(
+⋮----
+command = None
 ⋮----
 command = pollinations_command(
 ⋮----
@@ -5609,15 +5706,18 @@ stdout = ""
 previous_similarity_failed = False
 previous_technical_failed = False
 ⋮----
+attempt_command = None
+⋮----
 attempt_command = list(command)
 ⋮----
 retry_guidance = []
 ⋮----
 guidance = " ".join(retry_guidance)
 ⋮----
-stdout = str(completed.stdout or "").strip()
-⋮----
+metadata = _sanitize_metadata(colab_result.get("metadata") or {})
 current_output = output
+⋮----
+stdout = str(completed.stdout or "").strip()
 ⋮----
 transparency = transparency_processor(
 ⋮----
@@ -6652,6 +6752,7 @@ py-modules = [
   "asset_library",
   "asset_profile_validation",
   "blender_adapter",
+  "colab_queue",
   "engine_profile_validation",
   "generator_backends",
   "gltf_binary_metrics",
@@ -6665,6 +6766,7 @@ py-modules = [
   "operational_status",
   "production_contract",
   "production_executor",
+  "qwen_colab_worker",
   "raster_backend",
   "raster_pack",
   "remote_batch",
@@ -6683,6 +6785,104 @@ config = ["*.json"]
 pipelines = ["*.json"]
 profiles = ["**/*.json"]
 schemas = ["*.json"]
+````
+
+## File: qwen_colab_worker.py
+````python
+REPOSITORY = os.environ.get("ASSET_FORGE_GITHUB_REPOSITORY", "dbrckk/asset-forge")
+BRANCH = os.environ.get("ASSET_FORGE_GITHUB_BRANCH", "main")
+QUEUE_DIR = os.environ.get("ASSET_FORGE_COLAB_QUEUE_DIR", "colab-queue/jobs")
+RESULT_DIR = os.environ.get("ASSET_FORGE_COLAB_RESULT_DIR", "colab-queue/results")
+MODEL_ID = os.environ.get("QWEN_IMAGE_MODEL", "Qwen/Qwen-Image-2.1")
+POLL_SECONDS = max(5, int(os.environ.get("ASSET_FORGE_COLAB_POLL_SECONDS", "15")))
+⋮----
+def _token() -> str
+⋮----
+token = str(os.environ.get("ASSET_FORGE_GITHUB_TOKEN") or "").strip()
+⋮----
+def _request(method: str, path: str, payload: dict | None = None)
+⋮----
+url = f"https://api.github.com/repos/{REPOSITORY}/{path}"
+body = None if payload is None else json.dumps(payload).encode("utf-8")
+request = urllib.request.Request(
+⋮----
+raw = response.read()
+⋮----
+def list_jobs() -> list[dict]
+⋮----
+rows = _request("GET", f"contents/{urllib.parse.quote(QUEUE_DIR)}?ref={urllib.parse.quote(BRANCH)}")
+⋮----
+def _get_json(path: str) -> tuple[dict, str]
+⋮----
+value = _request("GET", f"contents/{urllib.parse.quote(path)}?ref={urllib.parse.quote(BRANCH)}")
+⋮----
+content = base64.b64decode(str(value.get("content") or "")).decode("utf-8")
+payload = json.loads(content)
+⋮----
+def _put(path: str, data: bytes, message: str, sha: str | None = None) -> dict
+⋮----
+payload = {
+⋮----
+def _put_overwrite(path: str, data: bytes, message: str) -> dict
+⋮----
+sha = None
+⋮----
+current = _request(
+⋮----
+sha = str(current.get("sha") or "") or None
+⋮----
+def heartbeat() -> None
+⋮----
+def _delete(path: str, sha: str, message: str) -> None
+⋮----
+def _download_reference(value)
+⋮----
+remote_path = str(value["github_path"])
+payload = _request(
+raw = base64.b64decode(str(payload.get("content") or ""))
+⋮----
+url = str(value or "")
+request = urllib.request.Request(url, headers={"User-Agent": "asset-forge-colab-worker"})
+⋮----
+def load_pipeline()
+⋮----
+pipe = QwenImage21Pipeline.from_pretrained(
+⋮----
+pipe = pipe.to("cuda")
+⋮----
+def run_job(pipe, job: dict)
+⋮----
+prompt = str(job.get("prompt") or "").strip()
+⋮----
+width = int(job.get("width") or 1024)
+height = int(job.get("height") or 1024)
+steps = int(job.get("steps") or 28)
+seed = int(job.get("seed") or 0)
+refs = job.get("references") if isinstance(job.get("references"), list) else []
+images = [
+⋮----
+kwargs = {
+⋮----
+image = pipe(**kwargs).images[0]
+output = io.BytesIO()
+⋮----
+def process_once(pipe) -> bool
+⋮----
+jobs = list_jobs()
+⋮----
+row = jobs[0]
+job_path = str(row.get("path") or "")
+⋮----
+job_id = str(job.get("id") or Path(job_path).stem)
+result_prefix = f"{RESULT_DIR}/{job_id}"
+⋮----
+result = {
+⋮----
+def main() -> None
+⋮----
+pipe = load_pipeline()
+⋮----
+worked = process_once(pipe)
 ````
 
 ## File: raster_backend.py

@@ -1,10 +1,15 @@
 # CI status
 
-Summary: 3 success / 0 failure / 1 active
+Summary: 1 success / 2 failure / 2 active
 
-- Validate asset-forge: in_progress / pending (41d6260b)
-- Validate asset-forge: completed / success (8254c921)
-- Validate asset-forge: completed / success (8ff176e3)
-- Live generation smoke: completed / success (552da434)
+- Validate asset-forge: in_progress / pending (d3663429)
+- Live generation smoke: completed / failure (d95772d2)
+- Validate asset-forge: in_progress / pending (d95772d2)
+- Live generation smoke: completed / failure (1eb7f931)
+- Validate asset-forge: completed / success (1eb7f931)
+
+## Latest failed run structure
+- Job: live-vector
+  - Failed step: Generate and validate a real vector asset
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.
