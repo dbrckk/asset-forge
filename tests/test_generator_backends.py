@@ -151,6 +151,11 @@ class GeneratorBackendsTests(unittest.TestCase):
                         output.write_bytes(raw.read_bytes())
                         and {"width": 64, "height": 64, "columns": 2, "rows": 2}
                     ),
+                    similarity_evaluator=lambda child, refs: {
+                        "score": 0.91,
+                        "bestReference": str(refs[0]),
+                        "comparisons": [],
+                    },
                 )
 
         self.assertTrue(result["metadata"]["ok"])
@@ -467,6 +472,98 @@ class GeneratorBackendsTests(unittest.TestCase):
                         root / "out",
                         backend="pollinations",
                         reference_paths=[reference],
+                    )
+
+
+    def test_visual_similarity_retries_until_threshold_passes(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            reference = out / "parent.png"
+            reference.write_bytes(b"PNG")
+            scores = iter([0.20, 0.73])
+            generation_calls = []
+
+            def runner(command, **kwargs):
+                if command[1] == "upload":
+                    class Upload:
+                        returncode = 0
+                        stdout = '{"url":"https://media.pollinations.ai/parent-ref"}'
+                        stderr = ""
+                    return Upload()
+                generation_calls.append(command)
+                target = Path(command[command.index("--output") + 1])
+                target.write_bytes(b"PNG")
+                class Generate:
+                    returncode = 0
+                    stdout = "{}"
+                    stderr = ""
+                return Generate()
+
+            with patch("generator_backends.shutil.which", return_value="/usr/bin/polli"):
+                result = execute_generated_asset(
+                    job(),
+                    out,
+                    backend="pollinations",
+                    reference_paths=[reference],
+                    runner=runner,
+                    raster_normalizer=lambda raw, output, value: (
+                        output.write_bytes(raw.read_bytes())
+                        and {"width": 64, "height": 64, "columns": 2, "rows": 2}
+                    ),
+                    similarity_evaluator=lambda child, refs: {
+                        "score": next(scores),
+                        "bestReference": str(refs[0]),
+                        "comparisons": [],
+                    },
+                )
+
+            self.assertEqual(len(generation_calls), 2)
+            self.assertFalse(result["visualSimilarity"]["attempts"][0]["passed"])
+            self.assertTrue(result["visualSimilarity"]["attempts"][1]["passed"])
+            self.assertTrue(result["visualSimilarity"]["passed"])
+            self.assertIn("drifted too far", generation_calls[1][3])
+
+    def test_visual_similarity_fails_after_retry_budget(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            reference = out / "parent.png"
+            reference.write_bytes(b"PNG")
+            value = job()
+            value["manifest"]["constraints"]["visualSimilarityRetries"] = 1
+            value["manifest"]["constraints"]["visualSimilarityMin"] = 0.8
+
+            def runner(command, **kwargs):
+                if command[1] == "upload":
+                    class Upload:
+                        returncode = 0
+                        stdout = '{"url":"https://media.pollinations.ai/parent-ref"}'
+                        stderr = ""
+                    return Upload()
+                target = Path(command[command.index("--output") + 1])
+                target.write_bytes(b"PNG")
+                class Generate:
+                    returncode = 0
+                    stdout = "{}"
+                    stderr = ""
+                return Generate()
+
+            with patch("generator_backends.shutil.which", return_value="/usr/bin/polli"):
+                with self.assertRaisesRegex(GenerationError, "visual consistency score"):
+                    execute_generated_asset(
+                        value,
+                        out,
+                        backend="pollinations",
+                        reference_paths=[reference],
+                        runner=runner,
+                        raster_normalizer=lambda raw, output, job_value: (
+                            output.write_bytes(raw.read_bytes())
+                            and {"width": 64, "height": 64, "columns": 2, "rows": 2}
+                        ),
+                        similarity_evaluator=lambda child, refs: {
+                            "score": 0.1,
+                            "bestReference": str(refs[0]),
+                            "comparisons": [],
+                        },
                     )
 
 
