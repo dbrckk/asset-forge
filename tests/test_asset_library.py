@@ -110,6 +110,32 @@ class AssetLibraryTests(unittest.TestCase):
             payload = json.loads(library.read_text())
             self.assertEqual(len(payload["entries"]), 2)
 
+    def test_repeated_success_record_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            library = root / "library.json"
+            artifact = root / "rex.png"
+            artifact.write_bytes(b"same-generation")
+            fingerprint = request_fingerprint(self.job(), backend="pollinations")
+
+            one = record_success(
+                library,
+                fingerprint=fingerprint,
+                job=self.job(),
+                result=self.result(artifact),
+            )
+            two = record_success(
+                library,
+                fingerprint=fingerprint,
+                job=self.job(),
+                result=self.result(artifact),
+            )
+
+            payload = json.loads(library.read_text())
+            self.assertEqual(one, two)
+            self.assertEqual(one["version"], 1)
+            self.assertEqual(len(payload["entries"]), 1)
+
     def test_reference_sha_changes_cache_key(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
