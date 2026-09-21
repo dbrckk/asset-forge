@@ -1,18 +1,18 @@
 {
   "budget": {
-    "confidence": "medium",
+    "confidence": "high",
     "expand_to": 12,
-    "max_files": 6,
+    "max_files": 3,
     "requested_max_files": 12,
-    "score_margin": 0,
-    "tier": "bounded",
-    "top_score": 29
+    "score_margin": 5,
+    "tier": "narrow",
+    "top_score": 35
   },
   "cache": {
-    "fingerprint": "a35a19edeecd8889a0cb57717a8a6b54ed5a654a518398b0c50fffac436d7eb7",
+    "fingerprint": "1f1f841285e2040fabdaf611a7060535a4a717edfe37fb30d04f6c55714777b3",
     "hit": false
   },
-  "candidate_count": 28,
+  "candidate_count": 31,
   "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
   "files": [
     {
@@ -21,31 +21,12 @@
         "engine",
         "game"
       ],
-      "path": "godot_handoff.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 29,
-      "symbols": [
-        "build_import_recommendations",
-        "detect_godot",
-        "godot_import_command",
-        "load_godot_profile",
-        "prepare_godot_handoff",
-        "validate_godot_handoff"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine",
-        "game"
-      ],
       "path": "tests/test_remote_batch.py",
       "reasons": [
+        "impact",
         "search-index"
       ],
-      "score": 29,
+      "score": 35,
       "symbols": [
         "RemoteBatchTests",
         "Result",
@@ -64,9 +45,10 @@
       "path": "asset_forge.py",
       "reasons": [
         "impact",
+        "recently-changed",
         "search-index"
       ],
-      "score": 27,
+      "score": 30,
       "symbols": [
         "_enrich_engine_handoff",
         "_persist_enriched_production_report",
@@ -92,76 +74,21 @@
     {
       "learning_score": 0,
       "matched_terms": [
-        "engine"
-      ],
-      "path": "engine_profile_validation.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 27,
-      "symbols": [
-        "_validate_object_keys",
-        "validate_all_godot_profiles",
-        "validate_godot_profile_data",
-        "validate_godot_profile_file"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine"
-      ],
-      "path": "tests/test_engine_profile_validation.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 27,
-      "symbols": [
-        "EngineProfileValidationTests",
-        "test_invalid_fps_fails",
-        "test_invalid_json_file_fails",
-        "test_missing_required_field_fails",
-        "test_profile_name_mismatch_fails",
-        "test_repository_profiles_all_validate",
-        "test_unknown_field_fails",
-        "test_valid_profile_passes",
-        "test_wrong_type_fails",
-        "valid_profile"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
+        "engine",
         "game"
       ],
-      "path": "generator_backends.py",
+      "path": "godot_handoff.py",
       "reasons": [
-        "impact",
-        "recently-changed",
         "search-index"
       ],
-      "score": 26,
+      "score": 29,
       "symbols": [
-        "GenerationError",
-        "_NoCredentialRedirect",
-        "_backend_history_path",
-        "_default_3d_opener",
-        "_ensure_transparency",
-        "_generation_dimensions",
-        "_imagen_output_path",
-        "_normalize_raster_geometry",
-        "_sanitize_metadata",
-        "_select_free_raster_backend",
-        "_sprite_sheet_geometry",
-        "_upload_reference_image",
-        "build_generation_prompt",
-        "execute_generated_3d_asset",
-        "execute_generated_asset",
-        "generator_backend_status",
-        "imagen_codex_command",
-        "pollinations_command",
-        "redirect_request",
-        "select_generation_backend"
+        "build_import_recommendations",
+        "detect_godot",
+        "godot_import_command",
+        "load_godot_profile",
+        "prepare_godot_handoff",
+        "validate_godot_handoff"
       ]
     }
   ],

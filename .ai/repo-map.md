@@ -451,6 +451,7 @@ on:
           - cloudflare
           - kaggle-qwen
           - vtracer
+          - kaggle-triposr
       model:
         description: "Optional model override"
         required: false
@@ -641,6 +642,7 @@ on:
           - cloudflare
           - kaggle-qwen
           - vtracer
+          - kaggle-triposr
       model:
         description: "Optional model override"
         required: false
@@ -922,7 +924,7 @@ jobs:
             "$GITHUB_WORKSPACE/build/wheel-venv/bin/asset-forge" validate-asset-profiles
           )
       - name: Compile
-        run: python -m compileall -q backend_history.py asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py vector_backend.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q backend_history.py asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py vector_backend.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py kaggle_3d_backend.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -1175,6 +1177,27 @@ updates:
       ],
       "license": "MIT",
       "repository": "visioncortex/vtracer"
+    },
+    {
+      "id": "triposr",
+      "name": "TripoSR",
+      "status": "preferred-fallback",
+      "domains": [
+        "3d",
+        "image-to-3d",
+        "mesh-reconstruction"
+      ],
+      "automation": [
+        "python",
+        "kaggle"
+      ],
+      "outputs": [
+        "glb",
+        "obj"
+      ],
+      "license": "MIT",
+      "repository": "VAST-AI-Research/TripoSR",
+      "notes": "Free lightweight 3D fallback; approximately 6 GB VRAM for one image. Premium/primary assets may prefer TRELLIS when available."
     }
   ]
 }
@@ -1571,10 +1594,16 @@ updates:
 ````json
 {
   "id": "model-3d",
-  "assetTypes": ["mesh", "prop", "environment", "character-3d"],
+  "assetTypes": [
+    "mesh",
+    "prop",
+    "environment",
+    "character-3d"
+  ],
   "stages": [
     "read-project-art-direction",
     "resolve-source-or-create",
+    "select-quality-aware-3d-backend",
     "normalize-scale-and-origin",
     "validate-topology-and-normals",
     "validate-uv",
@@ -1589,7 +1618,10 @@ updates:
   "defaults": {
     "masterFormat": "blend",
     "deliveryFormat": "glb",
-    "embedTextures": true
+    "embedTextures": true,
+    "freeFallbackBackend": "kaggle-triposr",
+    "premiumBackend": "pollinations-trellis",
+    "premiumFirstForPrimary": true
   }
 }
 ````
@@ -6263,6 +6295,7 @@ authenticated = api_key_available or credentials.is_file()
 codex_token_available = bool(
 cloudflare = cloudflare_status(environ=env)
 kaggle = kaggle_status(environ=env)
+kaggle_3d = kaggle_3d_status(environ=env)
 vectorizer = vectorizer_status()
 free_raster_ready = bool(
 vectorizer = dict(vectorizer)
@@ -6541,15 +6574,49 @@ payload = json.loads(str(completed.stdout or ""))
 ⋮----
 url = payload.get("url")
 ⋮----
-api_key = str(env.get("POLLINATIONS_API_KEY") or "").strip()
+statuses = generator_backend_status(environ=env)
 ⋮----
-executable = shutil.which("polli")
+pollinations_ready = (
+⋮----
+manifest = manifest if isinstance(manifest, dict) else {}
+⋮----
+constraints = constraints if isinstance(constraints, dict) else {}
+importance = str(manifest.get("importance") or "").strip().lower()
+premium_first = (
+⋮----
+requested_backend = str(backend or "auto")
+⋮----
+selected_backend = "pollinations"
+⋮----
+selected_backend = "kaggle-triposr"
+⋮----
+selected_backend = requested_backend
+⋮----
+initial_backend = selected_backend
+fallbacks = []
+effective_model = (
 ⋮----
 out = Path(output_dir)
 ⋮----
 reference_dir = out / "reference"
+⋮----
+reference_backend = _select_free_raster_backend(
+⋮----
+reference_backend = "pollinations"
+⋮----
 reference = generator(
 reference_path = Path(str(reference.get("sourcePath") or ""))
+⋮----
+mc_resolution = {
+output = out / "generated-source.glb"
+⋮----
+metadata = kaggle_generator(
+⋮----
+effective_model = DEFAULT_3D_MODEL
+⋮----
+api_key = str(env.get("POLLINATIONS_API_KEY") or "").strip()
+⋮----
+executable = shutil.which("polli")
 ⋮----
 image_url = _upload_reference_image(
 ⋮----
@@ -6557,11 +6624,9 @@ endpoint = "https://gen.pollinations.ai/3d/no_prompt_for_trellis_needed"
 body = json.dumps(
 request = urllib.request.Request(
 ⋮----
-status = int(getattr(response, "status", 200))
+status_code = int(getattr(response, "status", 200))
 ⋮----
 raw = response.read(MAX_3D_BYTES + 1)
-⋮----
-output = out / "generated-source.glb"
 ````
 
 ## File: gltf_binary_metrics.py
@@ -7520,6 +7585,7 @@ pollinations = generation.get("pollinations", {})
 imagen_codex = generation.get("imagenCodex", {})
 qwen_colab = generation.get("qwenColab", {})
 vtracer = generation.get("vtracer", {})
+kaggle_triposr = generation.get("kaggleTripoSR", {})
 ⋮----
 cloudflare_raster = bool(cloudflare.get("rasterReady"))
 kaggle_raster = bool(kaggle_qwen.get("rasterReady"))
@@ -7528,6 +7594,8 @@ pollinations_vector = bool(pollinations.get("rasterVectorReady"))
 vtracer_vector = bool(vtracer.get("vectorSvgReady"))
 imagen_raster = bool(imagen_codex.get("rasterReady"))
 queued_qwen = bool(qwen_colab.get("queueReady"))
+triposr_3d = bool(kaggle_triposr.get("threeDReady"))
+pollinations_3d = bool(pollinations.get("threeDReady"))
 ⋮----
 direct_raster_ready = any(
 free_raster_ready = cloudflare_raster or kaggle_raster
@@ -7542,6 +7610,7 @@ capabilities = {
 # Cloudflare Workers AI, then Kaggle Qwen.
 preferred_raster_backend = _first_ready_backend(
 preferred_vector_backend = (
+preferred_3d_backend = (
 ⋮----
 blockers = []
 ⋮----
@@ -7777,6 +7846,7 @@ py-modules = [
   "gltf_diagnostics",
   "gltf_quality",
   "kaggle_backend",
+  "kaggle_3d_backend",
   "lod_3d",
   "gltf_tools",
   "godot_3d_delivery",

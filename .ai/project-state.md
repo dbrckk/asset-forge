@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:46:42Z
+Generated: 2026-09-21T16:49:36Z
 
 ### Git
 - Branch: `main`
-- Head: `b3b0e9aa9238`
-- Commit date: 2026-09-21T18:46:30+02:00
-- Commit: test: cover Kaggle TripoSR 3D backend
+- Head: `3630d3ae3871`
+- Commit date: 2026-09-21T18:49:21+02:00
+- Commit: pipeline: add quality-aware free 3D routing
 - Tracked files: 301
 
 ### Recently changed files
-- `tests/test_kaggle_3d_backend.py`
-- `kaggle_3d_backend.py`
+- `pipelines/model-3d.json`
+- `config/tooling.json`
 - `.github/workflows/production-os-batch.yml`
 - `.github/workflows/production-os-dispatch.yml`
-- `tests/test_generator_backends.py`
+- `remote_batch.py`
 
 ### Project signals
 - `pyproject.toml`

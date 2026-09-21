@@ -1,13 +1,13 @@
 # Change impact
 
-Base: 56cf7b635c588c4b54fa64064f12f1b58da99e6b
-Head: b3b0e9aa9238f35f8a180e61e31ca1034043e8ad
+Base: bc90d2e60ea8d1d66854195a02fd26f57be4d6a2
+Head: 3630d3ae387146bef6d743701127efdb4e21dcd4
 
 ## Changed files
-- A tests/test_kaggle_3d_backend.py
+- M pipelines/model-3d.json
 
 ## Affected areas
-- tests
+- pipelines
 
 ## Related test candidates
 - No direct filename-based test match detected.
