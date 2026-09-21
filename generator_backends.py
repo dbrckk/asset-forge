@@ -31,6 +31,11 @@ from colab_queue import (
     submit as submit_colab_job,
     wait_result as wait_colab_result,
 )
+from vector_backend import (
+    VectorizationError,
+    status as vectorizer_status,
+    vectorize_raster,
+)
 
 
 RASTER_GENERATED_TYPES = {"sprite", "sprite-sheet", "tileset", "pixel-art"}
@@ -98,9 +103,20 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
     )
     cloudflare = cloudflare_status(environ=env)
     kaggle = kaggle_status(environ=env)
+    vectorizer = vectorizer_status()
+    free_raster_ready = bool(
+        cloudflare.get("rasterReady") is True
+        or kaggle.get("rasterReady") is True
+    )
+    vectorizer = dict(vectorizer)
+    vectorizer["vectorSvgReady"] = bool(
+        vectorizer.get("vectorizeReady") and free_raster_ready
+    )
+    vectorizer["freeRasterReady"] = free_raster_ready
     return {
         "cloudflare": cloudflare,
         "kaggleQwen": kaggle,
+        "vtracer": vectorizer,
         "pollinations": {
             "installed": polli is not None,
             "executable": polli,
@@ -408,7 +424,7 @@ def pollinations_command(
 
 
 def select_generation_backend(job: dict, requested: str = "auto") -> str:
-    if requested in {"pollinations", "imagen-codex", "qwen-colab", "cloudflare", "kaggle-qwen"}:
+    if requested in {"pollinations", "imagen-codex", "qwen-colab", "cloudflare", "kaggle-qwen", "vtracer"}:
         return requested
     if requested != "auto":
         raise GenerationError(f"unsupported generator backend: {requested}")
@@ -419,6 +435,7 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str:
     cloudflare = status.get("cloudflare", {})
     kaggle = status.get("kaggleQwen", {})
     imagen_codex = status.get("imagenCodex", {})
+    vtracer = status.get("vtracer", {})
     if asset_type in RASTER_GENERATED_TYPES:
         if cloudflare.get("rasterReady") is True:
             return "cloudflare"
@@ -427,10 +444,13 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str:
         raise GenerationError("no authenticated free raster generation backend is ready")
 
     if asset_type in VECTOR_GENERATED_TYPES:
+        if vtracer.get("vectorSvgReady") is True:
+            return "vtracer"
         if pollinations.get("rasterVectorReady") is True:
             return "pollinations"
         raise GenerationError(
-            "no authenticated SVG generation backend is ready; imagen-codex is raster-only"
+            "no SVG generation backend is ready; configure a free raster backend "
+            "plus VTracer, or enable Pollinations explicitly"
         )
 
     if asset_type in THREE_D_GENERATED_TYPES:
@@ -534,6 +554,7 @@ def execute_generated_asset(
     transparency_processor: Callable[..., dict | None] = _ensure_transparency,
     similarity_evaluator: Callable[[Path, list[Path]], dict] = compare_against_references,
     technical_quality_evaluator: Callable[[Path, dict], dict] = evaluate_raster_art,
+    vectorizer: Callable[..., dict] = vectorize_raster,
 ) -> dict:
     if job.get("requiresGenerator") is not True:
         raise GenerationError("production job does not require a generator")
@@ -546,7 +567,7 @@ def execute_generated_asset(
         raise GenerationError(f"unsupported generated asset type: {asset_type or '<missing>'}")
 
     executable = None
-    if backend not in {"qwen-colab", "cloudflare", "kaggle-qwen"}:
+    if backend not in {"qwen-colab", "cloudflare", "kaggle-qwen", "vtracer"}:
         executable_name = "polli" if backend == "pollinations" else "imagen"
         executable = shutil.which(executable_name)
         if not executable:
@@ -608,6 +629,7 @@ def execute_generated_asset(
         backend = "kaggle-qwen"
 
     effective_model = model or (
+        "visioncortex/vtracer" if backend == "vtracer" else
         DEFAULT_VECTOR_MODEL if backend == "pollinations" and vector else
         DEFAULT_REFERENCE_MODEL if backend == "pollinations" and references else
         "codex-2" if backend == "imagen-codex" else
@@ -628,7 +650,7 @@ def execute_generated_asset(
                 )
             )
 
-    if backend in {"qwen-colab", "cloudflare", "kaggle-qwen"}:
+    if backend in {"qwen-colab", "cloudflare", "kaggle-qwen", "vtracer"}:
         command = None
     elif backend == "pollinations":
         command = pollinations_command(
@@ -705,7 +727,7 @@ def execute_generated_asset(
                     "use a clean readable silhouette, stable frame occupancy, and stronger local contrast."
                 )
 
-        if backend in {"qwen-colab", "cloudflare", "kaggle-qwen"}:
+        if backend in {"qwen-colab", "cloudflare", "kaggle-qwen", "vtracer"}:
             attempt_command = None
             attempt_job = json.loads(json.dumps(job))
             if retry_guidance:
@@ -729,7 +751,105 @@ def execute_generated_asset(
             manifest_value = dict(manifest_value)
             manifest_value["constraints"] = constraint_value
             attempt_job["manifest"] = manifest_value
-            if backend == "qwen-colab":
+            if backend == "vtracer":
+                prompt = build_generation_prompt(attempt_job)
+                prompt += (
+                    " Render as clean flat vector-friendly source art with solid fills, "
+                    "limited colors, crisp silhouettes, minimal texture, no photographic noise, "
+                    "and no mockup background. Preserve simple separable regions that trace cleanly."
+                )
+                dimensions = (1024, 1024)
+                statuses = generator_backend_status()
+                cloudflare_ready = (
+                    statuses.get("cloudflare", {}).get("rasterReady") is True
+                )
+                kaggle_ready = (
+                    statuses.get("kaggleQwen", {}).get("rasterReady") is True
+                )
+                raster_source = output_dir / "vector-source.png"
+                raster_metadata = None
+                raster_backend = None
+                if cloudflare_ready:
+                    try:
+                        raster_metadata = cloudflare_generate(
+                            prompt,
+                            raster_source,
+                            width=dimensions[0],
+                            height=dimensions[1],
+                            seed=int(constraint_value.get("seed") or 0),
+                            steps=int(constraint_value.get("generationSteps") or 20),
+                            guidance=float(constraint_value.get("guidance") or 7.5),
+                            model=DEFAULT_CLOUDFLARE_MODEL,
+                            timeout_seconds=timeout,
+                        )
+                        raster_backend = "cloudflare"
+                    except CloudflareGenerationError as exc:
+                        if not kaggle_ready:
+                            raise GenerationError(
+                                f"vtracer source generation failed on cloudflare: {exc}"
+                            ) from exc
+                        try:
+                            raster_metadata = kaggle_generate(
+                                prompt,
+                                raster_source,
+                                width=dimensions[0],
+                                height=dimensions[1],
+                                seed=int(constraint_value.get("seed") or 0),
+                                steps=int(constraint_value.get("generationSteps") or 20),
+                                reference_path=None,
+                                model=DEFAULT_KAGGLE_MODEL,
+                                timeout_seconds=max(timeout, 1800.0),
+                            )
+                            raster_backend = "kaggle-qwen"
+                            fallback_history.append({
+                                "stage": "vector-raster",
+                                "from": "cloudflare",
+                                "to": "kaggle-qwen",
+                                "reason": "cloudflare-generation-error",
+                                "attempt": attempt + 1,
+                            })
+                        except KaggleGenerationError as fallback_exc:
+                            raise GenerationError(
+                                f"vtracer source generation failed on cloudflare: {exc}; "
+                                f"kaggle-qwen fallback failed: {fallback_exc}"
+                            ) from fallback_exc
+                elif kaggle_ready:
+                    try:
+                        raster_metadata = kaggle_generate(
+                            prompt,
+                            raster_source,
+                            width=dimensions[0],
+                            height=dimensions[1],
+                            seed=int(constraint_value.get("seed") or 0),
+                            steps=int(constraint_value.get("generationSteps") or 20),
+                            reference_path=None,
+                            model=DEFAULT_KAGGLE_MODEL,
+                            timeout_seconds=max(timeout, 1800.0),
+                        )
+                        raster_backend = "kaggle-qwen"
+                    except KaggleGenerationError as exc:
+                        raise GenerationError(
+                            f"vtracer source generation failed on kaggle-qwen: {exc}"
+                        ) from exc
+                else:
+                    raise GenerationError(
+                        "vtracer requires Cloudflare or Kaggle Qwen to generate its raster source"
+                    )
+                try:
+                    vector_metadata = vectorizer(
+                        raster_source,
+                        output,
+                        preset="poster",
+                    )
+                except (VectorizationError, OSError, ValueError) as exc:
+                    raise GenerationError(f"vtracer vectorization failed: {exc}") from exc
+                metadata = _sanitize_metadata({
+                    "rasterBackend": raster_backend,
+                    "rasterGeneration": raster_metadata,
+                    "vectorization": vector_metadata,
+                })
+                current_output = output
+            elif backend == "qwen-colab":
                 try:
                     submitted = submit_colab_job(
                         attempt_job,
