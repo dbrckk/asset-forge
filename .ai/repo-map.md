@@ -2897,9 +2897,13 @@ kaggle = history["backends"]["kaggle-qwen"]
 ⋮----
 persisted = load_history(path)
 ⋮----
-def test_3d_result_learns_from_nested_reference_generation(self)
+def test_record_generation_result_tracks_regeneration_pressure(self)
 ⋮----
 history = record_generation_result(path, {
+⋮----
+stats = history["backends"]["cloudflare"]
+⋮----
+def test_3d_result_learns_from_nested_reference_generation(self)
 ⋮----
 triposr = history["backends"]["kaggle-triposr"]
 ⋮----
@@ -6089,8 +6093,19 @@ fallbacks = result.get("fallbacks")
 ⋮----
 reason = str(fallback.get("reason") or "")
 source = str(fallback.get("from") or "").strip()
+destination = str(fallback.get("to") or "").strip()
+⋮----
+source_stats = _stats(history, source)
+⋮----
+destination_stats = _stats(history, destination)
 ⋮----
 final_backend = str(result.get("backend") or "").strip()
+⋮----
+regeneration_attempts = []
+⋮----
+attempts = value.get("attempts") if isinstance(value, dict) else None
+⋮----
+stats = _stats(history, final_backend)
 ⋮----
 reference_generation = result.get("referenceGeneration")
 ⋮----
@@ -6120,6 +6135,9 @@ quality_sum = float(value.get("qualitySum") or 0.0)
 ⋮----
 reliability = max(0.0, min(1.0, successes / max(1, attempts)))
 quality = (
+fallback_pressure = max(
+regeneration_pressure = max(
+pressure_penalty = 0.04 * fallback_pressure + 0.04 * regeneration_pressure
 ⋮----
 # Do not penalize a backend merely because older successful runs did
 # not yet emit quality telemetry. Reliability plus configured priority

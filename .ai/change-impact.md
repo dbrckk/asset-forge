@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 9b50ce5b71563da9a7bcdcc48cada424990ca900
-Head: d23384c1b730ac7854cbc5592df2a95cf79f486d
+Base: e44e1b9975f9bbaff535231e6288f2f20f9d4a21
+Head: 971dded0a52109def9d3676ba8ce73add9aab36a
 
 ## Changed files
-- M generator_backends.py
+- M backend_history.py
 
 ## Affected areas
 - (root)
 
 ## Related test candidates
-- tests/test_generator_backends.py
+- tests/test_backend_history.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

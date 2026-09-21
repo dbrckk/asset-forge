@@ -5,610 +5,357 @@
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
   "symbols": {
-    "_sanitize_metadata": {
+    "empty_history": {
       "source": {
-        "file": "generator_backends.py",
-        "start": 65,
-        "end": 89
+        "file": "backend_history.py",
+        "start": 12,
+        "end": 16
       },
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "GenerationError": {
+    "load_history": {
       "source": {
-        "file": "generator_backends.py",
-        "start": 92,
-        "end": 93
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_backend_history_path": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 96,
-        "end": 99
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_select_free_raster_backend": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 102,
-        "end": 112
+        "file": "backend_history.py",
+        "start": 19,
+        "end": 34
       },
       "symbol_dependencies": [
         {
-          "symbol": "_backend_history_path",
+          "symbol": "empty_history",
           "definitions": [
             {
-              "file": "generator_backends.py",
-              "line": 96,
+              "file": "backend_history.py",
+              "line": 12,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_stats": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 37,
+        "end": 52
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_quality_from_generation": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 55,
+        "end": 69
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_record": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 72,
+        "end": 91
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_stats",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 37,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "record_generation_result": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 94,
+        "end": 170
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_quality_from_generation",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 55,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_record",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 72,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_stats",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 37,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "load_history",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 19,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "backend_score": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 173,
+        "end": 214
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "choose_backend": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 217,
+        "end": 240
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "backend_score",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 173,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "load_history",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 19,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "BackendHistoryTests": {
+      "source": {
+        "file": "tests/test_backend_history.py",
+        "start": 16,
+        "end": 190
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "backend_score",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 173,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
         },
         {
           "symbol": "choose_backend",
           "definitions": [
             {
               "file": "backend_history.py",
+              "line": 217,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "empty_history",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 12,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "load_history",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 19,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "record_generation_result",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 94,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_3d_result_learns_from_nested_reference_generation",
+          "definitions": [
+            {
+              "file": "tests/test_backend_history.py",
+              "line": 151,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_default_order_is_preserved_without_enough_samples",
+          "definitions": [
+            {
+              "file": "tests/test_backend_history.py",
+              "line": 27,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_missing_or_invalid_history_falls_back_safely",
+          "definitions": [
+            {
+              "file": "tests/test_backend_history.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_record_generation_result_tracks_fallback_and_quality",
+          "definitions": [
+            {
+              "file": "tests/test_backend_history.py",
+              "line": 89,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_record_generation_result_tracks_regeneration_pressure",
+          "definitions": [
+            {
+              "file": "tests/test_backend_history.py",
+              "line": 125,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_reliable_observed_cloudflare_stays_ahead_of_unknown_kaggle",
+          "definitions": [
+            {
+              "file": "tests/test_backend_history.py",
+              "line": 72,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_repeated_cloudflare_failures_move_auto_route_to_kaggle",
+          "definitions": [
+            {
+              "file": "tests/test_backend_history.py",
+              "line": 39,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_vector_result_records_underlying_raster_backend",
+          "definitions": [
+            {
+              "file": "tests/test_backend_history.py",
               "line": 178,
               "kind": "function",
               "language": "python"
             }
           ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "status",
-          "definitions": [
-            {
-              "file": "cloudflare_backend.py",
-              "line": 19,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "kaggle_3d_backend.py",
-              "line": 31,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "kaggle_backend.py",
-              "line": 21,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "vector_backend.py",
-              "line": 16,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 3
-    },
-    "generator_backend_status": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 115,
-        "end": 185
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_sprite_sheet_geometry": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 188,
-        "end": 220
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_generation_dimensions": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 223,
-        "end": 234
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_sprite_sheet_geometry",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 188,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
           "relation": "same_file"
         }
       ],
-      "dependency_count": 1
+      "dependency_count": 13
     },
-    "_ensure_transparency": {
+    "test_missing_or_invalid_history_falls_back_safely": {
       "source": {
-        "file": "generator_backends.py",
-        "start": 237,
-        "end": 314
+        "file": "tests/test_backend_history.py",
+        "start": 17,
+        "end": 25
       },
       "symbol_dependencies": [
         {
-          "symbol": "GenerationError",
+          "symbol": "empty_history",
           "definitions": [
             {
-              "file": "generator_backends.py",
-              "line": 92,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_normalize_raster_geometry": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 317,
-        "end": 358
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 92,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_sprite_sheet_geometry",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 188,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "build_generation_prompt": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 361,
-        "end": 410
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 92,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_sprite_sheet_geometry",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 188,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "pollinations_command": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 413,
-        "end": 451
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_generation_dimensions",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 223,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "build_generation_prompt",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 361,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "select_generation_backend": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 454,
-        "end": 490
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 92,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_select_free_raster_backend",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 102,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "generator_backend_status",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 115,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "status",
-          "definitions": [
-            {
-              "file": "cloudflare_backend.py",
-              "line": 19,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "kaggle_3d_backend.py",
-              "line": 31,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "kaggle_backend.py",
-              "line": 21,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "vector_backend.py",
-              "line": 16,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 4
-    },
-    "imagen_codex_command": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 493,
-        "end": 532
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 92,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "build_generation_prompt",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 361,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "_imagen_output_path": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 535,
-        "end": 568
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 92,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_sanitize_metadata",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 65,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "execute_generated_asset": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 571,
-        "end": 1248
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "ArtQualityError",
-          "definitions": [
-            {
-              "file": "art_quality.py",
-              "line": 7,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "CloudflareGenerationError",
-          "definitions": [
-            {
-              "file": "cloudflare_backend.py",
-              "line": 15,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "ColabQueueError",
-          "definitions": [
-            {
-              "file": "colab_queue.py",
-              "line": 13,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 92,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "KaggleGenerationError",
-          "definitions": [
-            {
-              "file": "kaggle_backend.py",
-              "line": 17,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "VectorizationError",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
+              "file": "backend_history.py",
               "line": 12,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "_backend_history_path",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 96,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_ensure_transparency",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 237,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_generation_dimensions",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 223,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_imagen_output_path",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 535,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_normalize_raster_geometry",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 317,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_sanitize_metadata",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 65,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_select_free_raster_backend",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 102,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_sprite_sheet_geometry",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 188,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_upload_reference_image",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 1263,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "build_generation_prompt",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 361,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "compare_against_references",
-          "definitions": [
-            {
-              "file": "visual_similarity.py",
-              "line": 193,
               "kind": "function",
               "language": "python"
             }
@@ -616,379 +363,111 @@
           "relation": "imported_module"
         },
         {
-          "symbol": "download_result_asset",
-          "definitions": [
-            {
-              "file": "colab_queue.py",
-              "line": 160,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "evaluate_raster_art",
-          "definitions": [
-            {
-              "file": "art_quality.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "generate",
-          "definitions": [
-            {
-              "file": "cloudflare_backend.py",
-              "line": 80,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "kaggle_3d_backend.py",
-              "line": 164,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "kaggle_backend.py",
-              "line": 224,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "generator_backend_status",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 115,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "imagen_codex_command",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 493,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "pollinations_command",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 413,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "record_generation_result",
+          "symbol": "load_history",
           "definitions": [
             {
               "file": "backend_history.py",
-              "line": 91,
+              "line": 19,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "imported_module"
-        },
-        {
-          "symbol": "select_generation_backend",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 454,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "vectorize_raster",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 26
-    },
-    "_NoCredentialRedirect": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 1251,
-        "end": 1253
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 92,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "redirect_request",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 1252,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
         }
       ],
       "dependency_count": 2
     },
-    "redirect_request": {
+    "test_default_order_is_preserved_without_enough_samples": {
       "source": {
-        "file": "generator_backends.py",
-        "start": 1252,
-        "end": 1253
+        "file": "tests/test_backend_history.py",
+        "start": 27,
+        "end": 37
       },
       "symbol_dependencies": [
         {
-          "symbol": "GenerationError",
+          "symbol": "choose_backend",
           "definitions": [
             {
-              "file": "generator_backends.py",
-              "line": 92,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_default_3d_opener": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 1256,
-        "end": 1260
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "_NoCredentialRedirect",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 1251,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_upload_reference_image": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 1263,
-        "end": 1292
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 92,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "execute_generated_3d_asset": {
-      "source": {
-        "file": "generator_backends.py",
-        "start": 1295,
-        "end": 1564
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "GenerationError",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 92,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "Kaggle3DGenerationError",
-          "definitions": [
-            {
-              "file": "kaggle_3d_backend.py",
-              "line": 27,
-              "kind": "class",
+              "file": "backend_history.py",
+              "line": 217,
+              "kind": "function",
               "language": "python"
             }
           ],
           "relation": "imported_module"
-        },
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_repeated_cloudflare_failures_move_auto_route_to_kaggle": {
+      "source": {
+        "file": "tests/test_backend_history.py",
+        "start": 39,
+        "end": 70
+      },
+      "symbol_dependencies": [
         {
-          "symbol": "_backend_history_path",
+          "symbol": "choose_backend",
           "definitions": [
             {
-              "file": "generator_backends.py",
-              "line": 96,
+              "file": "backend_history.py",
+              "line": 217,
               "kind": "function",
               "language": "python"
             }
           ],
-          "relation": "same_file"
-        },
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_reliable_observed_cloudflare_stays_ahead_of_unknown_kaggle": {
+      "source": {
+        "file": "tests/test_backend_history.py",
+        "start": 72,
+        "end": 87
+      },
+      "symbol_dependencies": [
         {
-          "symbol": "_default_3d_opener",
+          "symbol": "backend_score",
           "definitions": [
             {
-              "file": "generator_backends.py",
-              "line": 1256,
+              "file": "backend_history.py",
+              "line": 173,
               "kind": "function",
               "language": "python"
             }
           ],
-          "relation": "same_file"
-        },
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_record_generation_result_tracks_fallback_and_quality": {
+      "source": {
+        "file": "tests/test_backend_history.py",
+        "start": 89,
+        "end": 123
+      },
+      "symbol_dependencies": [
         {
-          "symbol": "_sanitize_metadata",
+          "symbol": "load_history",
           "definitions": [
             {
-              "file": "generator_backends.py",
-              "line": 65,
+              "file": "backend_history.py",
+              "line": 19,
               "kind": "function",
               "language": "python"
             }
           ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_select_free_raster_backend",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 102,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_upload_reference_image",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 1263,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "execute_generated_asset",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 571,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "generator_backend_status",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 115,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
+          "relation": "imported_module"
         },
         {
           "symbol": "record_generation_result",
           "definitions": [
             {
               "file": "backend_history.py",
-              "line": 91,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "status",
-          "definitions": [
-            {
-              "file": "cloudflare_backend.py",
-              "line": 19,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "kaggle_3d_backend.py",
-              "line": 31,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "kaggle_backend.py",
-              "line": 21,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "vector_backend.py",
-              "line": 16,
+              "line": 94,
               "kind": "function",
               "language": "python"
             }
@@ -996,7 +475,73 @@
           "relation": "imported_module"
         }
       ],
-      "dependency_count": 11
+      "dependency_count": 2
+    },
+    "test_record_generation_result_tracks_regeneration_pressure": {
+      "source": {
+        "file": "tests/test_backend_history.py",
+        "start": 125,
+        "end": 149
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "record_generation_result",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 94,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_3d_result_learns_from_nested_reference_generation": {
+      "source": {
+        "file": "tests/test_backend_history.py",
+        "start": 151,
+        "end": 176
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "record_generation_result",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 94,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "test_vector_result_records_underlying_raster_backend": {
+      "source": {
+        "file": "tests/test_backend_history.py",
+        "start": 178,
+        "end": 190
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "record_generation_result",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 94,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
     }
   }
 }

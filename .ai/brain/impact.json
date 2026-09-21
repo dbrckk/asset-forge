@@ -1,139 +1,77 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "668dc01cc58bf883db440f5ef4f5c0c75ba322f0",
-  "head": "d23384c1b730ac7854cbc5592df2a95cf79f486d",
+  "base": "d23384c1b730ac7854cbc5592df2a95cf79f486d",
+  "head": "971dded0a52109def9d3676ba8ce73add9aab36a",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "generator_backends.py",
+      "path": "backend_history.py",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_backend_history.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
-    "generator_backends.py"
+    "backend_history.py",
+    "tests/test_backend_history.py"
   ],
   "impacted_files": [
-    "asset_forge.py",
+    "backend_history.py",
     "generator_backends.py",
-    "operational_status.py",
-    "production_executor.py",
+    "tests/test_backend_history.py",
     "tests/test_generator_backends.py"
   ],
   "impacted_symbols": [
     {
-      "name": "load_json",
+      "name": "empty_history",
       "kind": "function",
-      "file": "asset_forge.py",
+      "file": "backend_history.py",
+      "line": 12
+    },
+    {
+      "name": "load_history",
+      "kind": "function",
+      "file": "backend_history.py",
+      "line": 19
+    },
+    {
+      "name": "_stats",
+      "kind": "function",
+      "file": "backend_history.py",
+      "line": 37
+    },
+    {
+      "name": "_quality_from_generation",
+      "kind": "function",
+      "file": "backend_history.py",
+      "line": 55
+    },
+    {
+      "name": "_record",
+      "kind": "function",
+      "file": "backend_history.py",
       "line": 72
     },
     {
-      "name": "validate_manifest",
+      "name": "record_generation_result",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 80
+      "file": "backend_history.py",
+      "line": 94
     },
     {
-      "name": "is_power_of_two",
+      "name": "backend_score",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 138
+      "file": "backend_history.py",
+      "line": 173
     },
     {
-      "name": "sprite_grid",
+      "name": "choose_backend",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 142
-    },
-    {
-      "name": "build_atlas_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 163
-    },
-    {
-      "name": "validate_raster_file",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 194
-    },
-    {
-      "name": "select_tools",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 253
-    },
-    {
-      "name": "build_plan",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 271
-    },
-    {
-      "name": "load_valid_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 300
-    },
-    {
-      "name": "cmd_validate",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 316
-    },
-    {
-      "name": "cmd_plan",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 324
-    },
-    {
-      "name": "cmd_validate_raster",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 332
-    },
-    {
-      "name": "cmd_atlas_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 346
-    },
-    {
-      "name": "execute_compiled_production_job",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 370
-    },
-    {
-      "name": "_write_production_inputs",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 425
-    },
-    {
-      "name": "_persist_enriched_production_report",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 441
-    },
-    {
-      "name": "_enrich_engine_handoff",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 454
-    },
-    {
-      "name": "parser",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 535
-    },
-    {
-      "name": "main",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 749
+      "file": "backend_history.py",
+      "line": 217
     },
     {
       "name": "_sanitize_metadata",
@@ -256,70 +194,58 @@
       "line": 1295
     },
     {
-      "name": "_first_ready_backend",
-      "kind": "function",
-      "file": "operational_status.py",
-      "line": 10
+      "name": "BackendHistoryTests",
+      "kind": "class",
+      "file": "tests/test_backend_history.py",
+      "line": 16
     },
     {
-      "name": "build_operational_status",
+      "name": "test_missing_or_invalid_history_falls_back_safely",
       "kind": "function",
-      "file": "operational_status.py",
+      "file": "tests/test_backend_history.py",
       "line": 17
     },
     {
-      "name": "ProductionExecutionError",
-      "kind": "class",
-      "file": "production_executor.py",
-      "line": 14
+      "name": "test_default_order_is_preserved_without_enough_samples",
+      "kind": "function",
+      "file": "tests/test_backend_history.py",
+      "line": 27
     },
     {
-      "name": "_safe_asset_id",
+      "name": "test_repeated_cloudflare_failures_move_auto_route_to_kaggle",
       "kind": "function",
-      "file": "production_executor.py",
-      "line": 18
+      "file": "tests/test_backend_history.py",
+      "line": 39
     },
     {
-      "name": "_trusted_generated_source",
+      "name": "test_reliable_observed_cloudflare_stays_ahead_of_unknown_kaggle",
       "kind": "function",
-      "file": "production_executor.py",
-      "line": 32
+      "file": "tests/test_backend_history.py",
+      "line": 72
     },
     {
-      "name": "_provenance_from_manifest",
+      "name": "test_record_generation_result_tracks_fallback_and_quality",
       "kind": "function",
-      "file": "production_executor.py",
-      "line": 49
+      "file": "tests/test_backend_history.py",
+      "line": 89
     },
     {
-      "name": "_routing_from_generation",
+      "name": "test_record_generation_result_tracks_regeneration_pressure",
       "kind": "function",
-      "file": "production_executor.py",
-      "line": 69
+      "file": "tests/test_backend_history.py",
+      "line": 125
     },
     {
-      "name": "_stage_provided_source",
+      "name": "test_3d_result_learns_from_nested_reference_generation",
       "kind": "function",
-      "file": "production_executor.py",
-      "line": 82
+      "file": "tests/test_backend_history.py",
+      "line": 151
     },
     {
-      "name": "execute_generated_raster_job",
+      "name": "test_vector_result_records_underlying_raster_backend",
       "kind": "function",
-      "file": "production_executor.py",
-      "line": 108
-    },
-    {
-      "name": "execute_generated_vector_job",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 262
-    },
-    {
-      "name": "execute_generated_3d_job",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 367
+      "file": "tests/test_backend_history.py",
+      "line": 178
     },
     {
       "name": "job",
@@ -947,6 +873,7 @@
     }
   ],
   "selected_tests": [
+    "tests/test_backend_history.py",
     "tests/test_generator_backends.py"
   ]
 }

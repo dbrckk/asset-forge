@@ -96,21 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T18:47:03Z
+Generated: 2026-09-21T19:00:49Z
 
 ### Git
 - Branch: `main`
-- Head: `d23384c1b730`
-- Commit date: 2026-09-21T20:46:47+02:00
-- Commit: fix: avoid double-counting 3D reference history
+- Head: `971dded0a521`
+- Commit date: 2026-09-21T21:00:27+02:00
+- Commit: feat: route away from high-retry backends adaptively
 - Tracked files: 305
 
 ### Recently changed files
+- `backend_history.py`
+- `tests/test_backend_history.py`
 - `generator_backends.py`
 - `.github/workflows/deadline-zero-live-pilot.yml`
-- `tests/test_remote_batch.py`
-- `remote_batch.py`
-- `backend_history.py`
 
 ### Project signals
 - `pyproject.toml`
