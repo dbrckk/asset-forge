@@ -25,6 +25,7 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
     imagen_codex = generation.get("imagenCodex", {})
     qwen_colab = generation.get("qwenColab", {})
     vtracer = generation.get("vtracer", {})
+    kaggle_triposr = generation.get("kaggleTripoSR", {})
 
     cloudflare_raster = bool(cloudflare.get("rasterReady"))
     kaggle_raster = bool(kaggle_qwen.get("rasterReady"))
@@ -33,6 +34,8 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
     vtracer_vector = bool(vtracer.get("vectorSvgReady"))
     imagen_raster = bool(imagen_codex.get("rasterReady"))
     queued_qwen = bool(qwen_colab.get("queueReady"))
+    triposr_3d = bool(kaggle_triposr.get("threeDReady"))
+    pollinations_3d = bool(pollinations.get("threeDReady"))
 
     direct_raster_ready = any(
         (
@@ -56,7 +59,10 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
         "freeVectorSvg": vtracer_vector,
         "vtracerVector": vtracer_vector,
         "pollinationsVector": pollinations_vector,
-        "threeDGlb": bool(pollinations.get("threeDReady")),
+        "threeDGlb": triposr_3d or pollinations_3d,
+        "freeThreeDGlb": triposr_3d,
+        "kaggleTripoSR3D": triposr_3d,
+        "pollinations3D": pollinations_3d,
         "godotImport": godot_executable is not None,
         "cloudflareRaster": cloudflare_raster,
         "kaggleQwenRaster": kaggle_raster,
@@ -79,6 +85,13 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
         if vtracer_vector
         else "pollinations"
         if pollinations_vector
+        else None
+    )
+    preferred_3d_backend = (
+        "kaggle-triposr"
+        if triposr_3d
+        else "pollinations"
+        if pollinations_3d
         else None
     )
 
@@ -107,7 +120,8 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
         )
     if not capabilities["threeDGlb"]:
         blockers.append(
-            "no authenticated 3D generation backend is ready"
+            "no authenticated 3D generation backend is ready; "
+            "configure Kaggle TripoSR or Pollinations"
         )
     if godot_executable is None:
         blockers.append("Godot executable is unavailable for real import validation")
@@ -149,9 +163,11 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
             "preferredRasterBackend": preferred_raster_backend,
             "queuedRasterBackend": "qwen-colab" if queued_qwen else None,
             "preferredVectorBackend": preferred_vector_backend,
+            "preferredThreeDBackend": preferred_3d_backend,
             "freeRasterReady": free_raster_ready,
             "autoRasterReady": free_raster_ready,
             "freeVectorReady": vtracer_vector,
+            "freeThreeDReady": triposr_3d,
         },
         "capabilities": capabilities,
         "generation": generation,
