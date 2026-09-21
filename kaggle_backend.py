@@ -34,7 +34,7 @@ def status(*, environ=None) -> dict:
         "credentialSource": "environment" if token and username else None,
         "model": DEFAULT_MODEL,
         "accelerator": DEFAULT_ACCELERATOR,
-        "quantization": "bitsandbytes_4bit_nf4",
+        "quantization": "bitsandbytes_4bit_nf4_transformer",
     }
 
 
@@ -96,7 +96,7 @@ pipe = QwenImage21Pipeline.from_pretrained(
 # Sequential CPU offload trades some speed for the lowest practical VRAM
 # footprint on Kaggle T4. This prevents the denoising transformer from
 # competing with the VAE/text encoder for the full 16 GB device.
-pipe.enable_sequential_cpu_offload()
+pipe.enable_model_cpu_offload()
 pipe.enable_attention_slicing()
 
 kwargs = {
