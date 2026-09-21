@@ -1,9 +1,16 @@
 {
   "id": "vector-svg",
-  "assetTypes": ["vector", "svg", "icon", "ui-vector", "logo"],
+  "assetTypes": [
+    "vector",
+    "svg",
+    "icon",
+    "ui-vector",
+    "logo"
+  ],
   "stages": [
     "read-project-art-direction",
     "resolve-source-or-create",
+    "free-raster-to-vector-fallback",
     "validate-svg-xml",
     "reject-executable-content",
     "reject-external-references",
@@ -16,6 +23,8 @@
   "defaults": {
     "masterFormat": "svg",
     "requireViewBox": true,
-    "allowExternalReferences": false
+    "allowExternalReferences": false,
+    "freeFirstVectorization": true,
+    "preferredVectorizer": "vtracer"
   }
 }
