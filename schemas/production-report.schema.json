@@ -13,41 +13,132 @@
     "artifact"
   ],
   "properties": {
-    "schema": {"const": "asset-forge/production-report/v1"},
-    "requestId": {"type": "string", "minLength": 1},
-    "assetId": {"type": "string", "minLength": 1},
-    "assetType": {"type": "string", "minLength": 1},
-    "success": {"type": "boolean"},
-    "generation": {"type": "object"},
+    "schema": {
+      "const": "asset-forge/production-report/v1"
+    },
+    "requestId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assetId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assetType": {
+      "type": "string",
+      "minLength": 1
+    },
+    "success": {
+      "type": "boolean"
+    },
+    "generation": {
+      "type": "object"
+    },
     "provenance": {
       "type": "object",
       "properties": {
-        "source": {"type": "object"},
-        "license": {"type": "object"}
+        "source": {
+          "type": "object"
+        },
+        "license": {
+          "type": "object"
+        }
       },
       "additionalProperties": true
     },
-    "processing": {"type": "object"},
+    "processing": {
+      "type": "object"
+    },
     "validation": {
       "type": "object",
-      "required": ["errors"],
+      "required": [
+        "errors"
+      ],
       "properties": {
-        "errors": {"type": "array"}
+        "errors": {
+          "type": "array"
+        }
       },
       "additionalProperties": true
     },
-    "artifact": {"type": ["string", "null"]},
-    "engineHandoff": {"type": "object"}
+    "artifact": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "engineHandoff": {
+      "type": "object"
+    },
+    "routing": {
+      "type": "object",
+      "properties": {
+        "requestedBackend": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "initialBackend": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "finalBackend": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fallbacks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "fallbackCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    }
   },
   "additionalProperties": true,
   "allOf": [
     {
-      "if": {"properties": {"success": {"const": true}}},
-      "then": {"properties": {"artifact": {"type": "string", "minLength": 1}}}
+      "if": {
+        "properties": {
+          "success": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "artifact": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     },
     {
-      "if": {"properties": {"success": {"const": false}}},
-      "then": {"properties": {"artifact": {"type": "null"}}}
+      "if": {
+        "properties": {
+          "success": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "artifact": {
+            "type": "null"
+          }
+        }
+      }
     }
   ]
 }
