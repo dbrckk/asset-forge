@@ -110,26 +110,41 @@ def _extract_kaggle_diagnostic(path: Path) -> str:
     raw = path.read_text(encoding="utf-8", errors="replace").strip()
     if not raw:
         return ""
+
     stderr_parts: list[str] = []
     fallback_parts: list[str] = []
-    for line in raw.splitlines():
-        line = line.strip().rstrip(",")
-        if not line:
-            continue
-        try:
-            record = json.loads(line)
-        except json.JSONDecodeError:
-            fallback_parts.append(line)
-            continue
-        if isinstance(record, dict):
-            data = str(record.get("data") or "")
-            if not data:
+
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        parsed = None
+
+    records = parsed if isinstance(parsed, list) else None
+    if records is None:
+        records = []
+        for line in raw.splitlines():
+            line = line.strip().rstrip(",")
+            if not line:
                 continue
-            stream = str(record.get("stream_name") or "").lower()
-            if stream == "stderr":
-                stderr_parts.append(data)
-            else:
-                fallback_parts.append(data)
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                fallback_parts.append(line)
+                continue
+            records.append(record)
+
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        data = str(record.get("data") or "")
+        if not data:
+            continue
+        stream = str(record.get("stream_name") or "").lower()
+        if stream == "stderr":
+            stderr_parts.append(data)
+        else:
+            fallback_parts.append(data)
+
     preferred = "".join(stderr_parts).strip() or "".join(fallback_parts).strip() or raw
     markers = (
         "Traceback (most recent call last):",
@@ -138,13 +153,16 @@ def _extract_kaggle_diagnostic(path: Path) -> str:
         "ModuleNotFoundError:",
         "ValueError:",
         "TypeError:",
+        "FileNotFoundError:",
         "CUDA out of memory",
+        "OutOfMemoryError",
+        "Killed",
     )
     positions = [preferred.rfind(marker) for marker in markers if marker in preferred]
     positions = [pos for pos in positions if pos >= 0]
     if positions:
         preferred = preferred[min(positions):]
-    return preferred[-12000:]
+    return preferred[-16000:]
 
 
 def _run(command: list[str], *, timeout: float, runner=subprocess.run) -> subprocess.CompletedProcess:
