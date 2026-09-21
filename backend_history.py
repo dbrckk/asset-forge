@@ -192,12 +192,26 @@ def backend_score(history: dict, backend: str, *, prior: float) -> float:
         if quality_samples > 0
         else None
     )
+    fallback_pressure = max(
+        0.0,
+        min(1.0, float(value.get("fallbacksFrom") or 0) / max(1, attempts)),
+    )
+    regeneration_pressure = max(
+        0.0,
+        min(1.0, float(value.get("regenerations") or 0) / max(1, attempts)),
+    )
+    pressure_penalty = 0.04 * fallback_pressure + 0.04 * regeneration_pressure
     if quality is None:
         # Do not penalize a backend merely because older successful runs did
         # not yet emit quality telemetry. Reliability plus configured priority
         # must still be able to outrank an entirely unknown alternative.
-        return 0.90 * reliability + 0.10 * prior
-    return 0.72 * reliability + 0.23 * quality + 0.05 * prior
+        return 0.90 * reliability + 0.10 * prior - pressure_penalty
+    return (
+        0.72 * reliability
+        + 0.23 * quality
+        + 0.05 * prior
+        - pressure_penalty
+    )
 
 
 def choose_backend(
