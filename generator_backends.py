@@ -26,6 +26,12 @@ from kaggle_backend import (
     generate as kaggle_generate,
     status as kaggle_status,
 )
+from kaggle_3d_backend import (
+    Kaggle3DGenerationError,
+    DEFAULT_MODEL as DEFAULT_TRIPOSR_MODEL,
+    generate as kaggle_3d_generate,
+    status as kaggle_3d_status,
+)
 from colab_queue import (
     ColabQueueError,
     download_result_asset,
@@ -123,6 +129,7 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
     )
     cloudflare = cloudflare_status(environ=env)
     kaggle = kaggle_status(environ=env)
+    kaggle_3d = kaggle_3d_status(environ=env)
     vectorizer = vectorizer_status()
     free_raster_ready = bool(
         cloudflare.get("rasterReady") is True
@@ -136,6 +143,7 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
     return {
         "cloudflare": cloudflare,
         "kaggleQwen": kaggle,
+        "kaggleTripoSR": kaggle_3d,
         "vtracer": vectorizer,
         "pollinations": {
             "installed": polli is not None,
@@ -1287,11 +1295,13 @@ def execute_generated_3d_asset(
     job: dict,
     output_dir: Path,
     *,
-    model: str = DEFAULT_3D_MODEL,
+    backend: str = "auto",
+    model: str | None = None,
     resolution: str = "low",
     timeout_seconds: float = 600.0,
     environ=None,
     generator: Callable = execute_generated_asset,
+    kaggle_generator: Callable = kaggle_3d_generate,
     upload_runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,
     opener: Callable = _default_3d_opener,
 ) -> dict:
@@ -1302,23 +1312,8 @@ def execute_generated_3d_asset(
         raise GenerationError(
             f"unsupported generated 3D asset type: {asset_type or '<missing>'}"
         )
-    if model != DEFAULT_3D_MODEL:
-        raise GenerationError(
-            "only microsoft/trellis-2 is enabled by default for free-first 3D production"
-        )
     if resolution not in {"low", "medium", "high"}:
         raise GenerationError("3D resolution must be low, medium, or high")
-
-    env = os.environ if environ is None else environ
-    api_key = str(env.get("POLLINATIONS_API_KEY") or "").strip()
-    if not api_key:
-        raise GenerationError(
-            "POLLINATIONS_API_KEY is required for server-side 3D generation"
-        )
-
-    executable = shutil.which("polli")
-    if not executable:
-        raise GenerationError("polli executable not found; install @pollinations/cli")
 
     try:
         timeout = float(timeout_seconds)
@@ -1327,19 +1322,142 @@ def execute_generated_3d_asset(
     if timeout <= 0:
         raise GenerationError("timeout_seconds must be positive")
 
+    env = os.environ if environ is None else environ
+    statuses = generator_backend_status(environ=env)
+    kaggle_ready = (
+        statuses.get("kaggleTripoSR", {}).get("threeDReady") is True
+    )
+    pollinations_ready = (
+        statuses.get("pollinations", {}).get("threeDReady") is True
+    )
+
+    requested_backend = str(backend or "auto")
+    if requested_backend == "auto":
+        if kaggle_ready:
+            selected_backend = "kaggle-triposr"
+        elif pollinations_ready:
+            selected_backend = "pollinations"
+        else:
+            raise GenerationError(
+                "no authenticated 3D generation backend is ready; "
+                "configure Kaggle TripoSR or Pollinations"
+            )
+    elif requested_backend in {"kaggle-triposr", "pollinations"}:
+        selected_backend = requested_backend
+    else:
+        raise GenerationError(
+            f"unsupported 3D generator backend: {requested_backend}"
+        )
+
+    initial_backend = selected_backend
+    fallbacks = []
+    effective_model = (
+        model
+        or (
+            DEFAULT_TRIPOSR_MODEL
+            if selected_backend == "kaggle-triposr"
+            else DEFAULT_3D_MODEL
+        )
+    )
+
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
     reference_dir = out / "reference"
+
+    if selected_backend == "kaggle-triposr":
+        reference_backend = _select_free_raster_backend(
+            statuses,
+            environ=env,
+        )
+        if reference_backend is None:
+            raise GenerationError(
+                "Kaggle TripoSR requires a free raster backend for its reference image"
+            )
+    else:
+        reference_backend = "pollinations"
+
     reference = generator(
         job,
         reference_dir,
-        backend="pollinations",
+        backend=reference_backend,
         model=None,
         timeout_seconds=min(timeout, 180.0),
     )
     reference_path = Path(str(reference.get("sourcePath") or ""))
     if not reference_path.is_file():
         raise GenerationError("3D reference generation did not produce an image")
+
+    if selected_backend == "kaggle-triposr":
+        mc_resolution = {
+            "low": 192,
+            "medium": 256,
+            "high": 320,
+        }[resolution]
+        output = out / "generated-source.glb"
+        try:
+            metadata = kaggle_generator(
+                reference_path,
+                output,
+                mc_resolution=mc_resolution,
+                model=effective_model,
+                timeout_seconds=max(timeout, 900.0),
+                environ=env,
+            )
+        except Kaggle3DGenerationError as exc:
+            if (
+                requested_backend == "auto"
+                and model is None
+                and pollinations_ready
+            ):
+                fallbacks.append({
+                    "from": "kaggle-triposr",
+                    "to": "pollinations",
+                    "reason": "kaggle-triposr-generation-error",
+                    "attempt": 1,
+                })
+                selected_backend = "pollinations"
+                effective_model = DEFAULT_3D_MODEL
+            else:
+                raise GenerationError(
+                    f"kaggle-triposr generation failed: {exc}"
+                ) from exc
+        else:
+            if not output.is_file() or output.stat().st_size <= 0:
+                raise GenerationError(
+                    "kaggle-triposr generation did not produce a GLB"
+                )
+            return {
+                "success": True,
+                "backend": "kaggle-triposr",
+                "requestedBackend": requested_backend,
+                "initialBackend": initial_backend,
+                "fallbacks": fallbacks,
+                "model": effective_model,
+                "resolution": resolution,
+                "assetType": asset_type,
+                "referenceBackend": reference_backend,
+                "referencePath": str(reference_path),
+                "referenceGeneration": reference,
+                "metadata": _sanitize_metadata(metadata),
+                "sourcePath": str(output),
+                "sourceBytes": output.stat().st_size,
+            }
+
+    if selected_backend != "pollinations":
+        raise GenerationError("3D backend routing reached an invalid state")
+    if effective_model != DEFAULT_3D_MODEL:
+        raise GenerationError(
+            "Pollinations 3D currently supports microsoft/trellis-2 only"
+        )
+
+    api_key = str(env.get("POLLINATIONS_API_KEY") or "").strip()
+    if not api_key:
+        raise GenerationError(
+            "POLLINATIONS_API_KEY is required for server-side 3D generation"
+        )
+    executable = shutil.which("polli")
+    if not executable:
+        raise GenerationError("polli executable not found; install @pollinations/cli")
 
     image_url = _upload_reference_image(
         reference_path,
@@ -1351,7 +1469,7 @@ def execute_generated_3d_asset(
     endpoint = "https://gen.pollinations.ai/3d/no_prompt_for_trellis_needed"
     body = json.dumps(
         {
-            "model": model,
+            "model": effective_model,
             "image": image_url,
             "resolution": resolution,
         },
@@ -1369,9 +1487,11 @@ def execute_generated_3d_asset(
     )
     try:
         with opener(request, timeout) as response:
-            status = int(getattr(response, "status", 200))
-            if status != 200:
-                raise GenerationError(f"Pollinations 3D returned HTTP {status}")
+            status_code = int(getattr(response, "status", 200))
+            if status_code != 200:
+                raise GenerationError(
+                    f"Pollinations 3D returned HTTP {status_code}"
+                )
             raw = response.read(MAX_3D_BYTES + 1)
     except urllib.error.HTTPError as exc:
         raise GenerationError(
@@ -1392,10 +1512,15 @@ def execute_generated_3d_asset(
     return {
         "success": True,
         "backend": "pollinations",
-        "model": model,
+        "requestedBackend": requested_backend,
+        "initialBackend": initial_backend,
+        "fallbacks": fallbacks,
+        "model": effective_model,
         "resolution": resolution,
         "assetType": asset_type,
+        "referenceBackend": reference_backend,
         "referencePath": str(reference_path),
+        "referenceGeneration": reference,
         "referenceUpload": {"temporaryPublic": True},
         "sourcePath": str(output),
         "sourceBytes": len(raw),
