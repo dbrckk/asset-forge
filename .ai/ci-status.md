@@ -1,15 +1,16 @@
 # CI status
 
-Summary: 1 success / 2 failure / 2 active
+Summary: 1 success / 1 failure / 3 active
 
-- Deadline Zero live premium pilot: in_progress / pending (9a23d425)
-- Validate asset-forge: in_progress / pending (9a23d425)
-- Validate asset-forge: completed / success (4eb6806f)
-- Validate asset-forge: completed / failure (c893806c)
-- Validate asset-forge: completed / failure (d8121c53)
+- Deadline Zero live premium pilot: in_progress / pending (abe4cf88)
+- Validate asset-forge: in_progress / pending (abe4cf88)
+- Validate asset-forge: in_progress / pending (6f40a0be)
+- Deadline Zero live premium pilot: completed / failure (9a23d425)
+- Validate asset-forge: completed / success (9a23d425)
 
 ## Latest failed run structure
-- Job: test
-  - Failed step: Unit tests
+- Job: produce
+  - Failed step: Produce Rex premium pilot
+  - Failed step: Upload live premium pilot
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.

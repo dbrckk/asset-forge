@@ -96,20 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T07:31:11Z
+Generated: 2026-09-21T07:40:45Z
 
 ### Git
 - Branch: `main`
-- Head: `9a23d4258c64`
-- Commit date: 2026-09-21T09:31:00+02:00
-- Commit: feat: run Deadline Zero live pilot on free image backends
+- Head: `abe4cf88c40a`
+- Commit date: 2026-09-21T09:40:30+02:00
+- Commit: fix: rerun live pilot when batch runner changes
 - Tracked files: 288
 
 ### Recently changed files
 - `.github/workflows/deadline-zero-live-pilot.yml`
+- `remote_batch.py`
 - `tests/test_generator_backends.py`
-- `.github/workflows/production-os-batch.yml`
-- `.github/workflows/production-os-dispatch.yml`
 
 ### Project signals
 - `pyproject.toml`

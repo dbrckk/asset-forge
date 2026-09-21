@@ -4,5 +4,889 @@
   "scope": "symbols defined in changed source files",
   "semantic": false,
   "note": "Occurrences are lexical word matches; verify source/LSP/compiler data before relying on them.",
-  "symbols": {}
+  "symbols": {
+    "RemoteBatchError": {
+      "definition": {
+        "file": "remote_batch.py",
+        "line": 14,
+        "kind": "class",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "remote_batch.py",
+          "line": 14,
+          "preview": "class RemoteBatchError(RuntimeError):",
+          "definition_candidate": true
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 21,
+          "preview": "raise RemoteBatchError(\"batch item id must be filename-safe\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 30,
+          "preview": "raise RemoteBatchError(\"batch item must be an object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 33,
+          "preview": "raise RemoteBatchError(\"batch item request is required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 36,
+          "preview": "raise RemoteBatchError(f\"duplicate batch item id: {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 43,
+          "preview": "raise RemoteBatchError(f\"depends_on for {item_id} must be a list\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 54,
+          "preview": "raise RemoteBatchError(f\"batch item cannot depend on itself: {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 56,
+          "preview": "raise RemoteBatchError(f\"unknown dependency for {item_id}: {dependency}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 73,
+          "preview": "raise RemoteBatchError(\"cyclic batch dependencies\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 88,
+          "preview": "raise RemoteBatchError(\"batch spec must contain a non-empty items list\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 103,
+          "preview": "raise RemoteBatchError(f\"unsafe target_path for {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 140,
+          "preview": "raise RemoteBatchError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 147,
+          "preview": "raise RemoteBatchError(f\"missing production report for {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 150,
+          "preview": "raise RemoteBatchError(f\"production report failed for {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 155,
+          "preview": "raise RemoteBatchError(f\"missing artifact for {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 158,
+          "preview": "raise RemoteBatchError(f\"artifact escapes item output for {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 170,
+          "preview": "raise RemoteBatchError(f\"invalid additionalArtifacts for {item_id}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 177,
+          "preview": "raise RemoteBatchError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 181,
+          "preview": "raise RemoteBatchError(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 19
+    },
+    "_safe_id": {
+      "definition": {
+        "file": "remote_batch.py",
+        "line": 18,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "remote_batch.py",
+          "line": 18,
+          "preview": "def _safe_id(value: str) -> str:",
+          "definition_candidate": true
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 34,
+          "preview": "item_id = _safe_id(raw.get(\"id\") or request.get(\"requestId\") or f\"item-{index + 1}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 100,
+          "preview": "request_id = _safe_id(request.get(\"requestId\") or item_id)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 3
+    },
+    "_ordered_items": {
+      "definition": {
+        "file": "remote_batch.py",
+        "line": 25,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "remote_batch.py",
+          "line": 25,
+          "preview": "def _ordered_items(items: list[dict]) -> list[dict]:",
+          "definition_candidate": true
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 97,
+          "preview": "for item in _ordered_items(items):",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "run": {
+      "definition": {
+        "file": "remote_batch.py",
+        "line": 77,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 689,
+          "preview": "gltf_diagnose = sub.add_parser(\"diagnose-gltf\", help=\"run deep accessor, skinning, and animation diagnostics\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 706,
+          "preview": "godot_import = sub.add_parser(\"validate-godot-handoff\", help=\"run Godot headless import validation on a handoff\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 736,
+          "preview": "run3d = sub.add_parser(\"run-3d\", help=\"run Blender to GLB validation/optimization pipeline\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 1325,
+          "preview": "if args.command == \"run-3d\":",
+          "definition_candidate": false
+        },
+        {
+          "file": "cloudflare_backend.py",
+          "line": 127,
+          "preview": "+ \"/ai/run/\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 197,
+          "preview": "runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 532,
+          "preview": "runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1029,
+          "preview": "upload_runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
+          "definition_candidate": false
+        },
+        {
+          "file": "godot_handoff.py",
+          "line": 151,
+          "preview": "\"- Open this folder as a Godot project or run headless import validation.\\n\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "godot_handoff.py",
+          "line": 195,
+          "preview": "completed = subprocess.run(",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 52,
+          "preview": "subprocess.run([",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 91,
+          "preview": "def _run(command: list[str], *, timeout: float, runner=subprocess.run) -> subprocess.CompletedProcess:",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 123,
+          "preview": "runner=subprocess.run,",
+          "definition_candidate": false
+        },
+        {
+          "file": "lod_3d.py",
+          "line": 32,
+          "preview": "runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 77,
+          "preview": "def run(",
+          "definition_candidate": true
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 132,
+          "preview": "completed = subprocess.run(",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 270,
+          "preview": "result = run(",
+          "definition_candidate": false
+        },
+        {
+          "file": "semantic_art_review.py",
+          "line": 76,
+          "preview": "runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
+          "definition_candidate": false
+        },
+        {
+          "file": "starlist_bridge.py",
+          "line": 38,
+          "preview": "completed = subprocess.run(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 178,
+          "preview": "name: \"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 199,
+          "preview": "assert.equal(animated.animation(\"run\").fps, 10);",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 200,
+          "preview": "assert.equal(animationFrameAtTime(animated, \"run\", 0.05).frame.index, 0);",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 201,
+          "preview": "assert.equal(animationFrameAtTime(animated, \"run\", 0.15).frame.index, 1);",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 202,
+          "preview": "assert.equal(animationFrameAtTime(animated, \"run\", 0.35).frame.index, 0);",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 245,
+          "preview": "() => createAnimationPlayer(animated, \"run\", { playbackRate: 0 }),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 253,
+          "preview": "const loopPlayer = createAnimationPlayer(animated, \"run\", {",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 270,
+          "preview": "const drawPlayer = createAnimationPlayer(animated, \"run\");",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1952,
+          "preview": "\"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2011,
+          "preview": "() => entityAnimationSystem.bind(\"missing\", \"run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2068,
+          "preview": "\"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_animation_infer.py",
+          "line": 21,
+          "preview": "self.assertEqual(animations[\"run\"][\"frames\"], [1, 3])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 21,
+          "preview": "\"requestId\": \"hero-run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 21,
+          "preview": "animation_name=\"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 30,
+          "preview": "self.assertIn('\"name\": &\"run\"', rendered)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 150,
+          "preview": "animations=[{\"name\": \"run\", \"frames\": [2]}],",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 193,
+          "preview": "@patch(\"godot_handoff.subprocess.run\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 195,
+          "preview": "def test_available_godot_import_passes(self, detect, run):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 197,
+          "preview": "run.return_value.returncode = 0",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 198,
+          "preview": "run.return_value.stdout = \"imported\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 199,
+          "preview": "run.return_value.stderr = \"\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 17,
+          "preview": "\"assetId\": \"hero-run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 21,
+          "preview": "\"id\": \"hero-run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 42,
+          "preview": "self.assertEqual(path.name, \"hero-run.png\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 50,
+          "preview": "webp_encoder=lambda *a, **k: self.fail(\"webp encoder must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 55,
+          "preview": "self.assertEqual(report[\"artifact\"], str(root / \"hero-run.png\"))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 81,
+          "preview": "png_optimizer=lambda *a, **k: self.fail(\"png optimizer must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 148,
+          "preview": "generic_validator=lambda p: self.fail(\"generic validator must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 153,
+          "preview": "self.assertEqual(report[\"artifact\"], str(root / \"hero-run.svg\"))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 205,
+          "preview": "self.assertEqual(path.name, \"hero-run.glb\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 224,
+          "preview": "structural_validator=lambda p: self.fail(\"generic validator must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 232,
+          "preview": "self.assertEqual(report[\"artifact\"], str(root / \"hero-run.glb\"))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 337,
+          "preview": "webp_encoder=lambda *a, **k: self.fail(\"webp must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 338,
+          "preview": "generator=lambda *a, **k: self.fail(\"generator must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 346,
+          "preview": "self.assertEqual(report[\"artifact\"], str(root / \"hero-run.png\"))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 372,
+          "preview": "generator=lambda *a, **k: self.fail(\"generator must not run\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 447,
+          "preview": "lod = output_dir / \"hero-run.lod1.glb\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 7,
+          "preview": "from remote_batch import run",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 44,
+          "preview": "\"id\": \"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 46,
+          "preview": "\"request\": request(\"run-request\", \"run\", 8),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 47,
+          "preview": "\"target_path\": \"assets/art/pilot/run.png\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 74,
+          "preview": "if payload[\"manifest\"][\"id\"] == \"run\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 85,
+          "preview": "with patch(\"remote_batch.subprocess.run\", side_effect=fake_run):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 86,
+          "preview": "result = run(spec, root / \"out\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 88,
+          "preview": "self.assertEqual(result[\"execution_order\"], [\"hero\", \"run\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 137,
+          "preview": "with patch(\"remote_batch.subprocess.run\", side_effect=fake_run):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 138,
+          "preview": "result = run(spec, root / \"out\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 209,
+          "preview": "\"name\": \"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 221,
+          "preview": "\"name\": \"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 245,
+          "preview": "\"name\": \"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 370,
+          "preview": "\"name\": \"run\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "toolchain_3d.py",
+          "line": 319,
+          "preview": "completed = subprocess.run(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 71
+    },
+    "main": {
+      "definition": {
+        "file": "remote_batch.py",
+        "line": 259,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 748,
+          "preview": "def main() -> int:",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 1347,
+          "preview": "raise SystemExit(main())",
+          "definition_candidate": false
+        },
+        {
+          "file": "colab_queue.py",
+          "line": 73,
+          "preview": "branch: str = \"main\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "colab_queue.py",
+          "line": 125,
+          "preview": "branch: str = \"main\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "colab_queue.py",
+          "line": 165,
+          "preview": "branch: str = \"main\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "qwen_colab_worker.py",
+          "line": 14,
+          "preview": "BRANCH = os.environ.get(\"ASSET_FORGE_GITHUB_BRANCH\", \"main\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "qwen_colab_worker.py",
+          "line": 215,
+          "preview": "def main() -> None:",
+          "definition_candidate": false
+        },
+        {
+          "file": "qwen_colab_worker.py",
+          "line": 226,
+          "preview": "main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 259,
+          "preview": "def main(argv=None) -> int:",
+          "definition_candidate": true
+        },
+        {
+          "file": "remote_batch.py",
+          "line": 281,
+          "preview": "raise SystemExit(main())",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_animation_infer.py",
+          "line": 56,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_art_quality.py",
+          "line": 144,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_forge.py",
+          "line": 238,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_library.py",
+          "line": 304,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_asset_profile_validation.py",
+          "line": 128,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_blender_adapter.py",
+          "line": 58,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_cloudflare_backend.py",
+          "line": 88,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_colab_queue.py",
+          "line": 52,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_engine_profile_validation.py",
+          "line": 83,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_fulfill.py",
+          "line": 209,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 742,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_binary_metrics.py",
+          "line": 133,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_diagnostics.py",
+          "line": 165,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_quality.py",
+          "line": 202,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_gltf_tools.py",
+          "line": 115,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_3d_delivery.py",
+          "line": 105,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_export.py",
+          "line": 176,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_godot_handoff.py",
+          "line": 212,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_kaggle_backend.py",
+          "line": 29,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 95,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 85,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_executor.py",
+          "line": 555,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_backend.py",
+          "line": 161,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_pack.py",
+          "line": 1453,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_remote_batch.py",
+          "line": 147,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_runtime_atlas.py",
+          "line": 387,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_semantic_art_review.py",
+          "line": 152,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_starlist_bridge.py",
+          "line": 68,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_svg_tools.py",
+          "line": 309,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_toolchain_3d.py",
+          "line": 218,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_visual_similarity.py",
+          "line": 116,
+          "preview": "unittest.main()",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 825,
+          "preview": "void main() {",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 868,
+          "preview": "void main() {",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 43
+    }
+  }
 }
