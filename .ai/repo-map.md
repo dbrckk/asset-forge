@@ -5833,7 +5833,15 @@ dimensions = _generation_dimensions(attempt_job) or (1024, 1024)
 ⋮----
 metadata = cloudflare_generate(
 ⋮----
+# Cloudflare SDXL currently accepts text-to-image but
+# may reject reference-image tensors. Preserve visual
+# identity by falling back to the automated Qwen
+# Kaggle backend whenever a referenced generation is
+# unsupported by the selected Cloudflare model.
+⋮----
 metadata = kaggle_generate(
+backend = "kaggle-qwen"
+effective_model = DEFAULT_KAGGLE_MODEL
 ⋮----
 metadata = _sanitize_metadata(metadata)
 ⋮----

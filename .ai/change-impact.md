@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 9c84002be440a67def2210b74e0b14b8a9b37444
-Head: 5f337092bc5654ba41ef06b6130755f5a74ed388
+Base: c2cb79eebfcd89b49e4114dcb287dfc89386f339
+Head: f3e34b324c478614f0f25dd28321cca9352ad551
 
 ## Changed files
-- M remote_batch.py
+- M generator_backends.py
 
 ## Affected areas
 - (root)
 
 ## Related test candidates
-- tests/test_remote_batch.py
+- tests/test_generator_backends.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.
