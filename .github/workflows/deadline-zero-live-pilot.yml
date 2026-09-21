@@ -127,8 +127,10 @@ jobs:
               fh.write("## Deadline Zero live visual pilot\n\n")
               fh.write(f"- Produced: {result['count']} assets\n")
               fh.write(f"- Quality-checked: {result['quality_summary']['checked']} assets\n")
+              fh.write(f"- Visual consistency checked: {result['quality_summary'].get('visual_checked', 0)} assets\n")
+              fh.write(f"- Technical quality checked: {result['quality_summary'].get('technical_checked', 0)} assets\n")
               fh.write(f"- Regenerated: {result['quality_summary']['regenerated']}\n")
-              fh.write(f"- Minimum consistency score: {result['quality_summary']['minimum_score']}\n")
+              fh.write(f"- Minimum quality score: {result['quality_summary']['minimum_score']}\n")
           PY
 
       - name: Upload live visual pilot
