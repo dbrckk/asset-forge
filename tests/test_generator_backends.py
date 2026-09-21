@@ -41,6 +41,19 @@ class GeneratorBackendsTests(unittest.TestCase):
         self.assertIn("32x32", prompt)
         self.assertIn("exactly 4 frames", prompt)
         self.assertIn("pixel art", prompt)
+        self.assertIn("stable scale and anchor point", prompt)
+        self.assertIn("Every frame must be visually distinct", prompt)
+
+    def test_prompt_adds_alpha_and_premium_quality_guards(self):
+        value = job()
+        value["manifest"]["constraints"].update({
+            "requiresAlpha": True,
+            "aaaQualityRequired": True,
+        })
+        prompt = build_generation_prompt(value)
+        self.assertIn("true transparent negative space", prompt)
+        self.assertIn("Premium game-production quality is mandatory", prompt)
+        self.assertIn("no generic stock-art or amateur visual language", prompt)
 
     def test_pollinations_command_never_contains_api_key(self):
         command = pollinations_command(
