@@ -5,228 +5,80 @@
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
   "symbols": {
-    "_first_ready_backend": {
+    "RemoteBatchError": {
       "source": {
-        "file": "operational_status.py",
-        "start": 10,
-        "end": 14
+        "file": "remote_batch.py",
+        "start": 15,
+        "end": 16
       },
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "build_operational_status": {
+    "_fallback_count": {
       "source": {
-        "file": "operational_status.py",
-        "start": 17,
-        "end": 149
+        "file": "remote_batch.py",
+        "start": 19,
+        "end": 24
       },
-      "symbol_dependencies": [
-        {
-          "symbol": "_first_ready_backend",
-          "definitions": [
-            {
-              "file": "operational_status.py",
-              "line": 10,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "detect_3d_tools",
-          "definitions": [
-            {
-              "file": "toolchain_3d.py",
-              "line": 18,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "generator_backend_status",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 84,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "raster_backend_status",
-          "definitions": [
-            {
-              "file": "raster_pack.py",
-              "line": 712,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "select_generation_backend",
-          "definitions": [
-            {
-              "file": "generator_backends.py",
-              "line": 410,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 5
+      "symbol_dependencies": [],
+      "dependency_count": 0
     },
-    "OperationalStatusTests": {
+    "_cloudflare_runtime_fallback_count": {
       "source": {
-        "file": "tests/test_operational_status.py",
-        "start": 8,
-        "end": 235
+        "file": "remote_batch.py",
+        "start": 27,
+        "end": 38
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_safe_id": {
+      "source": {
+        "file": "remote_batch.py",
+        "start": 41,
+        "end": 45
       },
       "symbol_dependencies": [
         {
-          "symbol": "build_operational_status",
+          "symbol": "RemoteBatchError",
           "definitions": [
             {
-              "file": "operational_status.py",
-              "line": 17,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "test_cloudflare_free_raster_is_reported_as_ready_without_cli",
-          "definitions": [
-            {
-              "file": "tests/test_operational_status.py",
-              "line": 94,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_imagen_codex_reports_required_token_names",
-          "definitions": [
-            {
-              "file": "tests/test_operational_status.py",
-              "line": 66,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_manual_raster_backend_is_not_reported_as_auto_route",
-          "definitions": [
-            {
-              "file": "tests/test_operational_status.py",
-              "line": 148,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_missing_optional_tools_are_reported_without_crashing",
-          "definitions": [
-            {
-              "file": "tests/test_operational_status.py",
-              "line": 43,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_qwen_colab_queue_counts_as_queued_generation_capability",
-          "definitions": [
-            {
-              "file": "tests/test_operational_status.py",
-              "line": 194,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_ready_matrix_is_machine_readable",
-          "definitions": [
-            {
-              "file": "tests/test_operational_status.py",
-              "line": 9,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "which",
-          "definitions": [
-            {
-              "file": "tests/test_operational_status.py",
-              "line": 10,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_operational_status.py",
-              "line": 67,
-              "kind": "function",
+              "file": "remote_batch.py",
+              "line": 15,
+              "kind": "class",
               "language": "python"
             }
           ],
           "relation": "same_file"
         }
       ],
-      "dependency_count": 8
+      "dependency_count": 1
     },
-    "test_ready_matrix_is_machine_readable": {
+    "_ordered_items": {
       "source": {
-        "file": "tests/test_operational_status.py",
-        "start": 9,
-        "end": 41
+        "file": "remote_batch.py",
+        "start": 48,
+        "end": 97
       },
       "symbol_dependencies": [
         {
-          "symbol": "build_operational_status",
+          "symbol": "RemoteBatchError",
           "definitions": [
             {
-              "file": "operational_status.py",
-              "line": 17,
-              "kind": "function",
+              "file": "remote_batch.py",
+              "line": 15,
+              "kind": "class",
               "language": "python"
             }
           ],
-          "relation": "imported_module"
+          "relation": "same_file"
         },
         {
-          "symbol": "which",
+          "symbol": "_safe_id",
           "definitions": [
             {
-              "file": "tests/test_operational_status.py",
-              "line": 10,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_operational_status.py",
-              "line": 67,
+              "file": "remote_batch.py",
+              "line": 41,
               "kind": "function",
               "language": "python"
             }
@@ -236,19 +88,180 @@
       ],
       "dependency_count": 2
     },
-    "which": {
+    "run": {
       "source": {
-        "file": "tests/test_operational_status.py",
-        "start": 10,
-        "end": 130
+        "file": "remote_batch.py",
+        "start": 100,
+        "end": 321
       },
       "symbol_dependencies": [
         {
-          "symbol": "build_operational_status",
+          "symbol": "RemoteBatchError",
           "definitions": [
             {
-              "file": "operational_status.py",
-              "line": 17,
+              "file": "remote_batch.py",
+              "line": 15,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_cloudflare_runtime_fallback_count",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 27,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_fallback_count",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 19,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_ordered_items",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 48,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_safe_id",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 41,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 5
+    },
+    "main": {
+      "source": {
+        "file": "remote_batch.py",
+        "start": 324,
+        "end": 342
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "run",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 100,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "request": {
+      "source": {
+        "file": "tests/test_remote_batch.py",
+        "start": 10,
+        "end": 34
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "RemoteBatchTests": {
+      "source": {
+        "file": "tests/test_remote_batch.py",
+        "start": 37,
+        "end": 261
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 101,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 193,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 245,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "fake_run",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 57,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 153,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 221,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "request",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "run",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 100,
               "kind": "function",
               "language": "python"
             }
@@ -256,11 +269,11 @@
           "relation": "imported_module"
         },
         {
-          "symbol": "test_cloudflare_free_raster_is_reported_as_ready_without_cli",
+          "symbol": "test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures",
           "definitions": [
             {
-              "file": "tests/test_operational_status.py",
-              "line": 94,
+              "file": "tests/test_remote_batch.py",
+              "line": 130,
               "kind": "function",
               "language": "python"
             }
@@ -268,11 +281,11 @@
           "relation": "same_file"
         },
         {
-          "symbol": "test_imagen_codex_reports_required_token_names",
+          "symbol": "test_dependency_order_and_reference_are_preserved",
           "definitions": [
             {
-              "file": "tests/test_operational_status.py",
-              "line": 66,
+              "file": "tests/test_remote_batch.py",
+              "line": 38,
               "kind": "function",
               "language": "python"
             }
@@ -280,11 +293,163 @@
           "relation": "same_file"
         },
         {
-          "symbol": "test_missing_optional_tools_are_reported_without_crashing",
+          "symbol": "test_remote_batch_propagates_library_version_metadata",
           "definitions": [
             {
-              "file": "tests/test_operational_status.py",
-              "line": 43,
+              "file": "tests/test_remote_batch.py",
+              "line": 211,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 7
+    },
+    "test_dependency_order_and_reference_are_preserved": {
+      "source": {
+        "file": "tests/test_remote_batch.py",
+        "start": 38,
+        "end": 128
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 101,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 193,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 245,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "fake_run",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 57,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 153,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 221,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "request",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "run",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 100,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "fake_run": {
+      "source": {
+        "file": "tests/test_remote_batch.py",
+        "start": 57,
+        "end": 177
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "Result",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 101,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 193,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 245,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "request",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "run",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 100,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 130,
               "kind": "function",
               "language": "python"
             }
@@ -294,19 +459,55 @@
       ],
       "dependency_count": 4
     },
-    "test_missing_optional_tools_are_reported_without_crashing": {
+    "Result": {
       "source": {
-        "file": "tests/test_operational_status.py",
-        "start": 43,
-        "end": 63
+        "file": "tests/test_remote_batch.py",
+        "start": 101,
+        "end": 221
       },
       "symbol_dependencies": [
         {
-          "symbol": "build_operational_status",
+          "symbol": "fake_run",
           "definitions": [
             {
-              "file": "operational_status.py",
-              "line": 17,
+              "file": "tests/test_remote_batch.py",
+              "line": 57,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 153,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 221,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "request",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "run",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 100,
               "kind": "function",
               "language": "python"
             }
@@ -314,17 +515,23 @@
           "relation": "imported_module"
         },
         {
-          "symbol": "which",
+          "symbol": "test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures",
           "definitions": [
             {
-              "file": "tests/test_operational_status.py",
-              "line": 10,
+              "file": "tests/test_remote_batch.py",
+              "line": 130,
               "kind": "function",
               "language": "python"
-            },
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_remote_batch_propagates_library_version_metadata",
+          "definitions": [
             {
-              "file": "tests/test_operational_status.py",
-              "line": 67,
+              "file": "tests/test_remote_batch.py",
+              "line": 211,
               "kind": "function",
               "language": "python"
             }
@@ -332,167 +539,171 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 2
+      "dependency_count": 5
     },
-    "test_imagen_codex_reports_required_token_names": {
+    "test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures": {
       "source": {
-        "file": "tests/test_operational_status.py",
-        "start": 66,
-        "end": 91
+        "file": "tests/test_remote_batch.py",
+        "start": 130,
+        "end": 209
       },
       "symbol_dependencies": [
         {
-          "symbol": "build_operational_status",
+          "symbol": "Result",
           "definitions": [
             {
-              "file": "operational_status.py",
-              "line": 17,
-              "kind": "function",
+              "file": "tests/test_remote_batch.py",
+              "line": 101,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 193,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 245,
+              "kind": "class",
               "language": "python"
             }
           ],
-          "relation": "imported_module"
+          "relation": "same_file"
         },
         {
-          "symbol": "which",
+          "symbol": "fake_run",
           "definitions": [
             {
-              "file": "tests/test_operational_status.py",
-              "line": 10,
+              "file": "tests/test_remote_batch.py",
+              "line": 57,
               "kind": "function",
               "language": "python"
             },
             {
-              "file": "tests/test_operational_status.py",
-              "line": 67,
+              "file": "tests/test_remote_batch.py",
+              "line": 153,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 221,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "same_file"
+        },
+        {
+          "symbol": "request",
+          "definitions": [
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "run",
+          "definitions": [
+            {
+              "file": "remote_batch.py",
+              "line": 100,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
         }
       ],
-      "dependency_count": 2
+      "dependency_count": 4
     },
-    "test_cloudflare_free_raster_is_reported_as_ready_without_cli": {
+    "test_remote_batch_propagates_library_version_metadata": {
       "source": {
-        "file": "tests/test_operational_status.py",
-        "start": 94,
-        "end": 146
+        "file": "tests/test_remote_batch.py",
+        "start": 211,
+        "end": 261
       },
       "symbol_dependencies": [
         {
-          "symbol": "build_operational_status",
+          "symbol": "Result",
           "definitions": [
             {
-              "file": "operational_status.py",
-              "line": 17,
-              "kind": "function",
+              "file": "tests/test_remote_batch.py",
+              "line": 101,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 193,
+              "kind": "class",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 245,
+              "kind": "class",
               "language": "python"
             }
           ],
-          "relation": "imported_module"
+          "relation": "same_file"
         },
         {
-          "symbol": "which",
+          "symbol": "fake_run",
           "definitions": [
             {
-              "file": "tests/test_operational_status.py",
-              "line": 10,
+              "file": "tests/test_remote_batch.py",
+              "line": 57,
               "kind": "function",
               "language": "python"
             },
             {
-              "file": "tests/test_operational_status.py",
-              "line": 67,
+              "file": "tests/test_remote_batch.py",
+              "line": 153,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_remote_batch.py",
+              "line": 221,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "test_manual_raster_backend_is_not_reported_as_auto_route": {
-      "source": {
-        "file": "tests/test_operational_status.py",
-        "start": 148,
-        "end": 192
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "build_operational_status",
-          "definitions": [
-            {
-              "file": "operational_status.py",
-              "line": 17,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
         },
         {
-          "symbol": "which",
+          "symbol": "request",
           "definitions": [
             {
-              "file": "tests/test_operational_status.py",
+              "file": "tests/test_remote_batch.py",
               "line": 10,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_operational_status.py",
-              "line": 67,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "same_file"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "test_qwen_colab_queue_counts_as_queued_generation_capability": {
-      "source": {
-        "file": "tests/test_operational_status.py",
-        "start": 194,
-        "end": 235
-      },
-      "symbol_dependencies": [
+        },
         {
-          "symbol": "build_operational_status",
+          "symbol": "run",
           "definitions": [
             {
-              "file": "operational_status.py",
-              "line": 17,
+              "file": "remote_batch.py",
+              "line": 100,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "imported_module"
-        },
-        {
-          "symbol": "which",
-          "definitions": [
-            {
-              "file": "tests/test_operational_status.py",
-              "line": 10,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_operational_status.py",
-              "line": 67,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
         }
       ],
-      "dependency_count": 2
+      "dependency_count": 4
     }
   }
 }

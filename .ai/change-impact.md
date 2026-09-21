@@ -1,13 +1,13 @@
 # Change impact
 
-Base: ce5f4364af0774afcdb0c60d206251e05ea8ccab
-Head: 49a46ea502e3dbaac4fc88ce6b7b5074e1882406
+Base: 8f4e4edda8cde7ce4d9656978be9d4ec21ac82fa
+Head: debdd3a63169bce25efebc5e5abe2b67979681a1
 
 ## Changed files
-- M tests/test_operational_status.py
+- M .github/workflows/production-os-batch.yml
 
 ## Affected areas
-- tests
+- .github
 
 ## Related test candidates
 - No direct filename-based test match detected.

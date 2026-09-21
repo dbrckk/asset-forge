@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:10:22Z
+Generated: 2026-09-21T16:11:39Z
 
 ### Git
 - Branch: `main`
-- Head: `49a46ea502e3`
-- Commit date: 2026-09-21T18:09:56+02:00
-- Commit: test: distinguish automatic and explicit raster readiness
+- Head: `debdd3a63169`
+- Commit date: 2026-09-21T18:11:16+02:00
+- Commit: ci: expose batch backend circuit breaker state
 - Tracked files: 291
 
 ### Recently changed files
+- `.github/workflows/production-os-batch.yml`
+- `tests/test_remote_batch.py`
+- `remote_batch.py`
 - `tests/test_operational_status.py`
 - `operational_status.py`
-- `.github/workflows/production-os-batch.yml`
-- `.github/workflows/production-os-dispatch.yml`
-- `tests/test_remote_batch.py`
 
 ### Project signals
 - `pyproject.toml`

@@ -568,6 +568,11 @@ jobs:
               if isinstance(result.get("quality_summary"), dict)
               else {}
           )
+          breaker = (
+              routing.get("circuit_breaker")
+              if isinstance(routing.get("circuit_breaker"), dict)
+              else {}
+          )
           summary = Path(os.environ["GITHUB_STEP_SUMMARY"])
           with summary.open("a", encoding="utf-8") as fh:
               fh.write("## Asset Forge batch\n\n")
@@ -578,6 +583,10 @@ jobs:
               )
               fh.write(
                   f"- Final backends: `{json.dumps(routing.get('final_backends', {}), sort_keys=True)}`\n"
+              )
+              fh.write(
+                  f"- Circuit breaker: `{'open' if breaker.get('open') else 'closed'}`"
+                  f" (override: `{breaker.get('override')}`)\n"
               )
               fh.write(f"- Quality checked: `{quality.get('checked', 0)}`\n")
               fh.write(f"- Regenerated: `{quality.get('regenerated', 0)}`\n")
@@ -4033,6 +4042,18 @@ stderr = ""
 result = run(spec, root / "out")
 ⋮----
 reference = Path(commands[1][commands[1].index("--reference") + 1])
+⋮----
+def test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures(self)
+⋮----
+backends = []
+⋮----
+selected_backend = cmd[cmd.index("--backend") + 1]
+⋮----
+routing = {
+⋮----
+result = run(spec, root / "out", backend="auto")
+⋮----
+breaker = result["routing_summary"]["circuit_breaker"]
 ⋮----
 def test_remote_batch_propagates_library_version_metadata(self)
 ⋮----
@@ -9949,8 +9970,17 @@ The controller can also import/export clipboard payloads with `get()` and `set()
 ## File: remote_batch.py
 ````python
 RASTER_SUFFIXES = {".png", ".webp", ".jpg", ".jpeg"}
+AUTO_BACKEND_CIRCUIT_BREAKER_FAILURES = 2
 ⋮----
 class RemoteBatchError(RuntimeError)
+⋮----
+def _fallback_count(routing: dict) -> int
+⋮----
+raw = routing.get("fallbackCount") if isinstance(routing, dict) else None
+⋮----
+fallbacks = routing.get("fallbacks") if isinstance(routing, dict) else None
+⋮----
+def _cloudflare_runtime_fallback_count(routing: dict) -> int
 ⋮----
 def _safe_id(value: str) -> str
 ⋮----
@@ -9990,6 +10020,8 @@ bundle_root = output_root / "bundle"
 ⋮----
 artifacts: dict[str, Path] = {}
 results = []
+auto_backend_override: str | None = None
+cloudflare_runtime_failures = 0
 ⋮----
 item_id = item["_id"]
 request = item["request"]
@@ -10000,6 +10032,7 @@ item_root = output_root / "jobs" / request_id
 ⋮----
 request_path = item_root / "request.json"
 ⋮----
+item_backend = auto_backend_override or backend
 cmd = [
 ⋮----
 source_path = str(item.get("source_path") or "").strip()
@@ -10048,6 +10081,8 @@ bundled_extra = bundle_root / bundle_name
 generation = report.get("generation") if isinstance(report.get("generation"), dict) else {}
 validation = report.get("validation") if isinstance(report.get("validation"), dict) else {}
 routing = report.get("routing") if isinstance(report.get("routing"), dict) else {}
+⋮----
+auto_backend_override = "kaggle-qwen"
 ⋮----
 quality = [item["visual_similarity"] for item in results if item["visual_similarity"]]
 scores = [

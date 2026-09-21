@@ -1,211 +1,142 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "b5b46bc7e17958ece2629c5dadee81e84fcd8ff2",
-  "head": "49a46ea502e3dbaac4fc88ce6b7b5074e1882406",
+  "base": "49a46ea502e3dbaac4fc88ce6b7b5074e1882406",
+  "head": "debdd3a63169bce25efebc5e5abe2b67979681a1",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "operational_status.py",
+      "path": ".github/workflows/production-os-batch.yml",
       "status": "M"
     },
     {
-      "path": "tests/test_operational_status.py",
+      "path": "remote_batch.py",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_remote_batch.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
-    "operational_status.py",
-    "tests/test_operational_status.py"
+    "remote_batch.py",
+    "tests/test_remote_batch.py"
   ],
   "impacted_files": [
-    "asset_forge.py",
-    "operational_status.py",
-    "tests/test_operational_status.py"
+    "remote_batch.py",
+    "tests/test_remote_batch.py"
   ],
   "impacted_symbols": [
     {
-      "name": "load_json",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 72
+      "name": "RemoteBatchError",
+      "kind": "class",
+      "file": "remote_batch.py",
+      "line": 15
     },
     {
-      "name": "validate_manifest",
+      "name": "_fallback_count",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 80
+      "file": "remote_batch.py",
+      "line": 19
     },
     {
-      "name": "is_power_of_two",
+      "name": "_cloudflare_runtime_fallback_count",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 138
+      "file": "remote_batch.py",
+      "line": 27
     },
     {
-      "name": "sprite_grid",
+      "name": "_safe_id",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 142
+      "file": "remote_batch.py",
+      "line": 41
     },
     {
-      "name": "build_atlas_manifest",
+      "name": "_ordered_items",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 163
+      "file": "remote_batch.py",
+      "line": 48
     },
     {
-      "name": "validate_raster_file",
+      "name": "run",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 194
-    },
-    {
-      "name": "select_tools",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 253
-    },
-    {
-      "name": "build_plan",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 271
-    },
-    {
-      "name": "load_valid_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 300
-    },
-    {
-      "name": "cmd_validate",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 316
-    },
-    {
-      "name": "cmd_plan",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 324
-    },
-    {
-      "name": "cmd_validate_raster",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 332
-    },
-    {
-      "name": "cmd_atlas_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 346
-    },
-    {
-      "name": "execute_compiled_production_job",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 370
-    },
-    {
-      "name": "_write_production_inputs",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 424
-    },
-    {
-      "name": "_persist_enriched_production_report",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 440
-    },
-    {
-      "name": "_enrich_engine_handoff",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 453
-    },
-    {
-      "name": "parser",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 534
+      "file": "remote_batch.py",
+      "line": 100
     },
     {
       "name": "main",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 748
+      "file": "remote_batch.py",
+      "line": 324
     },
     {
-      "name": "_first_ready_backend",
+      "name": "request",
       "kind": "function",
-      "file": "operational_status.py",
+      "file": "tests/test_remote_batch.py",
       "line": 10
     },
     {
-      "name": "build_operational_status",
-      "kind": "function",
-      "file": "operational_status.py",
-      "line": 17
-    },
-    {
-      "name": "OperationalStatusTests",
+      "name": "RemoteBatchTests",
       "kind": "class",
-      "file": "tests/test_operational_status.py",
-      "line": 8
+      "file": "tests/test_remote_batch.py",
+      "line": 37
     },
     {
-      "name": "test_ready_matrix_is_machine_readable",
+      "name": "test_dependency_order_and_reference_are_preserved",
       "kind": "function",
-      "file": "tests/test_operational_status.py",
-      "line": 9
+      "file": "tests/test_remote_batch.py",
+      "line": 38
     },
     {
-      "name": "which",
+      "name": "fake_run",
       "kind": "function",
-      "file": "tests/test_operational_status.py",
-      "line": 10
+      "file": "tests/test_remote_batch.py",
+      "line": 57
     },
     {
-      "name": "test_missing_optional_tools_are_reported_without_crashing",
-      "kind": "function",
-      "file": "tests/test_operational_status.py",
-      "line": 43
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_remote_batch.py",
+      "line": 101
     },
     {
-      "name": "test_imagen_codex_reports_required_token_names",
+      "name": "test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures",
       "kind": "function",
-      "file": "tests/test_operational_status.py",
-      "line": 66
+      "file": "tests/test_remote_batch.py",
+      "line": 130
     },
     {
-      "name": "which",
+      "name": "fake_run",
       "kind": "function",
-      "file": "tests/test_operational_status.py",
-      "line": 67
+      "file": "tests/test_remote_batch.py",
+      "line": 153
     },
     {
-      "name": "test_cloudflare_free_raster_is_reported_as_ready_without_cli",
-      "kind": "function",
-      "file": "tests/test_operational_status.py",
-      "line": 94
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_remote_batch.py",
+      "line": 193
     },
     {
-      "name": "test_manual_raster_backend_is_not_reported_as_auto_route",
+      "name": "test_remote_batch_propagates_library_version_metadata",
       "kind": "function",
-      "file": "tests/test_operational_status.py",
-      "line": 148
+      "file": "tests/test_remote_batch.py",
+      "line": 211
     },
     {
-      "name": "test_qwen_colab_queue_counts_as_queued_generation_capability",
+      "name": "fake_run",
       "kind": "function",
-      "file": "tests/test_operational_status.py",
-      "line": 194
+      "file": "tests/test_remote_batch.py",
+      "line": 221
+    },
+    {
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_remote_batch.py",
+      "line": 245
     }
   ],
   "selected_tests": [
-    "tests/test_operational_status.py"
+    "tests/test_remote_batch.py"
   ]
 }
