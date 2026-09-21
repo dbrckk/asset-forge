@@ -96,16 +96,17 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T13:31:45Z
+Generated: 2026-09-21T13:57:19Z
 
 ### Git
 - Branch: `main`
-- Head: `007501188030`
-- Commit date: 2026-09-21T15:31:32+02:00
-- Commit: fix: avoid meta tensors in Qwen text encoder
+- Head: `a982b92f5491`
+- Commit date: 2026-09-21T15:57:06+02:00
+- Commit: fix: validate all generated pilot assets
 - Tracked files: 290
 
 ### Recently changed files
+- `.github/workflows/deadline-zero-live-pilot.yml`
 - `kaggle_backend.py`
 
 ### Project signals
