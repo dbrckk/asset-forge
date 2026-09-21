@@ -96,20 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T19:08:50Z
+Generated: 2026-09-21T19:29:30Z
 
 ### Git
 - Branch: `main`
-- Head: `b8b4f4161bd8`
-- Commit date: 2026-09-21T21:08:23+02:00
-- Commit: test: lock premium prompt quality guards
+- Head: `a58fe2485467`
+- Commit date: 2026-09-21T21:29:02+02:00
+- Commit: test: cover diagnostic-aware retry guidance
 - Tracked files: 305
 
 ### Recently changed files
 - `tests/test_generator_backends.py`
 - `generator_backends.py`
 - `backend_history.py`
-- `tests/test_backend_history.py`
 
 ### Project signals
 - `pyproject.toml`

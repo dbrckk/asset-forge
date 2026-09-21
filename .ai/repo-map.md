@@ -3104,6 +3104,10 @@ value = job()
 ⋮----
 prompt = build_generation_prompt(value)
 ⋮----
+def test_technical_retry_guidance_targets_measured_failures(self)
+⋮----
+guidance = _technical_retry_guidance({
+⋮----
 def test_pollinations_command_never_contains_api_key(self)
 ⋮----
 command = pollinations_command(
@@ -6430,6 +6434,25 @@ frames = constraints.get("expectedFrames")
 ⋮----
 prompt = " ".join(details)
 ⋮----
+def _technical_retry_guidance(result: dict | None) -> str
+⋮----
+metrics = result.get("metrics") if isinstance(result.get("metrics"), dict) else {}
+errors = [str(v) for v in (result.get("errors") or [])]
+warnings = [str(v) for v in (result.get("warnings") or [])]
+guidance = []
+⋮----
+border = metrics.get("borderAlphaRatio")
+⋮----
+occupancy = metrics.get("occupancy")
+⋮----
+contrast = metrics.get("contrastSpan")
+⋮----
+unique = metrics.get("uniqueFrameRatio")
+⋮----
+drift = metrics.get("maxFrameCenterDrift")
+⋮----
+combined = " ".join(errors + warnings).lower()
+⋮----
 prompt = build_generation_prompt(job)
 ⋮----
 effective_model = model
@@ -6528,6 +6551,7 @@ stdout = ""
 ⋮----
 previous_similarity_failed = False
 previous_technical_failed = False
+previous_technical_result = None
 ⋮----
 retry_guidance = []
 ⋮----
@@ -6615,6 +6639,7 @@ technical_passed = True
 ⋮----
 technical = technical_quality_evaluator(
 ⋮----
+previous_technical_result = technical if isinstance(technical, dict) else None
 technical_score = (
 ⋮----
 technical_passed = (

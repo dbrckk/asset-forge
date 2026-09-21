@@ -1,7 +1,7 @@
 # Change impact
 
-Base: 7a33d5afde2ea8ec854bb3c01964fc21a6552c83
-Head: b8b4f4161bd8cfdc7a63fe0793158b229c23b40b
+Base: 6054c7ab2d1f04e76f577601bb64e6c42a0c77a8
+Head: a58fe2485467673542aefb3c884d840f70739168
 
 ## Changed files
 - M tests/test_generator_backends.py
