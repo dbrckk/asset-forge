@@ -7,61 +7,115 @@ from raster_pack import raster_backend_status
 from toolchain_3d import detect_3d_tools
 
 
+def _first_ready_backend(*candidates: tuple[str, dict]) -> str | None:
+    for name, status in candidates:
+        if isinstance(status, dict) and status.get("rasterReady") is True:
+            return name
+    return None
+
+
 def build_operational_status(*, environ=None, home=None, which=shutil.which) -> dict:
     generation = generator_backend_status(environ=environ, home=home)
     raster = raster_backend_status()
     tools_3d = detect_3d_tools()
 
-    pollinations = generation["pollinations"]
+    cloudflare = generation.get("cloudflare", {})
+    kaggle_qwen = generation.get("kaggleQwen", {})
+    pollinations = generation.get("pollinations", {})
     imagen_codex = generation.get("imagenCodex", {})
-    imagen_installed = bool(imagen_codex.get("installed"))
-    imagen_authenticated = bool(imagen_codex.get("authenticated"))
+    qwen_colab = generation.get("qwenColab", {})
+
+    cloudflare_raster = bool(cloudflare.get("rasterReady"))
+    kaggle_raster = bool(kaggle_qwen.get("rasterReady"))
+    pollinations_raster = bool(pollinations.get("rasterVectorReady"))
+    imagen_raster = bool(imagen_codex.get("rasterReady"))
+    queued_qwen = bool(qwen_colab.get("queueReady"))
+
+    direct_raster_ready = any(
+        (
+            cloudflare_raster,
+            kaggle_raster,
+            pollinations_raster,
+            imagen_raster,
+        )
+    )
+    free_raster_ready = cloudflare_raster or kaggle_raster
+
     webp_encode = bool(
         raster.get("webp", {}).get("encode", {}).get("available", False)
     )
     godot_executable = which("godot4") or which("godot")
 
     capabilities = {
-        "rasterPng": bool(
-            pollinations.get("rasterVectorReady")
-            or imagen_codex.get("rasterReady")
-        ),
-        "rasterWebp": bool(
-            pollinations.get("rasterVectorReady")
-            or imagen_codex.get("rasterReady")
-        ) and webp_encode,
+        "rasterPng": direct_raster_ready,
+        "rasterWebp": direct_raster_ready and webp_encode,
         "vectorSvg": bool(pollinations.get("rasterVectorReady")),
         "threeDGlb": bool(pollinations.get("threeDReady")),
         "godotImport": godot_executable is not None,
-        "imagenCodexRaster": bool(imagen_codex.get("rasterReady")),
+        "cloudflareRaster": cloudflare_raster,
+        "kaggleQwenRaster": kaggle_raster,
+        "freeRaster": free_raster_ready,
+        "qwenColabQueue": queued_qwen,
+        "pollinationsRaster": pollinations_raster,
+        "imagenCodexRaster": imagen_raster,
     }
 
+    preferred_raster_backend = _first_ready_backend(
+        ("cloudflare", cloudflare),
+        ("kaggle-qwen", kaggle_qwen),
+        (
+            "pollinations",
+            {"rasterReady": pollinations.get("rasterVectorReady") is True},
+        ),
+        ("imagen-codex", imagen_codex),
+    )
+
     blockers = []
-    if not pollinations.get("installed") and not imagen_installed:
-        blockers.append("no image generation CLI is installed (polli or imagen)")
-    if (
-        not pollinations.get("authenticated")
-        and not imagen_authenticated
-    ):
-        blockers.append("no image generation backend is authenticated")
-    if imagen_installed and not imagen_authenticated:
-        blockers.append(
-            "imagen-codex requires CODEX_ACCESS_TOKEN or CHATGPT_ACCESS_TOKEN; IMAGEN_API_KEY is not used"
-        )
-    if not webp_encode:
+    if not capabilities["rasterPng"]:
+        if queued_qwen:
+            blockers.append(
+                "no direct raster backend is ready; Qwen Colab batch queue is available"
+            )
+        else:
+            blockers.append(
+                "no authenticated raster generation backend is ready "
+                "(Cloudflare, Kaggle Qwen, Pollinations, or imagen-codex)"
+            )
+    if capabilities["rasterPng"] and not webp_encode:
         blockers.append("Pillow/libwebp is unavailable for WebP output")
-    if not pollinations.get("threeDReady"):
-        blockers.append("POLLINATIONS_API_KEY is required for server-side 3D generation")
+    if not capabilities["vectorSvg"]:
+        blockers.append(
+            "no authenticated SVG generation backend is ready"
+        )
+    if not capabilities["threeDGlb"]:
+        blockers.append(
+            "no authenticated 3D generation backend is ready"
+        )
     if godot_executable is None:
         blockers.append("Godot executable is unavailable for real import validation")
+
+    imagen_installed = bool(imagen_codex.get("installed"))
+    imagen_authenticated = bool(imagen_codex.get("authenticated"))
+    if (
+        imagen_installed
+        and not imagen_authenticated
+        and not direct_raster_ready
+        and not queued_qwen
+    ):
+        blockers.append(
+            "imagen-codex requires CODEX_ACCESS_TOKEN or CHATGPT_ACCESS_TOKEN; "
+            "IMAGEN_API_KEY is not used"
+        )
 
     return {
         "schema": "asset-forge/operational-status/v1",
         "ready": {
-            "anyGeneratedAsset": any(
-                capabilities[name]
-                for name in ("rasterPng", "rasterWebp", "vectorSvg", "threeDGlb")
-            ),
+            "anyGeneratedAsset": direct_raster_ready
+            or capabilities["vectorSvg"]
+            or capabilities["threeDGlb"]
+            or queued_qwen,
+            "raster": direct_raster_ready,
+            "queuedRaster": queued_qwen,
             "rasterVector": capabilities["rasterPng"] and capabilities["vectorSvg"],
             "threeD": capabilities["threeDGlb"],
             "full": (
@@ -71,6 +125,11 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
                 and capabilities["threeDGlb"]
                 and capabilities["godotImport"]
             ),
+        },
+        "routing": {
+            "preferredRasterBackend": preferred_raster_backend,
+            "queuedRasterBackend": "qwen-colab" if queued_qwen else None,
+            "freeRasterReady": free_raster_ready,
         },
         "capabilities": capabilities,
         "generation": generation,
