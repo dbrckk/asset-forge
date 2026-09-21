@@ -64,7 +64,18 @@ import torch
 from PIL import Image
 from diffusers import QwenImage21Pipeline
 
-job = json.loads(Path("/kaggle/working/job.json").read_text())
+def _input_file(name):
+    candidates = [
+        Path("/kaggle/working") / name,
+        Path("/kaggle/src") / name,
+        Path(__file__).resolve().parent / name,
+    ]
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+    raise FileNotFoundError(f"{name} not found in Kaggle working/source directories")
+
+job = json.loads(_input_file("job.json").read_text())
 model = job.get("model") or "Qwen/Qwen-Image-2.1"
 pipe = QwenImage21Pipeline.from_pretrained(model, torch_dtype=torch.float16)
 pipe.enable_model_cpu_offload()
@@ -76,8 +87,16 @@ kwargs = {
     "num_inference_steps": int(job.get("steps") or 20),
     "generator": torch.Generator(device="cuda").manual_seed(int(job.get("seed") or 0)),
 }
-reference = Path("/kaggle/working/reference.png")
-if reference.is_file():
+reference = None
+for candidate in (
+    Path("/kaggle/working/reference.png"),
+    Path("/kaggle/src/reference.png"),
+    Path(__file__).resolve().parent / "reference.png",
+):
+    if candidate.is_file():
+        reference = candidate
+        break
+if reference is not None:
     kwargs["image"] = Image.open(reference).convert("RGBA")
 
 image = pipe(**kwargs).images[0]
