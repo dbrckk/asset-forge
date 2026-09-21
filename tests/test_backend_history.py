@@ -148,6 +148,38 @@ class BackendHistoryTests(unittest.TestCase):
             self.assertEqual(stats["successes"], 1)
             self.assertEqual(stats["regenerations"], 2)
 
+    def test_retry_strategy_effectiveness_is_learned(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "history.json"
+            history = record_generation_result(path, {
+                "backend": "kaggle-qwen",
+                "fallbacks": [],
+                "technicalQuality": {
+                    "attempts": [
+                        {"score": 0.52, "passed": False, "retryCategories": []},
+                        {
+                            "score": 0.74,
+                            "passed": False,
+                            "retryCategories": ["contrast", "border-clearance"],
+                        },
+                        {
+                            "score": 0.91,
+                            "passed": True,
+                            "retryCategories": ["contrast"],
+                        },
+                    ],
+                },
+            })
+
+            strategies = history["backends"]["kaggle-qwen"]["retryStrategies"]
+            self.assertEqual(strategies["contrast"]["attempts"], 2)
+            self.assertEqual(strategies["contrast"]["improvements"], 2)
+            self.assertEqual(strategies["contrast"]["passes"], 1)
+            self.assertAlmostEqual(strategies["contrast"]["scoreDeltaSum"], 0.39)
+            self.assertEqual(strategies["border-clearance"]["attempts"], 1)
+            self.assertEqual(strategies["border-clearance"]["improvements"], 1)
+            self.assertEqual(strategies["border-clearance"]["passes"], 0)
+
     def test_3d_result_learns_from_nested_reference_generation(self):
         with tempfile.TemporaryDirectory() as td:
             path = Path(td) / "history.json"
