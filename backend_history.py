@@ -108,6 +108,18 @@ def record_generation_result(path: Path | str | None, result: dict) -> dict:
     if final_backend:
         _record(history, final_backend, success=True, quality=quality)
 
+    reference_generation = result.get("referenceGeneration")
+    if isinstance(reference_generation, dict):
+        reference_backend = str(reference_generation.get("backend") or "").strip()
+        if reference_backend:
+            reference_quality = _quality_from_generation(reference_generation)
+            _record(
+                history,
+                reference_backend,
+                success=reference_generation.get("success") is True,
+                quality=reference_quality,
+            )
+
     metadata = result.get("metadata")
     raster_backend = (
         str(metadata.get("rasterBackend") or "").strip()
