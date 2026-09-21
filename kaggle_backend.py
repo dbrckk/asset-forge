@@ -93,6 +93,47 @@ Path("/kaggle/working/result.json").write_text(json.dumps({
 '''
 
 
+def _extract_kaggle_diagnostic(path: Path) -> str:
+    raw = path.read_text(encoding="utf-8", errors="replace").strip()
+    if not raw:
+        return ""
+    stderr_parts: list[str] = []
+    fallback_parts: list[str] = []
+    for line in raw.splitlines():
+        line = line.strip().rstrip(",")
+        if not line:
+            continue
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError:
+            fallback_parts.append(line)
+            continue
+        if isinstance(record, dict):
+            data = str(record.get("data") or "")
+            if not data:
+                continue
+            stream = str(record.get("stream_name") or "").lower()
+            if stream == "stderr":
+                stderr_parts.append(data)
+            else:
+                fallback_parts.append(data)
+    preferred = "".join(stderr_parts).strip() or "".join(fallback_parts).strip() or raw
+    markers = (
+        "Traceback (most recent call last):",
+        "RuntimeError:",
+        "ImportError:",
+        "ModuleNotFoundError:",
+        "ValueError:",
+        "TypeError:",
+        "CUDA out of memory",
+    )
+    positions = [preferred.rfind(marker) for marker in markers if marker in preferred]
+    positions = [pos for pos in positions if pos >= 0]
+    if positions:
+        preferred = preferred[min(positions):]
+    return preferred[-12000:]
+
+
 def _run(command: list[str], *, timeout: float, runner=subprocess.run) -> subprocess.CompletedProcess:
     completed = runner(
         command,
@@ -231,7 +272,12 @@ def generate(
                     except OSError:
                         continue
                     if body:
-                        diagnostics.append(f"{candidate.name}: {body[-4000:]}")
+                        if candidate.suffix.lower() == ".log":
+                            extracted = _extract_kaggle_diagnostic(candidate)
+                            if extracted:
+                                diagnostics.append(f"{candidate.name}: {extracted}")
+                        else:
+                            diagnostics.append(f"{candidate.name}: {body[-4000:]}")
             detail = "; ".join(diagnostics)[-8000:] if diagnostics else "no diagnostic output was returned"
             raise KaggleGenerationError(f"{terminal_error}; diagnostics: {detail}")
         generated = download_dir / "asset.png"
