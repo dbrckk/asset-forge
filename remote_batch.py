@@ -327,7 +327,7 @@ def main(argv=None) -> int:
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument(
         "--backend",
-        choices=["auto", "cloudflare", "kaggle-qwen", "qwen-colab", "pollinations", "imagen-codex"],
+        choices=["auto", "cloudflare", "kaggle-qwen", "qwen-colab", "pollinations", "imagen-codex", "vtracer"],
         default="auto",
     )
     parser.add_argument("--model")
