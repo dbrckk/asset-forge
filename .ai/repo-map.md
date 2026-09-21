@@ -2895,9 +2895,15 @@ kaggle = history["backends"]["kaggle-qwen"]
 ⋮----
 persisted = load_history(path)
 ⋮----
-def test_vector_result_records_underlying_raster_backend(self)
+def test_3d_result_learns_from_nested_reference_generation(self)
 ⋮----
 history = record_generation_result(path, {
+⋮----
+triposr = history["backends"]["kaggle-triposr"]
+⋮----
+raster = history["backends"]["kaggle-qwen"]
+⋮----
+def test_vector_result_records_underlying_raster_backend(self)
 ````
 
 ## File: tests/test_blender_adapter.py
@@ -3232,6 +3238,10 @@ def test_3d_generation_requires_configured_backend(self)
 def test_auto_3d_secondary_prefers_free_kaggle_triposr(self)
 ⋮----
 def kaggle_generator(reference_path, output, **kwargs)
+⋮----
+def test_3d_generation_persists_backend_history(self)
+⋮----
+history = __import__("json").loads(history_path.read_text())
 ⋮----
 def test_auto_3d_primary_prefers_pollinations_trellis(self)
 ⋮----
@@ -6074,6 +6084,12 @@ source = str(fallback.get("from") or "").strip()
 ⋮----
 final_backend = str(result.get("backend") or "").strip()
 ⋮----
+reference_generation = result.get("referenceGeneration")
+⋮----
+reference_backend = str(reference_generation.get("backend") or "").strip()
+⋮----
+reference_quality = _quality_from_generation(reference_generation)
+⋮----
 metadata = result.get("metadata")
 raster_backend = (
 ⋮----
@@ -6096,6 +6112,10 @@ quality_sum = float(value.get("qualitySum") or 0.0)
 ⋮----
 reliability = max(0.0, min(1.0, successes / max(1, attempts)))
 quality = (
+⋮----
+# Do not penalize a backend merely because older successful runs did
+# not yet emit quality telemetry. Reliability plus configured priority
+# must still be able to outrank an entirely unknown alternative.
 ⋮----
 ready = [str(value) for value in ready_backends if str(value)]
 ⋮----
@@ -6631,6 +6651,8 @@ output = out / "generated-source.glb"
 metadata = kaggle_generator(
 ⋮----
 effective_model = DEFAULT_3D_MODEL
+⋮----
+history_path = _backend_history_path(environ=env)
 ⋮----
 api_key = str(env.get("POLLINATIONS_API_KEY") or "").strip()
 ⋮----

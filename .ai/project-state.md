@@ -96,21 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:53:29Z
+Generated: 2026-09-21T18:18:11Z
 
 ### Git
 - Branch: `main`
-- Head: `a14ff81d55db`
-- Commit date: 2026-09-21T18:53:19+02:00
-- Commit: ci: allow Kaggle 3D production startup time
+- Head: `8db76fb2266e`
+- Commit date: 2026-09-21T20:17:54+02:00
+- Commit: fix: avoid penalizing reliable backends without quality samples
 - Tracked files: 305
 
 ### Recently changed files
-- `.github/workflows/production-os-dispatch.yml`
-- `README.md`
-- `tests/test_operational_status.py`
-- `tests/test_production_executor.py`
+- `backend_history.py`
 - `tests/test_generator_backends.py`
+- `generator_backends.py`
+- `tests/test_backend_history.py`
 
 ### Project signals
 - `pyproject.toml`

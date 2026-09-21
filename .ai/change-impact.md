@@ -1,16 +1,16 @@
 # Change impact
 
-Base: a7c957f5efe047b0afae75687295c902ba8df59e
-Head: a14ff81d55db60e3ba2fc9c2c63db5b03f011981
+Base: 1a1d3229f15bb769d02c294368664615ff082070
+Head: 8db76fb2266e4d2f13d8562fe3763f56eefc0677
 
 ## Changed files
-- M .github/workflows/production-os-dispatch.yml
+- M backend_history.py
 
 ## Affected areas
-- .github
+- (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_backend_history.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.
