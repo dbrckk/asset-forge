@@ -145,6 +145,60 @@ class OperationalStatusTests(unittest.TestCase):
             any("no authenticated raster generation backend" in value for value in status["blockers"])
         )
 
+    def test_free_vtracer_vector_route_is_reported(self):
+        with patch(
+            "operational_status.generator_backend_status",
+            return_value={
+                "cloudflare": {"rasterReady": True},
+                "kaggleQwen": {"rasterReady": False},
+                "vtracer": {
+                    "vectorizeReady": True,
+                    "vectorSvgReady": True,
+                    "freeRasterReady": True,
+                },
+                "pollinations": {
+                    "installed": False,
+                    "authenticated": False,
+                    "rasterVectorReady": False,
+                    "threeDReady": False,
+                },
+                "imagenCodex": {
+                    "installed": False,
+                    "authenticated": False,
+                    "rasterReady": False,
+                },
+                "qwenColab": {"queueReady": False},
+            },
+        ), patch("operational_status.raster_backend_status") as raster, patch(
+            "operational_status.detect_3d_tools", return_value={}
+        ):
+            raster.return_value = {
+                "png": {"decode": True, "encode": True, "dependency": "builtin"},
+                "webp": {
+                    "inspect": True,
+                    "decode": {"available": True},
+                    "encode": {"available": True},
+                },
+            }
+            status = build_operational_status(
+                environ={},
+                home=Path("/not-real"),
+                which=lambda name: None,
+            )
+
+        self.assertTrue(status["capabilities"]["vectorSvg"])
+        self.assertTrue(status["capabilities"]["freeVectorSvg"])
+        self.assertTrue(status["capabilities"]["vtracerVector"])
+        self.assertEqual(
+            status["routing"]["preferredVectorBackend"],
+            "vtracer",
+        )
+        self.assertTrue(status["routing"]["freeVectorReady"])
+        self.assertFalse(any(
+            "no SVG generation backend is ready" in value
+            for value in status["blockers"]
+        ))
+
     def test_manual_raster_backend_is_not_reported_as_auto_route(self):
         with patch(
             "operational_status.generator_backend_status",
