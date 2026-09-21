@@ -216,8 +216,10 @@ jobs:
     timeout-minutes: 35
     env:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
-      CODEX_ACCESS_TOKEN: ${{ secrets.CODEX_ACCESS_TOKEN }}
-      CHATGPT_ACCESS_TOKEN: ${{ secrets.CHATGPT_ACCESS_TOKEN }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
     steps:
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -233,7 +235,9 @@ jobs:
           node-version: "22"
 
       - name: Install Asset Forge
-        run: python -m pip install ".[generation]"
+        run: |
+          python -m pip install ".[generation]"
+          python -m pip install -U kaggle
 
       - name: Restore Asset Forge library
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -258,17 +262,17 @@ jobs:
         id: credential
         shell: bash
         run: |
-          if [ -n "$POLLINATIONS_API_KEY" ]; then
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
             echo "ready=true" >> "$GITHUB_OUTPUT"
-            echo "backend=pollinations" >> "$GITHUB_OUTPUT"
-            echo "credential=POLLINATIONS_API_KEY" >> "$GITHUB_OUTPUT"
-          elif [ -n "$CODEX_ACCESS_TOKEN" ] || [ -n "$CHATGPT_ACCESS_TOKEN" ]; then
+            echo "backend=cloudflare" >> "$GITHUB_OUTPUT"
+            echo "credential=CLOUDFLARE_API_TOKEN/CLOUDFLARE_ACCOUNT_ID" >> "$GITHUB_OUTPUT"
+          elif [ -n "$KAGGLE_API_TOKEN" ] && [ -n "$KAGGLE_USERNAME" ]; then
             echo "ready=true" >> "$GITHUB_OUTPUT"
-            echo "backend=imagen-codex" >> "$GITHUB_OUTPUT"
-            echo "credential=CODEX_ACCESS_TOKEN/CHATGPT_ACCESS_TOKEN" >> "$GITHUB_OUTPUT"
+            echo "backend=kaggle-qwen" >> "$GITHUB_OUTPUT"
+            echo "credential=KAGGLE_API_TOKEN/KAGGLE_USERNAME" >> "$GITHUB_OUTPUT"
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Deadline Zero live pilot requires Pollinations or Imagen/Codex credentials."
+            echo "::notice::Deadline Zero live pilot requires Cloudflare Workers AI or Kaggle credentials."
           fi
 
       - name: Produce Rex premium pilot
@@ -283,7 +287,7 @@ jobs:
         if: steps.credential.outputs.ready != 'true'
         run: |
           mkdir -p build/deadline-zero-live-pilot
-          printf '%s\n' '{"schema_version":"asset-forge/live-pilot/v1","success":false,"status":"credential_required","required_secret":"POLLINATIONS_API_KEY or CODEX_ACCESS_TOKEN/CHATGPT_ACCESS_TOKEN"}' > build/deadline-zero-live-pilot/pilot-status.json
+          printf '%s\n' '{"schema_version":"asset-forge/live-pilot/v1","success":false,"status":"credential_required","required_secret":"CLOUDFLARE_API_TOKEN+CLOUDFLARE_ACCOUNT_ID or KAGGLE_API_TOKEN+KAGGLE_USERNAME"}' > build/deadline-zero-live-pilot/pilot-status.json
 
       - name: Validate pilot bundle
         if: steps.credential.outputs.ready == 'true'

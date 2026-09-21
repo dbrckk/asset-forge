@@ -96,20 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T07:17:16Z
+Generated: 2026-09-21T07:31:11Z
 
 ### Git
 - Branch: `main`
-- Head: `4eb6806f0f13`
-- Commit date: 2026-09-21T09:17:04+02:00
-- Commit: fix: align free raster backend error assertion
+- Head: `9a23d4258c64`
+- Commit date: 2026-09-21T09:31:00+02:00
+- Commit: feat: run Deadline Zero live pilot on free image backends
 - Tracked files: 288
 
 ### Recently changed files
+- `.github/workflows/deadline-zero-live-pilot.yml`
 - `tests/test_generator_backends.py`
 - `.github/workflows/production-os-batch.yml`
 - `.github/workflows/production-os-dispatch.yml`
-- `asset_forge.py`
 
 ### Project signals
 - `pyproject.toml`
