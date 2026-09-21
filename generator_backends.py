@@ -537,7 +537,10 @@ def execute_generated_asset(
 ) -> dict:
     if job.get("requiresGenerator") is not True:
         raise GenerationError("production job does not require a generator")
+    requested_backend = backend
     backend = select_generation_backend(job, backend)
+    initial_backend = backend
+    fallback_history = []
     asset_type = str(job.get("assetType") or "")
     if asset_type not in SUPPORTED_GENERATED_TYPES:
         raise GenerationError(f"unsupported generated asset type: {asset_type or '<missing>'}")
@@ -596,6 +599,12 @@ def execute_generated_asset(
         and references
         and generator_backend_status().get("kaggleQwen", {}).get("rasterReady") is True
     ):
+        fallback_history.append({
+            "from": "cloudflare",
+            "to": "kaggle-qwen",
+            "reason": "reference-routing",
+            "attempt": 0,
+        })
         backend = "kaggle-qwen"
 
     effective_model = model or (
@@ -767,12 +776,18 @@ def execute_generated_asset(
                             timeout_seconds=timeout,
                         )
                     except CloudflareGenerationError as exc:
-                        # Cloudflare SDXL currently accepts text-to-image but
-                        # may reject reference-image tensors. Preserve visual
-                        # identity by falling back to the automated Qwen
-                        # Kaggle backend whenever a referenced generation is
-                        # unsupported by the selected Cloudflare model.
-                        if references and generator_backend_status().get("kaggleQwen", {}).get("rasterReady") is True:
+                        # Free-first auto routing should survive a transient
+                        # Cloudflare failure when the Qwen Kaggle backend is
+                        # already configured. Explicit Cloudflare requests
+                        # remain strict unless a reference image requires Qwen.
+                        kaggle_ready = (
+                            generator_backend_status()
+                            .get("kaggleQwen", {})
+                            .get("rasterReady")
+                            is True
+                        )
+                        allow_fallback = requested_backend == "auto" or bool(references)
+                        if kaggle_ready and allow_fallback:
                             try:
                                 metadata = kaggle_generate(
                                     prompt,
@@ -781,15 +796,21 @@ def execute_generated_asset(
                                     height=dimensions[1],
                                     seed=int(constraint_value.get("seed") or 0),
                                     steps=int(constraint_value.get("generationSteps") or 20),
-                                    reference_path=references[0],
+                                    reference_path=(references[0] if references else None),
                                     model=DEFAULT_KAGGLE_MODEL,
                                     timeout_seconds=max(timeout, 1800.0),
                                 )
+                                fallback_history.append({
+                                    "from": "cloudflare",
+                                    "to": "kaggle-qwen",
+                                    "reason": "cloudflare-generation-error",
+                                    "attempt": attempt + 1,
+                                })
                                 backend = "kaggle-qwen"
                                 effective_model = DEFAULT_KAGGLE_MODEL
                             except KaggleGenerationError as fallback_exc:
                                 raise GenerationError(
-                                    f"cloudflare reference generation failed: {exc}; "
+                                    f"cloudflare generation failed: {exc}; "
                                     f"kaggle-qwen fallback failed: {fallback_exc}"
                                 ) from fallback_exc
                         else:
@@ -958,6 +979,9 @@ def execute_generated_asset(
     return {
         "success": True,
         "backend": backend,
+        "requestedBackend": requested_backend,
+        "initialBackend": initial_backend,
+        "fallbacks": fallback_history,
         "model": effective_model,
         "assetType": asset_type,
         "sourcePath": str(final_output),
