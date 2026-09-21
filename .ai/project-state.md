@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:09:18Z
+Generated: 2026-09-21T16:10:22Z
 
 ### Git
 - Branch: `main`
-- Head: `b5b46bc7e179`
-- Commit date: 2026-09-21T18:08:55+02:00
-- Commit: ci: publish batch routing and quality summary
+- Head: `49a46ea502e3`
+- Commit date: 2026-09-21T18:09:56+02:00
+- Commit: test: distinguish automatic and explicit raster readiness
 - Tracked files: 291
 
 ### Recently changed files
+- `tests/test_operational_status.py`
+- `operational_status.py`
 - `.github/workflows/production-os-batch.yml`
 - `.github/workflows/production-os-dispatch.yml`
 - `tests/test_remote_batch.py`
-- `remote_batch.py`
-- `tests/test_production_executor.py`
 
 ### Project signals
 - `pyproject.toml`

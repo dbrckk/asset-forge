@@ -3363,6 +3363,8 @@ def test_imagen_codex_reports_required_token_names(self)
 ⋮----
 def test_cloudflare_free_raster_is_reported_as_ready_without_cli(self)
 ⋮----
+def test_manual_raster_backend_is_not_reported_as_auto_route(self)
+⋮----
 def test_qwen_colab_queue_counts_as_queued_generation_capability(self)
 ````
 
@@ -7011,6 +7013,9 @@ godot_executable = which("godot4") or which("godot")
 ⋮----
 capabilities = {
 ⋮----
+# Keep this aligned with select_generation_backend(..., "auto"):
+# automatic raster production is intentionally free-first and only uses
+# Cloudflare Workers AI, then Kaggle Qwen.
 preferred_raster_backend = _first_ready_backend(
 ⋮----
 blockers = []
