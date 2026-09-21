@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T09:45:54Z
+Generated: 2026-09-21T10:49:39Z
 
 ### Git
 - Branch: `main`
-- Head: `36a3e101d3e5`
-- Commit date: 2026-09-21T11:45:42+02:00
-- Commit: fix: retain final Kaggle exception after traceback
+- Head: `5245202033f4`
+- Commit date: 2026-09-21T12:49:23+02:00
+- Commit: fix: offload quantized Qwen pipeline on Kaggle T4
 - Tracked files: 290
 
 ### Recently changed files
