@@ -1,10 +1,10 @@
 # Change impact
 
-Base: 64b8862c24c8a04ba1c80ae68a988eb15fa61aa1
-Head: eb86bf16ee824bdd8aebd1c4485d545a19f966ce
+Base: bac22d6abbc5a715c1962a742ff6f5a1df980e47
+Head: 6b41967a9e60b9e0914a98094665c828047fe3c3
 
 ## Changed files
-- M .github/workflows/live-generation.yml
+- M .github/workflows/deadline-zero-live-pilot.yml
 
 ## Affected areas
 - .github

@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T14:39:15Z
+Generated: 2026-09-21T14:47:21Z
 
 ### Git
 - Branch: `main`
-- Head: `eb86bf16ee82`
-- Commit date: 2026-09-21T16:39:02+02:00
-- Commit: ci: move live smoke to free raster backends
+- Head: `6b41967a9e60`
+- Commit date: 2026-09-21T16:47:07+02:00
+- Commit: fix: persist latest validated asset library between pilot runs
 - Tracked files: 291
 
 ### Recently changed files
+- `.github/workflows/deadline-zero-live-pilot.yml`
 - `.github/workflows/live-generation.yml`
 - `examples/production-request-live-raster.json`
 - `tests/test_generator_backends.py`
 - `generator_backends.py`
-- `tests/test_kaggle_backend.py`
 
 ### Project signals
 - `pyproject.toml`

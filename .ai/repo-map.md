@@ -247,7 +247,7 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: ~/.cache/asset-forge
-          key: asset-forge-deadline-zero-${{ runner.os }}-v1
+          key: asset-forge-deadline-zero-${{ runner.os }}-${{ github.run_id }}
           restore-keys: |
             asset-forge-deadline-zero-${{ runner.os }}-
 
