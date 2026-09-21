@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T08:59:18Z
+Generated: 2026-09-21T09:14:43Z
 
 ### Git
 - Branch: `main`
-- Head: `1b1aef7d36ac`
-- Commit date: 2026-09-21T10:59:02+02:00
-- Commit: fix: embed Kaggle Qwen job inputs in kernel script
+- Head: `c35f9d199581`
+- Commit date: 2026-09-21T11:14:31+02:00
+- Commit: fix: parse Kaggle JSON-array logs completely
 - Tracked files: 290
 
 ### Recently changed files

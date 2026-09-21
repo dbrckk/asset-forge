@@ -1,13 +1,13 @@
 # CI status
 
-Summary: 2 success / 2 failure / 2 active
+Summary: 3 success / 1 failure / 2 active
 
-- Deadline Zero live premium pilot: in_progress / pending (1b1aef7d)
-- Validate asset-forge: in_progress / pending (1b1aef7d)
+- Deadline Zero live premium pilot: in_progress / pending (c35f9d19)
+- Validate asset-forge: in_progress / pending (c35f9d19)
+- Precise semantic refresh: completed / success (915622e3)
+- Deadline Zero live premium pilot: completed / failure (1b1aef7d)
+- Validate asset-forge: completed / success (1b1aef7d)
 - Validate asset-forge: completed / success (d8de0e6d)
-- Deadline Zero live premium pilot: completed / failure (d8de0e6d)
-- Deadline Zero live premium pilot: completed / failure (e3dc7a58)
-- Validate asset-forge: completed / success (e3dc7a58)
 
 ## Latest failed run structure
 - Job: produce

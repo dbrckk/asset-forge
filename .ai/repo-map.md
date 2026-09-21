@@ -6651,6 +6651,14 @@ raw = path.read_text(encoding="utf-8", errors="replace").strip()
 stderr_parts: list[str] = []
 fallback_parts: list[str] = []
 ⋮----
+parsed = json.loads(raw)
+⋮----
+parsed = None
+⋮----
+records = parsed if isinstance(parsed, list) else None
+⋮----
+records = []
+⋮----
 line = line.strip().rstrip(",")
 ⋮----
 record = json.loads(line)
