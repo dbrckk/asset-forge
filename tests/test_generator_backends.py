@@ -7,6 +7,7 @@ from cloudflare_backend import CloudflareGenerationError
 from kaggle_3d_backend import Kaggle3DGenerationError
 from generator_backends import (
     GenerationError,
+    _technical_retry_guidance,
     build_generation_prompt,
     execute_generated_asset,
     execute_generated_3d_asset,
@@ -54,6 +55,25 @@ class GeneratorBackendsTests(unittest.TestCase):
         self.assertIn("true transparent negative space", prompt)
         self.assertIn("Premium game-production quality is mandatory", prompt)
         self.assertIn("no generic stock-art or amateur visual language", prompt)
+
+    def test_technical_retry_guidance_targets_measured_failures(self):
+        guidance = _technical_retry_guidance({
+            "metrics": {
+                "borderAlphaRatio": 0.2,
+                "occupancy": 0.9,
+                "contrastSpan": 42,
+                "uniqueFrameRatio": 0.25,
+                "maxFrameCenterDrift": 0.31,
+            },
+            "errors": ["transparent background required but raster is fully opaque"],
+            "warnings": [],
+        })
+        self.assertIn("farther from the image borders", guidance)
+        self.assertIn("Reduce subject scale", guidance)
+        self.assertIn("Increase local value contrast", guidance)
+        self.assertIn("each animation frame visibly distinct", guidance)
+        self.assertIn("stable frame center", guidance)
+        self.assertIn("true transparency", guidance)
 
     def test_pollinations_command_never_contains_api_key(self):
         command = pollinations_command(
