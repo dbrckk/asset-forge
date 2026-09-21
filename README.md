@@ -49,7 +49,9 @@ asset-forge operational-status
 
 The JSON readiness report distinguishes direct raster generation, queued Qwen raster generation, WebP encoding, SVG, generated GLB, and real Godot import validation. Raster `--backend auto` is free-first: it selects Cloudflare Workers AI when configured, then Kaggle Qwen Image 2.1. If a Cloudflare runtime request fails and Kaggle is ready, automatic production falls back to Kaggle and records the route in `production-report.json`. Production batches open a circuit breaker after repeated Cloudflare runtime failures so later assets do not repeat the same failed call.
 
-Pollinations remains the explicit SVG/3D path; server-side generated 3D requires `POLLINATIONS_API_KEY`. `qwen-colab` is reported separately as a queued batch capability rather than a direct synchronous raster backend. WebP output requires Pillow/libwebp, and real Godot import validation requires a Godot executable. Production reports and Production OS batch results expose the requested, initial, and final backend plus fallback history for diagnostics.
+SVG and 3D production now have free/open fallbacks. SVG `auto` uses the local MIT-licensed VTracer path when a free raster backend is ready, then falls back to explicit Pollinations SVG generation when needed. For 3D, `auto` is quality-aware: primary/hero/critical assets prefer Pollinations + TRELLIS when available, while secondary assets can use the MIT-licensed TripoSR path on Kaggle. If TripoSR fails during automatic production and TRELLIS is available, the run falls back to Pollinations and records the route. Every produced GLB still passes the existing structural, profile, quality, LOD/collision, and engine handoff gates before promotion.
+
+Raster routing also learns from recent production history when `ASSET_FORGE_BACKEND_HISTORY` is configured. Production OS persists this lightweight history between runs so repeated Cloudflare/Kaggle successes, failures, and quality scores can influence later `auto` choices without overriding explicit backend selections.
 
 For debugging or staged orchestration, the two lower-level commands remain available:
 
