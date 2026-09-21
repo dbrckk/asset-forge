@@ -1,13 +1,13 @@
 # Change impact
 
-Base: fff1c80c7d78cd91afca03f7d294b43126753f2f
-Head: e2e2bf59ea91d4ce142e2bbe53e58b165602c7c3
+Base: e243af0fa14812d94c9f252419d1e4167f2ab72c
+Head: a555a2396db59c692cadab7cc7f1a8296825ec80
 
 ## Changed files
-- M .github/workflows/validate.yml
+- M tests/test_vector_backend.py
 
 ## Affected areas
-- .github
+- tests
 
 ## Related test candidates
 - No direct filename-based test match detected.

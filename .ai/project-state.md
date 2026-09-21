@@ -96,21 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:34:44Z
+Generated: 2026-09-21T16:36:27Z
 
 ### Git
 - Branch: `main`
-- Head: `e2e2bf59ea91`
-- Commit date: 2026-09-21T18:34:32+02:00
-- Commit: ci: smoke-test real VTracer backend
+- Head: `a555a2396db5`
+- Commit date: 2026-09-21T18:36:01+02:00
+- Commit: test: cover VTracer Rust panic containment
 - Tracked files: 293
 
 ### Recently changed files
-- `.github/workflows/validate.yml`
-- `tests/test_operational_status.py`
-- `tests/test_generator_backends.py`
 - `tests/test_vector_backend.py`
-- `pipelines/vector-svg.json`
+- `.github/workflows/validate.yml`
+- `vector_backend.py`
+- `tests/test_operational_status.py`
 
 ### Project signals
 - `pyproject.toml`
