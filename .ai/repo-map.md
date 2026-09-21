@@ -6642,6 +6642,28 @@ cleaned = re.sub(r"[^a-z0-9-]+", "-", value.lower()).strip("-")
 ⋮----
 def _runner_source() -> str
 ⋮----
+def _extract_kaggle_diagnostic(path: Path) -> str
+⋮----
+raw = path.read_text(encoding="utf-8", errors="replace").strip()
+⋮----
+stderr_parts: list[str] = []
+fallback_parts: list[str] = []
+⋮----
+line = line.strip().rstrip(",")
+⋮----
+record = json.loads(line)
+⋮----
+data = str(record.get("data") or "")
+⋮----
+stream = str(record.get("stream_name") or "").lower()
+⋮----
+preferred = "".join(stderr_parts).strip() or "".join(fallback_parts).strip() or raw
+markers = (
+positions = [preferred.rfind(marker) for marker in markers if marker in preferred]
+positions = [pos for pos in positions if pos >= 0]
+⋮----
+preferred = preferred[min(positions):]
+⋮----
 def _run(command: list[str], *, timeout: float, runner=subprocess.run) -> subprocess.CompletedProcess
 ⋮----
 completed = runner(
@@ -6677,6 +6699,8 @@ download_dir = root / "download"
 diagnostics = []
 ⋮----
 body = candidate.read_text(encoding="utf-8", errors="replace").strip()
+⋮----
+extracted = _extract_kaggle_diagnostic(candidate)
 ⋮----
 detail = "; ".join(diagnostics)[-8000:] if diagnostics else "no diagnostic output was returned"
 ⋮----

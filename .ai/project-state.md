@@ -96,20 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T08:23:12Z
+Generated: 2026-09-21T08:38:40Z
 
 ### Git
 - Branch: `main`
-- Head: `000bd2daec3e`
-- Commit date: 2026-09-21T10:23:01+02:00
-- Commit: fix: avoid stale torchao breaking Qwen on Kaggle
+- Head: `e3dc7a58232e`
+- Commit date: 2026-09-21T10:38:29+02:00
+- Commit: fix: extract stderr tracebacks from Kaggle kernel logs
 - Tracked files: 290
 
 ### Recently changed files
 - `kaggle_backend.py`
 - `.github/workflows/deadline-zero-live-pilot.yml`
 - `generator_backends.py`
-- `remote_batch.py`
 
 ### Project signals
 - `pyproject.toml`
