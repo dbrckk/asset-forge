@@ -96,20 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:37:45Z
+Generated: 2026-09-21T16:42:00Z
 
 ### Git
 - Branch: `main`
-- Head: `5e9450e197b5`
-- Commit date: 2026-09-21T18:37:32+02:00
-- Commit: feat: add adaptive backend performance history
-- Tracked files: 294
+- Head: `a6bb2f7390a8`
+- Commit date: 2026-09-21T18:41:38+02:00
+- Commit: ci: persist adaptive backend history for batches
+- Tracked files: 295
 
 ### Recently changed files
-- `backend_history.py`
-- `tests/test_vector_backend.py`
+- `.github/workflows/production-os-batch.yml`
+- `.github/workflows/production-os-dispatch.yml`
+- `tests/test_generator_backends.py`
+- `generator_backends.py`
 - `.github/workflows/validate.yml`
-- `vector_backend.py`
 
 ### Project signals
 - `pyproject.toml`

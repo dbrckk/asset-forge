@@ -1,14 +1,14 @@
 # CI status
 
-Summary: 2 success / 1 failure / 1 active
+Summary: 0 success / 3 failure / 1 active
 
-- Validate asset-forge: in_progress / pending (5e9450e1)
-- Validate asset-forge: completed / success (a555a239)
-- Validate asset-forge: completed / success (e243af0f)
-- Validate asset-forge: completed / failure (e9dd0806)
+- Validate asset-forge: in_progress / pending (a6bb2f73)
+- Validate asset-forge: completed / failure (72e88713)
+- Validate asset-forge: completed / failure (c66bad80)
+- Validate asset-forge: completed / failure (bf8075c6)
 
 ## Latest failed run structure
-- Job: vector-backend
-  - Failed step: VTracer backend smoke test
+- Job: test
+  - Failed step: Unit tests
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.

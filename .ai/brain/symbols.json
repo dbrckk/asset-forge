@@ -418,7 +418,7 @@
       "language": "python",
       "kind": "function",
       "name": "choose_backend",
-      "line": 157
+      "line": 161
     },
     {
       "file": "blender_adapter.py",
@@ -565,126 +565,140 @@
       "language": "python",
       "kind": "function",
       "name": "_sanitize_metadata",
-      "line": 58
+      "line": 59
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "GenerationError",
-      "line": 85
+      "line": 86
+    },
+    {
+      "file": "generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "_backend_history_path",
+      "line": 90
+    },
+    {
+      "file": "generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "_select_free_raster_backend",
+      "line": 96
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "generator_backend_status",
-      "line": 89
+      "line": 109
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "_sprite_sheet_geometry",
-      "line": 160
+      "line": 180
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "_generation_dimensions",
-      "line": 195
+      "line": 215
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "_ensure_transparency",
-      "line": 209
+      "line": 229
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "_normalize_raster_geometry",
-      "line": 289
+      "line": 309
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "build_generation_prompt",
-      "line": 333
+      "line": 353
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "pollinations_command",
-      "line": 385
+      "line": 405
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "select_generation_backend",
-      "line": 426
+      "line": 446
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "imagen_codex_command",
-      "line": 466
+      "line": 485
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "_imagen_output_path",
-      "line": 508
+      "line": 527
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "execute_generated_asset",
-      "line": 544
+      "line": 563
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "_NoCredentialRedirect",
-      "line": 1156
+      "line": 1242
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "redirect_request",
-      "line": 1157
+      "line": 1243
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "_default_3d_opener",
-      "line": 1161
+      "line": 1247
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "_upload_reference_image",
-      "line": 1168
+      "line": 1254
     },
     {
       "file": "generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "execute_generated_3d_asset",
-      "line": 1200
+      "line": 1286
     },
     {
       "file": "gltf_binary_metrics.py",
@@ -2234,6 +2248,55 @@
       "line": 102
     },
     {
+      "file": "tests/test_backend_history.py",
+      "language": "python",
+      "kind": "class",
+      "name": "BackendHistoryTests",
+      "line": 16
+    },
+    {
+      "file": "tests/test_backend_history.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_missing_or_invalid_history_falls_back_safely",
+      "line": 17
+    },
+    {
+      "file": "tests/test_backend_history.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_default_order_is_preserved_without_enough_samples",
+      "line": 27
+    },
+    {
+      "file": "tests/test_backend_history.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_repeated_cloudflare_failures_move_auto_route_to_kaggle",
+      "line": 39
+    },
+    {
+      "file": "tests/test_backend_history.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_reliable_observed_cloudflare_stays_ahead_of_unknown_kaggle",
+      "line": 72
+    },
+    {
+      "file": "tests/test_backend_history.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_record_generation_result_tracks_fallback_and_quality",
+      "line": 89
+    },
+    {
+      "file": "tests/test_backend_history.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_vector_result_records_underlying_raster_backend",
+      "line": 123
+    },
+    {
       "file": "tests/test_blender_adapter.py",
       "language": "python",
       "kind": "class",
@@ -2748,337 +2811,372 @@
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "test_auto_backend_prefers_cloudflare_for_raster_when_ready",
+      "name": "test_auto_backend_uses_adaptive_history_after_enough_samples",
       "line": 440
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "test_auto_backend_uses_kaggle_when_cloudflare_unavailable",
-      "line": 451
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "function",
-      "name": "test_auto_backend_does_not_fall_back_to_imagen_codex",
-      "line": 463
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "function",
-      "name": "test_auto_vector_prefers_vtracer_with_free_raster_source",
-      "line": 477
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "function",
-      "name": "test_auto_vector_falls_back_to_pollinations_when_vtracer_unavailable",
-      "line": 495
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "function",
-      "name": "test_vtracer_vector_generation_uses_free_cloudflare_source",
-      "line": 513
+      "name": "test_auto_kaggle_failure_can_fall_back_to_cloudflare",
+      "line": 488
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "fake_cloudflare",
-      "line": 522
+      "line": 492
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "fake_vectorizer",
-      "line": 529
+      "name": "test_successful_generation_persists_backend_history",
+      "line": 536
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "test_vtracer_vector_source_falls_back_to_kaggle",
-      "line": 569
+      "name": "fake_cloudflare",
+      "line": 545
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "fake_kaggle",
-      "line": 577
+      "name": "test_auto_backend_prefers_cloudflare_for_raster_when_ready",
+      "line": 579
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "fake_vectorizer",
-      "line": 581
+      "name": "test_auto_backend_uses_kaggle_when_cloudflare_unavailable",
+      "line": 590
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "test_auto_backend_rejects_vector_when_only_imagen_is_ready",
-      "line": 618
+      "name": "test_auto_backend_does_not_fall_back_to_imagen_codex",
+      "line": 602
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "test_required_alpha_runs_transparency_processor_before_normalization",
+      "name": "test_auto_vector_prefers_vtracer_with_free_raster_source",
+      "line": 616
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_auto_vector_falls_back_to_pollinations_when_vtracer_unavailable",
       "line": 634
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "runner",
-      "line": 642
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "class",
-      "name": "Result",
-      "line": 645
+      "name": "test_vtracer_vector_generation_uses_free_cloudflare_source",
+      "line": 652
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "transparency",
-      "line": 651
+      "name": "fake_cloudflare",
+      "line": 661
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "normalize",
-      "line": 655
+      "name": "fake_vectorizer",
+      "line": 668
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
-      "name": "test_3d_prompt_is_reference_image_oriented",
-      "line": 674
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "function",
-      "name": "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
-      "line": 682
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "function",
-      "name": "generator",
-      "line": 687
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "function",
-      "name": "upload_runner",
-      "line": 693
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "class",
-      "name": "Result",
-      "line": 696
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "class",
-      "name": "Response",
-      "line": 702
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "function",
-      "name": "__enter__",
-      "line": 704
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "function",
-      "name": "__exit__",
-      "line": 706
-    },
-    {
-      "file": "tests/test_generator_backends.py",
-      "language": "python",
-      "kind": "function",
-      "name": "read",
+      "name": "test_vtracer_vector_source_falls_back_to_kaggle",
       "line": 708
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
+      "name": "fake_kaggle",
+      "line": 716
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "fake_vectorizer",
+      "line": 720
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_auto_backend_rejects_vector_when_only_imagen_is_ready",
+      "line": 757
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_required_alpha_runs_transparency_processor_before_normalization",
+      "line": 773
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "runner",
+      "line": 781
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "class",
+      "name": "Result",
+      "line": 784
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "transparency",
+      "line": 790
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "normalize",
+      "line": 794
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_3d_prompt_is_reference_image_oriented",
+      "line": 813
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
+      "line": 821
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "generator",
+      "line": 826
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "upload_runner",
+      "line": 832
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "class",
+      "name": "Result",
+      "line": 835
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "class",
+      "name": "Response",
+      "line": 841
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "__enter__",
+      "line": 843
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "__exit__",
+      "line": 845
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
+      "name": "read",
+      "line": 847
+    },
+    {
+      "file": "tests/test_generator_backends.py",
+      "language": "python",
+      "kind": "function",
       "name": "opener",
-      "line": 711
+      "line": 850
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_3d_generation_requires_server_api_key",
-      "line": 741
+      "line": 880
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_unsupported_generated_type_fails_closed",
-      "line": 751
+      "line": 890
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_raster_generation_uploads_and_passes_visual_reference",
-      "line": 758
+      "line": 897
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "runner",
-      "line": 765
+      "line": 904
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Upload",
-      "line": 768
+      "line": 907
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Generate",
-      "line": 775
+      "line": 914
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_visual_reference_rejects_vector_generation",
-      "line": 816
+      "line": 955
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_visual_similarity_retries_until_threshold_passes",
-      "line": 834
+      "line": 973
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "runner",
-      "line": 842
+      "line": 981
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Upload",
-      "line": 844
+      "line": 983
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Generate",
-      "line": 852
+      "line": 991
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_visual_similarity_fails_after_retry_budget",
-      "line": 882
+      "line": 1021
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "runner",
-      "line": 891
+      "line": 1030
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Upload",
-      "line": 893
+      "line": 1032
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Generate",
-      "line": 900
+      "line": 1039
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_technical_quality_retries_without_visual_reference",
-      "line": 926
+      "line": 1065
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "runner",
-      "line": 935
+      "line": 1074
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Generate",
-      "line": 939
+      "line": 1078
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "test_technical_quality_rejects_after_retry_budget",
-      "line": 970
+      "line": 1109
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "function",
       "name": "runner",
-      "line": 978
+      "line": 1117
     },
     {
       "file": "tests/test_generator_backends.py",
       "language": "python",
       "kind": "class",
       "name": "Generate",
-      "line": 982
+      "line": 1121
     },
     {
       "file": "tests/test_gltf_binary_metrics.py",

@@ -98,6 +98,7 @@ tests/
   test_asset_forge.py
   test_asset_library.py
   test_asset_profile_validation.py
+  test_backend_history.py
   test_blender_adapter.py
   test_cloudflare_backend.py
   test_colab_queue.py
@@ -473,9 +474,18 @@ jobs:
       GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_REPOSITORY: ${{ github.repository }}
+      ASSET_FORGE_BACKEND_HISTORY: .asset-forge/backend-history.json
     steps:
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Restore backend performance history
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .asset-forge/backend-history.json
+          key: asset-forge-backend-history-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            asset-forge-backend-history-${{ github.ref_name }}-
 
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
@@ -654,9 +664,18 @@ jobs:
       GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_REPOSITORY: ${{ github.repository }}
+      ASSET_FORGE_BACKEND_HISTORY: .asset-forge/backend-history.json
     steps:
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Restore backend performance history
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .asset-forge/backend-history.json
+          key: asset-forge-backend-history-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            asset-forge-backend-history-${{ github.ref_name }}-
 
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
@@ -901,7 +920,7 @@ jobs:
             "$GITHUB_WORKSPACE/build/wheel-venv/bin/asset-forge" validate-asset-profiles
           )
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py vector_backend.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q backend_history.py asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py vector_backend.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -2806,6 +2825,47 @@ profile_dir = root / "profiles" / "vector"
 loaded = load_vector_profile("icon", root=root)
 ````
 
+## File: tests/test_backend_history.py
+````python
+class BackendHistoryTests(unittest.TestCase)
+⋮----
+def test_missing_or_invalid_history_falls_back_safely(self)
+⋮----
+root = Path(td)
+missing = root / "missing.json"
+⋮----
+invalid = root / "invalid.json"
+⋮----
+def test_default_order_is_preserved_without_enough_samples(self)
+⋮----
+path = Path(td) / "history.json"
+⋮----
+def test_repeated_cloudflare_failures_move_auto_route_to_kaggle(self)
+⋮----
+history = {
+⋮----
+def test_reliable_observed_cloudflare_stays_ahead_of_unknown_kaggle(self)
+⋮----
+cloudflare = backend_score(history, "cloudflare", prior=1.0)
+unknown_kaggle = backend_score(history, "kaggle-qwen", prior=0.98)
+⋮----
+def test_record_generation_result_tracks_fallback_and_quality(self)
+⋮----
+result = {
+⋮----
+history = record_generation_result(path, result)
+⋮----
+cloudflare = history["backends"]["cloudflare"]
+⋮----
+kaggle = history["backends"]["kaggle-qwen"]
+⋮----
+persisted = load_history(path)
+⋮----
+def test_vector_result_records_underlying_raster_backend(self)
+⋮----
+history = record_generation_result(path, {
+````
+
 ## File: tests/test_blender_adapter.py
 ````python
 class BlenderAdapterTests(unittest.TestCase)
@@ -3060,6 +3120,22 @@ def test_auto_cloudflare_failure_falls_back_to_kaggle_qwen(self)
 ⋮----
 def test_explicit_cloudflare_failure_does_not_silently_fallback(self)
 ⋮----
+def test_auto_backend_uses_adaptive_history_after_enough_samples(self)
+⋮----
+history_path = Path(td) / "backend-history.json"
+⋮----
+def test_auto_kaggle_failure_can_fall_back_to_cloudflare(self)
+⋮----
+def fake_cloudflare(prompt, output, **kwargs)
+⋮----
+def test_successful_generation_persists_backend_history(self)
+⋮----
+root = Path(td)
+out = root / "out"
+history_path = root / "backend-history.json"
+⋮----
+history = load_history(history_path)
+⋮----
 def test_auto_backend_prefers_cloudflare_for_raster_when_ready(self)
 ⋮----
 def test_auto_backend_uses_kaggle_when_cloudflare_unavailable(self)
@@ -3071,8 +3147,6 @@ def test_auto_vector_prefers_vtracer_with_free_raster_source(self)
 def test_auto_vector_falls_back_to_pollinations_when_vtracer_unavailable(self)
 ⋮----
 def test_vtracer_vector_generation_uses_free_cloudflare_source(self)
-⋮----
-def fake_cloudflare(prompt, output, **kwargs)
 ⋮----
 def fake_vectorizer(source, output, **kwargs)
 ⋮----
@@ -3097,8 +3171,6 @@ three_d = job()
 prompt = build_generation_prompt(three_d)
 ⋮----
 def test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth(self)
-⋮----
-root = Path(td)
 ⋮----
 def generator(value, output_dir, **kwargs)
 ⋮----
@@ -5928,6 +6000,11 @@ value = history.get("backends", {}).get(backend)
 ⋮----
 attempts = int(value.get("attempts") or 0)
 ⋮----
+# Keep the configured order while a backend is unproven, but give
+# sufficiently observed reliable backends room to outrank unknown
+# alternatives. This avoids needless provider churn after a few
+# successful production runs.
+⋮----
 successes = int(value.get("successes") or 0)
 quality_samples = int(value.get("qualitySamples") or 0)
 quality_sum = float(value.get("qualitySum") or 0.0)
@@ -6131,9 +6208,17 @@ name = str(key)[:256]
 ⋮----
 class GenerationError(RuntimeError)
 ⋮----
-def generator_backend_status(*, environ=None, home: Path | None = None) -> dict
+def _backend_history_path(*, environ=None) -> Path | None
 ⋮----
 env = os.environ if environ is None else environ
+raw = str(env.get("ASSET_FORGE_BACKEND_HISTORY") or "").strip()
+⋮----
+def _select_free_raster_backend(status: dict, *, environ=None) -> str | None
+⋮----
+ready = []
+⋮----
+def generator_backend_status(*, environ=None, home: Path | None = None) -> dict
+⋮----
 home_dir = Path.home() if home is None else Path(home)
 polli = shutil.which("polli")
 imagen = shutil.which("imagen")
@@ -6226,6 +6311,8 @@ cloudflare = status.get("cloudflare", {})
 kaggle = status.get("kaggleQwen", {})
 imagen_codex = status.get("imagenCodex", {})
 vtracer = status.get("vtracer", {})
+⋮----
+selected = _select_free_raster_backend(status)
 ⋮----
 def _imagen_output_path(output_dir: Path, stdout: str) -> tuple[Path, dict | None]
 ⋮----
@@ -6325,13 +6412,15 @@ cloudflare_ready = (
 kaggle_ready = (
 raster_source = output_dir / "vector-source.png"
 raster_metadata = None
-raster_backend = None
+raster_backend = _select_free_raster_backend(statuses)
 ⋮----
 raster_metadata = cloudflare_generate(
-raster_backend = "cloudflare"
 ⋮----
 raster_metadata = kaggle_generate(
+⋮----
 raster_backend = "kaggle-qwen"
+⋮----
+raster_backend = "cloudflare"
 ⋮----
 vector_metadata = vectorizer(
 ⋮----
@@ -6357,6 +6446,9 @@ allow_fallback = requested_backend == "auto" or bool(references)
 metadata = kaggle_generate(
 ⋮----
 effective_model = DEFAULT_KAGGLE_MODEL
+⋮----
+backend = "cloudflare"
+effective_model = DEFAULT_CLOUDFLARE_MODEL
 ⋮----
 metadata = _sanitize_metadata(metadata)
 ⋮----
@@ -6396,6 +6488,13 @@ can_retry_similarity = (
 can_retry_technical = (
 ⋮----
 failures = []
+⋮----
+result = {
+⋮----
+history_path = _backend_history_path()
+⋮----
+# Learning is advisory. A broken cache or unwritable history must
+# never make a valid production asset fail.
 ⋮----
 class _NoCredentialRedirect(urllib.request.HTTPRedirectHandler)
 ⋮----
@@ -7554,6 +7653,7 @@ py-modules = [
   "asset_library",
   "asset_profile_validation",
   "blender_adapter",
+  "backend_history",
   "colab_queue",
   "cloudflare_backend",
   "engine_profile_validation",

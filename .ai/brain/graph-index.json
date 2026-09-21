@@ -5,6 +5,7 @@
     "asset-forge.py",
     "asset-library.py",
     "asset-profile-validation.py",
+    "backend-history.py",
     "benchmarks",
     "blender-adapter.py",
     "cloudflare-backend.py",
@@ -34,6 +35,7 @@
     "svg-tools.py",
     "tests",
     "toolchain-3d.py",
+    "vector-backend.py",
     "visual-similarity.py",
     "web"
   ],
@@ -59,6 +61,7 @@
         "runtime_atlas.py",
         "starlist_bridge.py",
         "svg_tools.py",
+        "tests/test_vector_backend.py",
         "toolchain_3d.py",
         "web/runtime_atlas.mjs"
       ],
@@ -68,16 +71,18 @@
         "tests/test_production_contract.py"
       ],
       "in_degree": 3,
-      "out_degree": 21,
+      "out_degree": 22,
       "path": "asset_forge.py"
     },
     {
       "dependencies": [
         "art_quality.py",
+        "backend_history.py",
         "cloudflare_backend.py",
         "colab_queue.py",
         "kaggle_backend.py",
         "tests/test_cloudflare_backend.py",
+        "vector_backend.py",
         "visual_similarity.py"
       ],
       "dependents": [
@@ -87,7 +92,7 @@
         "tests/test_generator_backends.py"
       ],
       "in_degree": 4,
-      "out_degree": 6,
+      "out_degree": 8,
       "path": "generator_backends.py"
     },
     {
@@ -196,6 +201,20 @@
     },
     {
       "dependencies": [
+        "engine_profile_validation.py",
+        "tests/test_vector_backend.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_godot_handoff.py",
+        "toolchain_3d.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 2,
+      "path": "godot_handoff.py"
+    },
+    {
+      "dependencies": [
         "blender_adapter.py",
         "godot_handoff.py"
       ],
@@ -287,16 +306,28 @@
     },
     {
       "dependencies": [
-        "engine_profile_validation.py"
+        "vector_backend.py"
       ],
       "dependents": [
         "asset_forge.py",
-        "tests/test_godot_handoff.py",
-        "toolchain_3d.py"
+        "godot_handoff.py",
+        "vector_backend.py"
       ],
       "in_degree": 3,
       "out_degree": 1,
-      "path": "godot_handoff.py"
+      "path": "tests/test_vector_backend.py"
+    },
+    {
+      "dependencies": [
+        "backend_history.py",
+        "cloudflare_backend.py",
+        "generator_backends.py",
+        "kaggle_backend.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 4,
+      "path": "tests/test_generator_backends.py"
     },
     {
       "dependencies": [],
@@ -308,6 +339,17 @@
       "in_degree": 3,
       "out_degree": 0,
       "path": "art_quality.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
+        "generator_backends.py",
+        "tests/test_backend_history.py",
+        "tests/test_generator_backends.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 0,
+      "path": "backend_history.py"
     },
     {
       "dependencies": [],
@@ -332,6 +374,17 @@
       "path": "engine_profile_validation.py"
     },
     {
+      "dependencies": [],
+      "dependents": [
+        "generator_backends.py",
+        "tests/test_generator_backends.py",
+        "tests/test_kaggle_backend.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 0,
+      "path": "kaggle_backend.py"
+    },
+    {
       "dependencies": [
         "tests/test_cloudflare_backend.py"
       ],
@@ -354,6 +407,18 @@
       "in_degree": 2,
       "out_degree": 1,
       "path": "svg_tools.py"
+    },
+    {
+      "dependencies": [
+        "tests/test_vector_backend.py"
+      ],
+      "dependents": [
+        "generator_backends.py",
+        "tests/test_vector_backend.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 1,
+      "path": "vector_backend.py"
     },
     {
       "dependencies": [
@@ -396,16 +461,6 @@
       "in_degree": 2,
       "out_degree": 0,
       "path": "godot_export.py"
-    },
-    {
-      "dependencies": [],
-      "dependents": [
-        "generator_backends.py",
-        "tests/test_kaggle_backend.py"
-      ],
-      "in_degree": 2,
-      "out_degree": 0,
-      "path": "kaggle_backend.py"
     },
     {
       "dependencies": [],
@@ -486,16 +541,6 @@
       "in_degree": 0,
       "out_degree": 2,
       "path": "tests/runtime_atlas_web.test.mjs"
-    },
-    {
-      "dependencies": [
-        "cloudflare_backend.py",
-        "generator_backends.py"
-      ],
-      "dependents": [],
-      "in_degree": 0,
-      "out_degree": 2,
-      "path": "tests/test_generator_backends.py"
     },
     {
       "dependencies": [
@@ -599,6 +644,15 @@
       "in_degree": 0,
       "out_degree": 1,
       "path": "tests/test_asset_profile_validation.py"
+    },
+    {
+      "dependencies": [
+        "backend_history.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1,
+      "path": "tests/test_backend_history.py"
     },
     {
       "dependencies": [
@@ -716,46 +770,10 @@
       "in_degree": 0,
       "out_degree": 1,
       "path": "tests/test_production_executor.py"
-    },
-    {
-      "dependencies": [
-        "raster_pack.py"
-      ],
-      "dependents": [],
-      "in_degree": 0,
-      "out_degree": 1,
-      "path": "tests/test_raster_pack.py"
-    },
-    {
-      "dependencies": [
-        "remote_batch.py"
-      ],
-      "dependents": [],
-      "in_degree": 0,
-      "out_degree": 1,
-      "path": "tests/test_remote_batch.py"
-    },
-    {
-      "dependencies": [
-        "semantic_art_review.py"
-      ],
-      "dependents": [],
-      "in_degree": 0,
-      "out_degree": 1,
-      "path": "tests/test_semantic_art_review.py"
-    },
-    {
-      "dependencies": [
-        "starlist_bridge.py"
-      ],
-      "dependents": [],
-      "in_degree": 0,
-      "out_degree": 1,
-      "path": "tests/test_starlist_bridge.py"
     }
   ],
-  "edge_count": 109,
+  "edge_count": 120,
   "generated_by": "dbrckk/repo-brain-v7-graph",
-  "node_count": 67,
+  "node_count": 71,
   "schema_version": 1
 }

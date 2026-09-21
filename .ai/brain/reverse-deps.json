@@ -40,6 +40,7 @@
         "runtime_atlas.py",
         "starlist_bridge.py",
         "svg_tools.py",
+        "tests/test_vector_backend.py",
         "toolchain_3d.py",
         "web/runtime_atlas.mjs"
       ],
@@ -49,7 +50,7 @@
         "tests/test_production_contract.py"
       ],
       "in_degree": 3,
-      "out_degree": 21
+      "out_degree": 22
     },
     "asset_library.py": {
       "dependencies": [],
@@ -69,6 +70,16 @@
         "tests/test_asset_profile_validation.py"
       ],
       "in_degree": 4,
+      "out_degree": 0
+    },
+    "backend_history.py": {
+      "dependencies": [],
+      "dependents": [
+        "generator_backends.py",
+        "tests/test_backend_history.py",
+        "tests/test_generator_backends.py"
+      ],
+      "in_degree": 3,
       "out_degree": 0
     },
     "benchmarks/runtime_atlas_web.bench.mjs": {
@@ -126,10 +137,12 @@
     "generator_backends.py": {
       "dependencies": [
         "art_quality.py",
+        "backend_history.py",
         "cloudflare_backend.py",
         "colab_queue.py",
         "kaggle_backend.py",
         "tests/test_cloudflare_backend.py",
+        "vector_backend.py",
         "visual_similarity.py"
       ],
       "dependents": [
@@ -139,7 +152,7 @@
         "tests/test_generator_backends.py"
       ],
       "in_degree": 4,
-      "out_degree": 6
+      "out_degree": 8
     },
     "gltf_binary_metrics.py": {
       "dependencies": [
@@ -221,7 +234,8 @@
     },
     "godot_handoff.py": {
       "dependencies": [
-        "engine_profile_validation.py"
+        "engine_profile_validation.py",
+        "tests/test_vector_backend.py"
       ],
       "dependents": [
         "asset_forge.py",
@@ -229,15 +243,16 @@
         "toolchain_3d.py"
       ],
       "in_degree": 3,
-      "out_degree": 1
+      "out_degree": 2
     },
     "kaggle_backend.py": {
       "dependencies": [],
       "dependents": [
         "generator_backends.py",
+        "tests/test_generator_backends.py",
         "tests/test_kaggle_backend.py"
       ],
-      "in_degree": 2,
+      "in_degree": 3,
       "out_degree": 0
     },
     "lod_3d.py": {
@@ -424,6 +439,14 @@
       "in_degree": 0,
       "out_degree": 1
     },
+    "tests/test_backend_history.py": {
+      "dependencies": [
+        "backend_history.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1
+    },
     "tests/test_blender_adapter.py": {
       "dependencies": [
         "blender_adapter.py"
@@ -471,12 +494,14 @@
     },
     "tests/test_generator_backends.py": {
       "dependencies": [
+        "backend_history.py",
         "cloudflare_backend.py",
-        "generator_backends.py"
+        "generator_backends.py",
+        "kaggle_backend.py"
       ],
       "dependents": [],
       "in_degree": 0,
-      "out_degree": 2
+      "out_degree": 4
     },
     "tests/test_gltf_binary_metrics.py": {
       "dependencies": [
@@ -634,6 +659,18 @@
       "in_degree": 0,
       "out_degree": 1
     },
+    "tests/test_vector_backend.py": {
+      "dependencies": [
+        "vector_backend.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "godot_handoff.py",
+        "vector_backend.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 1
+    },
     "tests/test_visual_similarity.py": {
       "dependencies": [
         "visual_similarity.py"
@@ -654,6 +691,17 @@
       ],
       "in_degree": 3,
       "out_degree": 2
+    },
+    "vector_backend.py": {
+      "dependencies": [
+        "tests/test_vector_backend.py"
+      ],
+      "dependents": [
+        "generator_backends.py",
+        "tests/test_vector_backend.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 1
     },
     "visual_similarity.py": {
       "dependencies": [],
