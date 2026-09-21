@@ -42,6 +42,9 @@ def _stats(history: dict, backend: str) -> dict:
             "attempts": 0,
             "successes": 0,
             "failures": 0,
+            "fallbacksFrom": 0,
+            "fallbacksTo": 0,
+            "regenerations": 0,
             "qualitySamples": 0,
             "qualitySum": 0.0,
         }
@@ -100,6 +103,17 @@ def record_generation_result(path: Path | str | None, result: dict) -> dict:
                 continue
             reason = str(fallback.get("reason") or "")
             source = str(fallback.get("from") or "").strip()
+            destination = str(fallback.get("to") or "").strip()
+            if source:
+                source_stats = _stats(history, source)
+                source_stats["fallbacksFrom"] = int(
+                    source_stats.get("fallbacksFrom") or 0
+                ) + 1
+            if destination:
+                destination_stats = _stats(history, destination)
+                destination_stats["fallbacksTo"] = int(
+                    destination_stats.get("fallbacksTo") or 0
+                ) + 1
             if source and "error" in reason:
                 _record(history, source, success=False)
                 failed_backends.add(source)
@@ -107,6 +121,17 @@ def record_generation_result(path: Path | str | None, result: dict) -> dict:
     final_backend = str(result.get("backend") or "").strip()
     if final_backend:
         _record(history, final_backend, success=True, quality=quality)
+        regeneration_attempts = []
+        for key in ("visualSimilarity", "technicalQuality"):
+            value = result.get(key)
+            attempts = value.get("attempts") if isinstance(value, dict) else None
+            if isinstance(attempts, list):
+                regeneration_attempts.append(max(0, len(attempts) - 1))
+        if regeneration_attempts:
+            stats = _stats(history, final_backend)
+            stats["regenerations"] = int(stats.get("regenerations") or 0) + max(
+                regeneration_attempts
+            )
 
     reference_generation = result.get("referenceGeneration")
     if isinstance(reference_generation, dict):
