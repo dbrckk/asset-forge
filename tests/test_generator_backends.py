@@ -348,7 +348,7 @@ class GeneratorBackendsTests(unittest.TestCase):
                 "imagenCodex": {"rasterReady": True},
             },
         ):
-            with self.assertRaisesRegex(GenerationError, "no authenticated raster"):
+            with self.assertRaisesRegex(GenerationError, "no authenticated free raster generation backend is ready"):
                 select_generation_backend(job(), "auto")
 
     def test_auto_backend_rejects_vector_when_only_imagen_is_ready(self):
