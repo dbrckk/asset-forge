@@ -1,9 +1,15 @@
 {
   "id": "model-3d",
-  "assetTypes": ["mesh", "prop", "environment", "character-3d"],
+  "assetTypes": [
+    "mesh",
+    "prop",
+    "environment",
+    "character-3d"
+  ],
   "stages": [
     "read-project-art-direction",
     "resolve-source-or-create",
+    "select-quality-aware-3d-backend",
     "normalize-scale-and-origin",
     "validate-topology-and-normals",
     "validate-uv",
@@ -18,6 +24,9 @@
   "defaults": {
     "masterFormat": "blend",
     "deliveryFormat": "glb",
-    "embedTextures": true
+    "embedTextures": true,
+    "freeFallbackBackend": "kaggle-triposr",
+    "premiumBackend": "pollinations-trellis",
+    "premiumFirstForPrimary": true
   }
 }
