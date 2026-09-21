@@ -123,6 +123,7 @@ tests/
   test_starlist_bridge.py
   test_svg_tools.py
   test_toolchain_3d.py
+  test_vector_backend.py
   test_visual_similarity.py
 web/
   runtime_atlas.mjs
@@ -445,6 +446,7 @@ on:
           - qwen-colab
           - cloudflare
           - kaggle-qwen
+          - vtracer
       model:
         description: "Optional model override"
         required: false
@@ -625,6 +627,7 @@ on:
           - qwen-colab
           - cloudflare
           - kaggle-qwen
+          - vtracer
       model:
         description: "Optional model override"
         required: false
@@ -897,7 +900,7 @@ jobs:
             "$GITHUB_WORKSPACE/build/wheel-venv/bin/asset-forge" validate-asset-profiles
           )
       - name: Compile
-        run: python -m compileall -q asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py vector_backend.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
@@ -946,6 +949,40 @@ jobs:
         run: python asset_forge.py raster-backend-status
       - name: WebP backend tests
         run: python -m unittest discover -s tests -p "test_raster_backend.py" -v
+
+
+  vector-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install VTracer backend
+        run: python -m pip install "vtracer>=0.6,<2"
+      - name: VTracer backend smoke test
+        run: |
+          python - <<'PY'
+          import base64
+          import tempfile
+          from pathlib import Path
+
+          from vector_backend import status, vectorize_raster
+
+          png = base64.b64decode(
+              "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFElEQVR42mP8z8Dwn4GBgYGJAQoAHgQCAeB5j9sAAAAASUVORK5CYII="
+          )
+          with tempfile.TemporaryDirectory() as td:
+              root = Path(td)
+              source = root / "source.png"
+              output = root / "output.svg"
+              source.write_bytes(png)
+              result = vectorize_raster(source, output)
+              assert status()["vectorizeReady"] is True
+              assert result["backend"] == "vtracer"
+              assert output.is_file() and output.stat().st_size > 0
+              assert "<svg" in output.read_text(encoding="utf-8").lower()
+          PY
 ````
 
 ## File: .github/dependabot.yml
@@ -988,55 +1025,133 @@ updates:
       "id": "blender",
       "name": "Blender",
       "status": "preferred",
-      "domains": ["3d", "rigging", "animation-3d", "rendering", "uv"],
-      "automation": ["python", "cli"],
-      "outputs": ["blend", "gltf", "glb", "fbx", "obj"],
+      "domains": [
+        "3d",
+        "rigging",
+        "animation-3d",
+        "rendering",
+        "uv"
+      ],
+      "automation": [
+        "python",
+        "cli"
+      ],
+      "outputs": [
+        "blend",
+        "gltf",
+        "glb",
+        "fbx",
+        "obj"
+      ],
       "license": "GPL-2.0-or-later"
     },
     {
       "id": "gltf-validator",
       "name": "Khronos glTF Validator",
       "status": "candidate",
-      "domains": ["3d-validation", "gltf"],
-      "automation": ["cli", "library"],
-      "outputs": ["validation-report"],
+      "domains": [
+        "3d-validation",
+        "gltf"
+      ],
+      "automation": [
+        "cli",
+        "library"
+      ],
+      "outputs": [
+        "validation-report"
+      ],
       "license": "Apache-2.0"
     },
     {
       "id": "gltf-transform",
       "name": "glTF Transform",
       "status": "candidate",
-      "domains": ["3d-optimization", "gltf", "texture-optimization"],
-      "automation": ["cli", "library"],
-      "outputs": ["gltf", "glb"],
+      "domains": [
+        "3d-optimization",
+        "gltf",
+        "texture-optimization"
+      ],
+      "automation": [
+        "cli",
+        "library"
+      ],
+      "outputs": [
+        "gltf",
+        "glb"
+      ],
       "license": "MIT"
     },
     {
       "id": "meshoptimizer",
       "name": "meshoptimizer",
       "status": "candidate",
-      "domains": ["mesh-optimization", "gltf"],
-      "automation": ["cli", "library"],
-      "outputs": ["optimized-mesh", "glb"],
+      "domains": [
+        "mesh-optimization",
+        "gltf"
+      ],
+      "automation": [
+        "cli",
+        "library"
+      ],
+      "outputs": [
+        "optimized-mesh",
+        "glb"
+      ],
       "license": "MIT"
     },
     {
       "id": "pixelorama",
       "name": "Pixelorama",
       "status": "candidate",
-      "domains": ["pixel-art", "sprites", "animation-2d"],
+      "domains": [
+        "pixel-art",
+        "sprites",
+        "animation-2d"
+      ],
       "automation": [],
-      "outputs": ["png", "sprite-sheet"],
+      "outputs": [
+        "png",
+        "sprite-sheet"
+      ],
       "license": "MIT"
     },
     {
       "id": "inkscape",
       "name": "Inkscape",
       "status": "candidate",
-      "domains": ["vector", "svg", "ui"],
-      "automation": ["cli"],
-      "outputs": ["svg", "png", "pdf"],
+      "domains": [
+        "vector",
+        "svg",
+        "ui"
+      ],
+      "automation": [
+        "cli"
+      ],
+      "outputs": [
+        "svg",
+        "png",
+        "pdf"
+      ],
       "license": "GPL-2.0-or-later"
+    },
+    {
+      "id": "vtracer",
+      "name": "VTracer",
+      "status": "preferred",
+      "domains": [
+        "vector",
+        "svg",
+        "raster-to-vector"
+      ],
+      "automation": [
+        "python",
+        "cli"
+      ],
+      "outputs": [
+        "svg"
+      ],
+      "license": "MIT",
+      "repository": "visioncortex/vtracer"
     }
   ]
 }
@@ -1487,10 +1602,17 @@ updates:
 ````json
 {
   "id": "vector-svg",
-  "assetTypes": ["vector", "svg", "icon", "ui-vector", "logo"],
+  "assetTypes": [
+    "vector",
+    "svg",
+    "icon",
+    "ui-vector",
+    "logo"
+  ],
   "stages": [
     "read-project-art-direction",
     "resolve-source-or-create",
+    "free-raster-to-vector-fallback",
     "validate-svg-xml",
     "reject-executable-content",
     "reject-external-references",
@@ -1503,7 +1625,9 @@ updates:
   "defaults": {
     "masterFormat": "svg",
     "requireViewBox": true,
-    "allowExternalReferences": false
+    "allowExternalReferences": false,
+    "freeFirstVectorization": true,
+    "preferredVectorizer": "vtracer"
   }
 }
 ````
@@ -2940,6 +3064,18 @@ def test_auto_backend_uses_kaggle_when_cloudflare_unavailable(self)
 ⋮----
 def test_auto_backend_does_not_fall_back_to_imagen_codex(self)
 ⋮----
+def test_auto_vector_prefers_vtracer_with_free_raster_source(self)
+⋮----
+def test_auto_vector_falls_back_to_pollinations_when_vtracer_unavailable(self)
+⋮----
+def test_vtracer_vector_generation_uses_free_cloudflare_source(self)
+⋮----
+def fake_cloudflare(prompt, output, **kwargs)
+⋮----
+def fake_vectorizer(source, output, **kwargs)
+⋮----
+def test_vtracer_vector_source_falls_back_to_kaggle(self)
+⋮----
 def test_auto_backend_rejects_vector_when_only_imagen_is_ready(self)
 ⋮----
 def test_required_alpha_runs_transparency_processor_before_normalization(self)
@@ -3372,6 +3508,8 @@ def test_missing_optional_tools_are_reported_without_crashing(self)
 def test_imagen_codex_reports_required_token_names(self)
 ⋮----
 def test_cloudflare_free_raster_is_reported_as_ready_without_cli(self)
+⋮----
+def test_free_vtracer_vector_route_is_reported(self)
 ⋮----
 def test_manual_raster_backend_is_not_reported_as_auto_route(self)
 ⋮----
@@ -4295,6 +4433,42 @@ result = execute_3d_pipeline(plan, Path("."))
     def test_godot4_target_adds_delivery_stage(self, detect)
 ⋮----
 def test_invalid_target_engine_is_rejected(self)
+````
+
+## File: tests/test_vector_backend.py
+````python
+class VectorBackendTests(unittest.TestCase)
+⋮----
+def test_status_reports_optional_dependency(self)
+⋮----
+result = status()
+⋮----
+def test_config_api_vectorizes_to_svg(self)
+⋮----
+root = Path(td)
+source = root / "source.png"
+output = root / "asset.svg"
+⋮----
+class Config
+⋮----
+@classmethod
+                def poster(cls)
+⋮----
+def convert_file(self, input_path, output_path)
+⋮----
+fake = SimpleNamespace(Config=Config)
+⋮----
+result = vectorize_raster(source, output)
+⋮----
+def test_legacy_api_remains_supported(self)
+⋮----
+source = root / "source.webp"
+⋮----
+def legacy(input_path, output_path, **kwargs)
+⋮----
+fake = SimpleNamespace(convert_image_to_svg_py=legacy)
+⋮----
+def test_missing_input_fails_closed(self)
 ````
 
 ## File: tests/test_visual_similarity.py
@@ -5879,6 +6053,9 @@ authenticated = api_key_available or credentials.is_file()
 codex_token_available = bool(
 cloudflare = cloudflare_status(environ=env)
 kaggle = kaggle_status(environ=env)
+vectorizer = vectorizer_status()
+free_raster_ready = bool(
+vectorizer = dict(vectorizer)
 ⋮----
 def _sprite_sheet_geometry(job: dict) -> tuple[int, int, int, int] | None
 ⋮----
@@ -5958,6 +6135,7 @@ pollinations = status.get("pollinations", {})
 cloudflare = status.get("cloudflare", {})
 kaggle = status.get("kaggleQwen", {})
 imagen_codex = status.get("imagenCodex", {})
+vtracer = status.get("vtracer", {})
 ⋮----
 def _imagen_output_path(output_dir: Path, stdout: str) -> tuple[Path, dict | None]
 ⋮----
@@ -6049,12 +6227,31 @@ constraint_value = dict(constraint_value)
 ⋮----
 manifest_value = dict(manifest_value)
 ⋮----
+prompt = build_generation_prompt(attempt_job)
+⋮----
+dimensions = (1024, 1024)
+statuses = generator_backend_status()
+cloudflare_ready = (
+kaggle_ready = (
+raster_source = output_dir / "vector-source.png"
+raster_metadata = None
+raster_backend = None
+⋮----
+raster_metadata = cloudflare_generate(
+raster_backend = "cloudflare"
+⋮----
+raster_metadata = kaggle_generate(
+raster_backend = "kaggle-qwen"
+⋮----
+vector_metadata = vectorizer(
+⋮----
+metadata = _sanitize_metadata({
+current_output = output
+⋮----
 submitted = submit_colab_job(
 colab_result = wait_colab_result(
 ⋮----
 metadata = _sanitize_metadata(colab_result.get("metadata") or {})
-⋮----
-prompt = build_generation_prompt(attempt_job)
 ⋮----
 dimensions = _generation_dimensions(attempt_job) or (1024, 1024)
 ⋮----
@@ -6064,7 +6261,7 @@ metadata = cloudflare_generate(
 # Cloudflare failure when the Qwen Kaggle backend is
 # already configured. Explicit Cloudflare requests
 # remain strict unless a reference image requires Qwen.
-kaggle_ready = (
+⋮----
 allow_fallback = requested_backend == "auto" or bool(references)
 ⋮----
 metadata = kaggle_generate(
@@ -6072,8 +6269,6 @@ metadata = kaggle_generate(
 effective_model = DEFAULT_KAGGLE_MODEL
 ⋮----
 metadata = _sanitize_metadata(metadata)
-⋮----
-current_output = output
 ⋮----
 attempt_command = list(command)
 ⋮----
@@ -7020,10 +7215,13 @@ kaggle_qwen = generation.get("kaggleQwen", {})
 pollinations = generation.get("pollinations", {})
 imagen_codex = generation.get("imagenCodex", {})
 qwen_colab = generation.get("qwenColab", {})
+vtracer = generation.get("vtracer", {})
 ⋮----
 cloudflare_raster = bool(cloudflare.get("rasterReady"))
 kaggle_raster = bool(kaggle_qwen.get("rasterReady"))
 pollinations_raster = bool(pollinations.get("rasterVectorReady"))
+pollinations_vector = bool(pollinations.get("rasterVectorReady"))
+vtracer_vector = bool(vtracer.get("vectorSvgReady"))
 imagen_raster = bool(imagen_codex.get("rasterReady"))
 queued_qwen = bool(qwen_colab.get("queueReady"))
 ⋮----
@@ -7039,6 +7237,7 @@ capabilities = {
 # automatic raster production is intentionally free-first and only uses
 # Cloudflare Workers AI, then Kaggle Qwen.
 preferred_raster_backend = _first_ready_backend(
+preferred_vector_backend = (
 ⋮----
 blockers = []
 ⋮----

@@ -1,13 +1,13 @@
 # Change impact
 
-Base: d6c201dc37bf5a8452be2d9b19c8a2d468c3e394
-Head: 9df5dd35afdba48411bce0461974142c9cdddfd2
+Base: fff1c80c7d78cd91afca03f7d294b43126753f2f
+Head: e2e2bf59ea91d4ce142e2bbe53e58b165602c7c3
 
 ## Changed files
-- M pyproject.toml
+- M .github/workflows/validate.yml
 
 ## Affected areas
-- (root)
+- .github
 
 ## Related test candidates
 - No direct filename-based test match detected.

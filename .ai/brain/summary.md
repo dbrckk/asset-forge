@@ -1,21 +1,21 @@
 # Repo Brain
 
 - Index mode: incremental
-- Files indexed: 72
-- Files reparsed this run: 1
-- Symbols: 908
-- Internal import edges: 87
-- Impacted files: 1
-- Selected tests: 0
+- Files indexed: 73
+- Files reparsed this run: 7
+- Symbols: 926
+- Internal import edges: 89
+- Impacted files: 12
+- Selected tests: 7
 
 ## Languages
-- python: 69 files
+- python: 70 files
 - javascript: 3 files
 
 ## Highest-density symbol files
 - web/runtime_atlas.mjs: 139 symbols
 - tests/test_raster_pack.py: 82 symbols
-- tests/test_generator_backends.py: 69 symbols
+- tests/test_generator_backends.py: 77 symbols
 - raster_pack.py: 51 symbols
 - tests/test_production_executor.py: 46 symbols
 - tests/test_svg_tools.py: 22 symbols
@@ -43,10 +43,10 @@
 ## ast-grep enrichment
 - ast-grep outline: available
 - AST index mode: incremental
-- AST files reparsed this run: 1
-- outline files retained: 68
-- top-level items retained: 1163
-- direct members retained: 354
+- AST files reparsed this run: 7
+- outline files retained: 69
+- top-level items retained: 1170
+- direct members retained: 363
 - symbol shards: 26
 - route named symbols via ast-routing.json, then fetch one ast-symbols/<initial>.json shard
 

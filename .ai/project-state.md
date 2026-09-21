@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:31:42Z
+Generated: 2026-09-21T16:34:44Z
 
 ### Git
 - Branch: `main`
-- Head: `9df5dd35afdb`
-- Commit date: 2026-09-21T18:31:31+02:00
-- Commit: build: include VTracer generation backend
-- Tracked files: 292
+- Head: `e2e2bf59ea91`
+- Commit date: 2026-09-21T18:34:32+02:00
+- Commit: ci: smoke-test real VTracer backend
+- Tracked files: 293
 
 ### Recently changed files
-- `pyproject.toml`
-- `vector_backend.py`
-- `README.md`
-- `.github/workflows/production-os-batch.yml`
-- `tests/test_remote_batch.py`
+- `.github/workflows/validate.yml`
+- `tests/test_operational_status.py`
+- `tests/test_generator_backends.py`
+- `tests/test_vector_backend.py`
+- `pipelines/vector-svg.json`
 
 ### Project signals
 - `pyproject.toml`

@@ -1,10 +1,14 @@
 # CI status
 
-Summary: 3 success / 0 failure / 1 active
+Summary: 1 success / 1 failure / 2 active
 
-- Validate asset-forge: in_progress / pending (9df5dd35)
-- Validate asset-forge: completed / success (d6c201dc)
-- Validate asset-forge: completed / success (cf1a165b)
-- Validate asset-forge: completed / success (debdd3a6)
+- Validate asset-forge: in_progress / pending (e2e2bf59)
+- Validate asset-forge: in_progress / pending (fff1c80c)
+- Validate asset-forge: completed / success (3edebfed)
+- Validate asset-forge: completed / failure (a20d629b)
+
+## Latest failed run structure
+- Job: test
+  - Failed step: Unit tests
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.
