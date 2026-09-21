@@ -33,7 +33,7 @@ jobs:
             "$GITHUB_WORKSPACE/build/wheel-venv/bin/asset-forge" validate-asset-profiles
           )
       - name: Compile
-        run: python -m compileall -q backend_history.py asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py vector_backend.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py blender_adapter.py toolchain_3d.py tests
+        run: python -m compileall -q backend_history.py asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py vector_backend.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py kaggle_3d_backend.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Validate example manifest
