@@ -3221,6 +3221,10 @@ status = build_operational_status(
 def test_missing_optional_tools_are_reported_without_crashing(self)
 ⋮----
 def test_imagen_codex_reports_required_token_names(self)
+⋮----
+def test_cloudflare_free_raster_is_reported_as_ready_without_cli(self)
+⋮----
+def test_qwen_colab_queue_counts_as_queued_generation_capability(self)
 ````
 
 ## File: tests/test_production_contract.py
@@ -6834,22 +6838,40 @@ report = {
 
 ## File: operational_status.py
 ````python
+def _first_ready_backend(*candidates: tuple[str, dict]) -> str | None
+⋮----
 def build_operational_status(*, environ=None, home=None, which=shutil.which) -> dict
 ⋮----
 generation = generator_backend_status(environ=environ, home=home)
 raster = raster_backend_status()
 tools_3d = detect_3d_tools()
 ⋮----
-pollinations = generation["pollinations"]
+cloudflare = generation.get("cloudflare", {})
+kaggle_qwen = generation.get("kaggleQwen", {})
+pollinations = generation.get("pollinations", {})
 imagen_codex = generation.get("imagenCodex", {})
-imagen_installed = bool(imagen_codex.get("installed"))
-imagen_authenticated = bool(imagen_codex.get("authenticated"))
+qwen_colab = generation.get("qwenColab", {})
+⋮----
+cloudflare_raster = bool(cloudflare.get("rasterReady"))
+kaggle_raster = bool(kaggle_qwen.get("rasterReady"))
+pollinations_raster = bool(pollinations.get("rasterVectorReady"))
+imagen_raster = bool(imagen_codex.get("rasterReady"))
+queued_qwen = bool(qwen_colab.get("queueReady"))
+⋮----
+direct_raster_ready = any(
+free_raster_ready = cloudflare_raster or kaggle_raster
+⋮----
 webp_encode = bool(
 godot_executable = which("godot4") or which("godot")
 ⋮----
 capabilities = {
 ⋮----
+preferred_raster_backend = _first_ready_backend(
+⋮----
 blockers = []
+⋮----
+imagen_installed = bool(imagen_codex.get("installed"))
+imagen_authenticated = bool(imagen_codex.get("authenticated"))
 ````
 
 ## File: production_contract.py

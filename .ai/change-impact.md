@@ -1,13 +1,13 @@
 # Change impact
 
-Base: 074b0e635cc3e62b48d1aff74c400920a9baf663
-Head: 1b6cd87eb59a5bc10b2871968d24d9460004ea43
+Base: 90a22bffcc6e258a9511d0d9b9b44661bd02f9c8
+Head: 65bc583125d332c8bccc313e0624e9c93dd124f3
 
 ## Changed files
-- M .github/workflows/deadline-zero-live-pilot.yml
+- M tests/test_operational_status.py
 
 ## Affected areas
-- .github
+- tests
 
 ## Related test candidates
 - No direct filename-based test match detected.

@@ -4,5 +4,431 @@
   "scope": "symbols defined in changed source files",
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
-  "symbols": {}
+  "symbols": {
+    "_first_ready_backend": {
+      "source": {
+        "file": "operational_status.py",
+        "start": 10,
+        "end": 14
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "build_operational_status": {
+      "source": {
+        "file": "operational_status.py",
+        "start": 17,
+        "end": 143
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_first_ready_backend",
+          "definitions": [
+            {
+              "file": "operational_status.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "detect_3d_tools",
+          "definitions": [
+            {
+              "file": "toolchain_3d.py",
+              "line": 18,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "generator_backend_status",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 84,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "raster_backend_status",
+          "definitions": [
+            {
+              "file": "raster_pack.py",
+              "line": 712,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "OperationalStatusTests": {
+      "source": {
+        "file": "tests/test_operational_status.py",
+        "start": 8,
+        "end": 187
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_operational_status",
+          "definitions": [
+            {
+              "file": "operational_status.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_cloudflare_free_raster_is_reported_as_ready_without_cli",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 94,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_imagen_codex_reports_required_token_names",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 66,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_missing_optional_tools_are_reported_without_crashing",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 43,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_qwen_colab_queue_counts_as_queued_generation_capability",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 146,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_ready_matrix_is_machine_readable",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 9,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "which",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 67,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 7
+    },
+    "test_ready_matrix_is_machine_readable": {
+      "source": {
+        "file": "tests/test_operational_status.py",
+        "start": 9,
+        "end": 41
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_operational_status",
+          "definitions": [
+            {
+              "file": "operational_status.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "which",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 67,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "which": {
+      "source": {
+        "file": "tests/test_operational_status.py",
+        "start": 10,
+        "end": 130
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_operational_status",
+          "definitions": [
+            {
+              "file": "operational_status.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "test_cloudflare_free_raster_is_reported_as_ready_without_cli",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 94,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_imagen_codex_reports_required_token_names",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 66,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_missing_optional_tools_are_reported_without_crashing",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 43,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 4
+    },
+    "test_missing_optional_tools_are_reported_without_crashing": {
+      "source": {
+        "file": "tests/test_operational_status.py",
+        "start": 43,
+        "end": 63
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_operational_status",
+          "definitions": [
+            {
+              "file": "operational_status.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "which",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 67,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_imagen_codex_reports_required_token_names": {
+      "source": {
+        "file": "tests/test_operational_status.py",
+        "start": 66,
+        "end": 91
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_operational_status",
+          "definitions": [
+            {
+              "file": "operational_status.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "which",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 67,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_cloudflare_free_raster_is_reported_as_ready_without_cli": {
+      "source": {
+        "file": "tests/test_operational_status.py",
+        "start": 94,
+        "end": 144
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_operational_status",
+          "definitions": [
+            {
+              "file": "operational_status.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "which",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 67,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    },
+    "test_qwen_colab_queue_counts_as_queued_generation_capability": {
+      "source": {
+        "file": "tests/test_operational_status.py",
+        "start": 146,
+        "end": 187
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "build_operational_status",
+          "definitions": [
+            {
+              "file": "operational_status.py",
+              "line": 17,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
+          "symbol": "which",
+          "definitions": [
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 10,
+              "kind": "function",
+              "language": "python"
+            },
+            {
+              "file": "tests/test_operational_status.py",
+              "line": 67,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
+    }
+  }
 }

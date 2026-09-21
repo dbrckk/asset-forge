@@ -1,17 +1,205 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "74b6d9f9f49f2fbba9c1b70bea330898700f4403",
-  "head": "1b6cd87eb59a5bc10b2871968d24d9460004ea43",
+  "base": "1b6cd87eb59a5bc10b2871968d24d9460004ea43",
+  "head": "65bc583125d332c8bccc313e0624e9c93dd124f3",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": ".github/workflows/deadline-zero-live-pilot.yml",
+      "path": "operational_status.py",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_operational_status.py",
       "status": "M"
     }
   ],
-  "changed_source_files": [],
-  "impacted_files": [],
-  "impacted_symbols": [],
-  "selected_tests": []
+  "changed_source_files": [
+    "operational_status.py",
+    "tests/test_operational_status.py"
+  ],
+  "impacted_files": [
+    "asset_forge.py",
+    "operational_status.py",
+    "tests/test_operational_status.py"
+  ],
+  "impacted_symbols": [
+    {
+      "name": "load_json",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 72
+    },
+    {
+      "name": "validate_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 80
+    },
+    {
+      "name": "is_power_of_two",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 138
+    },
+    {
+      "name": "sprite_grid",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 142
+    },
+    {
+      "name": "build_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 163
+    },
+    {
+      "name": "validate_raster_file",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 194
+    },
+    {
+      "name": "select_tools",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 253
+    },
+    {
+      "name": "build_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 271
+    },
+    {
+      "name": "load_valid_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 300
+    },
+    {
+      "name": "cmd_validate",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 316
+    },
+    {
+      "name": "cmd_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 324
+    },
+    {
+      "name": "cmd_validate_raster",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 332
+    },
+    {
+      "name": "cmd_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 346
+    },
+    {
+      "name": "execute_compiled_production_job",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 370
+    },
+    {
+      "name": "_write_production_inputs",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 424
+    },
+    {
+      "name": "_persist_enriched_production_report",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 440
+    },
+    {
+      "name": "_enrich_engine_handoff",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 453
+    },
+    {
+      "name": "parser",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 534
+    },
+    {
+      "name": "main",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 748
+    },
+    {
+      "name": "_first_ready_backend",
+      "kind": "function",
+      "file": "operational_status.py",
+      "line": 10
+    },
+    {
+      "name": "build_operational_status",
+      "kind": "function",
+      "file": "operational_status.py",
+      "line": 17
+    },
+    {
+      "name": "OperationalStatusTests",
+      "kind": "class",
+      "file": "tests/test_operational_status.py",
+      "line": 8
+    },
+    {
+      "name": "test_ready_matrix_is_machine_readable",
+      "kind": "function",
+      "file": "tests/test_operational_status.py",
+      "line": 9
+    },
+    {
+      "name": "which",
+      "kind": "function",
+      "file": "tests/test_operational_status.py",
+      "line": 10
+    },
+    {
+      "name": "test_missing_optional_tools_are_reported_without_crashing",
+      "kind": "function",
+      "file": "tests/test_operational_status.py",
+      "line": 43
+    },
+    {
+      "name": "test_imagen_codex_reports_required_token_names",
+      "kind": "function",
+      "file": "tests/test_operational_status.py",
+      "line": 66
+    },
+    {
+      "name": "which",
+      "kind": "function",
+      "file": "tests/test_operational_status.py",
+      "line": 67
+    },
+    {
+      "name": "test_cloudflare_free_raster_is_reported_as_ready_without_cli",
+      "kind": "function",
+      "file": "tests/test_operational_status.py",
+      "line": 94
+    },
+    {
+      "name": "test_qwen_colab_queue_counts_as_queued_generation_capability",
+      "kind": "function",
+      "file": "tests/test_operational_status.py",
+      "line": 146
+    }
+  ],
+  "selected_tests": [
+    "tests/test_operational_status.py"
+  ]
 }

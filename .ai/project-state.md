@@ -96,20 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T15:43:54Z
+Generated: 2026-09-21T16:03:33Z
 
 ### Git
 - Branch: `main`
-- Head: `1b6cd87eb59a`
-- Commit date: 2026-09-21T17:43:29+02:00
-- Commit: chore: align live pilot artifact naming
+- Head: `65bc583125d3`
+- Commit date: 2026-09-21T18:03:16+02:00
+- Commit: test: cover free raster operational routing
 - Tracked files: 291
 
 ### Recently changed files
+- `tests/test_operational_status.py`
+- `operational_status.py`
 - `.github/workflows/deadline-zero-live-pilot.yml`
 - `tests/test_kaggle_backend.py`
 - `kaggle_backend.py`
-- `.github/workflows/live-generation.yml`
 
 ### Project signals
 - `pyproject.toml`
