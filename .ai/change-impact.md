@@ -1,13 +1,13 @@
 # Change impact
 
-Base: 27216614e3616932baee34149f37564dc908f4de
-Head: c128c9404720e5d7a6292130ebf50eabea006bb9
+Base: 25acc1d9aa18903ee0986b2f898011b3c630e658
+Head: b5b46bc7e17958ece2629c5dadee81e84fcd8ff2
 
 ## Changed files
-- M tests/test_production_executor.py
+- M .github/workflows/production-os-batch.yml
 
 ## Affected areas
-- tests
+- .github
 
 ## Related test candidates
 - No direct filename-based test match detected.

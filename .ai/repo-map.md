@@ -546,6 +546,44 @@ jobs:
               assert hashlib.sha256(artifact.read_bytes()).hexdigest() == item["sha256"]
           PY
 
+      - name: Publish batch summary
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          result = json.loads(
+              Path("build/remote-batch/output/batch-result.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          routing = (
+              result.get("routing_summary")
+              if isinstance(result.get("routing_summary"), dict)
+              else {}
+          )
+          quality = (
+              result.get("quality_summary")
+              if isinstance(result.get("quality_summary"), dict)
+              else {}
+          )
+          summary = Path(os.environ["GITHUB_STEP_SUMMARY"])
+          with summary.open("a", encoding="utf-8") as fh:
+              fh.write("## Asset Forge batch\n\n")
+              fh.write(f"- Assets: `{result.get('count')}`\n")
+              fh.write(
+                  f"- Fallbacks: `{routing.get('fallback_count', 0)}` "
+                  f"across `{routing.get('items_with_fallback', 0)}` assets\n"
+              )
+              fh.write(
+                  f"- Final backends: `{json.dumps(routing.get('final_backends', {}), sort_keys=True)}`\n"
+              )
+              fh.write(f"- Quality checked: `{quality.get('checked', 0)}`\n")
+              fh.write(f"- Regenerated: `{quality.get('regenerated', 0)}`\n")
+              fh.write(f"- Minimum similarity: `{quality.get('minimum_score')}`\n")
+          PY
+
       - name: Upload transactional batch bundle
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -681,6 +719,10 @@ jobs:
           from pathlib import Path
 
           report = json.loads(Path(os.environ["REPORT_PATH"]).read_text(encoding="utf-8"))
+          routing = report.get("routing") if isinstance(report.get("routing"), dict) else {}
+          initial_backend = routing.get("initialBackend")
+          final_backend = routing.get("finalBackend")
+          fallback_count = int(routing.get("fallbackCount") or 0)
           summary = Path(os.environ["GITHUB_STEP_SUMMARY"])
           with summary.open("a", encoding="utf-8") as fh:
               fh.write("## Asset Forge production\n\n")
@@ -688,6 +730,8 @@ jobs:
               fh.write(f"- Asset: `{report.get('assetId')}`\n")
               fh.write(f"- Type: `{report.get('assetType')}`\n")
               fh.write(f"- Success: `{report.get('success')}`\n")
+              fh.write(f"- Backend: `{initial_backend}` → `{final_backend}`\n")
+              fh.write(f"- Fallbacks: `{fallback_count}`\n")
               fh.write(f"- Artifact: `{report.get('artifact')}`\n")
           PY
         env:
@@ -9998,9 +10042,15 @@ bundled_extra = bundle_root / bundle_name
 ⋮----
 generation = report.get("generation") if isinstance(report.get("generation"), dict) else {}
 validation = report.get("validation") if isinstance(report.get("validation"), dict) else {}
+routing = report.get("routing") if isinstance(report.get("routing"), dict) else {}
 ⋮----
 quality = [item["visual_similarity"] for item in results if item["visual_similarity"]]
 scores = [
+routed = [
+final_backends: dict[str, int] = {}
+⋮----
+final_backend = str(routing.get("finalBackend") or "").strip()
+⋮----
 result = {
 ⋮----
 def main(argv=None) -> int

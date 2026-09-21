@@ -96,9 +96,10 @@
       ],
       "dependents": [
         "generator_backends.py",
-        "tests/test_cloudflare_backend.py"
+        "tests/test_cloudflare_backend.py",
+        "tests/test_generator_backends.py"
       ],
-      "in_degree": 2,
+      "in_degree": 3,
       "out_degree": 1
     },
     "colab_queue.py": {
@@ -470,11 +471,12 @@
     },
     "tests/test_generator_backends.py": {
       "dependencies": [
+        "cloudflare_backend.py",
         "generator_backends.py"
       ],
       "dependents": [],
       "in_degree": 0,
-      "out_degree": 1
+      "out_degree": 2
     },
     "tests/test_gltf_binary_metrics.py": {
       "dependencies": [

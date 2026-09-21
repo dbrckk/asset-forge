@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:06:24Z
+Generated: 2026-09-21T16:09:18Z
 
 ### Git
 - Branch: `main`
-- Head: `c128c9404720`
-- Commit date: 2026-09-21T18:06:10+02:00
-- Commit: test: cover production routing telemetry
+- Head: `b5b46bc7e179`
+- Commit date: 2026-09-21T18:08:55+02:00
+- Commit: ci: publish batch routing and quality summary
 - Tracked files: 291
 
 ### Recently changed files
+- `.github/workflows/production-os-batch.yml`
+- `.github/workflows/production-os-dispatch.yml`
+- `tests/test_remote_batch.py`
+- `remote_batch.py`
 - `tests/test_production_executor.py`
-- `schemas/production-report.schema.json`
-- `production_executor.py`
-- `tests/test_generator_backends.py`
-- `generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`

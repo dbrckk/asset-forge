@@ -274,6 +274,19 @@
     },
     {
       "dependencies": [
+        "tests/test_cloudflare_backend.py"
+      ],
+      "dependents": [
+        "generator_backends.py",
+        "tests/test_cloudflare_backend.py",
+        "tests/test_generator_backends.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 1,
+      "path": "cloudflare_backend.py"
+    },
+    {
+      "dependencies": [
         "engine_profile_validation.py"
       ],
       "dependents": [
@@ -317,18 +330,6 @@
       "in_degree": 3,
       "out_degree": 0,
       "path": "engine_profile_validation.py"
-    },
-    {
-      "dependencies": [
-        "tests/test_cloudflare_backend.py"
-      ],
-      "dependents": [
-        "generator_backends.py",
-        "tests/test_cloudflare_backend.py"
-      ],
-      "in_degree": 2,
-      "out_degree": 1,
-      "path": "cloudflare_backend.py"
     },
     {
       "dependencies": [
@@ -488,6 +489,16 @@
     },
     {
       "dependencies": [
+        "cloudflare_backend.py",
+        "generator_backends.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 2,
+      "path": "tests/test_generator_backends.py"
+    },
+    {
+      "dependencies": [
         "gltf_binary_metrics.py",
         "gltf_quality.py"
       ],
@@ -627,15 +638,6 @@
     },
     {
       "dependencies": [
-        "generator_backends.py"
-      ],
-      "dependents": [],
-      "in_degree": 0,
-      "out_degree": 1,
-      "path": "tests/test_generator_backends.py"
-    },
-    {
-      "dependencies": [
         "gltf_diagnostics.py"
       ],
       "dependents": [],
@@ -752,7 +754,7 @@
       "path": "tests/test_starlist_bridge.py"
     }
   ],
-  "edge_count": 107,
+  "edge_count": 109,
   "generated_by": "dbrckk/repo-brain-v7-graph",
   "node_count": 67,
   "schema_version": 1
