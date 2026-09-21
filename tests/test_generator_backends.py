@@ -314,6 +314,48 @@ class GeneratorBackendsTests(unittest.TestCase):
             self.assertEqual(result["references"][0]["transport"], "local-input-ref")
             self.assertIsNone(result["references"][0]["url"])
 
+    def test_cloudflare_reference_routes_directly_to_kaggle_qwen(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            reference = out / "parent.png"
+            reference.write_bytes(b"PNG")
+            seen = {}
+
+            def fake_kaggle(prompt, output, **kwargs):
+                seen["prompt"] = prompt
+                seen["reference_path"] = kwargs.get("reference_path")
+                output.write_bytes(b"PNG")
+                return {"provider": "kaggle", "model": "Qwen/Qwen-Image-2.1"}
+
+            with patch(
+                "generator_backends.generator_backend_status",
+                return_value={"kaggleQwen": {"rasterReady": True}},
+            ), patch(
+                "generator_backends.kaggle_generate",
+                side_effect=fake_kaggle,
+            ), patch(
+                "generator_backends.cloudflare_generate",
+                side_effect=AssertionError("Cloudflare must not be called for referenced raster jobs"),
+            ):
+                result = execute_generated_asset(
+                    job(),
+                    out,
+                    backend="cloudflare",
+                    reference_paths=[reference],
+                    raster_normalizer=lambda raw, output, value: (
+                        output.write_bytes(raw.read_bytes())
+                        and {"width": 64, "height": 64, "columns": 2, "rows": 2}
+                    ),
+                    similarity_evaluator=lambda child, refs: {
+                        "score": 0.91,
+                        "bestReference": str(refs[0]),
+                        "comparisons": [],
+                    },
+                )
+
+            self.assertEqual(result["backend"], "kaggle-qwen")
+            self.assertEqual(seen["reference_path"], reference)
+
     def test_auto_backend_prefers_cloudflare_for_raster_when_ready(self):
         with patch(
             "generator_backends.generator_backend_status",
