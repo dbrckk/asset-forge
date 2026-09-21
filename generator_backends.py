@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Callable
 
 from art_quality import ArtQualityError, evaluate_raster_art
+from backend_history import choose_backend, record_generation_result
 from visual_similarity import compare_against_references
 from cloudflare_backend import (
     CloudflareGenerationError,
@@ -84,6 +85,25 @@ def _sanitize_metadata(value, *, depth: int = 0):
 
 class GenerationError(RuntimeError):
     pass
+
+
+def _backend_history_path(*, environ=None) -> Path | None:
+    env = os.environ if environ is None else environ
+    raw = str(env.get("ASSET_FORGE_BACKEND_HISTORY") or "").strip()
+    return Path(raw) if raw else None
+
+
+def _select_free_raster_backend(status: dict, *, environ=None) -> str | None:
+    ready = []
+    if status.get("cloudflare", {}).get("rasterReady") is True:
+        ready.append("cloudflare")
+    if status.get("kaggleQwen", {}).get("rasterReady") is True:
+        ready.append("kaggle-qwen")
+    return choose_backend(
+        ready,
+        history_path=_backend_history_path(environ=environ),
+        default_order=["cloudflare", "kaggle-qwen"],
+    )
 
 
 def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
@@ -437,10 +457,9 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str:
     imagen_codex = status.get("imagenCodex", {})
     vtracer = status.get("vtracer", {})
     if asset_type in RASTER_GENERATED_TYPES:
-        if cloudflare.get("rasterReady") is True:
-            return "cloudflare"
-        if kaggle.get("rasterReady") is True:
-            return "kaggle-qwen"
+        selected = _select_free_raster_backend(status)
+        if selected is not None:
+            return selected
         raise GenerationError("no authenticated free raster generation backend is ready")
 
     if asset_type in VECTOR_GENERATED_TYPES:
@@ -768,8 +787,8 @@ def execute_generated_asset(
                 )
                 raster_source = output_dir / "vector-source.png"
                 raster_metadata = None
-                raster_backend = None
-                if cloudflare_ready:
+                raster_backend = _select_free_raster_backend(statuses)
+                if raster_backend == "cloudflare":
                     try:
                         raster_metadata = cloudflare_generate(
                             prompt,
@@ -782,7 +801,6 @@ def execute_generated_asset(
                             model=DEFAULT_CLOUDFLARE_MODEL,
                             timeout_seconds=timeout,
                         )
-                        raster_backend = "cloudflare"
                     except CloudflareGenerationError as exc:
                         if not kaggle_ready:
                             raise GenerationError(
@@ -800,7 +818,6 @@ def execute_generated_asset(
                                 model=DEFAULT_KAGGLE_MODEL,
                                 timeout_seconds=max(timeout, 1800.0),
                             )
-                            raster_backend = "kaggle-qwen"
                             fallback_history.append({
                                 "stage": "vector-raster",
                                 "from": "cloudflare",
@@ -808,12 +825,13 @@ def execute_generated_asset(
                                 "reason": "cloudflare-generation-error",
                                 "attempt": attempt + 1,
                             })
+                            raster_backend = "kaggle-qwen"
                         except KaggleGenerationError as fallback_exc:
                             raise GenerationError(
                                 f"vtracer source generation failed on cloudflare: {exc}; "
                                 f"kaggle-qwen fallback failed: {fallback_exc}"
                             ) from fallback_exc
-                elif kaggle_ready:
+                elif raster_backend == "kaggle-qwen":
                     try:
                         raster_metadata = kaggle_generate(
                             prompt,
@@ -826,11 +844,36 @@ def execute_generated_asset(
                             model=DEFAULT_KAGGLE_MODEL,
                             timeout_seconds=max(timeout, 1800.0),
                         )
-                        raster_backend = "kaggle-qwen"
                     except KaggleGenerationError as exc:
-                        raise GenerationError(
-                            f"vtracer source generation failed on kaggle-qwen: {exc}"
-                        ) from exc
+                        if not cloudflare_ready:
+                            raise GenerationError(
+                                f"vtracer source generation failed on kaggle-qwen: {exc}"
+                            ) from exc
+                        try:
+                            raster_metadata = cloudflare_generate(
+                                prompt,
+                                raster_source,
+                                width=dimensions[0],
+                                height=dimensions[1],
+                                seed=int(constraint_value.get("seed") or 0),
+                                steps=int(constraint_value.get("generationSteps") or 20),
+                                guidance=float(constraint_value.get("guidance") or 7.5),
+                                model=DEFAULT_CLOUDFLARE_MODEL,
+                                timeout_seconds=timeout,
+                            )
+                            fallback_history.append({
+                                "stage": "vector-raster",
+                                "from": "kaggle-qwen",
+                                "to": "cloudflare",
+                                "reason": "kaggle-generation-error",
+                                "attempt": attempt + 1,
+                            })
+                            raster_backend = "cloudflare"
+                        except CloudflareGenerationError as fallback_exc:
+                            raise GenerationError(
+                                f"vtracer source generation failed on kaggle-qwen: {exc}; "
+                                f"cloudflare fallback failed: {fallback_exc}"
+                            ) from fallback_exc
                 else:
                     raise GenerationError(
                         "vtracer requires Cloudflare or Kaggle Qwen to generate its raster source"
@@ -949,7 +992,41 @@ def execute_generated_asset(
                             timeout_seconds=max(timeout, 1800.0),
                         )
                     except KaggleGenerationError as exc:
-                        raise GenerationError(f"kaggle-qwen generation failed: {exc}") from exc
+                        cloudflare_ready = (
+                            generator_backend_status()
+                            .get("cloudflare", {})
+                            .get("rasterReady")
+                            is True
+                        )
+                        if requested_backend == "auto" and cloudflare_ready:
+                            try:
+                                metadata = cloudflare_generate(
+                                    prompt,
+                                    output,
+                                    width=dimensions[0],
+                                    height=dimensions[1],
+                                    seed=int(constraint_value.get("seed") or 0),
+                                    steps=int(constraint_value.get("generationSteps") or 20),
+                                    reference_path=None,
+                                    guidance=float(constraint_value.get("guidance") or 7.5),
+                                    model=DEFAULT_CLOUDFLARE_MODEL,
+                                    timeout_seconds=timeout,
+                                )
+                                fallback_history.append({
+                                    "from": "kaggle-qwen",
+                                    "to": "cloudflare",
+                                    "reason": "kaggle-generation-error",
+                                    "attempt": attempt + 1,
+                                })
+                                backend = "cloudflare"
+                                effective_model = DEFAULT_CLOUDFLARE_MODEL
+                            except CloudflareGenerationError as fallback_exc:
+                                raise GenerationError(
+                                    f"kaggle-qwen generation failed: {exc}; "
+                                    f"cloudflare fallback failed: {fallback_exc}"
+                                ) from fallback_exc
+                        else:
+                            raise GenerationError(f"kaggle-qwen generation failed: {exc}") from exc
                 metadata = _sanitize_metadata(metadata)
             stdout = ""
             current_output = output
@@ -1096,7 +1173,7 @@ def execute_generated_asset(
             + f" after {attempt + 1} attempts"
         )
 
-    return {
+    result = {
         "success": True,
         "backend": backend,
         "requestedBackend": requested_backend,
@@ -1151,6 +1228,15 @@ def execute_generated_asset(
         },
     }
 
+    history_path = _backend_history_path()
+    if history_path is not None:
+        try:
+            record_generation_result(history_path, result)
+        except (OSError, ValueError, TypeError):
+            # Learning is advisory. A broken cache or unwritable history must
+            # never make a valid production asset fail.
+            pass
+    return result
 
 
 class _NoCredentialRedirect(urllib.request.HTTPRedirectHandler):
