@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T08:13:45Z
+Generated: 2026-09-21T08:23:12Z
 
 ### Git
 - Branch: `main`
-- Head: `9f82ee769ad4`
-- Commit date: 2026-09-21T10:13:24+02:00
-- Commit: fix: preserve Kaggle failure diagnostics for Qwen jobs
+- Head: `000bd2daec3e`
+- Commit date: 2026-09-21T10:23:01+02:00
+- Commit: fix: avoid stale torchao breaking Qwen on Kaggle
 - Tracked files: 290
 
 ### Recently changed files
