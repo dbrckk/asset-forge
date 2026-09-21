@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from cloudflare_backend import CloudflareGenerationError
 from generator_backends import (
     GenerationError,
     build_generation_prompt,
@@ -355,6 +356,86 @@ class GeneratorBackendsTests(unittest.TestCase):
 
             self.assertEqual(result["backend"], "kaggle-qwen")
             self.assertEqual(seen["reference_path"], reference)
+
+    def test_auto_cloudflare_failure_falls_back_to_kaggle_qwen(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+
+            def fake_kaggle(prompt, output, **kwargs):
+                output.write_bytes(b"PNG")
+                return {
+                    "provider": "kaggle",
+                    "model": "Qwen/Qwen-Image-2.1",
+                }
+
+            with patch(
+                "generator_backends.generator_backend_status",
+                return_value={
+                    "cloudflare": {"rasterReady": True},
+                    "kaggleQwen": {"rasterReady": True},
+                    "pollinations": {
+                        "rasterVectorReady": False,
+                        "threeDReady": False,
+                    },
+                    "imagenCodex": {"rasterReady": False},
+                },
+            ), patch(
+                "generator_backends.cloudflare_generate",
+                side_effect=CloudflareGenerationError("temporary failure"),
+            ), patch(
+                "generator_backends.kaggle_generate",
+                side_effect=fake_kaggle,
+            ):
+                result = execute_generated_asset(
+                    job(),
+                    out,
+                    backend="auto",
+                    raster_normalizer=lambda raw, output, value: (
+                        output.write_bytes(raw.read_bytes())
+                        and {"width": 64, "height": 64, "columns": 2, "rows": 2}
+                    ),
+                )
+
+            self.assertEqual(result["requestedBackend"], "auto")
+            self.assertEqual(result["initialBackend"], "cloudflare")
+            self.assertEqual(result["backend"], "kaggle-qwen")
+            self.assertEqual(
+                result["fallbacks"],
+                [{
+                    "from": "cloudflare",
+                    "to": "kaggle-qwen",
+                    "reason": "cloudflare-generation-error",
+                    "attempt": 1,
+                }],
+            )
+
+    def test_explicit_cloudflare_failure_does_not_silently_fallback(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+
+            with patch(
+                "generator_backends.generator_backend_status",
+                return_value={
+                    "cloudflare": {"rasterReady": True},
+                    "kaggleQwen": {"rasterReady": True},
+                },
+            ), patch(
+                "generator_backends.cloudflare_generate",
+                side_effect=CloudflareGenerationError("temporary failure"),
+            ), patch(
+                "generator_backends.kaggle_generate",
+            ) as kaggle:
+                with self.assertRaisesRegex(
+                    GenerationError,
+                    "cloudflare generation failed",
+                ):
+                    execute_generated_asset(
+                        job(),
+                        out,
+                        backend="cloudflare",
+                    )
+
+            kaggle.assert_not_called()
 
     def test_auto_backend_prefers_cloudflare_for_raster_when_ready(self):
         with patch(
