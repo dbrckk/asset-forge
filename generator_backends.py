@@ -859,6 +859,11 @@ def execute_generated_asset(
     previous_technical_failed = False
     previous_technical_result = None
     for attempt in range(retry_budget + 1):
+        applied_retry_categories = (
+            _technical_retry_categories(previous_technical_result)
+            if attempt > 0 and previous_technical_failed
+            else []
+        )
         retry_guidance = []
         if attempt > 0:
             if previous_similarity_failed:
@@ -1259,17 +1264,12 @@ def execute_generated_asset(
                 and not list(technical.get("errors") or [])
             )
             previous_technical_failed = not technical_passed
-            retry_categories = (
-                _technical_retry_categories(previous_technical_result)
-                if attempt > 0 and previous_technical_result is not None
-                else []
-            )
             technical_quality_history.append({
                 "attempt": attempt + 1,
                 "score": round(float(technical_score), 6),
                 "threshold": technical_threshold,
                 "passed": technical_passed,
-                "retryCategories": retry_categories,
+                "retryCategories": applied_retry_categories,
                 "metrics": technical.get("metrics", {}),
                 "errors": list(technical.get("errors") or []),
                 "warnings": list(technical.get("warnings") or []),
