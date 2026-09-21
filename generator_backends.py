@@ -1331,9 +1331,22 @@ def execute_generated_3d_asset(
         statuses.get("pollinations", {}).get("threeDReady") is True
     )
 
+    manifest = job.get("manifest")
+    manifest = manifest if isinstance(manifest, dict) else {}
+    constraints = manifest.get("constraints")
+    constraints = constraints if isinstance(constraints, dict) else {}
+    importance = str(manifest.get("importance") or "").strip().lower()
+    premium_first = (
+        importance in {"primary", "hero", "critical"}
+        or constraints.get("premiumQualityRequired") is True
+        or constraints.get("aaaQualityRequired") is True
+    )
+
     requested_backend = str(backend or "auto")
     if requested_backend == "auto":
-        if kaggle_ready:
+        if premium_first and pollinations_ready:
+            selected_backend = "pollinations"
+        elif kaggle_ready:
             selected_backend = "kaggle-triposr"
         elif pollinations_ready:
             selected_backend = "pollinations"
@@ -1435,6 +1448,7 @@ def execute_generated_3d_asset(
                 "model": effective_model,
                 "resolution": resolution,
                 "assetType": asset_type,
+                "routingPolicy": "premium-first" if premium_first else "free-first",
                 "referenceBackend": reference_backend,
                 "referencePath": str(reference_path),
                 "referenceGeneration": reference,
@@ -1518,6 +1532,7 @@ def execute_generated_3d_asset(
         "model": effective_model,
         "resolution": resolution,
         "assetType": asset_type,
+        "routingPolicy": "premium-first" if premium_first else "free-first",
         "referenceBackend": reference_backend,
         "referencePath": str(reference_path),
         "referenceGeneration": reference,
