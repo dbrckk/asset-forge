@@ -112,6 +112,7 @@ tests/
   test_godot_3d_delivery.py
   test_godot_export.py
   test_godot_handoff.py
+  test_kaggle_3d_backend.py
   test_kaggle_backend.py
   test_operational_status.py
   test_production_contract.py
@@ -148,6 +149,7 @@ gltf_tools.py
 godot_3d_delivery.py
 godot_export.py
 godot_handoff.py
+kaggle_3d_backend.py
 kaggle_backend.py
 lod_3d.py
 operational_status.py
@@ -3548,6 +3550,39 @@ result = validate_godot_handoff(project)
 @patch("godot_handoff.subprocess.run")
 @patch("godot_handoff.detect_godot")
     def test_available_godot_import_passes(self, detect, run)
+````
+
+## File: tests/test_kaggle_3d_backend.py
+````python
+class Kaggle3DBackendTests(unittest.TestCase)
+⋮----
+def test_status_requires_cli_and_kaggle_credentials(self)
+⋮----
+ready = status(environ={
+⋮----
+def test_runner_is_pinned_and_requires_glb_output(self)
+⋮----
+source = _runner_source()
+⋮----
+def test_generate_orchestrates_private_gpu_kernel_and_downloads_glb(self)
+⋮----
+root = Path(td)
+reference = root / "reference.png"
+⋮----
+output = root / "asset.glb"
+commands = []
+⋮----
+def runner(command, **kwargs)
+⋮----
+download = Path(command[command.index("-p") + 1])
+⋮----
+result = generate(
+⋮----
+push = next(command for command in commands if command[1:3] == ["kernels", "push"])
+⋮----
+def test_generate_rejects_unapproved_model_override(self)
+⋮----
+source = Path(td) / "reference.png"
 ````
 
 ## File: tests/test_kaggle_backend.py
@@ -7228,6 +7263,86 @@ chosen = executable or detected["path"]
 ⋮----
 command = godot_import_command(chosen, project_dir)
 completed = subprocess.run(
+````
+
+## File: kaggle_3d_backend.py
+````python
+DEFAULT_MODEL = "stabilityai/TripoSR"
+TRIPOSR_REPOSITORY = "https://github.com/VAST-AI-Research/TripoSR.git"
+TRIPOSR_COMMIT = "107cefdc244c39106fa830359024f6a2f1c78871"
+MAX_REFERENCE_BYTES = 20 * 1024 * 1024
+MAX_GLB_BYTES = 100 * 1024 * 1024
+⋮----
+class Kaggle3DGenerationError(RuntimeError)
+⋮----
+def status(*, environ=None) -> dict
+⋮----
+env = os.environ if environ is None else environ
+token = str(env.get("KAGGLE_API_TOKEN") or "").strip()
+username = str(env.get("KAGGLE_USERNAME") or "").strip()
+executable = shutil.which("kaggle")
+ready = bool(token and username and executable)
+⋮----
+def _runner_source() -> str
+⋮----
+def _validate_reference(path: Path) -> Path
+⋮----
+source = Path(path)
+⋮----
+size = source.stat().st_size
+⋮----
+source = _validate_reference(reference_path)
+⋮----
+resolution = int(mc_resolution)
+⋮----
+timeout = float(timeout_seconds)
+⋮----
+job_tag = _slug(f"asset-forge-triposr-{int(time.time())}-{os.getpid()}")
+kernel_id = f"{_slug(username)}/{job_tag}"
+⋮----
+root = Path(td)
+script = _runner_source()
+script = script.replace(
+⋮----
+metadata = {
+⋮----
+deadline = time.monotonic() + timeout
+terminal_error = None
+last_status = ""
+⋮----
+status_result = _run(
+⋮----
+body = (
+last_status = body.strip()
+⋮----
+terminal_error = f"Kaggle TripoSR kernel failed: {last_status[:1200]}"
+⋮----
+download_dir = root / "download"
+⋮----
+error_file = download_dir / "error.json"
+⋮----
+payload = json.loads(error_file.read_text(encoding="utf-8"))
+⋮----
+payload = None
+⋮----
+detail = (
+⋮----
+diagnostics = []
+⋮----
+detail = _extract_kaggle_diagnostic(candidate)
+⋮----
+suffix = diagnostics[-1][-6000:] if diagnostics else "no diagnostic output"
+⋮----
+generated = download_dir / "asset.glb"
+⋮----
+raw = generated.read_bytes()
+⋮----
+target = Path(output)
+⋮----
+result_path = download_dir / "result.json"
+result = {}
+⋮----
+result = json.loads(result_path.read_text(encoding="utf-8"))
 ````
 
 ## File: kaggle_backend.py

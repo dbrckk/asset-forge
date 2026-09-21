@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:42:00Z
+Generated: 2026-09-21T16:46:42Z
 
 ### Git
 - Branch: `main`
-- Head: `a6bb2f7390a8`
-- Commit date: 2026-09-21T18:41:38+02:00
-- Commit: ci: persist adaptive backend history for batches
-- Tracked files: 295
+- Head: `b3b0e9aa9238`
+- Commit date: 2026-09-21T18:46:30+02:00
+- Commit: test: cover Kaggle TripoSR 3D backend
+- Tracked files: 301
 
 ### Recently changed files
+- `tests/test_kaggle_3d_backend.py`
+- `kaggle_3d_backend.py`
 - `.github/workflows/production-os-batch.yml`
 - `.github/workflows/production-os-dispatch.yml`
 - `tests/test_generator_backends.py`
-- `generator_backends.py`
-- `.github/workflows/validate.yml`
 
 ### Project signals
 - `pyproject.toml`
