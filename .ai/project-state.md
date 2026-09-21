@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T14:47:21Z
+Generated: 2026-09-21T15:01:46Z
 
 ### Git
 - Branch: `main`
-- Head: `6b41967a9e60`
-- Commit date: 2026-09-21T16:47:07+02:00
-- Commit: fix: persist latest validated asset library between pilot runs
+- Head: `74b6d9f9f49f`
+- Commit date: 2026-09-21T17:01:29+02:00
+- Commit: test: lock memory-safe dual quantization
 - Tracked files: 291
 
 ### Recently changed files
+- `tests/test_kaggle_backend.py`
+- `kaggle_backend.py`
 - `.github/workflows/deadline-zero-live-pilot.yml`
 - `.github/workflows/live-generation.yml`
 - `examples/production-request-live-raster.json`
-- `tests/test_generator_backends.py`
-- `generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`

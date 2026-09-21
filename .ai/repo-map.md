@@ -3201,7 +3201,7 @@ def test_status_rejects_missing_cli(self)
 ⋮----
 value = status(environ={
 ⋮----
-def test_runner_quantizes_transformer_only(self)
+def test_runner_quantizes_transformer_and_text_encoder(self)
 ⋮----
 source = _runner_source()
 ````
