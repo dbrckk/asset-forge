@@ -19,6 +19,12 @@ from cloudflare_backend import (
     generate as cloudflare_generate,
     status as cloudflare_status,
 )
+from kaggle_backend import (
+    KaggleGenerationError,
+    DEFAULT_MODEL as DEFAULT_KAGGLE_MODEL,
+    generate as kaggle_generate,
+    status as kaggle_status,
+)
 from colab_queue import (
     ColabQueueError,
     download_result_asset,
@@ -91,8 +97,10 @@ def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:
         ).strip()
     )
     cloudflare = cloudflare_status(environ=env)
+    kaggle = kaggle_status(environ=env)
     return {
         "cloudflare": cloudflare,
+        "kaggleQwen": kaggle,
         "pollinations": {
             "installed": polli is not None,
             "executable": polli,
@@ -400,7 +408,7 @@ def pollinations_command(
 
 
 def select_generation_backend(job: dict, requested: str = "auto") -> str:
-    if requested in {"pollinations", "imagen-codex", "qwen-colab", "cloudflare"}:
+    if requested in {"pollinations", "imagen-codex", "qwen-colab", "cloudflare", "kaggle-qwen"}:
         return requested
     if requested != "auto":
         raise GenerationError(f"unsupported generator backend: {requested}")
@@ -409,13 +417,14 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str:
     status = generator_backend_status()
     pollinations = status.get("pollinations", {})
     cloudflare = status.get("cloudflare", {})
+    kaggle = status.get("kaggleQwen", {})
     imagen_codex = status.get("imagenCodex", {})
     if asset_type in RASTER_GENERATED_TYPES:
         if cloudflare.get("rasterReady") is True:
             return "cloudflare"
-        if pollinations.get("rasterVectorReady") is True:
-            return "pollinations"
-        raise GenerationError("no authenticated raster generation backend is ready")
+        if kaggle.get("rasterReady") is True:
+            return "kaggle-qwen"
+        raise GenerationError("no authenticated free raster generation backend is ready")
 
     if asset_type in VECTOR_GENERATED_TYPES:
         if pollinations.get("rasterVectorReady") is True:
@@ -534,7 +543,7 @@ def execute_generated_asset(
         raise GenerationError(f"unsupported generated asset type: {asset_type or '<missing>'}")
 
     executable = None
-    if backend not in {"qwen-colab", "cloudflare"}:
+    if backend not in {"qwen-colab", "cloudflare", "kaggle-qwen"}:
         executable_name = "polli" if backend == "pollinations" else "imagen"
         executable = shutil.which(executable_name)
         if not executable:
@@ -571,7 +580,7 @@ def execute_generated_asset(
     references = [Path(path) for path in (reference_paths or [])]
     if references and asset_type not in RASTER_GENERATED_TYPES:
         raise GenerationError("visual references are currently supported for raster generation only")
-    if references and backend not in {"pollinations", "imagen-codex", "qwen-colab", "cloudflare"}:
+    if references and backend not in {"pollinations", "imagen-codex", "qwen-colab", "cloudflare", "kaggle-qwen"}:
         raise GenerationError("selected backend does not support visual references")
     if len(references) > 4:
         raise GenerationError("at most 4 visual references are supported")
@@ -585,6 +594,7 @@ def execute_generated_asset(
         "codex-2" if backend == "imagen-codex" else
         "Qwen/Qwen-Image-2.1" if backend == "qwen-colab" else
         DEFAULT_CLOUDFLARE_MODEL if backend == "cloudflare" else
+        DEFAULT_KAGGLE_MODEL if backend == "kaggle-qwen" else
         None
     )
     reference_urls = []
@@ -599,7 +609,7 @@ def execute_generated_asset(
                 )
             )
 
-    if backend in {"qwen-colab", "cloudflare"}:
+    if backend in {"qwen-colab", "cloudflare", "kaggle-qwen"}:
         command = None
     elif backend == "pollinations":
         command = pollinations_command(
@@ -676,7 +686,7 @@ def execute_generated_asset(
                     "use a clean readable silhouette, stable frame occupancy, and stronger local contrast."
                 )
 
-        if backend in {"qwen-colab", "cloudflare"}:
+        if backend in {"qwen-colab", "cloudflare", "kaggle-qwen"}:
             attempt_command = None
             attempt_job = json.loads(json.dumps(job))
             if retry_guidance:
@@ -731,22 +741,38 @@ def execute_generated_asset(
                         "and camera language while applying only the requested change."
                     )
                 dimensions = _generation_dimensions(attempt_job) or (1024, 1024)
-                try:
-                    metadata = cloudflare_generate(
-                        prompt,
-                        output,
-                        width=dimensions[0],
-                        height=dimensions[1],
-                        seed=int(constraint_value.get("seed") or 0),
-                        steps=int(constraint_value.get("generationSteps") or 20),
-                        reference_path=(references[0] if references else None),
-                        strength=float(constraint_value.get("referenceStrength") or 0.55),
-                        guidance=float(constraint_value.get("guidance") or 7.5),
-                        model=effective_model or DEFAULT_CLOUDFLARE_MODEL,
-                        timeout_seconds=timeout,
-                    )
-                except CloudflareGenerationError as exc:
-                    raise GenerationError(f"cloudflare generation failed: {exc}") from exc
+                if backend == "cloudflare":
+                    try:
+                        metadata = cloudflare_generate(
+                            prompt,
+                            output,
+                            width=dimensions[0],
+                            height=dimensions[1],
+                            seed=int(constraint_value.get("seed") or 0),
+                            steps=int(constraint_value.get("generationSteps") or 20),
+                            reference_path=(references[0] if references else None),
+                            strength=float(constraint_value.get("referenceStrength") or 0.55),
+                            guidance=float(constraint_value.get("guidance") or 7.5),
+                            model=effective_model or DEFAULT_CLOUDFLARE_MODEL,
+                            timeout_seconds=timeout,
+                        )
+                    except CloudflareGenerationError as exc:
+                        raise GenerationError(f"cloudflare generation failed: {exc}") from exc
+                else:
+                    try:
+                        metadata = kaggle_generate(
+                            prompt,
+                            output,
+                            width=dimensions[0],
+                            height=dimensions[1],
+                            seed=int(constraint_value.get("seed") or 0),
+                            steps=int(constraint_value.get("generationSteps") or 20),
+                            reference_path=(references[0] if references else None),
+                            model=effective_model or DEFAULT_KAGGLE_MODEL,
+                            timeout_seconds=max(timeout, 1800.0),
+                        )
+                    except KaggleGenerationError as exc:
+                        raise GenerationError(f"kaggle-qwen generation failed: {exc}") from exc
                 metadata = _sanitize_metadata(metadata)
             stdout = ""
             current_output = output
@@ -918,6 +944,8 @@ def execute_generated_asset(
                     if backend == "qwen-colab"
                     else "cloudflare-inline-base64"
                     if backend == "cloudflare"
+                    else "kaggle-kernel-input"
+                    if backend == "kaggle-qwen"
                     else "local-input-ref"
                 ),
             }
