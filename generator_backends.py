@@ -582,6 +582,7 @@ def execute_generated_asset(
     similarity_evaluator: Callable[[Path, list[Path]], dict] = compare_against_references,
     technical_quality_evaluator: Callable[[Path, dict], dict] = evaluate_raster_art,
     vectorizer: Callable[..., dict] = vectorize_raster,
+    record_history: bool = True,
 ) -> dict:
     if job.get("requiresGenerator") is not True:
         raise GenerationError("production job does not require a generator")
@@ -1236,7 +1237,7 @@ def execute_generated_asset(
         },
     }
 
-    history_path = _backend_history_path()
+    history_path = _backend_history_path() if record_history else None
     if history_path is not None:
         try:
             record_generation_result(history_path, result)
@@ -1389,12 +1390,19 @@ def execute_generated_3d_asset(
     else:
         reference_backend = "pollinations"
 
+    reference_kwargs = {
+        "backend": reference_backend,
+        "model": None,
+        "timeout_seconds": min(timeout, 180.0),
+    }
+    if generator is execute_generated_asset:
+        # The enclosing 3D result persists the reference outcome together with
+        # the 3D backend. Avoid counting the same raster generation twice.
+        reference_kwargs["record_history"] = False
     reference = generator(
         job,
         reference_dir,
-        backend=reference_backend,
-        model=None,
-        timeout_seconds=min(timeout, 180.0),
+        **reference_kwargs,
     )
     reference_path = Path(str(reference.get("sourcePath") or ""))
     if not reference_path.is_file():
