@@ -1,13 +1,13 @@
 # Change impact
 
-Base: 923dd31e8e843784e86adbf9848354369aba78ce
-Head: 705e3bac1f716d80e785ea0e518f4d67dde3b8e4
+Base: a7c957f5efe047b0afae75687295c902ba8df59e
+Head: a14ff81d55db60e3ba2fc9c2c63db5b03f011981
 
 ## Changed files
-- M tests/test_operational_status.py
+- M .github/workflows/production-os-dispatch.yml
 
 ## Affected areas
-- tests
+- .github
 
 ## Related test candidates
 - No direct filename-based test match detected.

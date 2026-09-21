@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:52:45Z
+Generated: 2026-09-21T16:53:29Z
 
 ### Git
 - Branch: `main`
-- Head: `705e3bac1f71`
-- Commit date: 2026-09-21T18:52:31+02:00
-- Commit: test: cover free TripoSR 3D readiness
+- Head: `a14ff81d55db`
+- Commit date: 2026-09-21T18:53:19+02:00
+- Commit: ci: allow Kaggle 3D production startup time
 - Tracked files: 305
 
 ### Recently changed files
+- `.github/workflows/production-os-dispatch.yml`
+- `README.md`
 - `tests/test_operational_status.py`
 - `tests/test_production_executor.py`
 - `tests/test_generator_backends.py`
-- `pipelines/model-3d.json`
-- `config/tooling.json`
 
 ### Project signals
 - `pyproject.toml`
