@@ -24,10 +24,13 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
     pollinations = generation.get("pollinations", {})
     imagen_codex = generation.get("imagenCodex", {})
     qwen_colab = generation.get("qwenColab", {})
+    vtracer = generation.get("vtracer", {})
 
     cloudflare_raster = bool(cloudflare.get("rasterReady"))
     kaggle_raster = bool(kaggle_qwen.get("rasterReady"))
     pollinations_raster = bool(pollinations.get("rasterVectorReady"))
+    pollinations_vector = bool(pollinations.get("rasterVectorReady"))
+    vtracer_vector = bool(vtracer.get("vectorSvgReady"))
     imagen_raster = bool(imagen_codex.get("rasterReady"))
     queued_qwen = bool(qwen_colab.get("queueReady"))
 
@@ -49,7 +52,10 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
     capabilities = {
         "rasterPng": direct_raster_ready,
         "rasterWebp": direct_raster_ready and webp_encode,
-        "vectorSvg": bool(pollinations.get("rasterVectorReady")),
+        "vectorSvg": vtracer_vector or pollinations_vector,
+        "freeVectorSvg": vtracer_vector,
+        "vtracerVector": vtracer_vector,
+        "pollinationsVector": pollinations_vector,
         "threeDGlb": bool(pollinations.get("threeDReady")),
         "godotImport": godot_executable is not None,
         "cloudflareRaster": cloudflare_raster,
@@ -67,6 +73,13 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
     preferred_raster_backend = _first_ready_backend(
         ("cloudflare", cloudflare),
         ("kaggle-qwen", kaggle_qwen),
+    )
+    preferred_vector_backend = (
+        "vtracer"
+        if vtracer_vector
+        else "pollinations"
+        if pollinations_vector
+        else None
     )
 
     blockers = []
@@ -89,7 +102,8 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
         blockers.append("Pillow/libwebp is unavailable for WebP output")
     if not capabilities["vectorSvg"]:
         blockers.append(
-            "no authenticated SVG generation backend is ready"
+            "no SVG generation backend is ready; install VTracer with a free raster "
+            "backend or configure Pollinations"
         )
     if not capabilities["threeDGlb"]:
         blockers.append(
@@ -134,8 +148,10 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
         "routing": {
             "preferredRasterBackend": preferred_raster_backend,
             "queuedRasterBackend": "qwen-colab" if queued_qwen else None,
+            "preferredVectorBackend": preferred_vector_backend,
             "freeRasterReady": free_raster_ready,
             "autoRasterReady": free_raster_ready,
+            "freeVectorReady": vtracer_vector,
         },
         "capabilities": capabilities,
         "generation": generation,
