@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T13:20:00Z
+Generated: 2026-09-21T13:31:45Z
 
 ### Git
 - Branch: `main`
-- Head: `0de8cfe9c93b`
-- Commit date: 2026-09-21T15:19:47+02:00
-- Commit: fix: persist exact Kaggle Qwen exceptions
+- Head: `007501188030`
+- Commit date: 2026-09-21T15:31:32+02:00
+- Commit: fix: avoid meta tensors in Qwen text encoder
 - Tracked files: 290
 
 ### Recently changed files
