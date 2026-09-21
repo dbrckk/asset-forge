@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T18:31:28Z
+Generated: 2026-09-21T18:47:03Z
 
 ### Git
 - Branch: `main`
-- Head: `668dc01cc58b`
-- Commit date: 2026-09-21T20:31:16+02:00
-- Commit: ci: report cached and generated pilot quality consistently
+- Head: `d23384c1b730`
+- Commit date: 2026-09-21T20:46:47+02:00
+- Commit: fix: avoid double-counting 3D reference history
 - Tracked files: 305
 
 ### Recently changed files
+- `generator_backends.py`
 - `.github/workflows/deadline-zero-live-pilot.yml`
 - `tests/test_remote_batch.py`
 - `remote_batch.py`
 - `backend_history.py`
-- `tests/test_generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`

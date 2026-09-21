@@ -258,6 +258,19 @@
       "path": "operational_status.py"
     },
     {
+      "dependencies": [
+        "backend_history.py",
+        "cloudflare_backend.py",
+        "generator_backends.py",
+        "kaggle_3d_backend.py",
+        "kaggle_backend.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 5,
+      "path": "tests/test_generator_backends.py"
+    },
+    {
       "dependencies": [],
       "dependents": [
         "asset_forge.py",
@@ -320,6 +333,19 @@
     },
     {
       "dependencies": [
+        "kaggle_backend.py"
+      ],
+      "dependents": [
+        "generator_backends.py",
+        "tests/test_generator_backends.py",
+        "tests/test_kaggle_3d_backend.py"
+      ],
+      "in_degree": 3,
+      "out_degree": 1,
+      "path": "kaggle_3d_backend.py"
+    },
+    {
+      "dependencies": [
         "vector_backend.py"
       ],
       "dependents": [
@@ -330,18 +356,6 @@
       "in_degree": 3,
       "out_degree": 1,
       "path": "tests/test_vector_backend.py"
-    },
-    {
-      "dependencies": [
-        "backend_history.py",
-        "cloudflare_backend.py",
-        "generator_backends.py",
-        "kaggle_backend.py"
-      ],
-      "dependents": [],
-      "in_degree": 0,
-      "out_degree": 4,
-      "path": "tests/test_generator_backends.py"
     },
     {
       "dependencies": [],
@@ -398,18 +412,6 @@
       "in_degree": 2,
       "out_degree": 1,
       "path": "colab_queue.py"
-    },
-    {
-      "dependencies": [
-        "kaggle_backend.py"
-      ],
-      "dependents": [
-        "generator_backends.py",
-        "tests/test_kaggle_3d_backend.py"
-      ],
-      "in_degree": 2,
-      "out_degree": 1,
-      "path": "kaggle_3d_backend.py"
     },
     {
       "dependencies": [
@@ -778,7 +780,7 @@
       "path": "tests/test_kaggle_backend.py"
     }
   ],
-  "edge_count": 125,
+  "edge_count": 127,
   "generated_by": "dbrckk/repo-brain-v7-graph",
   "node_count": 73,
   "schema_version": 1

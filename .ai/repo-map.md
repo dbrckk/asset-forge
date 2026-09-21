@@ -6605,7 +6605,7 @@ failures = []
 ⋮----
 result = {
 ⋮----
-history_path = _backend_history_path()
+history_path = _backend_history_path() if record_history else None
 ⋮----
 # Learning is advisory. A broken cache or unwritable history must
 # never make a valid production asset fail.
@@ -6649,6 +6649,11 @@ reference_dir = out / "reference"
 reference_backend = _select_free_raster_backend(
 ⋮----
 reference_backend = "pollinations"
+⋮----
+reference_kwargs = {
+⋮----
+# The enclosing 3D result persists the reference outcome together with
+# the 3D backend. Avoid counting the same raster generation twice.
 ⋮----
 reference = generator(
 reference_path = Path(str(reference.get("sourcePath") or ""))

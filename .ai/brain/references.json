@@ -5,1940 +5,1647 @@
   "semantic": false,
   "note": "Occurrences are lexical word matches; verify source/LSP/compiler data before relying on them.",
   "symbols": {
-    "RemoteBatchError": {
+    "_sanitize_metadata": {
       "definition": {
-        "file": "remote_batch.py",
-        "line": 15,
+        "file": "generator_backends.py",
+        "line": 65,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 65,
+          "preview": "def _sanitize_metadata(value, *, depth: int = 0):",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 74,
+          "preview": "_sanitize_metadata(item, depth=depth + 1)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 87,
+          "preview": "cleaned[name] = _sanitize_metadata(item, depth=depth + 1)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 540,
+          "preview": "metadata = _sanitize_metadata(parsed)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 898,
+          "preview": "metadata = _sanitize_metadata({",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 925,
+          "preview": "metadata = _sanitize_metadata(colab_result.get(\"metadata\") or {})",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1039,
+          "preview": "metadata = _sanitize_metadata(metadata)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1094,
+          "preview": "metadata = _sanitize_metadata(parsed)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1463,
+          "preview": "\"metadata\": _sanitize_metadata(metadata),",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 9
+    },
+    "GenerationError": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 92,
         "kind": "class",
         "language": "python"
       },
       "occurrences": [
         {
-          "file": "remote_batch.py",
-          "line": 15,
-          "preview": "class RemoteBatchError(RuntimeError):",
+          "file": "generator_backends.py",
+          "line": 92,
+          "preview": "class GenerationError(RuntimeError):",
           "definition_candidate": true
         },
         {
-          "file": "remote_batch.py",
-          "line": 44,
-          "preview": "raise RemoteBatchError(\"batch item id must be filename-safe\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 53,
-          "preview": "raise RemoteBatchError(\"batch item must be an object\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 56,
-          "preview": "raise RemoteBatchError(\"batch item request is required\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 59,
-          "preview": "raise RemoteBatchError(f\"duplicate batch item id: {item_id}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 66,
-          "preview": "raise RemoteBatchError(f\"depends_on for {item_id} must be a list\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 77,
-          "preview": "raise RemoteBatchError(f\"batch item cannot depend on itself: {item_id}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 79,
-          "preview": "raise RemoteBatchError(f\"unknown dependency for {item_id}: {dependency}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 96,
-          "preview": "raise RemoteBatchError(\"cyclic batch dependencies\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 111,
-          "preview": "raise RemoteBatchError(\"batch spec must contain a non-empty items list\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 128,
-          "preview": "raise RemoteBatchError(f\"unsafe target_path for {item_id}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 166,
-          "preview": "raise RemoteBatchError(",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 173,
-          "preview": "raise RemoteBatchError(f\"missing production report for {item_id}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 176,
-          "preview": "raise RemoteBatchError(f\"production report failed for {item_id}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 185,
-          "preview": "raise RemoteBatchError(f\"missing artifact for {item_id}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 188,
-          "preview": "raise RemoteBatchError(f\"artifact escapes item output for {item_id}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 200,
-          "preview": "raise RemoteBatchError(f\"invalid additionalArtifacts for {item_id}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 207,
-          "preview": "raise RemoteBatchError(",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 211,
-          "preview": "raise RemoteBatchError(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 19
-    },
-    "_fallback_count": {
-      "definition": {
-        "file": "remote_batch.py",
-        "line": 19,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "remote_batch.py",
-          "line": 19,
-          "preview": "def _fallback_count(routing: dict) -> int:",
-          "definition_candidate": true
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 304,
-          "preview": "if _fallback_count(routing) > 0",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 307,
-          "preview": "_fallback_count(routing)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_cloudflare_runtime_fallback_count": {
-      "definition": {
-        "file": "remote_batch.py",
-        "line": 27,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "remote_batch.py",
-          "line": 27,
-          "preview": "def _cloudflare_runtime_fallback_count(routing: dict) -> int:",
-          "definition_candidate": true
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 231,
-          "preview": "cloudflare_runtime_failures += _cloudflare_runtime_fallback_count(routing)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "_safe_id": {
-      "definition": {
-        "file": "remote_batch.py",
-        "line": 41,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "remote_batch.py",
-          "line": 41,
-          "preview": "def _safe_id(value: str) -> str:",
-          "definition_candidate": true
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 57,
-          "preview": "item_id = _safe_id(raw.get(\"id\") or request.get(\"requestId\") or f\"item-{index + 1}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 125,
-          "preview": "request_id = _safe_id(request.get(\"requestId\") or item_id)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "_ordered_items": {
-      "definition": {
-        "file": "remote_batch.py",
-        "line": 48,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "remote_batch.py",
-          "line": 48,
-          "preview": "def _ordered_items(items: list[dict]) -> list[dict]:",
-          "definition_candidate": true
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 122,
-          "preview": "for item in _ordered_items(items):",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "run": {
-      "definition": {
-        "file": "remote_batch.py",
-        "line": 100,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 690,
-          "preview": "gltf_diagnose = sub.add_parser(\"diagnose-gltf\", help=\"run deep accessor, skinning, and animation diagnostics\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 707,
-          "preview": "godot_import = sub.add_parser(\"validate-godot-handoff\", help=\"run Godot headless import validation on a handoff\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 737,
-          "preview": "run3d = sub.add_parser(\"run-3d\", help=\"run Blender to GLB validation/optimization pipeline\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 1326,
-          "preview": "if args.command == \"run-3d\":",
-          "definition_candidate": false
-        },
-        {
-          "file": "cloudflare_backend.py",
-          "line": 127,
-          "preview": "+ \"/ai/run/\"",
+          "file": "generator_backends.py",
+          "line": 252,
+          "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 241,
-          "preview": "runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
+          "line": 261,
+          "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 579,
-          "preview": "runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
+          "line": 275,
+          "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1305,
-          "preview": "upload_runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
+          "line": 289,
+          "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
-          "file": "godot_handoff.py",
-          "line": 151,
-          "preview": "\"- Open this folder as a Godot project or run headless import validation.\\n\"",
+          "file": "generator_backends.py",
+          "line": 294,
+          "preview": "raise GenerationError(\"rembg did not produce an output file\")",
           "definition_candidate": false
         },
         {
-          "file": "godot_handoff.py",
-          "line": 195,
-          "preview": "completed = subprocess.run(",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_3d_backend.py",
-          "line": 70,
-          "preview": "subprocess.run([\"git\", \"init\", str(repo)], check=True)",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_3d_backend.py",
-          "line": 71,
-          "preview": "subprocess.run(",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_3d_backend.py",
-          "line": 76,
-          "preview": "subprocess.run(",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_3d_backend.py",
-          "line": 80,
-          "preview": "subprocess.run(",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_3d_backend.py",
-          "line": 84,
-          "preview": "subprocess.run(",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_3d_backend.py",
-          "line": 88,
-          "preview": "subprocess.run(",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_3d_backend.py",
-          "line": 94,
-          "preview": "subprocess.run(",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_3d_backend.py",
-          "line": 97,
-          "preview": "str(repo / \"run.py\"),",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_3d_backend.py",
-          "line": 173,
-          "preview": "runner=subprocess.run,",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_backend.py",
-          "line": 57,
-          "preview": "subprocess.run([sys.executable, \"-m\", \"pip\", \"uninstall\", \"-q\", \"-y\", \"torchao\"], check=False)",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_backend.py",
-          "line": 58,
-          "preview": "subprocess.run([",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_backend.py",
-          "line": 205,
-          "preview": "def _run(command: list[str], *, timeout: float, runner=subprocess.run) -> subprocess.CompletedProcess:",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_backend.py",
-          "line": 237,
-          "preview": "runner=subprocess.run,",
-          "definition_candidate": false
-        },
-        {
-          "file": "lod_3d.py",
-          "line": 32,
-          "preview": "runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 100,
-          "preview": "def run(",
-          "definition_candidate": true
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 158,
-          "preview": "completed = subprocess.run(",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 359,
-          "preview": "result = run(",
-          "definition_candidate": false
-        },
-        {
-          "file": "semantic_art_review.py",
-          "line": 76,
-          "preview": "runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,",
-          "definition_candidate": false
-        },
-        {
-          "file": "starlist_bridge.py",
-          "line": 38,
-          "preview": "completed = subprocess.run(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 178,
-          "preview": "name: \"run\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 199,
-          "preview": "assert.equal(animated.animation(\"run\").fps, 10);",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 200,
-          "preview": "assert.equal(animationFrameAtTime(animated, \"run\", 0.05).frame.index, 0);",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 201,
-          "preview": "assert.equal(animationFrameAtTime(animated, \"run\", 0.15).frame.index, 1);",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 202,
-          "preview": "assert.equal(animationFrameAtTime(animated, \"run\", 0.35).frame.index, 0);",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 245,
-          "preview": "() => createAnimationPlayer(animated, \"run\", { playbackRate: 0 }),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 253,
-          "preview": "const loopPlayer = createAnimationPlayer(animated, \"run\", {",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 270,
-          "preview": "const drawPlayer = createAnimationPlayer(animated, \"run\");",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 1952,
-          "preview": "\"run\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 2011,
-          "preview": "() => entityAnimationSystem.bind(\"missing\", \"run\"),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 2068,
-          "preview": "\"run\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_animation_infer.py",
-          "line": 21,
-          "preview": "self.assertEqual(animations[\"run\"][\"frames\"], [1, 3])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 23,
-          "preview": "\"requestId\": \"hero-run\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_godot_export.py",
-          "line": 21,
-          "preview": "animation_name=\"run\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_godot_export.py",
-          "line": 30,
-          "preview": "self.assertIn('\"name\": &\"run\"', rendered)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_godot_export.py",
-          "line": 150,
-          "preview": "animations=[{\"name\": \"run\", \"frames\": [2]}],",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_godot_handoff.py",
-          "line": 193,
-          "preview": "@patch(\"godot_handoff.subprocess.run\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_godot_handoff.py",
-          "line": 195,
-          "preview": "def test_available_godot_import_passes(self, detect, run):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_godot_handoff.py",
-          "line": 197,
-          "preview": "run.return_value.returncode = 0",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_godot_handoff.py",
-          "line": 198,
-          "preview": "run.return_value.stdout = \"imported\"",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_godot_handoff.py",
-          "line": 199,
-          "preview": "run.return_value.stderr = \"\"",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 17,
-          "preview": "\"assetId\": \"hero-run\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 21,
-          "preview": "\"id\": \"hero-run\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 42,
-          "preview": "self.assertEqual(path.name, \"hero-run.png\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 50,
-          "preview": "webp_encoder=lambda *a, **k: self.fail(\"webp encoder must not run\"),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 55,
-          "preview": "self.assertEqual(report[\"artifact\"], str(root / \"hero-run.png\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 87,
-          "preview": "webp_encoder=lambda *a, **k: self.fail(\"webp encoder must not run\"),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 126,
-          "preview": "png_optimizer=lambda *a, **k: self.fail(\"png optimizer must not run\"),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 193,
-          "preview": "generic_validator=lambda p: self.fail(\"generic validator must not run\"),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 198,
-          "preview": "self.assertEqual(report[\"artifact\"], str(root / \"hero-run.svg\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 250,
-          "preview": "self.assertEqual(path.name, \"hero-run.glb\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 269,
-          "preview": "structural_validator=lambda p: self.fail(\"generic validator must not run\"),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 277,
-          "preview": "self.assertEqual(report[\"artifact\"], str(root / \"hero-run.glb\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 431,
-          "preview": "webp_encoder=lambda *a, **k: self.fail(\"webp must not run\"),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 432,
-          "preview": "generator=lambda *a, **k: self.fail(\"generator must not run\"),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 440,
-          "preview": "self.assertEqual(report[\"artifact\"], str(root / \"hero-run.png\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 466,
-          "preview": "generator=lambda *a, **k: self.fail(\"generator must not run\"),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_executor.py",
-          "line": 541,
-          "preview": "lod = output_dir / \"hero-run.lod1.glb\"",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 7,
-          "preview": "from remote_batch import run",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 44,
-          "preview": "\"id\": \"run\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 46,
-          "preview": "\"request\": request(\"run-request\", \"run\", 8),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 47,
-          "preview": "\"target_path\": \"assets/art/pilot/run.png\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 74,
-          "preview": "if payload[\"manifest\"][\"id\"] == \"run\"",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 91,
-          "preview": "if payload[\"manifest\"][\"id\"] == \"run\"",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 107,
-          "preview": "with patch(\"remote_batch.subprocess.run\", side_effect=fake_run):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 108,
-          "preview": "result = run(spec, root / \"out\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 110,
-          "preview": "self.assertEqual(result[\"execution_order\"], [\"hero\", \"run\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 169,
-          "preview": "with patch(\"remote_batch.subprocess.run\", side_effect=fake_run):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 170,
-          "preview": "result = run(spec, root / \"out\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 250,
-          "preview": "with patch(\"remote_batch.subprocess.run\", side_effect=fake_run):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 251,
-          "preview": "result = run(spec, root / \"out\", backend=\"auto\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
+          "file": "generator_backends.py",
           "line": 301,
-          "preview": "with patch(\"remote_batch.subprocess.run\", side_effect=fake_run):",
+          "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_remote_batch.py",
-          "line": 302,
-          "preview": "result = run(spec, root / \"out\")",
+          "file": "generator_backends.py",
+          "line": 306,
+          "preview": "raise GenerationError(\"rembg output is still fully opaque\")",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_runtime_atlas.py",
-          "line": 209,
-          "preview": "\"name\": \"run\",",
+          "file": "generator_backends.py",
+          "line": 328,
+          "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_runtime_atlas.py",
-          "line": 221,
-          "preview": "\"name\": \"run\",",
+          "file": "generator_backends.py",
+          "line": 346,
+          "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_runtime_atlas.py",
-          "line": 245,
-          "preview": "\"name\": \"run\",",
+          "file": "generator_backends.py",
+          "line": 365,
+          "preview": "raise GenerationError(\"production job instruction missing\")",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_runtime_atlas.py",
-          "line": 370,
-          "preview": "\"name\": \"run\",",
+          "file": "generator_backends.py",
+          "line": 367,
+          "preview": "raise GenerationError(f\"unsupported generated asset type: {asset_type or '<missing>'}\")",
           "definition_candidate": false
         },
         {
-          "file": "toolchain_3d.py",
-          "line": 319,
-          "preview": "completed = subprocess.run(",
+          "file": "generator_backends.py",
+          "line": 371,
+          "preview": "raise GenerationError(\"production job manifest missing\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 409,
+          "preview": "raise GenerationError(\"generation prompt exceeds 16000 characters\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 458,
+          "preview": "raise GenerationError(f\"unsupported generator backend: {requested}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 471,
+          "preview": "raise GenerationError(\"no authenticated free raster generation backend is ready\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 478,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 486,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 490,
+          "preview": "raise GenerationError(f\"unsupported generated asset type: {asset_type or '<missing>'}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 504,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 554,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 568,
+          "preview": "raise GenerationError(\"imagen-codex did not produce a PNG output\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 588,
+          "preview": "raise GenerationError(\"production job does not require a generator\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 595,
+          "preview": "raise GenerationError(f\"unsupported generated asset type: {asset_type or '<missing>'}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 603,
+          "preview": "raise GenerationError(\"polli executable not found; install @pollinations/cli\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 604,
+          "preview": "raise GenerationError(\"imagen executable not found\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 609,
+          "preview": "raise GenerationError(\"timeout_seconds must be positive\") from exc",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 611,
+          "preview": "raise GenerationError(\"timeout_seconds must be positive\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 628,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 634,
+          "preview": "raise GenerationError(\"visual references are currently supported for raster generation only\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 636,
+          "preview": "raise GenerationError(\"selected backend does not support visual references\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 638,
+          "preview": "raise GenerationError(\"at most 4 visual references are supported\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 641,
+          "preview": "raise GenerationError(f\"visual reference file missing or empty: {reference}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 717,
+          "preview": "raise GenerationError(\"visual and technical quality controls must be numeric\") from exc",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 719,
+          "preview": "raise GenerationError(\"visualSimilarityMin must be between 0 and 1\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 721,
+          "preview": "raise GenerationError(\"visualSimilarityRetries must be between 0 and 4\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 723,
+          "preview": "raise GenerationError(\"technicalQualityMin must be between 0 and 1\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 725,
+          "preview": "raise GenerationError(\"technicalQualityRetries must be between 0 and 4\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 815,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 839,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 858,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 882,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 887,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 897,
+          "preview": "raise GenerationError(f\"vtracer vectorization failed: {exc}\") from exc",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 924,
+          "preview": "raise GenerationError(f\"qwen-colab generation failed: {exc}\") from exc",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 984,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 989,
+          "preview": "raise GenerationError(f\"cloudflare generation failed: {exc}\") from exc",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1033,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1038,
+          "preview": "raise GenerationError(f\"kaggle-qwen generation failed: {exc}\") from exc",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1059,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1070,
+          "preview": "raise GenerationError(f\"{backend} generation did not produce an output file\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1086,
+          "preview": "raise GenerationError(\"raster normalization did not produce an output file\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1104,
+          "preview": "raise GenerationError(\"visual similarity evaluator returned no numeric score\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1128,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1137,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1180,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1253,
+          "preview": "raise GenerationError(\"credential-bearing 3D redirects are refused\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1279,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1286,
+          "preview": "raise GenerationError(\"pollinations upload returned invalid JSON\") from exc",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1288,
+          "preview": "raise GenerationError(\"pollinations upload response must be an object\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1291,
+          "preview": "raise GenerationError(\"pollinations upload response missing trusted media URL\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1310,
+          "preview": "raise GenerationError(\"production job does not require a generator\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1313,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1317,
+          "preview": "raise GenerationError(\"3D resolution must be low, medium, or high\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1322,
+          "preview": "raise GenerationError(\"timeout_seconds must be positive\") from exc",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1324,
+          "preview": "raise GenerationError(\"timeout_seconds must be positive\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1355,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1362,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1387,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1409,
+          "preview": "raise GenerationError(\"3D reference generation did not produce an image\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1442,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1447,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1476,
+          "preview": "raise GenerationError(\"3D backend routing reached an invalid state\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1478,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1484,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1489,
+          "preview": "raise GenerationError(\"polli executable not found; install @pollinations/cli\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1521,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1526,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1530,
+          "preview": "raise GenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1535,
+          "preview": "raise GenerationError(\"generated GLB exceeds 100MB safety limit\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1537,
+          "preview": "raise GenerationError(\"Pollinations 3D response is not a GLB\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 9,
+          "preview": "GenerationError,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 208,
+          "preview": "with self.assertRaisesRegex(GenerationError, \"raster generated assets only\"):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 430,
+          "preview": "GenerationError,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 614,
+          "preview": "with self.assertRaisesRegex(GenerationError, \"no authenticated free raster generation backend is ready\"):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 771,
+          "preview": "with self.assertRaisesRegex(GenerationError, \"no SVG generation backend\"):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 885,
+          "preview": "GenerationError,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1137,
+          "preview": "with self.assertRaisesRegex(GenerationError, \"unsupported generated asset type\"):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1208,
+          "preview": "with self.assertRaisesRegex(GenerationError, \"raster generation only\"):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1290,
+          "preview": "with self.assertRaisesRegex(GenerationError, \"visual consistency score\"):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1372,
+          "preview": "with self.assertRaisesRegex(GenerationError, \"technical art quality score\"):",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 87
+      "occurrence_count": 91
     },
-    "main": {
+    "_backend_history_path": {
       "definition": {
-        "file": "remote_batch.py",
-        "line": 348,
+        "file": "generator_backends.py",
+        "line": 96,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 96,
+          "preview": "def _backend_history_path(*, environ=None) -> Path | None:",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 110,
+          "preview": "history_path=_backend_history_path(environ=environ),",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1240,
+          "preview": "history_path = _backend_history_path() if record_history else None",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1467,
+          "preview": "history_path = _backend_history_path(environ=env)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1558,
+          "preview": "history_path = _backend_history_path(environ=env)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 5
+    },
+    "_select_free_raster_backend": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 102,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 102,
+          "preview": "def _select_free_raster_backend(status: dict, *, environ=None) -> str | None:",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 468,
+          "preview": "selected = _select_free_raster_backend(status)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 799,
+          "preview": "raster_backend = _select_free_raster_backend(statuses)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1382,
+          "preview": "reference_backend = _select_free_raster_backend(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 4
+    },
+    "generator_backend_status": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 115,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "asset_forge.py",
-          "line": 749,
-          "preview": "def main() -> int:",
+          "line": 25,
+          "preview": "from generator_backends import THREE_D_GENERATED_TYPES, VECTOR_GENERATED_TYPES, execute_generated_asset, generator_backend_status",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 1348,
-          "preview": "raise SystemExit(main())",
+          "line": 797,
+          "preview": "print(json.dumps(generator_backend_status(), indent=2, sort_keys=True))",
           "definition_candidate": false
         },
         {
-          "file": "colab_queue.py",
-          "line": 73,
-          "preview": "branch: str = \"main\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "colab_queue.py",
-          "line": 125,
-          "preview": "branch: str = \"main\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "colab_queue.py",
-          "line": 165,
-          "preview": "branch: str = \"main\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "qwen_colab_worker.py",
-          "line": 14,
-          "preview": "BRANCH = os.environ.get(\"ASSET_FORGE_GITHUB_BRANCH\", \"main\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "qwen_colab_worker.py",
-          "line": 215,
-          "preview": "def main() -> None:",
-          "definition_candidate": false
-        },
-        {
-          "file": "qwen_colab_worker.py",
-          "line": 226,
-          "preview": "main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 348,
-          "preview": "def main(argv=None) -> int:",
+          "file": "generator_backends.py",
+          "line": 115,
+          "preview": "def generator_backend_status(*, environ=None, home: Path | None = None) -> dict:",
           "definition_candidate": true
         },
         {
-          "file": "remote_batch.py",
-          "line": 370,
-          "preview": "raise SystemExit(main())",
+          "file": "generator_backends.py",
+          "line": 461,
+          "preview": "status = generator_backend_status()",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_animation_infer.py",
-          "line": 56,
-          "preview": "unittest.main()",
+          "file": "generator_backends.py",
+          "line": 649,
+          "preview": "and generator_backend_status().get(\"kaggleQwen\", {}).get(\"rasterReady\") is True",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_art_quality.py",
-          "line": 144,
-          "preview": "unittest.main()",
+          "file": "generator_backends.py",
+          "line": 790,
+          "preview": "statuses = generator_backend_status()",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_asset_forge.py",
-          "line": 238,
-          "preview": "unittest.main()",
+          "file": "generator_backends.py",
+          "line": 956,
+          "preview": "generator_backend_status()",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_asset_library.py",
-          "line": 304,
-          "preview": "unittest.main()",
+          "file": "generator_backends.py",
+          "line": 1005,
+          "preview": "generator_backend_status()",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_asset_profile_validation.py",
-          "line": 128,
-          "preview": "unittest.main()",
+          "file": "generator_backends.py",
+          "line": 1327,
+          "preview": "statuses = generator_backend_status(environ=env)",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_backend_history.py",
-          "line": 166,
-          "preview": "unittest.main()",
+          "file": "operational_status.py",
+          "line": 5,
+          "preview": "from generator_backends import generator_backend_status",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_blender_adapter.py",
-          "line": 58,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_cloudflare_backend.py",
-          "line": 88,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_colab_queue.py",
-          "line": 52,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_engine_profile_validation.py",
-          "line": 83,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_fulfill.py",
-          "line": 209,
-          "preview": "unittest.main()",
+          "file": "operational_status.py",
+          "line": 18,
+          "preview": "generation = generator_backend_status(environ=environ, home=home)",
           "definition_candidate": false
         },
         {
           "file": "tests/test_generator_backends.py",
-          "line": 1392,
-          "preview": "unittest.main()",
+          "line": 13,
+          "preview": "generator_backend_status,",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_gltf_binary_metrics.py",
-          "line": 133,
-          "preview": "unittest.main()",
+          "file": "tests/test_generator_backends.py",
+          "line": 80,
+          "preview": "status = generator_backend_status(",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_gltf_diagnostics.py",
-          "line": 165,
-          "preview": "unittest.main()",
+          "file": "tests/test_generator_backends.py",
+          "line": 179,
+          "preview": "status = generator_backend_status(",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_gltf_quality.py",
-          "line": 202,
-          "preview": "unittest.main()",
+          "file": "tests/test_generator_backends.py",
+          "line": 333,
+          "preview": "\"generator_backends.generator_backend_status\",",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_gltf_tools.py",
-          "line": 115,
-          "preview": "unittest.main()",
+          "file": "tests/test_generator_backends.py",
+          "line": 373,
+          "preview": "\"generator_backends.generator_backend_status\",",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_godot_3d_delivery.py",
-          "line": 105,
-          "preview": "unittest.main()",
+          "file": "tests/test_generator_backends.py",
+          "line": 418,
+          "preview": "\"generator_backends.generator_backend_status\",",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_godot_export.py",
-          "line": 176,
-          "preview": "unittest.main()",
+          "file": "tests/test_generator_backends.py",
+          "line": 472,
+          "preview": "\"generator_backends.generator_backend_status\",",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_godot_handoff.py",
-          "line": 212,
-          "preview": "unittest.main()",
+          "file": "tests/test_generator_backends.py",
+          "line": 501,
+          "preview": "\"generator_backends.generator_backend_status\",",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_kaggle_3d_backend.py",
-          "line": 113,
-          "preview": "unittest.main()",
+          "file": "tests/test_generator_backends.py",
+          "line": 582,
+          "preview": "\"generator_backends.generator_backend_status\",",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_kaggle_backend.py",
-          "line": 36,
-          "preview": "unittest.main()",
+          "file": "tests/test_generator_backends.py",
+          "line": 593,
+          "preview": "\"generator_backends.generator_backend_status\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 605,
+          "preview": "\"generator_backends.generator_backend_status\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 621,
+          "preview": "\"generator_backends.generator_backend_status\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 639,
+          "preview": "\"generator_backends.generator_backend_status\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 679,
+          "preview": "\"generator_backends.generator_backend_status\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 729,
+          "preview": "\"generator_backends.generator_backend_status\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 762,
+          "preview": "\"generator_backends.generator_backend_status\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 923,
+          "preview": "\"generator_backends.generator_backend_status\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 979,
+          "preview": "\"generator_backends.generator_backend_status\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1045,
+          "preview": "\"generator_backends.generator_backend_status\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1103,
+          "preview": "\"generator_backends.generator_backend_status\",",
           "definition_candidate": false
         },
         {
           "file": "tests/test_operational_status.py",
-          "line": 342,
-          "preview": "unittest.main()",
+          "line": 96,
+          "preview": "\"operational_status.generator_backend_status\",",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_production_contract.py",
-          "line": 85,
-          "preview": "unittest.main()",
+          "file": "tests/test_operational_status.py",
+          "line": 150,
+          "preview": "\"operational_status.generator_backend_status\",",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_production_executor.py",
-          "line": 649,
-          "preview": "unittest.main()",
+          "file": "tests/test_operational_status.py",
+          "line": 204,
+          "preview": "\"operational_status.generator_backend_status\",",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_backend.py",
-          "line": 161,
-          "preview": "unittest.main()",
+          "file": "tests/test_operational_status.py",
+          "line": 253,
+          "preview": "\"operational_status.generator_backend_status\",",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_raster_pack.py",
-          "line": 1453,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 315,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_runtime_atlas.py",
-          "line": 387,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_semantic_art_review.py",
-          "line": 152,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_starlist_bridge.py",
-          "line": 68,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_svg_tools.py",
-          "line": 309,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_toolchain_3d.py",
-          "line": 218,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 103,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_visual_similarity.py",
-          "line": 116,
-          "preview": "unittest.main()",
-          "definition_candidate": false
-        },
-        {
-          "file": "web/runtime_atlas.mjs",
-          "line": 825,
-          "preview": "void main() {",
-          "definition_candidate": false
-        },
-        {
-          "file": "web/runtime_atlas.mjs",
-          "line": 868,
-          "preview": "void main() {",
+          "file": "tests/test_operational_status.py",
+          "line": 299,
+          "preview": "\"operational_status.generator_backend_status\",",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 46
+      "occurrence_count": 36
     },
-    "request": {
+    "_sprite_sheet_geometry": {
       "definition": {
-        "file": "tests/test_remote_batch.py",
-        "line": 10,
+        "file": "generator_backends.py",
+        "line": 188,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 188,
+          "preview": "def _sprite_sheet_geometry(job: dict) -> tuple[int, int, int, int] | None:",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 224,
+          "preview": "geometry = _sprite_sheet_geometry(job)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 318,
+          "preview": "geometry = _sprite_sheet_geometry(job)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 401,
+          "preview": "geometry = _sprite_sheet_geometry(job)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 618,
+          "preview": "and _sprite_sheet_geometry(job) is not None",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 5
+    },
+    "_generation_dimensions": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 223,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 223,
+          "preview": "def _generation_dimensions(job: dict) -> tuple[int, int] | None:",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 446,
+          "preview": "dimensions = _generation_dimensions(job)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 934,
+          "preview": "dimensions = _generation_dimensions(attempt_job) or (1024, 1024)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 3
+    },
+    "_ensure_transparency": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 237,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 237,
+          "preview": "def _ensure_transparency(",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 581,
+          "preview": "transparency_processor: Callable[..., dict | None] = _ensure_transparency,",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "_normalize_raster_geometry": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 317,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 317,
+          "preview": "def _normalize_raster_geometry(raw: Path, output: Path, job: dict) -> dict | None:",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 580,
+          "preview": "raster_normalizer: Callable[[Path, Path, dict], dict | None] = _normalize_raster_geometry,",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "build_generation_prompt": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 361,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 361,
+          "preview": "def build_generation_prompt(job: dict) -> str:",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 421,
+          "preview": "prompt = build_generation_prompt(job)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 507,
+          "preview": "prompt = build_generation_prompt(job)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 783,
+          "preview": "prompt = build_generation_prompt(attempt_job)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 927,
+          "preview": "prompt = build_generation_prompt(attempt_job)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 10,
+          "preview": "build_generation_prompt,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 40,
+          "preview": "prompt = build_generation_prompt(job())",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 76,
+          "preview": "self.assertIn(\"valid SVG viewBox\", build_generation_prompt(vector_job))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 818,
+          "preview": "prompt = build_generation_prompt(three_d)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1138,
+          "preview": "build_generation_prompt(bad)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 10
+    },
+    "pollinations_command": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 413,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 413,
+          "preview": "def pollinations_command(",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 684,
+          "preview": "command = pollinations_command(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 15,
+          "preview": "pollinations_command,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 46,
+          "preview": "command = pollinations_command(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 66,
+          "preview": "command = pollinations_command(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 5
+    },
+    "select_generation_backend": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 454,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 454,
+          "preview": "def select_generation_backend(job: dict, requested: str = \"auto\") -> str:",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 590,
+          "preview": "backend = select_generation_backend(job, backend)",
+          "definition_candidate": false
+        },
+        {
+          "file": "operational_status.py",
+          "line": 76,
+          "preview": "# Keep this aligned with select_generation_backend(..., \"auto\"):",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 16,
+          "preview": "select_generation_backend,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 485,
+          "preview": "select_generation_backend(job(), \"auto\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 498,
+          "preview": "\"generator_backends.select_generation_backend\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 589,
+          "preview": "self.assertEqual(select_generation_backend(job(), \"auto\"), \"cloudflare\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 601,
+          "preview": "self.assertEqual(select_generation_backend(job(), \"auto\"), \"kaggle-qwen\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 615,
+          "preview": "select_generation_backend(job(), \"auto\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 631,
+          "preview": "select_generation_backend(vector_job, \"auto\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 649,
+          "preview": "select_generation_backend(vector_job, \"auto\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 772,
+          "preview": "select_generation_backend(vector_job, \"auto\")",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 12
+    },
+    "imagen_codex_command": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 493,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 493,
+          "preview": "def imagen_codex_command(",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 692,
+          "preview": "command = imagen_codex_command(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 14,
+          "preview": "imagen_codex_command,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 193,
+          "preview": "command = imagen_codex_command(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 209,
+          "preview": "imagen_codex_command(vector_job, Path(\"out\"))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 255,
+          "preview": "command = imagen_codex_command(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 6
+    },
+    "_imagen_output_path": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 535,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 535,
+          "preview": "def _imagen_output_path(output_dir: Path, stdout: str) -> tuple[Path, dict | None]:",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1068,
+          "preview": "current_output, metadata = _imagen_output_path(output_dir, stdout)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "execute_generated_asset": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 571,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "asset_forge.py",
-          "line": 545,
-          "preview": "production_job = sub.add_parser(\"production-job\", help=\"compile a Production OS/AI Dev Server asset request into an executable job\")",
+          "line": 25,
+          "preview": "from generator_backends import THREE_D_GENERATED_TYPES, VECTOR_GENERATED_TYPES, execute_generated_asset, generator_backend_status",
           "definition_candidate": false
         },
         {
           "file": "asset_forge.py",
-          "line": 546,
-          "preview": "production_job.add_argument(\"request\", type=Path)",
+          "line": 805,
+          "preview": "result = execute_generated_asset(",
           "definition_candidate": false
         },
         {
-          "file": "asset_forge.py",
-          "line": 570,
-          "preview": "fulfill = sub.add_parser(\"fulfill\", help=\"compile and execute a generated production request end to end\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
+          "file": "generator_backends.py",
           "line": 571,
-          "preview": "fulfill.add_argument(\"request\", type=Path)",
-          "definition_candidate": false
+          "preview": "def execute_generated_asset(",
+          "definition_candidate": true
         },
         {
-          "file": "asset_forge.py",
-          "line": 776,
-          "preview": "request = load_json(args.request)",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 777,
-          "preview": "errors = validate_production_request(request, validate_manifest)",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 783,
-          "preview": "plan = build_plan(request[\"manifest\"], root)",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 784,
-          "preview": "job = build_production_job(request, plan)",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 849,
-          "preview": "request = load_json(args.request)",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 850,
-          "preview": "errors = validate_production_request(request, validate_manifest)",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 856,
-          "preview": "plan = build_plan(request[\"manifest\"], root)",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 857,
-          "preview": "job = build_production_job(request, plan)",
-          "definition_candidate": false
-        },
-        {
-          "file": "cloudflare_backend.py",
-          "line": 8,
-          "preview": "import urllib.request",
-          "definition_candidate": false
-        },
-        {
-          "file": "cloudflare_backend.py",
-          "line": 47,
-          "preview": "\"Cloudflare Workers AI request failed\"",
-          "definition_candidate": false
-        },
-        {
-          "file": "cloudflare_backend.py",
-          "line": 94,
-          "preview": "opener=urllib.request.urlopen,",
-          "definition_candidate": false
-        },
-        {
-          "file": "cloudflare_backend.py",
-          "line": 130,
-          "preview": "request = urllib.request.Request(",
-          "definition_candidate": false
-        },
-        {
-          "file": "cloudflare_backend.py",
-          "line": 142,
-          "preview": "with opener(request, timeout=float(timeout_seconds)) as response:",
-          "definition_candidate": false
-        },
-        {
-          "file": "colab_queue.py",
-          "line": 9,
-          "preview": "import urllib.request",
-          "definition_candidate": false
-        },
-        {
-          "file": "colab_queue.py",
-          "line": 52,
-          "preview": "request = urllib.request.Request(",
-          "definition_candidate": false
-        },
-        {
-          "file": "colab_queue.py",
-          "line": 64,
-          "preview": "with urllib.request.urlopen(request, timeout=60) as response:",
+          "file": "generator_backends.py",
+          "line": 1304,
+          "preview": "generator: Callable = execute_generated_asset,",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
+          "line": 1398,
+          "preview": "if generator is execute_generated_asset:",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_executor.py",
           "line": 10,
-          "preview": "import urllib.request",
+          "preview": "from generator_backends import THREE_D_GENERATED_TYPES, VECTOR_GENERATED_TYPES, execute_generated_3d_asset, execute_generated_asset",
           "definition_candidate": false
         },
         {
+          "file": "production_executor.py",
+          "line": 115,
+          "preview": "generator: Callable = execute_generated_asset,",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_executor.py",
+          "line": 270,
+          "preview": "generator: Callable = execute_generated_asset,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 11,
+          "preview": "execute_generated_asset,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 106,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 147,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 230,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 288,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 342,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 390,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 433,
+          "preview": "execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 515,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 558,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 691,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 743,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 801,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1165,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1209,
+          "preview": "execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1242,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1291,
+          "preview": "execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1329,
+          "preview": "result = execute_generated_asset(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 1373,
+          "preview": "execute_generated_asset(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 27
+    },
+    "_NoCredentialRedirect": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 1251,
+        "kind": "class",
+        "language": "python"
+      },
+      "occurrences": [
+        {
           "file": "generator_backends.py",
-          "line": 1250,
+          "line": 1251,
           "preview": "class _NoCredentialRedirect(urllib.request.HTTPRedirectHandler):",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 1255,
-          "preview": "def _default_3d_opener(request, timeout):",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 1256,
-          "preview": "return urllib.request.build_opener(_NoCredentialRedirect()).open(",
-          "definition_candidate": false
+          "definition_candidate": true
         },
         {
           "file": "generator_backends.py",
           "line": 1257,
-          "preview": "request,",
+          "preview": "return urllib.request.build_opener(_NoCredentialRedirect()).open(",
           "definition_candidate": false
-        },
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "redirect_request": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 1252,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
         {
           "file": "generator_backends.py",
-          "line": 1499,
-          "preview": "request = urllib.request.Request(",
-          "definition_candidate": false
-        },
+          "line": 1252,
+          "preview": "def redirect_request(self, req, fp, code, msg, headers, newurl):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "_default_3d_opener": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 1256,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
         {
           "file": "generator_backends.py",
-          "line": 1510,
-          "preview": "with opener(request, timeout) as response:",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 8,
-          "preview": "REQUEST_SCHEMA = \"asset-forge/production-request/v1\"",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 14,
-          "preview": "def validate_production_request(request: dict, validate_manifest: Callable[[dict], list[str]]) -> list[str]:",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 16,
-          "preview": "if request.get(\"schema\") != REQUEST_SCHEMA:",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 19,
-          "preview": "request_id = request.get(\"requestId\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 25,
-          "preview": "instruction = request.get(\"instruction\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 29,
-          "preview": "manifest = request.get(\"manifest\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 38,
-          "preview": "delivery = request.get(\"delivery\", {})",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 53,
-          "preview": "request: dict,",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 58,
-          "preview": "manifest = request[\"manifest\"]",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 60,
-          "preview": "delivery = request.get(\"delivery\") or {}",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 61,
-          "preview": "output_dir = delivery.get(\"outputDir\") or str(Path(default_output_dir) / request[\"requestId\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 66,
-          "preview": "\"requestId\": request[\"requestId\"],",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 70,
-          "preview": "\"instruction\": request[\"instruction\"],",
-          "definition_candidate": false
-        },
-        {
-          "file": "qwen_colab_worker.py",
-          "line": 10,
-          "preview": "import urllib.request",
-          "definition_candidate": false
-        },
-        {
-          "file": "qwen_colab_worker.py",
-          "line": 31,
-          "preview": "request = urllib.request.Request(",
-          "definition_candidate": false
-        },
-        {
-          "file": "qwen_colab_worker.py",
-          "line": 43,
-          "preview": "with urllib.request.urlopen(request, timeout=60) as response:",
-          "definition_candidate": false
-        },
-        {
-          "file": "qwen_colab_worker.py",
-          "line": 106,
-          "preview": "request = urllib.request.Request(url, headers={\"User-Agent\": \"asset-forge-colab-worker\"})",
-          "definition_candidate": false
-        },
-        {
-          "file": "qwen_colab_worker.py",
-          "line": 107,
-          "preview": "with urllib.request.urlopen(request, timeout=90) as response:",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 54,
-          "preview": "request = raw.get(\"request\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 55,
-          "preview": "if not isinstance(request, dict):",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 56,
-          "preview": "raise RemoteBatchError(\"batch item request is required\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 57,
-          "preview": "item_id = _safe_id(raw.get(\"id\") or request.get(\"requestId\") or f\"item-{index + 1}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 124,
-          "preview": "request = item[\"request\"]",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 125,
-          "preview": "request_id = _safe_id(request.get(\"requestId\") or item_id)",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 132,
-          "preview": "request_path = item_root / \"request.json\"",
-          "definition_candidate": false
-        },
-        {
-          "file": "remote_batch.py",
-          "line": 134,
-          "preview": "json.dumps(request, indent=2, sort_keys=True) + \"\\n\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_cloudflare_backend.py",
-          "line": 55,
-          "preview": "def opener(request, timeout):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_cloudflare_backend.py",
-          "line": 56,
-          "preview": "seen[\"url\"] = request.full_url",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_cloudflare_backend.py",
-          "line": 57,
-          "preview": "seen[\"auth\"] = request.get_header(\"Authorization\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_cloudflare_backend.py",
-          "line": 58,
-          "preview": "seen[\"payload\"] = json.loads(request.data.decode())",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_fulfill.py",
-          "line": 18,
-          "preview": "\"examples/production-request.json\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_fulfill.py",
-          "line": 26,
-          "preview": "self.assertEqual(args.request, Path(\"examples/production-request.json\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_fulfill.py",
-          "line": 34,
-          "preview": "\"examples/production-request.json\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_fulfill.py",
-          "line": 42,
-          "preview": "request = asset_forge.load_json(ROOT / \"examples/production-request.json\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_fulfill.py",
-          "line": 43,
-          "preview": "plan = asset_forge.build_plan(request[\"manifest\"], ROOT)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_fulfill.py",
-          "line": 44,
-          "preview": "job = asset_forge.build_production_job(request, plan)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_fulfill.py",
-          "line": 54,
-          "preview": "self.assertEqual(written_job[\"requestId\"], request[\"requestId\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_fulfill.py",
-          "line": 55,
-          "preview": "self.assertEqual(written_manifest[\"id\"], request[\"manifest\"][\"id\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_fulfill.py",
-          "line": 56,
-          "preview": "self.assertEqual(written_plan[\"assetId\"], request[\"manifest\"][\"id\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 851,
-          "preview": "def opener(request, timeout):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 852,
-          "preview": "seen[\"url\"] = request.full_url",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 853,
-          "preview": "seen[\"authorization\"] = request.get_header(\"Authorization\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 854,
-          "preview": "seen[\"body\"] = request.data",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 1062,
-          "preview": "opener=lambda request, timeout: Response(),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 1121,
-          "preview": "opener=lambda request, timeout: Response(),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_contract.py",
-          "line": 16,
-          "preview": "def request(self):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_contract.py",
-          "line": 28,
-          "preview": "request = self.request()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_contract.py",
-          "line": 30,
-          "preview": "validate_production_request(request, asset_forge.validate_manifest),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_contract.py",
-          "line": 33,
-          "preview": "plan = asset_forge.build_plan(request[\"manifest\"], Path(__file__).resolve().parents[1])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_contract.py",
-          "line": 34,
-          "preview": "job = build_production_job(request, plan)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_contract.py",
-          "line": 45,
-          "preview": "\"requestId\": \"request-1\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_contract.py",
-          "line": 59,
-          "preview": "\"requestId\": \"request-1\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_contract.py",
-          "line": 73,
-          "preview": "request = self.request()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_contract.py",
-          "line": 74,
-          "preview": "request[\"instruction\"] = \"\"",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_contract.py",
-          "line": 75,
-          "preview": "request[\"manifest\"][\"license\"][\"commercialUse\"] = False",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_production_contract.py",
-          "line": 76,
-          "preview": "errors = validate_production_request(request, asset_forge.validate_manifest)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 10,
-          "preview": "def request(request_id, asset_id, expected_frames=1):",
+          "line": 1256,
+          "preview": "def _default_3d_opener(request, timeout):",
           "definition_candidate": true
         },
         {
-          "file": "tests/test_remote_batch.py",
+          "file": "generator_backends.py",
+          "line": 1307,
+          "preview": "opener: Callable = _default_3d_opener,",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "_upload_reference_image": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 1263,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 673,
+          "preview": "_upload_reference_image(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1263,
+          "preview": "def _upload_reference_image(",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1491,
+          "preview": "image_url = _upload_reference_image(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 3
+    },
+    "execute_generated_3d_asset": {
+      "definition": {
+        "file": "generator_backends.py",
+        "line": 1295,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 1295,
+          "preview": "def execute_generated_3d_asset(",
+          "definition_candidate": true
+        },
+        {
+          "file": "production_executor.py",
+          "line": 10,
+          "preview": "from generator_backends import THREE_D_GENERATED_TYPES, VECTOR_GENERATED_TYPES, execute_generated_3d_asset, execute_generated_asset",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_executor.py",
+          "line": 376,
+          "preview": "generator: Callable = execute_generated_3d_asset,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
           "line": 12,
-          "preview": "\"schema\": \"asset-forge/production-request/v1\",",
+          "preview": "execute_generated_3d_asset,",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_remote_batch.py",
-          "line": 46,
-          "preview": "\"request\": request(\"run-request\", \"run\", 8),",
+          "file": "tests/test_generator_backends.py",
+          "line": 861,
+          "preview": "result = execute_generated_3d_asset(",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_remote_batch.py",
-          "line": 51,
-          "preview": "\"request\": request(\"hero-request\", \"hero\"),",
+          "file": "tests/test_generator_backends.py",
+          "line": 888,
+          "preview": "execute_generated_3d_asset(",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_remote_batch.py",
-          "line": 136,
-          "preview": "\"request\": request(\"cached-request\", \"cached\"),",
+          "file": "tests/test_generator_backends.py",
+          "line": 931,
+          "preview": "result = execute_generated_3d_asset(",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_remote_batch.py",
-          "line": 187,
-          "preview": "\"request\": request(\"request-1\", \"asset-1\"),",
+          "file": "tests/test_generator_backends.py",
+          "line": 987,
+          "preview": "execute_generated_3d_asset(",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_remote_batch.py",
-          "line": 192,
-          "preview": "\"request\": request(\"request-2\", \"asset-2\"),",
+          "file": "tests/test_generator_backends.py",
+          "line": 1055,
+          "preview": "result = execute_generated_3d_asset(",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_remote_batch.py",
-          "line": 197,
-          "preview": "\"request\": request(\"request-3\", \"asset-3\"),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 267,
-          "preview": "\"request\": request(\"hero-request\", \"hero\"),",
+          "file": "tests/test_generator_backends.py",
+          "line": 1111,
+          "preview": "result = execute_generated_3d_asset(",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 92
-    },
-    "RemoteBatchTests": {
-      "definition": {
-        "file": "tests/test_remote_batch.py",
-        "line": 37,
-        "kind": "class",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 37,
-          "preview": "class RemoteBatchTests(unittest.TestCase):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_dependency_order_and_reference_are_preserved": {
-      "definition": {
-        "file": "tests/test_remote_batch.py",
-        "line": 38,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 38,
-          "preview": "def test_dependency_order_and_reference_are_preserved(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "fake_run": {
-      "definition": {
-        "file": "tests/test_remote_batch.py",
-        "line": 57,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 57,
-          "preview": "def fake_run(cmd, **kwargs):",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 107,
-          "preview": "with patch(\"remote_batch.subprocess.run\", side_effect=fake_run):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 140,
-          "preview": "def fake_run(cmd, **kwargs):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 169,
-          "preview": "with patch(\"remote_batch.subprocess.run\", side_effect=fake_run):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 203,
-          "preview": "def fake_run(cmd, **kwargs):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 250,
-          "preview": "with patch(\"remote_batch.subprocess.run\", side_effect=fake_run):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 271,
-          "preview": "def fake_run(cmd, **kwargs):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 301,
-          "preview": "with patch(\"remote_batch.subprocess.run\", side_effect=fake_run):",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 8
-    },
-    "Result": {
-      "definition": {
-        "file": "tests/test_remote_batch.py",
-        "line": 101,
-        "kind": "class",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 96,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 103,
-          "preview": "return Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 136,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 144,
-          "preview": "return Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 219,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 224,
-          "preview": "return Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 280,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 285,
-          "preview": "return Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 785,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 789,
-          "preview": "return Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 836,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 840,
-          "preview": "return Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 1025,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 1029,
-          "preview": "return Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 1083,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 1087,
-          "preview": "return Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 101,
-          "preview": "class Result:",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 105,
-          "preview": "return Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 163,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 167,
-          "preview": "return Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 243,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 248,
-          "preview": "return Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 295,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 299,
-          "preview": "return Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_semantic_art_review.py",
-          "line": 67,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_semantic_art_review.py",
-          "line": 71,
-          "preview": "result = Result()",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_semantic_art_review.py",
-          "line": 117,
-          "preview": "class Result:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_semantic_art_review.py",
-          "line": 121,
-          "preview": "result = Result()",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 28
-    },
-    "test_cached_assets_count_as_quality_checked_from_technical_validation": {
-      "definition": {
-        "file": "tests/test_remote_batch.py",
-        "line": 130,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 130,
-          "preview": "def test_cached_assets_count_as_quality_checked_from_technical_validation(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures": {
-      "definition": {
-        "file": "tests/test_remote_batch.py",
-        "line": 180,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 180,
-          "preview": "def test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_remote_batch_propagates_library_version_metadata": {
-      "definition": {
-        "file": "tests/test_remote_batch.py",
-        "line": 261,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_remote_batch.py",
-          "line": 261,
-          "preview": "def test_remote_batch_propagates_library_version_metadata(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
+      "occurrence_count": 10
     }
   }
 }
