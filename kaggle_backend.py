@@ -92,8 +92,12 @@ pipe = QwenImage21Pipeline.from_pretrained(
     torch_dtype=torch.float16,
     low_cpu_mem_usage=True,
     quantization_config=quantization_config,
-    device_map="cuda",
 )
+# Sequential CPU offload trades some speed for the lowest practical VRAM
+# footprint on Kaggle T4. This prevents the denoising transformer from
+# competing with the VAE/text encoder for the full 16 GB device.
+pipe.enable_sequential_cpu_offload()
+pipe.enable_attention_slicing()
 
 kwargs = {
     "prompt": job["prompt"],
