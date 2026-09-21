@@ -1,13 +1,13 @@
 # Change impact
 
-Base: bc90d2e60ea8d1d66854195a02fd26f57be4d6a2
-Head: 3630d3ae387146bef6d743701127efdb4e21dcd4
+Base: 923dd31e8e843784e86adbf9848354369aba78ce
+Head: 705e3bac1f716d80e785ea0e518f4d67dde3b8e4
 
 ## Changed files
-- M pipelines/model-3d.json
+- M tests/test_operational_status.py
 
 ## Affected areas
-- pipelines
+- tests
 
 ## Related test candidates
 - No direct filename-based test match detected.

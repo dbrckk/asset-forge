@@ -3227,7 +3227,19 @@ result = execute_generated_3d_asset(
 ⋮----
 payload = __import__("json").loads(seen["body"].decode("utf-8"))
 ⋮----
-def test_3d_generation_requires_server_api_key(self)
+def test_3d_generation_requires_configured_backend(self)
+⋮----
+def test_auto_3d_secondary_prefers_free_kaggle_triposr(self)
+⋮----
+def kaggle_generator(reference_path, output, **kwargs)
+⋮----
+def test_auto_3d_primary_prefers_pollinations_trellis(self)
+⋮----
+stdout = '{"url":"https://media.pollinations.ai/primary-ref"}'
+⋮----
+def test_auto_3d_triposr_failure_falls_back_to_pollinations(self)
+⋮----
+stdout = '{"url":"https://media.pollinations.ai/fallback-ref"}'
 ⋮----
 def test_unsupported_generated_type_fails_closed(self)
 ⋮----
@@ -3652,6 +3664,8 @@ def test_cloudflare_free_raster_is_reported_as_ready_without_cli(self)
 ⋮----
 def test_free_vtracer_vector_route_is_reported(self)
 ⋮----
+def test_free_kaggle_triposr_3d_route_is_reported(self)
+⋮----
 def test_manual_raster_backend_is_not_reported_as_auto_route(self)
 ⋮----
 def test_qwen_colab_queue_counts_as_queued_generation_capability(self)
@@ -3740,6 +3754,10 @@ def quality(path, profile)
 def godot(path, profile)
 ⋮----
 report = execute_generated_3d_job(
+⋮----
+def test_3d_backend_and_model_are_forwarded_to_generator(self)
+⋮----
+seen = {}
 ⋮----
 def test_godot_3d_emits_runtime_plan_sidecar(self)
 ⋮----

@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:49:36Z
+Generated: 2026-09-21T16:52:45Z
 
 ### Git
 - Branch: `main`
-- Head: `3630d3ae3871`
-- Commit date: 2026-09-21T18:49:21+02:00
-- Commit: pipeline: add quality-aware free 3D routing
-- Tracked files: 301
+- Head: `705e3bac1f71`
+- Commit date: 2026-09-21T18:52:31+02:00
+- Commit: test: cover free TripoSR 3D readiness
+- Tracked files: 305
 
 ### Recently changed files
+- `tests/test_operational_status.py`
+- `tests/test_production_executor.py`
+- `tests/test_generator_backends.py`
 - `pipelines/model-3d.json`
 - `config/tooling.json`
-- `.github/workflows/production-os-batch.yml`
-- `.github/workflows/production-os-dispatch.yml`
-- `remote_batch.py`
 
 ### Project signals
 - `pyproject.toml`
