@@ -23,6 +23,7 @@ on:
           - pollinations
           - qwen-colab
           - cloudflare
+          - kaggle-qwen
       model:
         description: "Optional model override"
         required: false
@@ -43,6 +44,8 @@ jobs:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
       GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_REPOSITORY: ${{ github.repository }}
@@ -61,7 +64,9 @@ jobs:
           node-version: "22"
 
       - name: Install Asset Forge
-        run: python -m pip install ".[generation]"
+        run: |
+          python -m pip install ".[generation]"
+          python -m pip install -U kaggle
 
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
