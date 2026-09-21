@@ -148,6 +148,11 @@ jobs:
               if isinstance(result.get("quality_summary"), dict)
               else {}
           )
+          breaker = (
+              routing.get("circuit_breaker")
+              if isinstance(routing.get("circuit_breaker"), dict)
+              else {}
+          )
           summary = Path(os.environ["GITHUB_STEP_SUMMARY"])
           with summary.open("a", encoding="utf-8") as fh:
               fh.write("## Asset Forge batch\n\n")
@@ -158,6 +163,10 @@ jobs:
               )
               fh.write(
                   f"- Final backends: `{json.dumps(routing.get('final_backends', {}), sort_keys=True)}`\n"
+              )
+              fh.write(
+                  f"- Circuit breaker: `{'open' if breaker.get('open') else 'closed'}`"
+                  f" (override: `{breaker.get('override')}`)\n"
               )
               fh.write(f"- Quality checked: `{quality.get('checked', 0)}`\n")
               fh.write(f"- Regenerated: `{quality.get('regenerated', 0)}`\n")
