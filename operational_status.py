@@ -55,19 +55,18 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
         "cloudflareRaster": cloudflare_raster,
         "kaggleQwenRaster": kaggle_raster,
         "freeRaster": free_raster_ready,
+        "autoRaster": free_raster_ready,
         "qwenColabQueue": queued_qwen,
         "pollinationsRaster": pollinations_raster,
         "imagenCodexRaster": imagen_raster,
     }
 
+    # Keep this aligned with select_generation_backend(..., "auto"):
+    # automatic raster production is intentionally free-first and only uses
+    # Cloudflare Workers AI, then Kaggle Qwen.
     preferred_raster_backend = _first_ready_backend(
         ("cloudflare", cloudflare),
         ("kaggle-qwen", kaggle_qwen),
-        (
-            "pollinations",
-            {"rasterReady": pollinations.get("rasterVectorReady") is True},
-        ),
-        ("imagen-codex", imagen_codex),
     )
 
     blockers = []
@@ -81,6 +80,11 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
                 "no authenticated raster generation backend is ready "
                 "(Cloudflare, Kaggle Qwen, Pollinations, or imagen-codex)"
             )
+    if capabilities["rasterPng"] and not capabilities["autoRaster"]:
+        blockers.append(
+            "automatic free raster routing is unavailable; "
+            "configure Cloudflare or Kaggle Qwen, or select another backend explicitly"
+        )
     if capabilities["rasterPng"] and not webp_encode:
         blockers.append("Pillow/libwebp is unavailable for WebP output")
     if not capabilities["vectorSvg"]:
@@ -115,6 +119,7 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
             or capabilities["threeDGlb"]
             or queued_qwen,
             "raster": direct_raster_ready,
+            "autoRaster": free_raster_ready,
             "queuedRaster": queued_qwen,
             "rasterVector": capabilities["rasterPng"] and capabilities["vectorSvg"],
             "threeD": capabilities["threeDGlb"],
@@ -130,6 +135,7 @@ def build_operational_status(*, environ=None, home=None, which=shutil.which) -> 
             "preferredRasterBackend": preferred_raster_backend,
             "queuedRasterBackend": "qwen-colab" if queued_qwen else None,
             "freeRasterReady": free_raster_ready,
+            "autoRasterReady": free_raster_ready,
         },
         "capabilities": capabilities,
         "generation": generation,
