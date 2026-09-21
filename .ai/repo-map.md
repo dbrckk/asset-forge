@@ -6664,12 +6664,21 @@ metadata = {
 ⋮----
 deadline = time.monotonic() + timeout_seconds
 last_status = ""
+terminal_error = None
 ⋮----
 status_result = _run(
 text = (str(status_result.stdout or "") + "\n" + str(status_result.stderr or "")).lower()
 last_status = text.strip()
 ⋮----
+terminal_error = f"Kaggle kernel failed: {last_status[:1200]}"
+⋮----
 download_dir = root / "download"
+⋮----
+diagnostics = []
+⋮----
+body = candidate.read_text(encoding="utf-8", errors="replace").strip()
+⋮----
+detail = "; ".join(diagnostics)[-8000:] if diagnostics else "no diagnostic output was returned"
 ⋮----
 generated = download_dir / "asset.png"
 result_path = download_dir / "result.json"

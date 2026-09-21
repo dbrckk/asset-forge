@@ -4,5 +4,1002 @@
   "scope": "symbols defined in changed source files",
   "semantic": false,
   "note": "Occurrences are lexical word matches; verify source/LSP/compiler data before relying on them.",
-  "symbols": {}
+  "symbols": {
+    "KaggleGenerationError": {
+      "definition": {
+        "file": "kaggle_backend.py",
+        "line": 17,
+        "kind": "class",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "generator_backends.py",
+          "line": 23,
+          "preview": "KaggleGenerationError,",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 780,
+          "preview": "except KaggleGenerationError as fallback_exc:",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 800,
+          "preview": "except KaggleGenerationError as exc:",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 17,
+          "preview": "class KaggleGenerationError(RuntimeError):",
+          "definition_candidate": true
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 103,
+          "preview": "raise KaggleGenerationError(",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 130,
+          "preview": "raise KaggleGenerationError(\"KAGGLE_API_TOKEN and KAGGLE_USERNAME are required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 132,
+          "preview": "raise KaggleGenerationError(\"kaggle CLI is not installed\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 134,
+          "preview": "raise KaggleGenerationError(\"prompt is required\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 159,
+          "preview": "raise KaggleGenerationError(f\"reference file missing or empty: {source}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 206,
+          "preview": "raise KaggleGenerationError(\"Kaggle kernel timed out\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 216,
+          "preview": "except KaggleGenerationError as output_exc:",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 218,
+          "preview": "raise KaggleGenerationError(f\"{terminal_error}; output retrieval failed: {output_exc}\") from output_exc",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 231,
+          "preview": "raise KaggleGenerationError(f\"{terminal_error}; diagnostics: {detail}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 235,
+          "preview": "raise KaggleGenerationError(\"Kaggle kernel produced no asset.png\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 253,
+          "preview": "except KaggleGenerationError:",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_kaggle_backend.py",
+          "line": 6,
+          "preview": "from kaggle_backend import KaggleGenerationError, status",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 16
+    },
+    "status": {
+      "definition": {
+        "file": "kaggle_backend.py",
+        "line": 21,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 262,
+          "preview": "\"status\": tool.get(\"status\"),",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 267,
+          "preview": "matches.sort(key=lambda item: (status_rank.get(item.get(\"status\"), 9), item.get(\"id\") or \"\"))",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 551,
+          "preview": "generator_status = sub.add_parser(\"generator-backend-status\", help=\"inspect available generation backends\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 552,
+          "preview": "operational_status = sub.add_parser(\"operational-status\", help=\"report machine-readable production readiness\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 723,
+          "preview": "raster_status = sub.add_parser(\"raster-backend-status\", help=\"detect optional raster pixel backends\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 724,
+          "preview": "toolchain_status = sub.add_parser(\"3d-toolchain-status\", help=\"detect available external 3D tools\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 754,
+          "preview": "if args.command == \"raster-backend-status\":",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 795,
+          "preview": "if args.command == \"generator-backend-status\":",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 798,
+          "preview": "if args.command == \"operational-status\":",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 1304,
+          "preview": "if args.command == \"3d-toolchain-status\":",
+          "definition_candidate": false
+        },
+        {
+          "file": "cloudflare_backend.py",
+          "line": 19,
+          "preview": "def status(*, environ=None) -> dict:",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 20,
+          "preview": "status as cloudflare_status,",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 26,
+          "preview": "status as kaggle_status,",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 417,
+          "preview": "status = generator_backend_status()",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 418,
+          "preview": "pollinations = status.get(\"pollinations\", {})",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 419,
+          "preview": "cloudflare = status.get(\"cloudflare\", {})",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 420,
+          "preview": "kaggle = status.get(\"kaggleQwen\", {})",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 421,
+          "preview": "imagen_codex = status.get(\"imagenCodex\", {})",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1132,
+          "preview": "status = int(getattr(response, \"status\", 200))",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1133,
+          "preview": "if status != 200:",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1134,
+          "preview": "raise GenerationError(f\"Pollinations 3D returned HTTP {status}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 21,
+          "preview": "def status(*, environ=None) -> dict:",
+          "definition_candidate": true
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 193,
+          "preview": "[executable, \"kernels\", \"status\", kernel_id],",
+          "definition_candidate": false
+        },
+        {
+          "file": "operational_status.py",
+          "line": 59,
+          "preview": "\"schema\": \"asset-forge/operational-status/v1\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "production_contract.py",
+          "line": 71,
+          "preview": "\"status\": \"ready\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "raster_backend.py",
+          "line": 41,
+          "preview": "status = detect_pillow_webp()",
+          "definition_candidate": false
+        },
+        {
+          "file": "raster_backend.py",
+          "line": 42,
+          "preview": "if not status[\"available\"]:",
+          "definition_candidate": false
+        },
+        {
+          "file": "raster_backend.py",
+          "line": 82,
+          "preview": "status = detect_pillow_webp()",
+          "definition_candidate": false
+        },
+        {
+          "file": "raster_backend.py",
+          "line": 83,
+          "preview": "if not status[\"available\"]:",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1169,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1193,
+          "preview": "fetchImpl: async () => ({ ok: false, status: 404 }),",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1214,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1246,
+          "preview": "status: url === \"bad.png\" ? 500 : 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1268,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1316,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1495,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1611,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1787,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 1873,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2046,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2215,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2265,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2632,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2681,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2836,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 2883,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3033,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3157,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3416,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3592,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3769,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3840,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 3984,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 4128,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 4242,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/runtime_atlas_web.test.mjs",
+          "line": 4313,
+          "preview": "status: 200,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_cloudflare_backend.py",
+          "line": 12,
+          "preview": "status,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_cloudflare_backend.py",
+          "line": 37,
+          "preview": "self.assertFalse(status(environ={})[\"rasterReady\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_cloudflare_backend.py",
+          "line": 38,
+          "preview": "self.assertTrue(status(environ={",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 78,
+          "preview": "status = generator_backend_status(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 82,
+          "preview": "self.assertTrue(status[\"pollinations\"][\"authenticated\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 83,
+          "preview": "self.assertTrue(status[\"pollinations\"][\"rasterVectorReady\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 84,
+          "preview": "self.assertTrue(status[\"pollinations\"][\"threeDReady\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 85,
+          "preview": "self.assertEqual(status[\"pollinations\"][\"credentialSource\"], \"environment\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 86,
+          "preview": "self.assertNotIn(\"super-secret-value\", repr(status))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 177,
+          "preview": "status = generator_backend_status(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 182,
+          "preview": "self.assertTrue(status[\"imagenCodex\"][\"installed\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 183,
+          "preview": "self.assertTrue(status[\"imagenCodex\"][\"authenticated\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 184,
+          "preview": "self.assertTrue(status[\"imagenCodex\"][\"rasterReady\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 185,
+          "preview": "self.assertFalse(status[\"imagenCodex\"][\"vectorSvgReady\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 186,
+          "preview": "self.assertNotIn(\"codex-secret\", repr(status))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 436,
+          "preview": "status = 200",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_kaggle_backend.py",
+          "line": 6,
+          "preview": "from kaggle_backend import KaggleGenerationError, status",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_kaggle_backend.py",
+          "line": 12,
+          "preview": "self.assertFalse(status(environ={})[\"rasterReady\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_kaggle_backend.py",
+          "line": 13,
+          "preview": "self.assertTrue(status(environ={",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_kaggle_backend.py",
+          "line": 20,
+          "preview": "value = status(environ={",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 28,
+          "preview": "status = build_operational_status(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 34,
+          "preview": "self.assertEqual(status[\"schema\"], \"asset-forge/operational-status/v1\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 35,
+          "preview": "self.assertTrue(status[\"ready\"][\"full\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 36,
+          "preview": "self.assertTrue(status[\"capabilities\"][\"rasterPng\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 37,
+          "preview": "self.assertTrue(status[\"capabilities\"][\"rasterWebp\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 38,
+          "preview": "self.assertTrue(status[\"capabilities\"][\"vectorSvg\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 39,
+          "preview": "self.assertTrue(status[\"capabilities\"][\"threeDGlb\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 40,
+          "preview": "self.assertTrue(status[\"capabilities\"][\"godotImport\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 41,
+          "preview": "self.assertNotIn(\"secret\", repr(status))",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 55,
+          "preview": "status = build_operational_status(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 61,
+          "preview": "self.assertFalse(status[\"ready\"][\"anyGeneratedAsset\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 62,
+          "preview": "self.assertFalse(status[\"ready\"][\"full\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 63,
+          "preview": "self.assertTrue(status[\"blockers\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 81,
+          "preview": "status = build_operational_status(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 87,
+          "preview": "self.assertFalse(status[\"capabilities\"][\"imagenCodexRaster\"])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_operational_status.py",
+          "line": 90,
+          "preview": "for value in status[\"blockers\"]",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 36,
+          "preview": "self.assertEqual(job[\"status\"], \"ready\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_backend.py",
+          "line": 12,
+          "preview": "status = detect_pillow_webp()",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_backend.py",
+          "line": 13,
+          "preview": "self.assertEqual(status[\"backend\"], \"pillow\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_backend.py",
+          "line": 14,
+          "preview": "self.assertIn(\"available\", status)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_backend.py",
+          "line": 15,
+          "preview": "self.assertIn(\"pillowVersion\", status)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_raster_backend.py",
+          "line": 16,
+          "preview": "self.assertIn(\"webpVersion\", status)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_toolchain_3d.py",
+          "line": 160,
+          "preview": "self.assertEqual(result[\"results\"][1][\"status\"], \"skipped-unavailable\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_toolchain_3d.py",
+          "line": 185,
+          "preview": "self.assertEqual(result[\"results\"][0][\"status\"], \"failed\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "toolchain_3d.py",
+          "line": 361,
+          "preview": "\"status\": item[\"status\"],",
+          "definition_candidate": false
+        },
+        {
+          "file": "toolchain_3d.py",
+          "line": 397,
+          "preview": "\"status\": \"missing-required\" if step[\"required\"] else \"skipped-unavailable\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "toolchain_3d.py",
+          "line": 410,
+          "preview": "\"status\": \"passed\" if executed[\"returnCode\"] == 0 else \"failed\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 1603,
+          "preview": "const status = response?.status ?? \"unknown\";",
+          "definition_candidate": false
+        },
+        {
+          "file": "web/runtime_atlas.mjs",
+          "line": 1604,
+          "preview": "throw new Error(`image fetch failed for ${url}: HTTP ${status}`);",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 105
+    },
+    "_slug": {
+      "definition": {
+        "file": "kaggle_backend.py",
+        "line": 40,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "kaggle_backend.py",
+          "line": 40,
+          "preview": "def _slug(value: str) -> str:",
+          "definition_candidate": true
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 139,
+          "preview": "job_tag = _slug(f\"asset-forge-qwen-{int(time.time())}-{os.getpid()}\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 140,
+          "preview": "kernel_id = f\"{_slug(username)}/{job_tag}\"",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 3
+    },
+    "_runner_source": {
+      "definition": {
+        "file": "kaggle_backend.py",
+        "line": 45,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "kaggle_backend.py",
+          "line": 45,
+          "preview": "def _runner_source() -> str:",
+          "definition_candidate": true
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 144,
+          "preview": "(root / \"runner.py\").write_text(_runner_source(), encoding=\"utf-8\")",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "_run": {
+      "definition": {
+        "file": "kaggle_backend.py",
+        "line": 91,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "kaggle_backend.py",
+          "line": 91,
+          "preview": "def _run(command: list[str], *, timeout: float, runner=subprocess.run) -> subprocess.CompletedProcess:",
+          "definition_candidate": true
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 182,
+          "preview": "_run(",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 192,
+          "preview": "status_result = _run(",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 211,
+          "preview": "_run(",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 248,
+          "preview": "_run(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 5
+    },
+    "generate": {
+      "definition": {
+        "file": "kaggle_backend.py",
+        "line": 110,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "asset_forge.py",
+          "line": 553,
+          "preview": "generate = sub.add_parser(\"generate\", help=\"execute a generated-asset production job\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 554,
+          "preview": "generate.add_argument(\"job\", type=Path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 555,
+          "preview": "generate.add_argument(\"output_dir\", type=Path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 556,
+          "preview": "generate.add_argument(\"--backend\", choices=[\"auto\", \"pollinations\", \"imagen-codex\", \"qwen-colab\", \"cloudflare\", \"kaggle-qwen\"], default=\"auto\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 557,
+          "preview": "generate.add_argument(\"--model\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 558,
+          "preview": "generate.add_argument(\"--timeout\", type=float, default=180.0)",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 560,
+          "preview": "produce = sub.add_parser(\"produce\", help=\"generate, process, validate, and report a raster production job\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "asset_forge.py",
+          "line": 801,
+          "preview": "if args.command == \"generate\":",
+          "definition_candidate": false
+        },
+        {
+          "file": "cloudflare_backend.py",
+          "line": 80,
+          "preview": "def generate(",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 19,
+          "preview": "generate as cloudflare_generate,",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 25,
+          "preview": "generate as kaggle_generate,",
+          "definition_candidate": false
+        },
+        {
+          "file": "godot_3d_delivery.py",
+          "line": 182,
+          "preview": "\"author a -col/-convcol collision node or generate collision during engine handoff\"",
+          "definition_candidate": false
+        },
+        {
+          "file": "kaggle_backend.py",
+          "line": 110,
+          "preview": "def generate(",
+          "definition_candidate": true
+        },
+        {
+          "file": "production_contract.py",
+          "line": 75,
+          "preview": "\"strategy\": \"generate-then-process\" if requires_generator else \"source-then-process\",",
+          "definition_candidate": false
+        },
+        {
+          "file": "runtime_3d_plan.py",
+          "line": 71,
+          "preview": "recommendations.append(\"generate and ship explicit lower-detail LOD meshes\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_cloudflare_backend.py",
+          "line": 11,
+          "preview": "generate,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_cloudflare_backend.py",
+          "line": 61,
+          "preview": "result = generate(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_cloudflare_backend.py",
+          "line": 84,
+          "preview": "generate(\"x\", Path(\"unused.png\"), environ={})",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 532,
+          "preview": "generate = [command for command in seen if command[1:3] == [\"gen\", \"image\"]][0]",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 533,
+          "preview": "self.assertIn(\"--image\", generate)",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 535,
+          "preview": "generate[generate.index(\"--image\") + 1],",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 539,
+          "preview": "generate[generate.index(\"--model\") + 1],",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_generator_backends.py",
+          "line": 547,
+          "preview": "self.assertIn(\"strict visual identity anchor\", generate[3])",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_production_contract.py",
+          "line": 38,
+          "preview": "self.assertEqual(job[\"execution\"][\"strategy\"], \"generate-then-process\")",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 24
+    }
+  }
 }

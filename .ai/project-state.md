@@ -96,16 +96,17 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T08:05:36Z
+Generated: 2026-09-21T08:13:45Z
 
 ### Git
 - Branch: `main`
-- Head: `d555c276270d`
-- Commit date: 2026-09-21T10:05:25+02:00
-- Commit: fix: rerun live pilot on backend routing changes
+- Head: `9f82ee769ad4`
+- Commit date: 2026-09-21T10:13:24+02:00
+- Commit: fix: preserve Kaggle failure diagnostics for Qwen jobs
 - Tracked files: 290
 
 ### Recently changed files
+- `kaggle_backend.py`
 - `.github/workflows/deadline-zero-live-pilot.yml`
 - `generator_backends.py`
 - `remote_batch.py`
