@@ -426,6 +426,45 @@ def build_generation_prompt(job: dict) -> str:
     return prompt
 
 
+def _technical_retry_categories(result: dict | None) -> list[str]:
+    if not isinstance(result, dict):
+        return ["general-quality"]
+
+    metrics = result.get("metrics") if isinstance(result.get("metrics"), dict) else {}
+    errors = [str(v) for v in (result.get("errors") or [])]
+    warnings = [str(v) for v in (result.get("warnings") or [])]
+    categories = []
+
+    border = metrics.get("borderAlphaRatio")
+    if isinstance(border, (int, float)) and float(border) > 0.08:
+        categories.append("border-clearance")
+
+    occupancy = metrics.get("occupancy")
+    if isinstance(occupancy, (int, float)):
+        if float(occupancy) > 0.78:
+            categories.append("scale-down")
+        elif float(occupancy) < 0.08:
+            categories.append("scale-up")
+
+    contrast = metrics.get("contrastSpan")
+    if isinstance(contrast, (int, float)) and float(contrast) < 70:
+        categories.append("contrast")
+
+    unique = metrics.get("uniqueFrameRatio")
+    if isinstance(unique, (int, float)) and float(unique) < 0.75:
+        categories.append("frame-diversity")
+
+    drift = metrics.get("maxFrameCenterDrift")
+    if isinstance(drift, (int, float)) and float(drift) > 0.18:
+        categories.append("frame-anchor")
+
+    combined = " ".join(errors + warnings).lower()
+    if "fully opaque" in combined or "transparent background" in combined:
+        categories.append("transparency")
+
+    return list(dict.fromkeys(categories or ["general-quality"]))
+
+
 def _technical_retry_guidance(result: dict | None) -> str:
     if not isinstance(result, dict):
         return (
@@ -1220,11 +1259,17 @@ def execute_generated_asset(
                 and not list(technical.get("errors") or [])
             )
             previous_technical_failed = not technical_passed
+            retry_categories = (
+                _technical_retry_categories(previous_technical_result)
+                if attempt > 0 and previous_technical_result is not None
+                else []
+            )
             technical_quality_history.append({
                 "attempt": attempt + 1,
                 "score": round(float(technical_score), 6),
                 "threshold": technical_threshold,
                 "passed": technical_passed,
+                "retryCategories": retry_categories,
                 "metrics": technical.get("metrics", {}),
                 "errors": list(technical.get("errors") or []),
                 "warnings": list(technical.get("warnings") or []),
