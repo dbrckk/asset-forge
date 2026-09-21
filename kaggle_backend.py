@@ -49,6 +49,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Kaggle images can ship an older torchao that is incompatible with the
+# current Diffusers import graph (missing FqnToConfig). Qwen-Image does not
+# require torchao for this fp16/offload path, so remove the stale optional
+# package before importing Diffusers.
+subprocess.run([sys.executable, "-m", "pip", "uninstall", "-q", "-y", "torchao"], check=False)
 subprocess.run([
     sys.executable, "-m", "pip", "install", "-q", "-U",
     "transformers>=5.17", "accelerate", "pillow",
