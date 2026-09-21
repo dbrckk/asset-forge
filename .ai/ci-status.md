@@ -1,14 +1,10 @@
 # CI status
 
-Summary: 2 success / 1 failure / 1 active
+Summary: 1 success / 0 failure / 3 active
 
-- Validate asset-forge: in_progress / pending (65bc5831)
-- Validate asset-forge: completed / success (90a22bff)
-- Deadline Zero live visual pilot: completed / failure (1b6cd87e)
-- Validate asset-forge: completed / success (1b6cd87e)
-
-## Latest failed run structure
-- Job: produce
-  - Failed step: Validate pilot bundle
+- Validate asset-forge: in_progress / pending (c128c940)
+- Validate asset-forge: in_progress / pending (27216614)
+- Validate asset-forge: completed / success (2d023b10)
+- Live generation smoke: in_progress / pending (2d023b10)
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.

@@ -1843,41 +1843,132 @@ updates:
     "artifact"
   ],
   "properties": {
-    "schema": {"const": "asset-forge/production-report/v1"},
-    "requestId": {"type": "string", "minLength": 1},
-    "assetId": {"type": "string", "minLength": 1},
-    "assetType": {"type": "string", "minLength": 1},
-    "success": {"type": "boolean"},
-    "generation": {"type": "object"},
+    "schema": {
+      "const": "asset-forge/production-report/v1"
+    },
+    "requestId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assetId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assetType": {
+      "type": "string",
+      "minLength": 1
+    },
+    "success": {
+      "type": "boolean"
+    },
+    "generation": {
+      "type": "object"
+    },
     "provenance": {
       "type": "object",
       "properties": {
-        "source": {"type": "object"},
-        "license": {"type": "object"}
+        "source": {
+          "type": "object"
+        },
+        "license": {
+          "type": "object"
+        }
       },
       "additionalProperties": true
     },
-    "processing": {"type": "object"},
+    "processing": {
+      "type": "object"
+    },
     "validation": {
       "type": "object",
-      "required": ["errors"],
+      "required": [
+        "errors"
+      ],
       "properties": {
-        "errors": {"type": "array"}
+        "errors": {
+          "type": "array"
+        }
       },
       "additionalProperties": true
     },
-    "artifact": {"type": ["string", "null"]},
-    "engineHandoff": {"type": "object"}
+    "artifact": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "engineHandoff": {
+      "type": "object"
+    },
+    "routing": {
+      "type": "object",
+      "properties": {
+        "requestedBackend": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "initialBackend": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "finalBackend": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fallbacks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "fallbackCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    }
   },
   "additionalProperties": true,
   "allOf": [
     {
-      "if": {"properties": {"success": {"const": true}}},
-      "then": {"properties": {"artifact": {"type": "string", "minLength": 1}}}
+      "if": {
+        "properties": {
+          "success": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "artifact": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     },
     {
-      "if": {"properties": {"success": {"const": false}}},
-      "then": {"properties": {"artifact": {"type": "null"}}}
+      "if": {
+        "properties": {
+          "success": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "artifact": {
+            "type": "null"
+          }
+        }
+      }
     }
   ]
 }
@@ -2785,6 +2876,10 @@ seen = {}
 ⋮----
 def fake_kaggle(prompt, output, **kwargs)
 ⋮----
+def test_auto_cloudflare_failure_falls_back_to_kaggle_qwen(self)
+⋮----
+def test_explicit_cloudflare_failure_does_not_silently_fallback(self)
+⋮----
 def test_auto_backend_prefers_cloudflare_for_raster_when_ready(self)
 ⋮----
 def test_auto_backend_uses_kaggle_when_cloudflare_unavailable(self)
@@ -3272,6 +3367,8 @@ def optimizer(source, output)
 def validator(path, manifest)
 ⋮----
 report = execute_generated_raster_job(
+⋮----
+def test_raster_report_exposes_backend_routing(self)
 ⋮----
 def test_webp_target_encodes_before_validation(self)
 ⋮----
@@ -5815,7 +5912,10 @@ fallback = Path(output_dir) / "generated-source.png"
 ⋮----
 matches = sorted(Path(output_dir).glob("generated-source*.png"))
 ⋮----
+requested_backend = backend
 backend = select_generation_backend(job, backend)
+initial_backend = backend
+fallback_history = []
 ⋮----
 executable = None
 ⋮----
@@ -5892,11 +5992,12 @@ dimensions = _generation_dimensions(attempt_job) or (1024, 1024)
 ⋮----
 metadata = cloudflare_generate(
 ⋮----
-# Cloudflare SDXL currently accepts text-to-image but
-# may reject reference-image tensors. Preserve visual
-# identity by falling back to the automated Qwen
-# Kaggle backend whenever a referenced generation is
-# unsupported by the selected Cloudflare model.
+# Free-first auto routing should survive a transient
+# Cloudflare failure when the Qwen Kaggle backend is
+# already configured. Explicit Cloudflare requests
+# remain strict unless a reference image requires Qwen.
+kaggle_ready = (
+allow_fallback = requested_backend == "auto" or bool(references)
 ⋮----
 metadata = kaggle_generate(
 ⋮----
@@ -6945,6 +7046,12 @@ source = manifest.get("source") if isinstance(manifest, dict) else None
 license_data = manifest.get("license") if isinstance(manifest, dict) else None
 source = source if isinstance(source, dict) else {}
 license_data = license_data if isinstance(license_data, dict) else {}
+⋮----
+def _routing_from_generation(generation: dict) -> dict
+⋮----
+value = generation if isinstance(generation, dict) else {}
+fallbacks = value.get("fallbacks")
+fallbacks = fallbacks if isinstance(fallbacks, list) else []
 ⋮----
 def _stage_provided_source(source_path: Path, output_dir: Path, *, suffix: str) -> dict
 ⋮----

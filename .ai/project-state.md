@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:03:33Z
+Generated: 2026-09-21T16:06:24Z
 
 ### Git
 - Branch: `main`
-- Head: `65bc583125d3`
-- Commit date: 2026-09-21T18:03:16+02:00
-- Commit: test: cover free raster operational routing
+- Head: `c128c9404720`
+- Commit date: 2026-09-21T18:06:10+02:00
+- Commit: test: cover production routing telemetry
 - Tracked files: 291
 
 ### Recently changed files
-- `tests/test_operational_status.py`
-- `operational_status.py`
-- `.github/workflows/deadline-zero-live-pilot.yml`
-- `tests/test_kaggle_backend.py`
-- `kaggle_backend.py`
+- `tests/test_production_executor.py`
+- `schemas/production-report.schema.json`
+- `production_executor.py`
+- `tests/test_generator_backends.py`
+- `generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`
