@@ -66,6 +66,19 @@ def _provenance_from_manifest(manifest: dict) -> dict:
     }
 
 
+def _routing_from_generation(generation: dict) -> dict:
+    value = generation if isinstance(generation, dict) else {}
+    fallbacks = value.get("fallbacks")
+    fallbacks = fallbacks if isinstance(fallbacks, list) else []
+    return {
+        "requestedBackend": value.get("requestedBackend"),
+        "initialBackend": value.get("initialBackend") or value.get("backend"),
+        "finalBackend": value.get("backend"),
+        "fallbacks": fallbacks,
+        "fallbackCount": len(fallbacks),
+    }
+
+
 def _stage_provided_source(source_path: Path, output_dir: Path, *, suffix: str) -> dict:
     source = Path(source_path)
     if not source.is_file():
@@ -225,6 +238,7 @@ def execute_generated_raster_job(
         "provenance": _provenance_from_manifest(manifest),
         "success": not combined_errors,
         "generation": generation,
+        "routing": _routing_from_generation(generation),
         "processing": processing,
         "validation": {
             "file": str(final),
@@ -327,6 +341,7 @@ def execute_generated_vector_job(
         "provenance": _provenance_from_manifest(manifest),
         "success": not errors,
         "generation": generation,
+        "routing": _routing_from_generation(generation),
         "processing": {
             "sanitize": sanitize_result,
             "normalize": normalize_result,
@@ -507,6 +522,7 @@ def execute_generated_3d_job(
         "provenance": _provenance_from_manifest(manifest),
         "success": not combined_errors,
         "generation": generation,
+        "routing": _routing_from_generation(generation),
         "validation": {
             "file": str(final),
             "profile": profile,
