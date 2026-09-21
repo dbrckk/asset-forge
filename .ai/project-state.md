@@ -96,19 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T19:29:30Z
+Generated: 2026-09-21T19:46:38Z
 
 ### Git
 - Branch: `main`
-- Head: `a58fe2485467`
-- Commit date: 2026-09-21T21:29:02+02:00
-- Commit: test: cover diagnostic-aware retry guidance
+- Head: `76a4a0c82fb7`
+- Commit date: 2026-09-21T21:46:14+02:00
+- Commit: test: cover corrective retry learning
 - Tracked files: 305
 
 ### Recently changed files
-- `tests/test_generator_backends.py`
-- `generator_backends.py`
+- `tests/test_backend_history.py`
 - `backend_history.py`
+- `generator_backends.py`
+- `tests/test_generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`

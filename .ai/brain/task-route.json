@@ -9,10 +9,10 @@
     "top_score": 29
   },
   "cache": {
-    "fingerprint": "a5fb55ab970ac970410e54797c3ccb903fa66d4fa79407b432c91d688476a6ad",
+    "fingerprint": "45aa1c8bdf0dbc829dbcdd8db512b8ecd6e74da1c6356fc885f6212fc6254ff7",
     "hit": false
   },
-  "candidate_count": 23,
+  "candidate_count": 24,
   "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
   "files": [
     {
@@ -55,6 +55,39 @@
         "test_cached_assets_count_as_quality_checked_from_technical_validation",
         "test_dependency_order_and_reference_are_preserved",
         "test_remote_batch_propagates_library_version_metadata"
+      ]
+    },
+    {
+      "learning_score": 0,
+      "matched_terms": [
+        "engine"
+      ],
+      "path": "asset_forge.py",
+      "reasons": [
+        "impact",
+        "search-index"
+      ],
+      "score": 27,
+      "symbols": [
+        "_enrich_engine_handoff",
+        "_persist_enriched_production_report",
+        "_write_production_inputs",
+        "build_atlas_manifest",
+        "build_plan",
+        "cmd_atlas_manifest",
+        "cmd_plan",
+        "cmd_validate",
+        "cmd_validate_raster",
+        "execute_compiled_production_job",
+        "is_power_of_two",
+        "load_json",
+        "load_valid_manifest",
+        "main",
+        "parser",
+        "select_tools",
+        "sprite_grid",
+        "validate_manifest",
+        "validate_raster_file"
       ]
     },
     {
@@ -105,9 +138,10 @@
       "path": "generator_backends.py",
       "reasons": [
         "impact",
+        "recently-changed",
         "search-index"
       ],
-      "score": 23,
+      "score": 26,
       "symbols": [
         "GenerationError",
         "_NoCredentialRedirect",
@@ -120,49 +154,15 @@
         "_sanitize_metadata",
         "_select_free_raster_backend",
         "_sprite_sheet_geometry",
+        "_technical_retry_categories",
+        "_technical_retry_guidance",
         "_upload_reference_image",
         "build_generation_prompt",
         "execute_generated_3d_asset",
         "execute_generated_asset",
         "generator_backend_status",
         "imagen_codex_command",
-        "pollinations_command",
-        "redirect_request",
-        "select_generation_backend"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "game"
-      ],
-      "path": "tests/test_generator_backends.py",
-      "reasons": [
-        "impact",
-        "search-index"
-      ],
-      "score": 23,
-      "symbols": [
-        "Generate",
-        "GeneratorBackendsTests",
-        "Response",
-        "Result",
-        "Upload",
-        "__enter__",
-        "__exit__",
-        "fake_cloudflare",
-        "fake_kaggle",
-        "fake_vectorizer",
-        "generator",
-        "job",
-        "kaggle_generator",
-        "normalize",
-        "opener",
-        "read",
-        "runner",
-        "test_3d_generation_persists_backend_history",
-        "test_3d_generation_requires_configured_backend",
-        "test_3d_prompt_is_reference_image_oriented"
+        "pollinations_command"
       ]
     }
   ],

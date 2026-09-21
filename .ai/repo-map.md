@@ -2903,6 +2903,10 @@ history = record_generation_result(path, {
 ⋮----
 stats = history["backends"]["cloudflare"]
 ⋮----
+def test_retry_strategy_effectiveness_is_learned(self)
+⋮----
+strategies = history["backends"]["kaggle-qwen"]["retryStrategies"]
+⋮----
 def test_3d_result_learns_from_nested_reference_generation(self)
 ⋮----
 triposr = history["backends"]["kaggle-triposr"]
@@ -6091,6 +6095,11 @@ stats = _stats(history, name)
 ⋮----
 bounded = max(0.0, min(1.0, float(quality)))
 ⋮----
+def _record_retry_strategy(stats: dict, category: str, *, delta: float, passed: bool) -> None
+⋮----
+strategies = stats.setdefault("retryStrategies", {})
+value = strategies.get(category)
+⋮----
 def record_generation_result(path: Path | str | None, result: dict) -> dict
 ⋮----
 history = load_history(path)
@@ -6109,11 +6118,23 @@ destination_stats = _stats(history, destination)
 ⋮----
 final_backend = str(result.get("backend") or "").strip()
 ⋮----
+technical_quality = result.get("technicalQuality")
+technical_attempts = (
+⋮----
+stats = _stats(history, final_backend)
+⋮----
+previous = technical_attempts[index - 1]
+previous_score = (
+current_score = attempt.get("score")
+⋮----
+delta = float(current_score) - float(previous_score)
+categories = attempt.get("retryCategories")
+⋮----
+name = str(category or "").strip()
+⋮----
 regeneration_attempts = []
 ⋮----
 attempts = value.get("attempts") if isinstance(value, dict) else None
-⋮----
-stats = _stats(history, final_backend)
 ⋮----
 reference_generation = result.get("referenceGeneration")
 ⋮----
@@ -6434,12 +6455,12 @@ frames = constraints.get("expectedFrames")
 ⋮----
 prompt = " ".join(details)
 ⋮----
-def _technical_retry_guidance(result: dict | None) -> str
+def _technical_retry_categories(result: dict | None) -> list[str]
 ⋮----
 metrics = result.get("metrics") if isinstance(result.get("metrics"), dict) else {}
 errors = [str(v) for v in (result.get("errors") or [])]
 warnings = [str(v) for v in (result.get("warnings") or [])]
-guidance = []
+categories = []
 ⋮----
 border = metrics.get("borderAlphaRatio")
 ⋮----
@@ -6452,6 +6473,10 @@ unique = metrics.get("uniqueFrameRatio")
 drift = metrics.get("maxFrameCenterDrift")
 ⋮----
 combined = " ".join(errors + warnings).lower()
+⋮----
+def _technical_retry_guidance(result: dict | None) -> str
+⋮----
+guidance = []
 ⋮----
 prompt = build_generation_prompt(job)
 ⋮----
@@ -6553,6 +6578,7 @@ previous_similarity_failed = False
 previous_technical_failed = False
 previous_technical_result = None
 ⋮----
+applied_retry_categories = (
 retry_guidance = []
 ⋮----
 attempt_command = None

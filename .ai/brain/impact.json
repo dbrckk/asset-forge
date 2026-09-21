@@ -1,28 +1,35 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "b8b4f4161bd8cfdc7a63fe0793158b229c23b40b",
-  "head": "a58fe2485467673542aefb3c884d840f70739168",
+  "base": "a58fe2485467673542aefb3c884d840f70739168",
+  "head": "76a4a0c82fb74cb3d6ca62cd40d986ac3f62f7c8",
   "index_mode": "incremental",
   "changed_files": [
+    {
+      "path": "backend_history.py",
+      "status": "M"
+    },
     {
       "path": "generator_backends.py",
       "status": "M"
     },
     {
-      "path": "tests/test_generator_backends.py",
+      "path": "tests/test_backend_history.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
+    "backend_history.py",
     "generator_backends.py",
-    "tests/test_generator_backends.py"
+    "tests/test_backend_history.py"
   ],
   "impacted_files": [
     "asset_forge.py",
+    "backend_history.py",
     "generator_backends.py",
     "operational_status.py",
     "production_executor.py",
+    "tests/test_backend_history.py",
     "tests/test_generator_backends.py"
   ],
   "impacted_symbols": [
@@ -141,6 +148,60 @@
       "line": 749
     },
     {
+      "name": "empty_history",
+      "kind": "function",
+      "file": "backend_history.py",
+      "line": 12
+    },
+    {
+      "name": "load_history",
+      "kind": "function",
+      "file": "backend_history.py",
+      "line": 19
+    },
+    {
+      "name": "_stats",
+      "kind": "function",
+      "file": "backend_history.py",
+      "line": 37
+    },
+    {
+      "name": "_quality_from_generation",
+      "kind": "function",
+      "file": "backend_history.py",
+      "line": 55
+    },
+    {
+      "name": "_record",
+      "kind": "function",
+      "file": "backend_history.py",
+      "line": 72
+    },
+    {
+      "name": "_record_retry_strategy",
+      "kind": "function",
+      "file": "backend_history.py",
+      "line": 94
+    },
+    {
+      "name": "record_generation_result",
+      "kind": "function",
+      "file": "backend_history.py",
+      "line": 113
+    },
+    {
+      "name": "backend_score",
+      "kind": "function",
+      "file": "backend_history.py",
+      "line": 223
+    },
+    {
+      "name": "choose_backend",
+      "kind": "function",
+      "file": "backend_history.py",
+      "line": 267
+    },
+    {
       "name": "_sanitize_metadata",
       "kind": "function",
       "file": "generator_backends.py",
@@ -201,70 +262,76 @@
       "line": 361
     },
     {
-      "name": "_technical_retry_guidance",
+      "name": "_technical_retry_categories",
       "kind": "function",
       "file": "generator_backends.py",
       "line": 429
     },
     {
+      "name": "_technical_retry_guidance",
+      "kind": "function",
+      "file": "generator_backends.py",
+      "line": 468
+    },
+    {
       "name": "pollinations_command",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 491
+      "line": 530
     },
     {
       "name": "select_generation_backend",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 532
+      "line": 571
     },
     {
       "name": "imagen_codex_command",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 571
+      "line": 610
     },
     {
       "name": "_imagen_output_path",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 613
+      "line": 652
     },
     {
       "name": "execute_generated_asset",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 649
+      "line": 688
     },
     {
       "name": "_NoCredentialRedirect",
       "kind": "class",
       "file": "generator_backends.py",
-      "line": 1329
+      "line": 1374
     },
     {
       "name": "redirect_request",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 1330
+      "line": 1375
     },
     {
       "name": "_default_3d_opener",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 1334
+      "line": 1379
     },
     {
       "name": "_upload_reference_image",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 1341
+      "line": 1386
     },
     {
       "name": "execute_generated_3d_asset",
       "kind": "function",
       "file": "generator_backends.py",
-      "line": 1373
+      "line": 1418
     },
     {
       "name": "_first_ready_backend",
@@ -331,6 +398,66 @@
       "kind": "function",
       "file": "production_executor.py",
       "line": 367
+    },
+    {
+      "name": "BackendHistoryTests",
+      "kind": "class",
+      "file": "tests/test_backend_history.py",
+      "line": 16
+    },
+    {
+      "name": "test_missing_or_invalid_history_falls_back_safely",
+      "kind": "function",
+      "file": "tests/test_backend_history.py",
+      "line": 17
+    },
+    {
+      "name": "test_default_order_is_preserved_without_enough_samples",
+      "kind": "function",
+      "file": "tests/test_backend_history.py",
+      "line": 27
+    },
+    {
+      "name": "test_repeated_cloudflare_failures_move_auto_route_to_kaggle",
+      "kind": "function",
+      "file": "tests/test_backend_history.py",
+      "line": 39
+    },
+    {
+      "name": "test_reliable_observed_cloudflare_stays_ahead_of_unknown_kaggle",
+      "kind": "function",
+      "file": "tests/test_backend_history.py",
+      "line": 72
+    },
+    {
+      "name": "test_record_generation_result_tracks_fallback_and_quality",
+      "kind": "function",
+      "file": "tests/test_backend_history.py",
+      "line": 89
+    },
+    {
+      "name": "test_record_generation_result_tracks_regeneration_pressure",
+      "kind": "function",
+      "file": "tests/test_backend_history.py",
+      "line": 125
+    },
+    {
+      "name": "test_retry_strategy_effectiveness_is_learned",
+      "kind": "function",
+      "file": "tests/test_backend_history.py",
+      "line": 151
+    },
+    {
+      "name": "test_3d_result_learns_from_nested_reference_generation",
+      "kind": "function",
+      "file": "tests/test_backend_history.py",
+      "line": 183
+    },
+    {
+      "name": "test_vector_result_records_underlying_raster_backend",
+      "kind": "function",
+      "file": "tests/test_backend_history.py",
+      "line": 210
     },
     {
       "name": "job",
@@ -970,6 +1097,7 @@
     }
   ],
   "selected_tests": [
+    "tests/test_backend_history.py",
     "tests/test_generator_backends.py"
   ]
 }
