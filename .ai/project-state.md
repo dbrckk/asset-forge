@@ -96,19 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T07:59:06Z
+Generated: 2026-09-21T08:05:36Z
 
 ### Git
 - Branch: `main`
-- Head: `f3e34b324c47`
-- Commit date: 2026-09-21T09:58:47+02:00
-- Commit: fix: fall back to Kaggle Qwen for referenced Cloudflare generations
-- Tracked files: 289
+- Head: `d555c276270d`
+- Commit date: 2026-09-21T10:05:25+02:00
+- Commit: fix: rerun live pilot on backend routing changes
+- Tracked files: 290
 
 ### Recently changed files
+- `.github/workflows/deadline-zero-live-pilot.yml`
 - `generator_backends.py`
 - `remote_batch.py`
-- `.github/workflows/deadline-zero-live-pilot.yml`
 
 ### Project signals
 - `pyproject.toml`

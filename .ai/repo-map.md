@@ -202,6 +202,9 @@ on:
       - ".github/workflows/deadline-zero-live-pilot.yml"
       - "examples/deadline-zero-live-pilot-batch.json"
       - "remote_batch.py"
+      - "generator_backends.py"
+      - "cloudflare_backend.py"
+      - "kaggle_backend.py"
   workflow_dispatch:
 
 permissions:

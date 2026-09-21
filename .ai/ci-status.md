@@ -1,13 +1,13 @@
 # CI status
 
-Summary: 1 success / 2 failure / 3 active
+Summary: 2 success / 2 failure / 2 active
 
-- Live generation smoke: in_progress / pending (f3e34b32)
-- Validate asset-forge: in_progress / pending (f3e34b32)
-- Validate asset-forge: in_progress / pending (f3e34b32)
+- Deadline Zero live premium pilot: in_progress / pending (d555c276)
+- Validate asset-forge: in_progress / pending (d555c276)
 - Live generation smoke: completed / failure (f3e34b32)
-- Validate asset-forge: completed / success (5f337092)
-- Deadline Zero live premium pilot: completed / failure (5f337092)
+- Validate asset-forge: completed / success (f3e34b32)
+- Validate asset-forge: completed / success (f3e34b32)
+- Live generation smoke: completed / failure (f3e34b32)
 
 ## Latest failed run structure
 - Job: live-vector
