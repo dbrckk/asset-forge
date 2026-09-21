@@ -6672,7 +6672,10 @@ markers = (
 positions = [preferred.rfind(marker) for marker in markers if marker in preferred]
 positions = [pos for pos in positions if pos >= 0]
 ⋮----
-preferred = preferred[min(positions):]
+# Start at the most recent diagnostic marker. Using the earliest marker
+# could leave a very long traceback that is later tail-truncated before
+# the actual exception message.
+preferred = preferred[max(positions):]
 ⋮----
 def _run(command: list[str], *, timeout: float, runner=subprocess.run) -> subprocess.CompletedProcess
 ⋮----

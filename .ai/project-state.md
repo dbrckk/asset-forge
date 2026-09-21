@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T09:28:19Z
+Generated: 2026-09-21T09:45:54Z
 
 ### Git
 - Branch: `main`
-- Head: `9dfc2a5640ab`
-- Commit date: 2026-09-21T11:28:08+02:00
-- Commit: fix: quantize Qwen 2.1 to fit Kaggle T4 memory
+- Head: `36a3e101d3e5`
+- Commit date: 2026-09-21T11:45:42+02:00
+- Commit: fix: retain final Kaggle exception after traceback
 - Tracked files: 290
 
 ### Recently changed files
