@@ -122,6 +122,10 @@ jobs:
           from pathlib import Path
 
           report = json.loads(Path(os.environ["REPORT_PATH"]).read_text(encoding="utf-8"))
+          routing = report.get("routing") if isinstance(report.get("routing"), dict) else {}
+          initial_backend = routing.get("initialBackend")
+          final_backend = routing.get("finalBackend")
+          fallback_count = int(routing.get("fallbackCount") or 0)
           summary = Path(os.environ["GITHUB_STEP_SUMMARY"])
           with summary.open("a", encoding="utf-8") as fh:
               fh.write("## Asset Forge production\n\n")
@@ -129,6 +133,8 @@ jobs:
               fh.write(f"- Asset: `{report.get('assetId')}`\n")
               fh.write(f"- Type: `{report.get('assetType')}`\n")
               fh.write(f"- Success: `{report.get('success')}`\n")
+              fh.write(f"- Backend: `{initial_backend}` → `{final_backend}`\n")
+              fh.write(f"- Fallbacks: `{fallback_count}`\n")
               fh.write(f"- Artifact: `{report.get('artifact')}`\n")
           PY
         env:
