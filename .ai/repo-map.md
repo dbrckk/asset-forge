@@ -6722,6 +6722,17 @@ body = candidate.read_text(encoding="utf-8", errors="replace").strip()
 ⋮----
 extracted = _extract_kaggle_diagnostic(candidate)
 ⋮----
+error_file = download_dir / "error.json"
+⋮----
+error_payload = json.loads(error_file.read_text(encoding="utf-8"))
+⋮----
+error_payload = None
+⋮----
+exc_type = str(error_payload.get("exceptionType") or "Exception")
+message = str(error_payload.get("message") or "").strip()
+traceback_text = str(error_payload.get("traceback") or "").strip()
+exact = f"{exc_type}: {message}" if message else exc_type
+⋮----
 detail = "; ".join(diagnostics)[-8000:] if diagnostics else "no diagnostic output was returned"
 ⋮----
 generated = download_dir / "asset.png"
