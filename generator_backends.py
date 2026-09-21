@@ -391,6 +391,17 @@ def build_generation_prompt(job: dict) -> str:
         details.append("Use a transparent background when appropriate.")
     if constraints.get("pixelArt") is True:
         details.append("Use crisp pixel art with no anti-aliased scaling and nearest-neighbour-friendly edges.")
+    if constraints.get("requiresAlpha") is True:
+        details.append(
+            "Keep the subject fully isolated with true transparent negative space; "
+            "do not paint a checkerboard, matte, card, floor, frame, or backdrop."
+        )
+    if constraints.get("aaaQualityRequired") is True or constraints.get("premiumQualityRequired") is True:
+        details.append(
+            "Premium game-production quality is mandatory: strong intentional silhouette, "
+            "coherent material definition, controlled value hierarchy, readable focal detail, "
+            "polished edges, and no generic stock-art or amateur visual language."
+        )
     fw = constraints.get("frameWidth")
     fh = constraints.get("frameHeight")
     frames = constraints.get("expectedFrames")
@@ -403,6 +414,11 @@ def build_generation_prompt(job: dict) -> str:
         _, _, columns, rows = geometry
         details.append(
             f"Arrange the frames on an exact {columns}-column by {rows}-row regular grid with no gutters."
+        )
+        details.append(
+            "Keep the character or object at a stable scale and anchor point in every frame; "
+            "preserve identity, palette, proportions, lighting direction, and camera angle across "
+            "the full sequence. Every frame must be visually distinct and animation-ready."
         )
     prompt = " ".join(details)
     if len(prompt) > 16000:
