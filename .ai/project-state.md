@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T09:14:43Z
+Generated: 2026-09-21T09:28:19Z
 
 ### Git
 - Branch: `main`
-- Head: `c35f9d199581`
-- Commit date: 2026-09-21T11:14:31+02:00
-- Commit: fix: parse Kaggle JSON-array logs completely
+- Head: `9dfc2a5640ab`
+- Commit date: 2026-09-21T11:28:08+02:00
+- Commit: fix: quantize Qwen 2.1 to fit Kaggle T4 memory
 - Tracked files: 290
 
 ### Recently changed files
