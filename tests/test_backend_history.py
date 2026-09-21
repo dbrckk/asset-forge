@@ -120,6 +120,33 @@ class BackendHistoryTests(unittest.TestCase):
             persisted = load_history(path)
             self.assertEqual(persisted, history)
 
+    def test_3d_result_learns_from_nested_reference_generation(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "history.json"
+            history = record_generation_result(path, {
+                "backend": "kaggle-triposr",
+                "fallbacks": [],
+                "referenceGeneration": {
+                    "success": True,
+                    "backend": "kaggle-qwen",
+                    "visualSimilarity": {
+                        "attempts": [{"score": 0.88, "passed": True}],
+                    },
+                    "technicalQuality": {
+                        "attempts": [{"score": 0.92, "passed": True}],
+                    },
+                },
+            })
+
+            triposr = history["backends"]["kaggle-triposr"]
+            self.assertEqual(triposr["successes"], 1)
+
+            raster = history["backends"]["kaggle-qwen"]
+            self.assertEqual(raster["attempts"], 1)
+            self.assertEqual(raster["successes"], 1)
+            self.assertEqual(raster["qualitySamples"], 1)
+            self.assertAlmostEqual(raster["qualitySum"], 0.9)
+
     def test_vector_result_records_underlying_raster_backend(self):
         with tempfile.TemporaryDirectory() as td:
             path = Path(td) / "history.json"
