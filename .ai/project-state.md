@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:12:24Z
+Generated: 2026-09-21T16:31:42Z
 
 ### Git
 - Branch: `main`
-- Head: `0f41688d535a`
-- Commit date: 2026-09-21T16:12:10Z
-- Commit: chore(ai): refresh unified AI context
-- Tracked files: 291
+- Head: `9df5dd35afdb`
+- Commit date: 2026-09-21T18:31:31+02:00
+- Commit: build: include VTracer generation backend
+- Tracked files: 292
 
 ### Recently changed files
+- `pyproject.toml`
+- `vector_backend.py`
 - `README.md`
 - `.github/workflows/production-os-batch.yml`
 - `tests/test_remote_batch.py`
-- `remote_batch.py`
-- `tests/test_operational_status.py`
 
 ### Project signals
 - `pyproject.toml`

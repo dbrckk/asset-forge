@@ -4,5 +4,114 @@
   "scope": "symbols defined in changed source files",
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
-  "symbols": {}
+  "symbols": {
+    "VectorizationError": {
+      "source": {
+        "file": "vector_backend.py",
+        "start": 12,
+        "end": 13
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "status": {
+      "source": {
+        "file": "vector_backend.py",
+        "start": 16,
+        "end": 31
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_validate_input": {
+      "source": {
+        "file": "vector_backend.py",
+        "start": 34,
+        "end": 49
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "VectorizationError",
+          "definitions": [
+            {
+              "file": "vector_backend.py",
+              "line": 12,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_validate_output": {
+      "source": {
+        "file": "vector_backend.py",
+        "start": 52,
+        "end": 65
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "VectorizationError",
+          "definitions": [
+            {
+              "file": "vector_backend.py",
+              "line": 12,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "vectorize_raster": {
+      "source": {
+        "file": "vector_backend.py",
+        "start": 68,
+        "end": 136
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "VectorizationError",
+          "definitions": [
+            {
+              "file": "vector_backend.py",
+              "line": 12,
+              "kind": "class",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_validate_input",
+          "definitions": [
+            {
+              "file": "vector_backend.py",
+              "line": 34,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "_validate_output",
+          "definitions": [
+            {
+              "file": "vector_backend.py",
+              "line": 52,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 3
+    }
+  }
 }

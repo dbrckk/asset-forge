@@ -162,6 +162,7 @@ semantic_art_review.py
 starlist_bridge.py
 svg_tools.py
 toolchain_3d.py
+vector_backend.py
 visual_similarity.py
 ````
 
@@ -7249,7 +7250,7 @@ dependencies = []
 
 [project.optional-dependencies]
 webp = ["Pillow>=12.2,<13"]
-generation = ["Pillow>=12.2,<13", "rembg[cpu,cli]"]
+generation = ["Pillow>=12.2,<13", "rembg[cpu,cli]", "vtracer>=0.6,<2"]
 dev = ["Pillow>=12.2,<13"]
 
 [project.scripts]
@@ -7291,6 +7292,7 @@ py-modules = [
   "svg_tools",
   "toolchain_3d",
   "visual_similarity",
+  "vector_backend",
 ]
 
 
@@ -10626,6 +10628,56 @@ godot_validation = {
 summary = _build_production_summary(plan, success, results)
 ⋮----
 report_path = Path(plan["workdir"]) / "production-report.json"
+````
+
+## File: vector_backend.py
+````python
+SUPPORTED_INPUT_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif"}
+⋮----
+class VectorizationError(RuntimeError)
+⋮----
+def status() -> dict
+⋮----
+installed = importlib.util.find_spec("vtracer") is not None
+package_version = None
+⋮----
+package_version = metadata.version("vtracer")
+⋮----
+def _validate_input(path: Path) -> Path
+⋮----
+source = Path(path)
+⋮----
+size = source.stat().st_size
+⋮----
+def _validate_output(path: Path) -> dict
+⋮----
+output = Path(path)
+⋮----
+head = output.read_text(encoding="utf-8")[:4096].lower()
+⋮----
+source = _validate_input(Path(input_path))
+output = Path(output_path)
+⋮----
+vtracer = importlib.import_module("vtracer")
+⋮----
+engine = None
+⋮----
+config_type = getattr(vtracer, "Config", None)
+⋮----
+factory = getattr(config_type, preset, None)
+⋮----
+config = factory()
+⋮----
+config = config_type(mode="polygon", hierarchical="cutout")
+result = config.convert_file(str(source), str(output))
+⋮----
+engine = "config-api"
+⋮----
+legacy = getattr(vtracer, "convert_image_to_svg_py", None)
+⋮----
+engine = "legacy-api"
+⋮----
+result = _validate_output(output)
 ````
 
 ## File: visual_similarity.py
