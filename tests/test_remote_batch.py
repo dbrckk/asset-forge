@@ -127,6 +127,56 @@ class RemoteBatchTests(unittest.TestCase):
             self.assertEqual(reference.name, "hero.png")
             self.assertTrue((root / "out" / "batch-result.json").is_file())
 
+    def test_cached_assets_count_as_quality_checked_from_technical_validation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            spec = root / "spec.json"
+            spec.write_text(json.dumps({"items": [{
+                "id": "cached",
+                "request": request("cached-request", "cached"),
+                "target_path": "assets/art/cached.png",
+            }]}))
+
+            def fake_run(cmd, **kwargs):
+                output = Path(cmd[cmd.index("--output-dir") + 1])
+                output.mkdir(parents=True, exist_ok=True)
+                artifact = output / "cached.png"
+                artifact.write_bytes(b"cached")
+                (output / "production-report.json").write_text(json.dumps({
+                    "success": True,
+                    "artifact": str(artifact),
+                    "generation": {},
+                    "validation": {
+                        "technicalArt": {
+                            "score": 0.91,
+                            "passed": True,
+                            "errors": [],
+                            "warnings": [],
+                        },
+                    },
+                    "routing": {
+                        "finalBackend": "provided",
+                        "fallbackCount": 0,
+                        "fallbacks": [],
+                    },
+                }))
+                class Result:
+                    returncode = 0
+                    stdout = ""
+                    stderr = ""
+                return Result()
+
+            with patch("remote_batch.subprocess.run", side_effect=fake_run):
+                result = run(spec, root / "out")
+
+            quality = result["quality_summary"]
+            self.assertEqual(quality["checked"], 1)
+            self.assertEqual(quality["visual_checked"], 0)
+            self.assertEqual(quality["technical_checked"], 1)
+            self.assertEqual(quality["minimum_score"], 0.91)
+            self.assertIsNone(quality["minimum_visual_score"])
+            self.assertEqual(quality["minimum_technical_score"], 0.91)
+
     def test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
