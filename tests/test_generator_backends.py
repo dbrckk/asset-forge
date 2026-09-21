@@ -437,6 +437,145 @@ class GeneratorBackendsTests(unittest.TestCase):
 
             kaggle.assert_not_called()
 
+    def test_auto_backend_uses_adaptive_history_after_enough_samples(self):
+        import json
+        from unittest.mock import patch as mock_patch
+
+        with tempfile.TemporaryDirectory() as td:
+            history_path = Path(td) / "backend-history.json"
+            history_path.write_text(json.dumps({
+                "schema": "asset-forge/backend-history/v1",
+                "backends": {
+                    "cloudflare": {
+                        "attempts": 3,
+                        "successes": 0,
+                        "failures": 3,
+                        "qualitySamples": 0,
+                        "qualitySum": 0.0,
+                    },
+                    "kaggle-qwen": {
+                        "attempts": 3,
+                        "successes": 3,
+                        "failures": 0,
+                        "qualitySamples": 3,
+                        "qualitySum": 2.7,
+                    },
+                },
+            }), encoding="utf-8")
+
+            with mock_patch.dict(
+                "os.environ",
+                {"ASSET_FORGE_BACKEND_HISTORY": str(history_path)},
+                clear=False,
+            ), patch(
+                "generator_backends.generator_backend_status",
+                return_value={
+                    "cloudflare": {"rasterReady": True},
+                    "kaggleQwen": {"rasterReady": True},
+                    "pollinations": {
+                        "rasterVectorReady": False,
+                        "threeDReady": False,
+                    },
+                    "imagenCodex": {"rasterReady": False},
+                    "vtracer": {"vectorSvgReady": False},
+                },
+            ):
+                self.assertEqual(
+                    select_generation_backend(job(), "auto"),
+                    "kaggle-qwen",
+                )
+
+    def test_auto_kaggle_failure_can_fall_back_to_cloudflare(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+
+            def fake_cloudflare(prompt, output, **kwargs):
+                output.write_bytes(b"PNG")
+                return {"provider": "cloudflare"}
+
+            with patch(
+                "generator_backends.select_generation_backend",
+                return_value="kaggle-qwen",
+            ), patch(
+                "generator_backends.generator_backend_status",
+                return_value={
+                    "cloudflare": {"rasterReady": True},
+                    "kaggleQwen": {"rasterReady": True},
+                },
+            ), patch(
+                "generator_backends.kaggle_generate",
+                side_effect=__import__("kaggle_backend").KaggleGenerationError(
+                    "temporary kaggle failure"
+                ),
+            ), patch(
+                "generator_backends.cloudflare_generate",
+                side_effect=fake_cloudflare,
+            ):
+                result = execute_generated_asset(
+                    job(),
+                    out,
+                    backend="auto",
+                    raster_normalizer=lambda raw, output, value: (
+                        output.write_bytes(raw.read_bytes())
+                        and {
+                            "width": 64,
+                            "height": 64,
+                            "columns": 2,
+                            "rows": 2,
+                        }
+                    ),
+                )
+
+            self.assertEqual(result["initialBackend"], "kaggle-qwen")
+            self.assertEqual(result["backend"], "cloudflare")
+            self.assertEqual(
+                result["fallbacks"][0]["reason"],
+                "kaggle-generation-error",
+            )
+
+    def test_successful_generation_persists_backend_history(self):
+        from backend_history import load_history
+        from unittest.mock import patch as mock_patch
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            out = root / "out"
+            history_path = root / "backend-history.json"
+
+            def fake_cloudflare(prompt, output, **kwargs):
+                output.write_bytes(b"PNG")
+                return {"provider": "cloudflare"}
+
+            with mock_patch.dict(
+                "os.environ",
+                {"ASSET_FORGE_BACKEND_HISTORY": str(history_path)},
+                clear=False,
+            ), patch(
+                "generator_backends.cloudflare_generate",
+                side_effect=fake_cloudflare,
+            ):
+                result = execute_generated_asset(
+                    job(),
+                    out,
+                    backend="cloudflare",
+                    raster_normalizer=lambda raw, output, value: (
+                        output.write_bytes(raw.read_bytes())
+                        and {
+                            "width": 64,
+                            "height": 64,
+                            "columns": 2,
+                            "rows": 2,
+                        }
+                    ),
+                )
+
+            self.assertTrue(result["success"])
+            history = load_history(history_path)
+            self.assertEqual(
+                history["backends"]["cloudflare"]["successes"],
+                1,
+            )
+
     def test_auto_backend_prefers_cloudflare_for_raster_when_ready(self):
         with patch(
             "generator_backends.generator_backend_status",
