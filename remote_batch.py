@@ -260,7 +260,11 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="Run a dependency-aware Asset Forge batch")
     parser.add_argument("--spec", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
-    parser.add_argument("--backend", choices=["auto", "pollinations", "imagen-codex"], default="auto")
+    parser.add_argument(
+        "--backend",
+        choices=["auto", "cloudflare", "kaggle-qwen", "qwen-colab", "pollinations", "imagen-codex"],
+        default="auto",
+    )
     parser.add_argument("--model")
     args = parser.parse_args(argv)
     result = run(
