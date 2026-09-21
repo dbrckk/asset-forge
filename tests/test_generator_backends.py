@@ -4,6 +4,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from cloudflare_backend import CloudflareGenerationError
+from kaggle_3d_backend import Kaggle3DGenerationError
 from generator_backends import (
     GenerationError,
     build_generation_prompt,
@@ -877,15 +878,196 @@ class GeneratorBackendsTests(unittest.TestCase):
             self.assertEqual(payload["image"], "https://media.pollinations.ai/ref-123")
             self.assertEqual(payload["model"], "microsoft/trellis-2")
 
-    def test_3d_generation_requires_server_api_key(self):
+    def test_3d_generation_requires_configured_backend(self):
         three_d = job()
         three_d["assetType"] = "mesh"
-        with self.assertRaisesRegex(GenerationError, "POLLINATIONS_API_KEY"):
+        with self.assertRaisesRegex(
+            GenerationError,
+            "no authenticated 3D generation backend",
+        ):
             execute_generated_3d_asset(
                 three_d,
                 Path("unused"),
                 environ={},
             )
+
+    def test_auto_3d_secondary_prefers_free_kaggle_triposr(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            seen = {}
+
+            def generator(value, output_dir, **kwargs):
+                seen["reference_backend"] = kwargs.get("backend")
+                source = Path(output_dir) / "generated-source.png"
+                source.parent.mkdir(parents=True, exist_ok=True)
+                source.write_bytes(b"PNG")
+                return {
+                    "success": True,
+                    "backend": kwargs.get("backend"),
+                    "sourcePath": str(source),
+                }
+
+            def kaggle_generator(reference_path, output, **kwargs):
+                seen["mc_resolution"] = kwargs.get("mc_resolution")
+                seen["model"] = kwargs.get("model")
+                output.write_bytes(
+                    b"glTF" + b"\x02\x00\x00\x00" + b"\x0c\x00\x00\x00"
+                )
+                return {"provider": "kaggle", "model": kwargs.get("model")}
+
+            three_d = job()
+            three_d["assetType"] = "prop"
+            three_d["manifest"]["importance"] = "secondary"
+
+            with patch(
+                "generator_backends.generator_backend_status",
+                return_value={
+                    "cloudflare": {"rasterReady": True},
+                    "kaggleQwen": {"rasterReady": True},
+                    "kaggleTripoSR": {"threeDReady": True},
+                    "pollinations": {"threeDReady": True},
+                },
+            ):
+                result = execute_generated_3d_asset(
+                    three_d,
+                    root,
+                    backend="auto",
+                    resolution="medium",
+                    generator=generator,
+                    kaggle_generator=kaggle_generator,
+                )
+
+            self.assertEqual(result["backend"], "kaggle-triposr")
+            self.assertEqual(result["requestedBackend"], "auto")
+            self.assertEqual(result["initialBackend"], "kaggle-triposr")
+            self.assertEqual(result["routingPolicy"], "free-first")
+            self.assertEqual(result["referenceBackend"], "cloudflare")
+            self.assertEqual(seen["reference_backend"], "cloudflare")
+            self.assertEqual(seen["mc_resolution"], 256)
+            self.assertEqual(seen["model"], "stabilityai/TripoSR")
+            self.assertEqual(Path(result["sourcePath"]).read_bytes()[:4], b"glTF")
+
+    def test_auto_3d_primary_prefers_pollinations_trellis(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            seen = {}
+
+            def generator(value, output_dir, **kwargs):
+                seen["reference_backend"] = kwargs.get("backend")
+                source = Path(output_dir) / "generated-source.png"
+                source.parent.mkdir(parents=True, exist_ok=True)
+                source.write_bytes(b"PNG")
+                return {"success": True, "sourcePath": str(source)}
+
+            def upload_runner(command, **kwargs):
+                class Result:
+                    returncode = 0
+                    stdout = '{"url":"https://media.pollinations.ai/primary-ref"}'
+                    stderr = ""
+                return Result()
+
+            class Response:
+                status = 200
+                def __enter__(self):
+                    return self
+                def __exit__(self, exc_type, exc, tb):
+                    return False
+                def read(self, limit=-1):
+                    return b"glTF" + b"\x02\x00\x00\x00" + b"\x0c\x00\x00\x00"
+
+            three_d = job()
+            three_d["assetType"] = "prop"
+            three_d["manifest"]["importance"] = "primary"
+
+            with patch(
+                "generator_backends.generator_backend_status",
+                return_value={
+                    "cloudflare": {"rasterReady": True},
+                    "kaggleQwen": {"rasterReady": True},
+                    "kaggleTripoSR": {"threeDReady": True},
+                    "pollinations": {"threeDReady": True},
+                },
+            ), patch("generator_backends.shutil.which", return_value="/usr/bin/polli"), patch(
+                "generator_backends.kaggle_3d_generate"
+            ) as kaggle:
+                result = execute_generated_3d_asset(
+                    three_d,
+                    root,
+                    backend="auto",
+                    environ={"POLLINATIONS_API_KEY": "secret-key"},
+                    generator=generator,
+                    upload_runner=upload_runner,
+                    opener=lambda request, timeout: Response(),
+                )
+
+            self.assertEqual(result["backend"], "pollinations")
+            self.assertEqual(result["initialBackend"], "pollinations")
+            self.assertEqual(result["routingPolicy"], "premium-first")
+            self.assertEqual(result["model"], "microsoft/trellis-2")
+            self.assertEqual(seen["reference_backend"], "pollinations")
+            kaggle.assert_not_called()
+
+    def test_auto_3d_triposr_failure_falls_back_to_pollinations(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+
+            def generator(value, output_dir, **kwargs):
+                source = Path(output_dir) / "generated-source.png"
+                source.parent.mkdir(parents=True, exist_ok=True)
+                source.write_bytes(b"PNG")
+                return {"success": True, "sourcePath": str(source)}
+
+            def upload_runner(command, **kwargs):
+                class Result:
+                    returncode = 0
+                    stdout = '{"url":"https://media.pollinations.ai/fallback-ref"}'
+                    stderr = ""
+                return Result()
+
+            class Response:
+                status = 200
+                def __enter__(self):
+                    return self
+                def __exit__(self, exc_type, exc, tb):
+                    return False
+                def read(self, limit=-1):
+                    return b"glTF" + b"\x02\x00\x00\x00" + b"\x0c\x00\x00\x00"
+
+            three_d = job()
+            three_d["assetType"] = "prop"
+            three_d["manifest"]["importance"] = "secondary"
+
+            with patch(
+                "generator_backends.generator_backend_status",
+                return_value={
+                    "cloudflare": {"rasterReady": True},
+                    "kaggleQwen": {"rasterReady": True},
+                    "kaggleTripoSR": {"threeDReady": True},
+                    "pollinations": {"threeDReady": True},
+                },
+            ), patch("generator_backends.shutil.which", return_value="/usr/bin/polli"):
+                result = execute_generated_3d_asset(
+                    three_d,
+                    root,
+                    backend="auto",
+                    environ={"POLLINATIONS_API_KEY": "secret-key"},
+                    generator=generator,
+                    kaggle_generator=lambda *a, **k: (_ for _ in ()).throw(
+                        Kaggle3DGenerationError("temporary TripoSR failure")
+                    ),
+                    upload_runner=upload_runner,
+                    opener=lambda request, timeout: Response(),
+                )
+
+            self.assertEqual(result["initialBackend"], "kaggle-triposr")
+            self.assertEqual(result["backend"], "pollinations")
+            self.assertEqual(result["routingPolicy"], "free-first")
+            self.assertEqual(result["fallbacks"], [{
+                "from": "kaggle-triposr",
+                "to": "pollinations",
+                "reason": "kaggle-triposr-generation-error",
+                "attempt": 1,
+            }])
 
     def test_unsupported_generated_type_fails_closed(self):
         bad = job()
