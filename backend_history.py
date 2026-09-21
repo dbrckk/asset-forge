@@ -91,6 +91,25 @@ def _record(
         stats["qualitySum"] = float(stats.get("qualitySum") or 0.0) + bounded
 
 
+def _record_retry_strategy(stats: dict, category: str, *, delta: float, passed: bool) -> None:
+    strategies = stats.setdefault("retryStrategies", {})
+    value = strategies.get(category)
+    if not isinstance(value, dict):
+        value = {
+            "attempts": 0,
+            "improvements": 0,
+            "passes": 0,
+            "scoreDeltaSum": 0.0,
+        }
+        strategies[category] = value
+    value["attempts"] = int(value.get("attempts") or 0) + 1
+    if delta > 0:
+        value["improvements"] = int(value.get("improvements") or 0) + 1
+    if passed:
+        value["passes"] = int(value.get("passes") or 0) + 1
+    value["scoreDeltaSum"] = float(value.get("scoreDeltaSum") or 0.0) + float(delta)
+
+
 def record_generation_result(path: Path | str | None, result: dict) -> dict:
     history = load_history(path)
     quality = _quality_from_generation(result)
@@ -121,6 +140,37 @@ def record_generation_result(path: Path | str | None, result: dict) -> dict:
     final_backend = str(result.get("backend") or "").strip()
     if final_backend:
         _record(history, final_backend, success=True, quality=quality)
+        technical_quality = result.get("technicalQuality")
+        technical_attempts = (
+            technical_quality.get("attempts")
+            if isinstance(technical_quality, dict)
+            else None
+        )
+        if isinstance(technical_attempts, list):
+            stats = _stats(history, final_backend)
+            for index, attempt in enumerate(technical_attempts):
+                if index == 0 or not isinstance(attempt, dict):
+                    continue
+                previous = technical_attempts[index - 1]
+                previous_score = (
+                    previous.get("score") if isinstance(previous, dict) else None
+                )
+                current_score = attempt.get("score")
+                if not isinstance(previous_score, (int, float)) or not isinstance(current_score, (int, float)):
+                    continue
+                delta = float(current_score) - float(previous_score)
+                categories = attempt.get("retryCategories")
+                if not isinstance(categories, list):
+                    continue
+                for category in categories:
+                    name = str(category or "").strip()
+                    if name:
+                        _record_retry_strategy(
+                            stats,
+                            name,
+                            delta=delta,
+                            passed=attempt.get("passed") is True,
+                        )
         regeneration_attempts = []
         for key in ("visualSimilarity", "technicalQuality"):
             value = result.get(key)
