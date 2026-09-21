@@ -96,13 +96,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T05:53:18Z
+Generated: 2026-09-21T07:17:16Z
 
 ### Git
 - Branch: `main`
-- Head: `d8121c535215`
-- Commit date: 2026-09-21T07:53:04+02:00
-- Commit: test: enforce Cloudflare then Kaggle free raster routing
+- Head: `4eb6806f0f13`
+- Commit date: 2026-09-21T09:17:04+02:00
+- Commit: fix: align free raster backend error assertion
 - Tracked files: 288
 
 ### Recently changed files
@@ -110,7 +110,6 @@ Generated: 2026-09-21T05:53:18Z
 - `.github/workflows/production-os-batch.yml`
 - `.github/workflows/production-os-dispatch.yml`
 - `asset_forge.py`
-- `generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`
