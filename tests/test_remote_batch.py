@@ -75,6 +75,28 @@ class RemoteBatchTests(unittest.TestCase):
                             else None
                         )
                     },
+                    "routing": (
+                        {
+                            "requestedBackend": "auto",
+                            "initialBackend": "cloudflare",
+                            "finalBackend": "kaggle-qwen",
+                            "fallbackCount": 1,
+                            "fallbacks": [{
+                                "from": "cloudflare",
+                                "to": "kaggle-qwen",
+                                "reason": "cloudflare-generation-error",
+                                "attempt": 1,
+                            }],
+                        }
+                        if payload["manifest"]["id"] == "run"
+                        else {
+                            "requestedBackend": "auto",
+                            "initialBackend": "cloudflare",
+                            "finalBackend": "cloudflare",
+                            "fallbackCount": 0,
+                            "fallbacks": [],
+                        }
+                    ),
                 }))
                 class Result:
                     returncode = 0
@@ -88,6 +110,17 @@ class RemoteBatchTests(unittest.TestCase):
             self.assertEqual(result["execution_order"], ["hero", "run"])
             self.assertEqual(result["quality_summary"]["checked"], 1)
             self.assertEqual(result["quality_summary"]["minimum_score"], 0.8)
+            self.assertEqual(result["routing_summary"]["reported"], 2)
+            self.assertEqual(result["routing_summary"]["items_with_fallback"], 1)
+            self.assertEqual(result["routing_summary"]["fallback_count"], 1)
+            self.assertEqual(
+                result["routing_summary"]["final_backends"],
+                {"cloudflare": 1, "kaggle-qwen": 1},
+            )
+            self.assertEqual(
+                result["items"][1]["routing"]["finalBackend"],
+                "kaggle-qwen",
+            )
             self.assertNotIn("--reference", commands[0])
             self.assertIn("--reference", commands[1])
             reference = Path(commands[1][commands[1].index("--reference") + 1])
@@ -138,6 +171,10 @@ class RemoteBatchTests(unittest.TestCase):
                 result = run(spec, root / "out")
 
             library = result["items"][0]["library"]
+            self.assertEqual(result["routing_summary"]["reported"], 0)
+            self.assertEqual(result["routing_summary"]["fallback_count"], 0)
+            self.assertEqual(result["routing_summary"]["final_backends"], {})
+            self.assertIsNone(result["items"][0]["routing"])
             self.assertEqual(library["entry"]["version"], 3)
             self.assertTrue(library["entry"]["preferred"])
             self.assertEqual(library["entry"]["compositeQuality"], 0.91)
