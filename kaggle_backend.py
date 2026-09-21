@@ -111,7 +111,21 @@ if reference_b64:
     import io
     kwargs["image"] = Image.open(io.BytesIO(base64.b64decode(reference_b64))).convert("RGBA")
 
-image = pipe(**kwargs).images[0]
+try:
+    image = pipe(**kwargs).images[0]
+except Exception as exc:
+    import traceback
+    error_payload = {
+        "success": False,
+        "exceptionType": type(exc).__name__,
+        "message": str(exc),
+        "traceback": traceback.format_exc(),
+    }
+    Path("/kaggle/working/error.json").write_text(
+        json.dumps(error_payload, indent=2) + "\n"
+    )
+    raise
+
 output = Path("/kaggle/working/asset.png")
 image.save(output)
 Path("/kaggle/working/result.json").write_text(json.dumps({
@@ -333,6 +347,22 @@ def generate(
                                 diagnostics.append(f"{candidate.name}: {extracted}")
                         else:
                             diagnostics.append(f"{candidate.name}: {body[-4000:]}")
+            error_file = download_dir / "error.json"
+            if error_file.is_file():
+                try:
+                    error_payload = json.loads(error_file.read_text(encoding="utf-8"))
+                except (OSError, json.JSONDecodeError):
+                    error_payload = None
+                if isinstance(error_payload, dict):
+                    exc_type = str(error_payload.get("exceptionType") or "Exception")
+                    message = str(error_payload.get("message") or "").strip()
+                    traceback_text = str(error_payload.get("traceback") or "").strip()
+                    exact = f"{exc_type}: {message}" if message else exc_type
+                    if traceback_text:
+                        exact += f"; traceback: {traceback_text[-12000:]}"
+                    raise KaggleGenerationError(
+                        f"{terminal_error}; exact exception: {exact}"
+                    )
             detail = "; ".join(diagnostics)[-8000:] if diagnostics else "no diagnostic output was returned"
             raise KaggleGenerationError(f"{terminal_error}; diagnostics: {detail}")
         generated = download_dir / "asset.png"
