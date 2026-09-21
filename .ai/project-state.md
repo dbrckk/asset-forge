@@ -96,14 +96,14 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-20T22:51:05Z
+Generated: 2026-09-21T05:53:18Z
 
 ### Git
 - Branch: `main`
-- Head: `808d9912897d`
-- Commit date: 2026-09-21T00:50:53+02:00
-- Commit: test: prefer Cloudflare in free automatic raster routing
-- Tracked files: 286
+- Head: `d8121c535215`
+- Commit date: 2026-09-21T07:53:04+02:00
+- Commit: test: enforce Cloudflare then Kaggle free raster routing
+- Tracked files: 288
 
 ### Recently changed files
 - `tests/test_generator_backends.py`

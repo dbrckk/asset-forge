@@ -110,6 +110,7 @@ tests/
   test_godot_3d_delivery.py
   test_godot_export.py
   test_godot_handoff.py
+  test_kaggle_backend.py
   test_operational_status.py
   test_production_contract.py
   test_production_executor.py
@@ -143,6 +144,7 @@ gltf_tools.py
 godot_3d_delivery.py
 godot_export.py
 godot_handoff.py
+kaggle_backend.py
 lod_3d.py
 operational_status.py
 production_contract.py
@@ -432,6 +434,7 @@ on:
           - pollinations
           - qwen-colab
           - cloudflare
+          - kaggle-qwen
       model:
         description: "Optional model override"
         required: false
@@ -452,6 +455,8 @@ jobs:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
       GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_REPOSITORY: ${{ github.repository }}
@@ -470,7 +475,9 @@ jobs:
           node-version: "22"
 
       - name: Install Asset Forge
-        run: python -m pip install ".[generation]"
+        run: |
+          python -m pip install ".[generation]"
+          python -m pip install -U kaggle
 
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
@@ -560,6 +567,7 @@ on:
           - pollinations
           - qwen-colab
           - cloudflare
+          - kaggle-qwen
       model:
         description: "Optional model override"
         required: false
@@ -580,6 +588,8 @@ jobs:
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
       GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_REPOSITORY: ${{ github.repository }}
@@ -598,7 +608,9 @@ jobs:
           node-version: "22"
 
       - name: Install Asset Forge
-        run: python -m pip install ".[generation]"
+        run: |
+          python -m pip install ".[generation]"
+          python -m pip install -U kaggle
 
       - name: Install Pollinations CLI
         run: npm install --global @pollinations/cli@0.1.15
@@ -2724,7 +2736,7 @@ calls = []
 ⋮----
 def test_auto_backend_prefers_cloudflare_for_raster_when_ready(self)
 ⋮----
-def test_auto_backend_uses_pollinations_when_cloudflare_unavailable(self)
+def test_auto_backend_uses_kaggle_when_cloudflare_unavailable(self)
 ⋮----
 def test_auto_backend_does_not_fall_back_to_imagen_codex(self)
 ⋮----
@@ -3127,6 +3139,17 @@ result = validate_godot_handoff(project)
 @patch("godot_handoff.subprocess.run")
 @patch("godot_handoff.detect_godot")
     def test_available_godot_import_passes(self, detect, run)
+````
+
+## File: tests/test_kaggle_backend.py
+````python
+class KaggleBackendTests(unittest.TestCase)
+⋮----
+def test_status_requires_cli_token_and_username(self)
+⋮----
+def test_status_rejects_missing_cli(self)
+⋮----
+value = status(environ={
 ````
 
 ## File: tests/test_operational_status.py
@@ -5632,6 +5655,7 @@ api_key_available = bool(str(env.get("POLLINATIONS_API_KEY") or "").strip())
 authenticated = api_key_available or credentials.is_file()
 codex_token_available = bool(
 cloudflare = cloudflare_status(environ=env)
+kaggle = kaggle_status(environ=env)
 ⋮----
 def _sprite_sheet_geometry(job: dict) -> tuple[int, int, int, int] | None
 ⋮----
@@ -5709,6 +5733,7 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str
 status = generator_backend_status()
 pollinations = status.get("pollinations", {})
 cloudflare = status.get("cloudflare", {})
+kaggle = status.get("kaggleQwen", {})
 imagen_codex = status.get("imagenCodex", {})
 ⋮----
 def _imagen_output_path(output_dir: Path, stdout: str) -> tuple[Path, dict | None]
@@ -5802,6 +5827,8 @@ prompt = build_generation_prompt(attempt_job)
 dimensions = _generation_dimensions(attempt_job) or (1024, 1024)
 ⋮----
 metadata = cloudflare_generate(
+⋮----
+metadata = kaggle_generate(
 ⋮----
 metadata = _sanitize_metadata(metadata)
 ⋮----
@@ -6578,6 +6605,66 @@ command = godot_import_command(chosen, project_dir)
 completed = subprocess.run(
 ````
 
+## File: kaggle_backend.py
+````python
+DEFAULT_MODEL = "Qwen/Qwen-Image-2.1"
+DEFAULT_ACCELERATOR = "NvidiaTeslaT4"
+⋮----
+class KaggleGenerationError(RuntimeError)
+⋮----
+def status(*, environ=None) -> dict
+⋮----
+env = os.environ if environ is None else environ
+token = str(env.get("KAGGLE_API_TOKEN") or "").strip()
+username = str(env.get("KAGGLE_USERNAME") or "").strip()
+executable = shutil.which("kaggle")
+ready = bool(token and username and executable)
+⋮----
+def _slug(value: str) -> str
+⋮----
+cleaned = re.sub(r"[^a-z0-9-]+", "-", value.lower()).strip("-")
+⋮----
+def _runner_source() -> str
+⋮----
+def _run(command: list[str], *, timeout: float, runner=subprocess.run) -> subprocess.CompletedProcess
+⋮----
+completed = runner(
+⋮----
+stderr = str(completed.stderr or "").strip()
+stdout = str(completed.stdout or "").strip()
+detail = stderr or stdout
+⋮----
+width = max(256, min(2048, int(width)))
+height = max(256, min(2048, int(height)))
+steps = max(1, min(40, int(steps)))
+job_tag = _slug(f"asset-forge-qwen-{int(time.time())}-{os.getpid()}")
+kernel_id = f"{_slug(username)}/{job_tag}"
+⋮----
+root = Path(td)
+⋮----
+source = Path(reference_path)
+⋮----
+metadata = {
+⋮----
+deadline = time.monotonic() + timeout_seconds
+last_status = ""
+⋮----
+status_result = _run(
+text = (str(status_result.stdout or "") + "\n" + str(status_result.stderr or "")).lower()
+last_status = text.strip()
+⋮----
+download_dir = root / "download"
+⋮----
+generated = download_dir / "asset.png"
+result_path = download_dir / "result.json"
+⋮----
+output = Path(output)
+⋮----
+metadata_out = {}
+⋮----
+metadata_out = json.loads(result_path.read_text(encoding="utf-8"))
+````
+
 ## File: lod_3d.py
 ````python
 class LodGenerationError(RuntimeError)
@@ -6853,6 +6940,7 @@ py-modules = [
   "gltf_binary_metrics",
   "gltf_diagnostics",
   "gltf_quality",
+  "kaggle_backend",
   "lod_3d",
   "gltf_tools",
   "godot_3d_delivery",
