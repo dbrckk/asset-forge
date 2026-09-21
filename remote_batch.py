@@ -9,10 +9,33 @@ from pathlib import Path
 
 
 RASTER_SUFFIXES = {".png", ".webp", ".jpg", ".jpeg"}
+AUTO_BACKEND_CIRCUIT_BREAKER_FAILURES = 2
 
 
 class RemoteBatchError(RuntimeError):
     pass
+
+
+def _fallback_count(routing: dict) -> int:
+    raw = routing.get("fallbackCount") if isinstance(routing, dict) else None
+    if isinstance(raw, int) and raw >= 0:
+        return raw
+    fallbacks = routing.get("fallbacks") if isinstance(routing, dict) else None
+    return len(fallbacks) if isinstance(fallbacks, list) else 0
+
+
+def _cloudflare_runtime_fallback_count(routing: dict) -> int:
+    fallbacks = routing.get("fallbacks") if isinstance(routing, dict) else None
+    if not isinstance(fallbacks, list):
+        return 0
+    return sum(
+        1
+        for item in fallbacks
+        if isinstance(item, dict)
+        and item.get("from") == "cloudflare"
+        and item.get("to") == "kaggle-qwen"
+        and item.get("reason") == "cloudflare-generation-error"
+    )
 
 
 def _safe_id(value: str) -> str:
@@ -94,6 +117,8 @@ def run(
 
     artifacts: dict[str, Path] = {}
     results = []
+    auto_backend_override: str | None = None
+    cloudflare_runtime_failures = 0
     for item in _ordered_items(items):
         item_id = item["_id"]
         request = item["request"]
@@ -109,6 +134,7 @@ def run(
             json.dumps(request, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
+        item_backend = auto_backend_override or backend
         cmd = [
             executable,
             "fulfill",
@@ -116,7 +142,7 @@ def run(
             "--output-dir",
             str(item_root),
             "--backend",
-            backend,
+            item_backend,
         ]
         if model:
             cmd.extend(["--model", model])
@@ -201,6 +227,10 @@ def run(
         generation = report.get("generation") if isinstance(report.get("generation"), dict) else {}
         validation = report.get("validation") if isinstance(report.get("validation"), dict) else {}
         routing = report.get("routing") if isinstance(report.get("routing"), dict) else {}
+        if backend == "auto" and auto_backend_override is None:
+            cloudflare_runtime_failures += _cloudflare_runtime_fallback_count(routing)
+            if cloudflare_runtime_failures >= AUTO_BACKEND_CIRCUIT_BREAKER_FAILURES:
+                auto_backend_override = "kaggle-qwen"
         results.append({
             "id": item_id,
             "depends_on": list(item["_deps"]),
@@ -260,13 +290,19 @@ def run(
             "reported": len(routed),
             "items_with_fallback": sum(
                 1 for routing in routed
-                if int(routing.get("fallbackCount") or 0) > 0
+                if _fallback_count(routing) > 0
             ),
             "fallback_count": sum(
-                int(routing.get("fallbackCount") or 0)
+                _fallback_count(routing)
                 for routing in routed
             ),
             "final_backends": final_backends,
+            "circuit_breaker": {
+                "threshold": AUTO_BACKEND_CIRCUIT_BREAKER_FAILURES,
+                "cloudflare_runtime_failures": cloudflare_runtime_failures,
+                "override": auto_backend_override,
+                "open": auto_backend_override is not None,
+            },
         },
         "quality_summary": {
             "checked": len(quality),
