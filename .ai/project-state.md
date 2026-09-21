@@ -96,20 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T18:18:11Z
+Generated: 2026-09-21T18:31:28Z
 
 ### Git
 - Branch: `main`
-- Head: `8db76fb2266e`
-- Commit date: 2026-09-21T20:17:54+02:00
-- Commit: fix: avoid penalizing reliable backends without quality samples
+- Head: `668dc01cc58b`
+- Commit date: 2026-09-21T20:31:16+02:00
+- Commit: ci: report cached and generated pilot quality consistently
 - Tracked files: 305
 
 ### Recently changed files
+- `.github/workflows/deadline-zero-live-pilot.yml`
+- `tests/test_remote_batch.py`
+- `remote_batch.py`
 - `backend_history.py`
 - `tests/test_generator_backends.py`
-- `generator_backends.py`
-- `tests/test_backend_history.py`
 
 ### Project signals
 - `pyproject.toml`

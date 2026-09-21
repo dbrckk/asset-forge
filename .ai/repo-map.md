@@ -328,8 +328,10 @@ jobs:
               fh.write("## Deadline Zero live visual pilot\n\n")
               fh.write(f"- Produced: {result['count']} assets\n")
               fh.write(f"- Quality-checked: {result['quality_summary']['checked']} assets\n")
+              fh.write(f"- Visual consistency checked: {result['quality_summary'].get('visual_checked', 0)} assets\n")
+              fh.write(f"- Technical quality checked: {result['quality_summary'].get('technical_checked', 0)} assets\n")
               fh.write(f"- Regenerated: {result['quality_summary']['regenerated']}\n")
-              fh.write(f"- Minimum consistency score: {result['quality_summary']['minimum_score']}\n")
+              fh.write(f"- Minimum quality score: {result['quality_summary']['minimum_score']}\n")
           PY
 
       - name: Upload live visual pilot
@@ -4350,6 +4352,12 @@ stderr = ""
 result = run(spec, root / "out")
 ⋮----
 reference = Path(commands[1][commands[1].index("--reference") + 1])
+⋮----
+def test_cached_assets_count_as_quality_checked_from_technical_validation(self)
+⋮----
+artifact = output / "cached.png"
+⋮----
+quality = result["quality_summary"]
 ⋮----
 def test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures(self)
 ⋮----
@@ -10706,6 +10714,9 @@ auto_backend_override = "kaggle-qwen"
 ⋮----
 quality = [item["visual_similarity"] for item in results if item["visual_similarity"]]
 scores = [
+technical_quality = [
+technical_scores = [
+combined_scores = scores + technical_scores
 routed = [
 final_backends: dict[str, int] = {}
 ⋮----

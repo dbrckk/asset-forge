@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 1a1d3229f15bb769d02c294368664615ff082070
-Head: 8db76fb2266e4d2f13d8562fe3763f56eefc0677
+Base: 5b7679c5cc7a5ee4968b086bc38a4b008a47cafd
+Head: 668dc01cc58bf883db440f5ef4f5c0c75ba322f0
 
 ## Changed files
-- M backend_history.py
+- M .github/workflows/deadline-zero-live-pilot.yml
 
 ## Affected areas
-- (root)
+- .github
 
 ## Related test candidates
-- tests/test_backend_history.py
+- No direct filename-based test match detected.
 
 ## Agent guidance
 - Read this file before broad repository exploration.
