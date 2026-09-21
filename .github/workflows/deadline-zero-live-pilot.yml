@@ -1,4 +1,4 @@
-name: Deadline Zero live premium pilot
+name: Deadline Zero live visual pilot
 
 on:
   push:
@@ -25,7 +25,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
-      POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
@@ -57,14 +56,6 @@ jobs:
           restore-keys: |
             asset-forge-deadline-zero-${{ runner.os }}-
 
-      - name: Install Pollinations CLI
-        run: npm install --global @pollinations/cli@0.1.15
-
-      - name: Authenticate Pollinations CLI
-        if: env.POLLINATIONS_API_KEY != ''
-        shell: bash
-        run: printf '%s' "$POLLINATIONS_API_KEY" | polli auth login --with-token
-
       - name: Inspect production readiness
         run: asset-forge operational-status
 
@@ -85,7 +76,7 @@ jobs:
             echo "::notice::Deadline Zero live pilot requires Cloudflare Workers AI or Kaggle credentials."
           fi
 
-      - name: Produce Rex premium pilot
+      - name: Produce Rex visual pilot
         if: steps.credential.outputs.ready == 'true'
         run: |
           python remote_batch.py \
@@ -116,7 +107,7 @@ jobs:
               "rex-pilot-attack",
           ]
           assert result["count"] == 3
-          assert result["quality_summary"]["checked"] == 2
+          assert result["quality_summary"]["checked"] == 3
           assert result["quality_summary"]["minimum_score"] is not None
           for item in result["items"]:
               artifact = root / item["artifact"]
@@ -133,9 +124,9 @@ jobs:
           from pathlib import Path
           result = json.loads(Path("build/deadline-zero-live-pilot/batch-result.json").read_text())
           with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8") as fh:
-              fh.write("## Deadline Zero live premium pilot\n\n")
+              fh.write("## Deadline Zero live visual pilot\n\n")
               fh.write(f"- Produced: {result['count']} assets\n")
-              fh.write(f"- Checked: {result['quality_summary']['checked']} dependent assets\n")
+              fh.write(f"- Quality-checked: {result['quality_summary']['checked']} assets\n")
               fh.write(f"- Regenerated: {result['quality_summary']['regenerated']}\n")
               fh.write(f"- Minimum consistency score: {result['quality_summary']['minimum_score']}\n")
           PY
