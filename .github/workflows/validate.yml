@@ -92,24 +92,25 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install VTracer backend
-        run: python -m pip install "vtracer>=0.6,<2"
+        run: python -m pip install "Pillow>=12.2,<13" "vtracer>=0.6,<2"
       - name: VTracer backend smoke test
         run: |
           python - <<'PY'
-          import base64
           import tempfile
           from pathlib import Path
 
+          from PIL import Image, ImageDraw
           from vector_backend import status, vectorize_raster
 
-          png = base64.b64decode(
-              "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFElEQVR42mP8z8Dwn4GBgYGJAQoAHgQCAeB5j9sAAAAASUVORK5CYII="
-          )
           with tempfile.TemporaryDirectory() as td:
               root = Path(td)
               source = root / "source.png"
               output = root / "output.svg"
-              source.write_bytes(png)
+              image = Image.new("RGB", (64, 64), "white")
+              draw = ImageDraw.Draw(image)
+              draw.rectangle((8, 8, 56, 56), fill="black")
+              draw.ellipse((20, 20, 44, 44), fill="red")
+              image.save(source, format="PNG")
               result = vectorize_raster(source, output)
               assert status()["vectorizeReady"] is True
               assert result["backend"] == "vtracer"
