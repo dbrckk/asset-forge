@@ -947,6 +947,68 @@ class GeneratorBackendsTests(unittest.TestCase):
             self.assertEqual(seen["model"], "stabilityai/TripoSR")
             self.assertEqual(Path(result["sourcePath"]).read_bytes()[:4], b"glTF")
 
+    def test_3d_generation_persists_backend_history(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            history_path = root / "backend-history.json"
+
+            def generator(value, output_dir, **kwargs):
+                source = Path(output_dir) / "generated-source.png"
+                source.parent.mkdir(parents=True, exist_ok=True)
+                source.write_bytes(b"PNG")
+                return {
+                    "success": True,
+                    "backend": kwargs.get("backend"),
+                    "sourcePath": str(source),
+                    "visualSimilarity": {
+                        "attempts": [{"score": 0.9, "passed": True}],
+                    },
+                }
+
+            def kaggle_generator(reference_path, output, **kwargs):
+                output.write_bytes(
+                    b"glTF" + b"\\x02\\x00\\x00\\x00" + b"\\x0c\\x00\\x00\\x00"
+                )
+                return {"provider": "kaggle", "model": kwargs.get("model")}
+
+            three_d = job()
+            three_d["assetType"] = "prop"
+            three_d["manifest"]["importance"] = "secondary"
+
+            with patch(
+                "generator_backends.generator_backend_status",
+                return_value={
+                    "cloudflare": {"rasterReady": True},
+                    "kaggleQwen": {"rasterReady": True},
+                    "kaggleTripoSR": {"threeDReady": True},
+                    "pollinations": {"threeDReady": False},
+                },
+            ):
+                execute_generated_3d_asset(
+                    three_d,
+                    root,
+                    backend="auto",
+                    environ={
+                        "ASSET_FORGE_BACKEND_HISTORY": str(history_path),
+                    },
+                    generator=generator,
+                    kaggle_generator=kaggle_generator,
+                )
+
+            history = __import__("json").loads(history_path.read_text())
+            self.assertEqual(
+                history["backends"]["kaggle-triposr"]["successes"],
+                1,
+            )
+            self.assertEqual(
+                history["backends"]["cloudflare"]["successes"],
+                1,
+            )
+            self.assertAlmostEqual(
+                history["backends"]["cloudflare"]["qualitySum"],
+                0.9,
+            )
+
     def test_auto_3d_primary_prefers_pollinations_trellis(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
