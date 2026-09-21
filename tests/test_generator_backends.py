@@ -474,17 +474,161 @@ class GeneratorBackendsTests(unittest.TestCase):
             with self.assertRaisesRegex(GenerationError, "no authenticated free raster generation backend is ready"):
                 select_generation_backend(job(), "auto")
 
+    def test_auto_vector_prefers_vtracer_with_free_raster_source(self):
+        vector_job = job()
+        vector_job["assetType"] = "icon"
+        with patch(
+            "generator_backends.generator_backend_status",
+            return_value={
+                "cloudflare": {"rasterReady": True},
+                "kaggleQwen": {"rasterReady": False},
+                "vtracer": {"vectorSvgReady": True},
+                "pollinations": {"rasterVectorReady": True, "threeDReady": False},
+                "imagenCodex": {"rasterReady": False},
+            },
+        ):
+            self.assertEqual(
+                select_generation_backend(vector_job, "auto"),
+                "vtracer",
+            )
+
+    def test_auto_vector_falls_back_to_pollinations_when_vtracer_unavailable(self):
+        vector_job = job()
+        vector_job["assetType"] = "logo"
+        with patch(
+            "generator_backends.generator_backend_status",
+            return_value={
+                "cloudflare": {"rasterReady": False},
+                "kaggleQwen": {"rasterReady": False},
+                "vtracer": {"vectorSvgReady": False},
+                "pollinations": {"rasterVectorReady": True, "threeDReady": False},
+                "imagenCodex": {"rasterReady": False},
+            },
+        ):
+            self.assertEqual(
+                select_generation_backend(vector_job, "auto"),
+                "pollinations",
+            )
+
+    def test_vtracer_vector_generation_uses_free_cloudflare_source(self):
+        vector_job = job()
+        vector_job["assetType"] = "icon"
+        vector_job["manifest"]["constraints"] = {}
+
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            seen = {}
+
+            def fake_cloudflare(prompt, output, **kwargs):
+                seen["prompt"] = prompt
+                seen["width"] = kwargs["width"]
+                seen["height"] = kwargs["height"]
+                output.write_bytes(b"PNG")
+                return {"provider": "cloudflare"}
+
+            def fake_vectorizer(source, output, **kwargs):
+                seen["vector_source"] = source
+                seen["preset"] = kwargs["preset"]
+                output.write_text(
+                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M0 0h64v64H0z"/></svg>',
+                    encoding="utf-8",
+                )
+                return {"backend": "vtracer", "bytes": output.stat().st_size}
+
+            with patch(
+                "generator_backends.generator_backend_status",
+                return_value={
+                    "cloudflare": {"rasterReady": True},
+                    "kaggleQwen": {"rasterReady": False},
+                    "vtracer": {"vectorSvgReady": True},
+                    "pollinations": {"rasterVectorReady": False, "threeDReady": False},
+                    "imagenCodex": {"rasterReady": False},
+                },
+            ), patch(
+                "generator_backends.cloudflare_generate",
+                side_effect=fake_cloudflare,
+            ):
+                result = execute_generated_asset(
+                    vector_job,
+                    out,
+                    backend="auto",
+                    vectorizer=fake_vectorizer,
+                )
+
+            self.assertEqual(result["backend"], "vtracer")
+            self.assertEqual(result["requestedBackend"], "auto")
+            self.assertEqual(result["initialBackend"], "vtracer")
+            self.assertEqual(result["model"], "visioncortex/vtracer")
+            self.assertEqual(result["metadata"]["rasterBackend"], "cloudflare")
+            self.assertEqual(seen["width"], 1024)
+            self.assertEqual(seen["height"], 1024)
+            self.assertEqual(seen["preset"], "poster")
+            self.assertIn("vector-friendly source art", seen["prompt"])
+            self.assertEqual(Path(result["sourcePath"]).suffix, ".svg")
+
+    def test_vtracer_vector_source_falls_back_to_kaggle(self):
+        vector_job = job()
+        vector_job["assetType"] = "logo"
+        vector_job["manifest"]["constraints"] = {}
+
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+
+            def fake_kaggle(prompt, output, **kwargs):
+                output.write_bytes(b"PNG")
+                return {"provider": "kaggle"}
+
+            def fake_vectorizer(source, output, **kwargs):
+                output.write_text(
+                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64"/></svg>',
+                    encoding="utf-8",
+                )
+                return {"backend": "vtracer"}
+
+            with patch(
+                "generator_backends.generator_backend_status",
+                return_value={
+                    "cloudflare": {"rasterReady": True},
+                    "kaggleQwen": {"rasterReady": True},
+                    "vtracer": {"vectorSvgReady": True},
+                    "pollinations": {"rasterVectorReady": False, "threeDReady": False},
+                },
+            ), patch(
+                "generator_backends.cloudflare_generate",
+                side_effect=CloudflareGenerationError("temporary failure"),
+            ), patch(
+                "generator_backends.kaggle_generate",
+                side_effect=fake_kaggle,
+            ):
+                result = execute_generated_asset(
+                    vector_job,
+                    out,
+                    backend="auto",
+                    vectorizer=fake_vectorizer,
+                )
+
+            self.assertEqual(result["backend"], "vtracer")
+            self.assertEqual(result["metadata"]["rasterBackend"], "kaggle-qwen")
+            self.assertEqual(result["fallbacks"][0]["stage"], "vector-raster")
+            self.assertEqual(
+                result["fallbacks"][0]["reason"],
+                "cloudflare-generation-error",
+            )
+
     def test_auto_backend_rejects_vector_when_only_imagen_is_ready(self):
         vector_job = job()
         vector_job["assetType"] = "icon"
         with patch(
             "generator_backends.generator_backend_status",
             return_value={
+                "cloudflare": {"rasterReady": False},
+                "kaggleQwen": {"rasterReady": False},
+                "vtracer": {"vectorSvgReady": False},
                 "pollinations": {"rasterVectorReady": False, "threeDReady": False},
                 "imagenCodex": {"rasterReady": True},
             },
         ):
-            with self.assertRaisesRegex(GenerationError, "raster-only"):
+            with self.assertRaisesRegex(GenerationError, "no SVG generation backend"):
                 select_generation_backend(vector_job, "auto")
 
     def test_required_alpha_runs_transparency_processor_before_normalization(self):
