@@ -110,15 +110,43 @@ class BackendHistoryTests(unittest.TestCase):
             cloudflare = history["backends"]["cloudflare"]
             self.assertEqual(cloudflare["attempts"], 1)
             self.assertEqual(cloudflare["failures"], 1)
+            self.assertEqual(cloudflare["fallbacksFrom"], 1)
 
             kaggle = history["backends"]["kaggle-qwen"]
             self.assertEqual(kaggle["attempts"], 1)
             self.assertEqual(kaggle["successes"], 1)
+            self.assertEqual(kaggle["fallbacksTo"], 1)
             self.assertEqual(kaggle["qualitySamples"], 1)
             self.assertAlmostEqual(kaggle["qualitySum"], 0.85)
 
             persisted = load_history(path)
             self.assertEqual(persisted, history)
+
+    def test_record_generation_result_tracks_regeneration_pressure(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "history.json"
+            history = record_generation_result(path, {
+                "backend": "cloudflare",
+                "fallbacks": [],
+                "visualSimilarity": {
+                    "attempts": [
+                        {"score": 0.4, "passed": False},
+                        {"score": 0.6, "passed": False},
+                        {"score": 0.82, "passed": True},
+                    ],
+                },
+                "technicalQuality": {
+                    "attempts": [
+                        {"score": 0.5, "passed": False},
+                        {"score": 0.9, "passed": True},
+                    ],
+                },
+            })
+
+            stats = history["backends"]["cloudflare"]
+            self.assertEqual(stats["attempts"], 1)
+            self.assertEqual(stats["successes"], 1)
+            self.assertEqual(stats["regenerations"], 2)
 
     def test_3d_result_learns_from_nested_reference_generation(self):
         with tempfile.TemporaryDirectory() as td:
