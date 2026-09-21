@@ -426,6 +426,68 @@ def build_generation_prompt(job: dict) -> str:
     return prompt
 
 
+def _technical_retry_guidance(result: dict | None) -> str:
+    if not isinstance(result, dict):
+        return (
+            "The previous variant failed technical game-art quality. "
+            "Improve silhouette readability, transparent padding, border clearance, "
+            "frame stability, contrast, and animation-frame distinctness."
+        )
+
+    metrics = result.get("metrics") if isinstance(result.get("metrics"), dict) else {}
+    errors = [str(v) for v in (result.get("errors") or [])]
+    warnings = [str(v) for v in (result.get("warnings") or [])]
+    guidance = []
+
+    border = metrics.get("borderAlphaRatio")
+    if isinstance(border, (int, float)) and float(border) > 0.08:
+        guidance.append(
+            "Move all visible artwork farther from the image borders and preserve clear transparent padding."
+        )
+
+    occupancy = metrics.get("occupancy")
+    if isinstance(occupancy, (int, float)):
+        if float(occupancy) > 0.78:
+            guidance.append(
+                "Reduce subject scale so the full silhouette fits comfortably inside the canvas."
+            )
+        elif float(occupancy) < 0.08:
+            guidance.append(
+                "Increase subject scale so the asset uses the canvas effectively without touching borders."
+            )
+
+    contrast = metrics.get("contrastSpan")
+    if isinstance(contrast, (int, float)) and float(contrast) < 70:
+        guidance.append(
+            "Increase local value contrast and separate the focal subject more clearly from secondary details."
+        )
+
+    unique = metrics.get("uniqueFrameRatio")
+    if isinstance(unique, (int, float)) and float(unique) < 0.75:
+        guidance.append(
+            "Make each animation frame visibly distinct while preserving the same subject identity and proportions."
+        )
+
+    drift = metrics.get("maxFrameCenterDrift")
+    if isinstance(drift, (int, float)) and float(drift) > 0.18:
+        guidance.append(
+            "Keep the subject anchored to a stable frame center with consistent scale across the sprite sequence."
+        )
+
+    combined = " ".join(errors + warnings).lower()
+    if "fully opaque" in combined or "transparent background" in combined:
+        guidance.append(
+            "Use true transparency around the subject; do not render a matte, floor, card, checkerboard, or backdrop."
+        )
+
+    if not guidance:
+        guidance.append(
+            "Improve technical game-art quality with a cleaner silhouette, controlled detail hierarchy, "
+            "stronger readable contrast, and more consistent production-ready framing."
+        )
+    return " ".join(dict.fromkeys(guidance))
+
+
 def pollinations_command(
     job: dict,
     output: Path,
@@ -756,6 +818,7 @@ def execute_generated_asset(
 
     previous_similarity_failed = False
     previous_technical_failed = False
+    previous_technical_result = None
     for attempt in range(retry_budget + 1):
         retry_guidance = []
         if attempt > 0:
@@ -766,9 +829,7 @@ def execute_generated_asset(
                 )
             if previous_technical_failed:
                 retry_guidance.append(
-                    "The previous variant failed technical game-art quality. "
-                    "Keep all visible art away from image borders, preserve transparent padding, "
-                    "use a clean readable silhouette, stable frame occupancy, and stronger local contrast."
+                    _technical_retry_guidance(previous_technical_result)
                 )
 
         if backend in {"qwen-colab", "cloudflare", "kaggle-qwen", "vtracer"}:
@@ -1144,6 +1205,7 @@ def execute_generated_asset(
                 raise GenerationError(
                     f"technical art quality evaluation failed: {exc}"
                 ) from exc
+            previous_technical_result = technical if isinstance(technical, dict) else None
             technical_score = (
                 technical.get("score")
                 if isinstance(technical, dict)
