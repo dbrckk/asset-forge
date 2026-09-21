@@ -96,18 +96,17 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T08:46:11Z
+Generated: 2026-09-21T08:59:18Z
 
 ### Git
 - Branch: `main`
-- Head: `d8de0e6dae34`
-- Commit date: 2026-09-21T10:45:59+02:00
-- Commit: fix: resolve Kaggle job inputs from source directory
+- Head: `1b1aef7d36ac`
+- Commit date: 2026-09-21T10:59:02+02:00
+- Commit: fix: embed Kaggle Qwen job inputs in kernel script
 - Tracked files: 290
 
 ### Recently changed files
 - `kaggle_backend.py`
-- `.github/workflows/deadline-zero-live-pilot.yml`
 
 ### Project signals
 - `pyproject.toml`

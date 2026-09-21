@@ -39,67 +39,67 @@
         },
         {
           "file": "kaggle_backend.py",
-          "line": 168,
+          "line": 162,
           "preview": "raise KaggleGenerationError(",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 195,
+          "line": 189,
           "preview": "raise KaggleGenerationError(\"KAGGLE_API_TOKEN and KAGGLE_USERNAME are required\")",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 197,
+          "line": 191,
           "preview": "raise KaggleGenerationError(\"kaggle CLI is not installed\")",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 199,
+          "line": 193,
           "preview": "raise KaggleGenerationError(\"prompt is required\")",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 224,
+          "line": 215,
           "preview": "raise KaggleGenerationError(f\"reference file missing or empty: {source}\")",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 271,
+          "line": 267,
           "preview": "raise KaggleGenerationError(\"Kaggle kernel timed out\")",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 281,
+          "line": 277,
           "preview": "except KaggleGenerationError as output_exc:",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 283,
+          "line": 279,
           "preview": "raise KaggleGenerationError(f\"{terminal_error}; output retrieval failed: {output_exc}\") from output_exc",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 301,
+          "line": 297,
           "preview": "raise KaggleGenerationError(f\"{terminal_error}; diagnostics: {detail}\")",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 305,
+          "line": 301,
           "preview": "raise KaggleGenerationError(\"Kaggle kernel produced no asset.png\")",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 323,
+          "line": 319,
           "preview": "except KaggleGenerationError:",
           "definition_candidate": false
         },
@@ -254,7 +254,7 @@
         },
         {
           "file": "kaggle_backend.py",
-          "line": 258,
+          "line": 254,
           "preview": "[executable, \"kernels\", \"status\", kernel_id],",
           "definition_candidate": false
         },
@@ -769,13 +769,13 @@
         },
         {
           "file": "kaggle_backend.py",
-          "line": 204,
+          "line": 198,
           "preview": "job_tag = _slug(f\"asset-forge-qwen-{int(time.time())}-{os.getpid()}\")",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 205,
+          "line": 199,
           "preview": "kernel_id = f\"{_slug(username)}/{job_tag}\"",
           "definition_candidate": false
         }
@@ -798,8 +798,8 @@
         },
         {
           "file": "kaggle_backend.py",
-          "line": 209,
-          "preview": "(root / \"runner.py\").write_text(_runner_source(), encoding=\"utf-8\")",
+          "line": 218,
+          "preview": "runner_source = _runner_source()",
           "definition_candidate": false
         }
       ],
@@ -808,20 +808,20 @@
     "_extract_kaggle_diagnostic": {
       "definition": {
         "file": "kaggle_backend.py",
-        "line": 115,
+        "line": 109,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "kaggle_backend.py",
-          "line": 115,
+          "line": 109,
           "preview": "def _extract_kaggle_diagnostic(path: Path) -> str:",
           "definition_candidate": true
         },
         {
           "file": "kaggle_backend.py",
-          "line": 295,
+          "line": 291,
           "preview": "extracted = _extract_kaggle_diagnostic(candidate)",
           "definition_candidate": false
         }
@@ -831,38 +831,38 @@
     "_run": {
       "definition": {
         "file": "kaggle_backend.py",
-        "line": 156,
+        "line": 150,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "kaggle_backend.py",
-          "line": 156,
+          "line": 150,
           "preview": "def _run(command: list[str], *, timeout: float, runner=subprocess.run) -> subprocess.CompletedProcess:",
           "definition_candidate": true
         },
         {
           "file": "kaggle_backend.py",
-          "line": 247,
+          "line": 243,
           "preview": "_run(",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 257,
+          "line": 253,
           "preview": "status_result = _run(",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 276,
+          "line": 272,
           "preview": "_run(",
           "definition_candidate": false
         },
         {
           "file": "kaggle_backend.py",
-          "line": 318,
+          "line": 314,
           "preview": "_run(",
           "definition_candidate": false
         }
@@ -872,7 +872,7 @@
     "generate": {
       "definition": {
         "file": "kaggle_backend.py",
-        "line": 175,
+        "line": 169,
         "kind": "function",
         "language": "python"
       },
@@ -951,7 +951,7 @@
         },
         {
           "file": "kaggle_backend.py",
-          "line": 175,
+          "line": 169,
           "preview": "def generate(",
           "definition_candidate": true
         },

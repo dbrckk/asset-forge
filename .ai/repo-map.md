@@ -6642,6 +6642,8 @@ cleaned = re.sub(r"[^a-z0-9-]+", "-", value.lower()).strip("-")
 ⋮----
 def _runner_source() -> str
 ⋮----
+template = r'''import base64
+⋮----
 def _extract_kaggle_diagnostic(path: Path) -> str
 ⋮----
 raw = path.read_text(encoding="utf-8", errors="replace").strip()
@@ -6679,8 +6681,15 @@ job_tag = _slug(f"asset-forge-qwen-{int(time.time())}-{os.getpid()}")
 kernel_id = f"{_slug(username)}/{job_tag}"
 ⋮----
 root = Path(td)
+job_payload = {
+reference_b64 = ""
 ⋮----
 source = Path(reference_path)
+⋮----
+reference_b64 = base64.b64encode(source.read_bytes()).decode("ascii")
+runner_source = _runner_source()
+runner_source = runner_source.replace("__ASSET_FORGE_JOB__", repr(job_payload))
+runner_source = runner_source.replace("__ASSET_FORGE_REFERENCE_B64__", repr(reference_b64))
 ⋮----
 metadata = {
 ⋮----
