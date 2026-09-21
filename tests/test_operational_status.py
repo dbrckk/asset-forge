@@ -135,6 +135,8 @@ class OperationalStatusTests(unittest.TestCase):
         self.assertTrue(status["ready"]["raster"])
         self.assertTrue(status["capabilities"]["freeRaster"])
         self.assertTrue(status["capabilities"]["cloudflareRaster"])
+        self.assertTrue(status["capabilities"]["autoRaster"])
+        self.assertTrue(status["ready"]["autoRaster"])
         self.assertEqual(
             status["routing"]["preferredRasterBackend"],
             "cloudflare",
@@ -142,6 +144,52 @@ class OperationalStatusTests(unittest.TestCase):
         self.assertFalse(
             any("no authenticated raster generation backend" in value for value in status["blockers"])
         )
+
+    def test_manual_raster_backend_is_not_reported_as_auto_route(self):
+        with patch(
+            "operational_status.generator_backend_status",
+            return_value={
+                "cloudflare": {"rasterReady": False},
+                "kaggleQwen": {"rasterReady": False},
+                "pollinations": {
+                    "installed": True,
+                    "authenticated": True,
+                    "rasterVectorReady": True,
+                    "threeDReady": False,
+                },
+                "imagenCodex": {
+                    "installed": False,
+                    "authenticated": False,
+                    "rasterReady": False,
+                },
+                "qwenColab": {"queueReady": False},
+            },
+        ), patch("operational_status.raster_backend_status") as raster, patch(
+            "operational_status.detect_3d_tools", return_value={}
+        ):
+            raster.return_value = {
+                "png": {"decode": True, "encode": True, "dependency": "builtin"},
+                "webp": {
+                    "inspect": True,
+                    "decode": {"available": True},
+                    "encode": {"available": True},
+                },
+            }
+            status = build_operational_status(
+                environ={},
+                home=Path("/not-real"),
+                which=lambda name: None,
+            )
+
+        self.assertTrue(status["ready"]["raster"])
+        self.assertFalse(status["ready"]["autoRaster"])
+        self.assertFalse(status["capabilities"]["autoRaster"])
+        self.assertIsNone(status["routing"]["preferredRasterBackend"])
+        self.assertFalse(status["routing"]["autoRasterReady"])
+        self.assertTrue(any(
+            "automatic free raster routing is unavailable" in value
+            for value in status["blockers"]
+        ))
 
     def test_qwen_colab_queue_counts_as_queued_generation_capability(self):
         with patch(
