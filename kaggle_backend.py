@@ -43,7 +43,7 @@ def _slug(value: str) -> str:
 
 
 def _runner_source() -> str:
-    return r'''import base64
+    template = r'''import base64
 import json
 import subprocess
 import sys
@@ -75,7 +75,7 @@ def _input_file(name):
             return candidate
     raise FileNotFoundError(f"{name} not found in Kaggle working/source directories")
 
-job = json.loads(_input_file("job.json").read_text())
+job = __ASSET_FORGE_JOB__
 model = job.get("model") or "Qwen/Qwen-Image-2.1"
 pipe = QwenImage21Pipeline.from_pretrained(model, torch_dtype=torch.float16)
 pipe.enable_model_cpu_offload()
@@ -87,17 +87,10 @@ kwargs = {
     "num_inference_steps": int(job.get("steps") or 20),
     "generator": torch.Generator(device="cuda").manual_seed(int(job.get("seed") or 0)),
 }
-reference = None
-for candidate in (
-    Path("/kaggle/working/reference.png"),
-    Path("/kaggle/src/reference.png"),
-    Path(__file__).resolve().parent / "reference.png",
-):
-    if candidate.is_file():
-        reference = candidate
-        break
-if reference is not None:
-    kwargs["image"] = Image.open(reference).convert("RGBA")
+reference_b64 = __ASSET_FORGE_REFERENCE_B64__
+if reference_b64:
+    import io
+    kwargs["image"] = Image.open(io.BytesIO(base64.b64decode(reference_b64))).convert("RGBA")
 
 image = pipe(**kwargs).images[0]
 output = Path("/kaggle/working/asset.png")
@@ -110,6 +103,7 @@ Path("/kaggle/working/result.json").write_text(json.dumps({
     "seed": int(job.get("seed") or 0),
 }, indent=2) + "\n")
 '''
+    return template
 
 
 def _extract_kaggle_diagnostic(path: Path) -> str:
@@ -206,23 +200,25 @@ def generate(
 
     with tempfile.TemporaryDirectory(prefix="asset-forge-kaggle-") as td:
         root = Path(td)
-        (root / "runner.py").write_text(_runner_source(), encoding="utf-8")
-        (root / "job.json").write_text(
-            json.dumps({
-                "prompt": str(prompt),
-                "width": width,
-                "height": height,
-                "seed": int(seed),
-                "steps": steps,
-                "model": model,
-            }, indent=2) + "\n",
-            encoding="utf-8",
-        )
+        job_payload = {
+            "prompt": str(prompt),
+            "width": width,
+            "height": height,
+            "seed": int(seed),
+            "steps": steps,
+            "model": model,
+        }
+        reference_b64 = ""
         if reference_path is not None:
             source = Path(reference_path)
             if not source.is_file() or source.stat().st_size <= 0:
                 raise KaggleGenerationError(f"reference file missing or empty: {source}")
-            shutil.copyfile(source, root / "reference.png")
+            import base64
+            reference_b64 = base64.b64encode(source.read_bytes()).decode("ascii")
+        runner_source = _runner_source()
+        runner_source = runner_source.replace("__ASSET_FORGE_JOB__", repr(job_payload))
+        runner_source = runner_source.replace("__ASSET_FORGE_REFERENCE_B64__", repr(reference_b64))
+        (root / "runner.py").write_text(runner_source, encoding="utf-8")
 
         metadata = {
             "id": kernel_id,
