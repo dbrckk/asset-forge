@@ -200,6 +200,7 @@ def run(
 
         generation = report.get("generation") if isinstance(report.get("generation"), dict) else {}
         validation = report.get("validation") if isinstance(report.get("validation"), dict) else {}
+        routing = report.get("routing") if isinstance(report.get("routing"), dict) else {}
         results.append({
             "id": item_id,
             "depends_on": list(item["_deps"]),
@@ -222,6 +223,7 @@ def run(
                 if isinstance(validation.get("semanticArt"), dict)
                 else None
             ),
+            "routing": routing or None,
             "additional_artifacts": additional_rows,
             "library": (
                 report.get("library")
@@ -238,11 +240,34 @@ def run(
         and value["attempts"]
         and isinstance(value["attempts"][-1].get("score"), (int, float))
     ]
+    routed = [
+        item["routing"]
+        for item in results
+        if isinstance(item.get("routing"), dict)
+    ]
+    final_backends: dict[str, int] = {}
+    for routing in routed:
+        final_backend = str(routing.get("finalBackend") or "").strip()
+        if final_backend:
+            final_backends[final_backend] = final_backends.get(final_backend, 0) + 1
+
     result = {
         "schema_version": "asset-forge/remote-batch-result/v1",
         "success": True,
         "count": len(results),
         "execution_order": [item["id"] for item in results],
+        "routing_summary": {
+            "reported": len(routed),
+            "items_with_fallback": sum(
+                1 for routing in routed
+                if int(routing.get("fallbackCount") or 0) > 0
+            ),
+            "fallback_count": sum(
+                int(routing.get("fallbackCount") or 0)
+                for routing in routed
+            ),
+            "final_backends": final_backends,
+        },
         "quality_summary": {
             "checked": len(quality),
             "regenerated": sum(
