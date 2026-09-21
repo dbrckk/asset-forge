@@ -588,6 +588,16 @@ def execute_generated_asset(
         if not reference.is_file() or reference.stat().st_size <= 0:
             raise GenerationError(f"visual reference file missing or empty: {reference}")
 
+    # Cloudflare SDXL is currently text-to-image only in our production path.
+    # Referenced raster jobs would predictably incur a failed Cloudflare call
+    # before falling back to Qwen. Route them straight to Kaggle when ready.
+    if (
+        backend == "cloudflare"
+        and references
+        and generator_backend_status().get("kaggleQwen", {}).get("rasterReady") is True
+    ):
+        backend = "kaggle-qwen"
+
     effective_model = model or (
         DEFAULT_VECTOR_MODEL if backend == "pollinations" and vector else
         DEFAULT_REFERENCE_MODEL if backend == "pollinations" and references else
