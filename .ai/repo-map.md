@@ -59,6 +59,7 @@ examples/
   asset-manifest.json
   deadline-zero-live-pilot-batch.json
   godot-animations.json
+  production-request-live-raster.json
   production-request-live-vector.json
   production-request.json
   runtime-atlas.json
@@ -346,14 +347,14 @@ on:
       - '.github/workflows/live-generation.yml'
       - 'generator_backends.py'
       - 'production_executor.py'
-      - 'examples/production-request-live-vector.json'
+      - 'examples/production-request-live-raster.json'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  live-vector:
+  live-raster:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -361,47 +362,56 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.12"
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
-        with:
-          node-version: "22"
-      - name: Detect backend credential
+      - name: Install generation dependencies
+        run: |
+          python -m pip install ".[generation]"
+          python -m pip install -U kaggle
+
+      - name: Detect free raster backend credential
         id: credential
         env:
-          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
         run: |
-          if [ -n "$POLLINATIONS_API_KEY" ]; then
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
             echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "backend=cloudflare" >> "$GITHUB_OUTPUT"
+          elif [ -n "$KAGGLE_API_TOKEN" ] && [ -n "$KAGGLE_USERNAME" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "backend=kaggle-qwen" >> "$GITHUB_OUTPUT"
           else
             echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::POLLINATIONS_API_KEY is not configured; live generation smoke skipped."
+            echo "::notice::Cloudflare or Kaggle raster credentials are not configured; live generation smoke skipped."
           fi
-      - name: Install Pollinations CLI
-        if: steps.credential.outputs.configured == 'true'
-        run: npm install --global @pollinations/cli@0.1.15
-      - name: Authenticate Pollinations CLI
-        if: steps.credential.outputs.configured == 'true'
-        env:
-          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
-        run: printf '%s' "$POLLINATIONS_API_KEY" | polli auth login --with-token
 
       - name: Check Asset Forge readiness
         if: steps.credential.outputs.configured == 'true'
         env:
-          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
         run: python asset_forge.py operational-status
-      - name: Generate and validate a real vector asset
+
+      - name: Generate and validate a real raster asset
         if: steps.credential.outputs.configured == 'true'
         env:
-          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
         run: |
-          python asset_forge.py fulfill examples/production-request-live-vector.json
-          python asset_forge.py validate-production-report build/live-vector-smoke/production-report.json
+          python asset_forge.py fulfill examples/production-request-live-raster.json --backend "${{ steps.credential.outputs.backend }}"
+          python asset_forge.py validate-production-report build/live-raster-smoke/production-report.json
+
       - name: Upload validated smoke artifact
         if: steps.credential.outputs.configured == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: asset-forge-live-vector-smoke
-          path: build/live-vector-smoke/
+          name: asset-forge-live-raster-smoke
+          path: build/live-raster-smoke/
           if-no-files-found: error
           retention-days: 7
 ````
@@ -1175,6 +1185,42 @@ updates:
       ]
     }
   ]
+}
+````
+
+## File: examples/production-request-live-raster.json
+````json
+{
+  "schema": "asset-forge/production-request/v1",
+  "requestId": "live-raster-smoke",
+  "instruction": "Create a simple isolated sci-fi energy cell game sprite with a dark metallic body, one cyan emissive strip, no text, no watermark, and a plain neutral background.",
+  "manifest": {
+    "id": "live-raster-cell",
+    "project": "asset-forge-live-smoke",
+    "type": "sprite",
+    "importance": "secondary",
+    "source": {"mode": "generated"},
+    "license": {
+      "id": "project-owned",
+      "commercialUse": true,
+      "derivatives": true,
+      "attributionRequired": false
+    },
+    "target": {
+      "engine": null,
+      "format": "png",
+      "maxBytes": 4194304
+    },
+    "constraints": {
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "expectedFrames": 1
+    }
+  },
+  "delivery": {
+    "engine": null,
+    "outputDir": "build/live-raster-smoke"
+  }
 }
 ````
 
@@ -2733,6 +2779,12 @@ reference = out / "parent.png"
 scores = iter([0.2, 0.83])
 calls = []
 ⋮----
+def test_cloudflare_reference_routes_directly_to_kaggle_qwen(self)
+⋮----
+seen = {}
+⋮----
+def fake_kaggle(prompt, output, **kwargs)
+⋮----
 def test_auto_backend_prefers_cloudflare_for_raster_when_ready(self)
 ⋮----
 def test_auto_backend_uses_kaggle_when_cloudflare_unavailable(self)
@@ -2760,7 +2812,6 @@ prompt = build_generation_prompt(three_d)
 def test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth(self)
 ⋮----
 root = Path(td)
-seen = {}
 ⋮----
 def generator(value, output_dir, **kwargs)
 ⋮----
@@ -3149,6 +3200,10 @@ def test_status_requires_cli_token_and_username(self)
 def test_status_rejects_missing_cli(self)
 ⋮----
 value = status(environ={
+⋮----
+def test_runner_quantizes_transformer_only(self)
+⋮----
+source = _runner_source()
 ````
 
 ## File: tests/test_operational_status.py
@@ -5773,6 +5828,12 @@ output = output_dir / (
 ⋮----
 references = [Path(path) for path in (reference_paths or [])]
 ⋮----
+# Cloudflare SDXL is currently text-to-image only in our production path.
+# Referenced raster jobs would predictably incur a failed Cloudflare call
+# before falling back to Qwen. Route them straight to Kaggle when ready.
+⋮----
+backend = "kaggle-qwen"
+⋮----
 effective_model = model or (
 reference_urls = []
 ⋮----
@@ -5834,7 +5895,7 @@ metadata = cloudflare_generate(
 # unsupported by the selected Cloudflare model.
 ⋮----
 metadata = kaggle_generate(
-backend = "kaggle-qwen"
+⋮----
 effective_model = DEFAULT_KAGGLE_MODEL
 ⋮----
 metadata = _sanitize_metadata(metadata)

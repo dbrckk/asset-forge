@@ -1,16 +1,10 @@
 # CI status
 
-Summary: 2 success / 2 failure / 2 active
+Summary: 2 success / 0 failure / 2 active
 
-- Deadline Zero live visual pilot: in_progress / pending (a982b92f)
-- Validate asset-forge: queued / pending (a982b92f)
-- Deadline Zero live premium pilot: completed / failure (00750118)
-- Validate asset-forge: completed / success (00750118)
-- Validate asset-forge: completed / success (0de8cfe9)
-- Deadline Zero live premium pilot: completed / failure (0de8cfe9)
-
-## Latest failed run structure
-- Job: produce
-  - Failed step: Validate pilot bundle
+- Live generation smoke: in_progress / pending (eb86bf16)
+- Validate asset-forge: in_progress / pending (eb86bf16)
+- Validate asset-forge: completed / success (64b8862c)
+- Validate asset-forge: completed / success (ce7ff3fb)
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.
