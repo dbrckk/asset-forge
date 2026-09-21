@@ -757,7 +757,33 @@ def execute_generated_asset(
                             timeout_seconds=timeout,
                         )
                     except CloudflareGenerationError as exc:
-                        raise GenerationError(f"cloudflare generation failed: {exc}") from exc
+                        # Cloudflare SDXL currently accepts text-to-image but
+                        # may reject reference-image tensors. Preserve visual
+                        # identity by falling back to the automated Qwen
+                        # Kaggle backend whenever a referenced generation is
+                        # unsupported by the selected Cloudflare model.
+                        if references and generator_backend_status().get("kaggleQwen", {}).get("rasterReady") is True:
+                            try:
+                                metadata = kaggle_generate(
+                                    prompt,
+                                    output,
+                                    width=dimensions[0],
+                                    height=dimensions[1],
+                                    seed=int(constraint_value.get("seed") or 0),
+                                    steps=int(constraint_value.get("generationSteps") or 20),
+                                    reference_path=references[0],
+                                    model=DEFAULT_KAGGLE_MODEL,
+                                    timeout_seconds=max(timeout, 1800.0),
+                                )
+                                backend = "kaggle-qwen"
+                                effective_model = DEFAULT_KAGGLE_MODEL
+                            except KaggleGenerationError as fallback_exc:
+                                raise GenerationError(
+                                    f"cloudflare reference generation failed: {exc}; "
+                                    f"kaggle-qwen fallback failed: {fallback_exc}"
+                                ) from fallback_exc
+                        else:
+                            raise GenerationError(f"cloudflare generation failed: {exc}") from exc
                 else:
                     try:
                         metadata = kaggle_generate(
