@@ -165,8 +165,13 @@ def backend_score(history: dict, backend: str, *, prior: float) -> float:
     quality = (
         max(0.0, min(1.0, quality_sum / quality_samples))
         if quality_samples > 0
-        else DEFAULT_QUALITY
+        else None
     )
+    if quality is None:
+        # Do not penalize a backend merely because older successful runs did
+        # not yet emit quality telemetry. Reliability plus configured priority
+        # must still be able to outrank an entirely unknown alternative.
+        return 0.90 * reliability + 0.10 * prior
     return 0.72 * reliability + 0.23 * quality + 0.05 * prior
 
 
