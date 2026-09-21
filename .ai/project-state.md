@@ -96,19 +96,18 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T08:38:40Z
+Generated: 2026-09-21T08:46:11Z
 
 ### Git
 - Branch: `main`
-- Head: `e3dc7a58232e`
-- Commit date: 2026-09-21T10:38:29+02:00
-- Commit: fix: extract stderr tracebacks from Kaggle kernel logs
+- Head: `d8de0e6dae34`
+- Commit date: 2026-09-21T10:45:59+02:00
+- Commit: fix: resolve Kaggle job inputs from source directory
 - Tracked files: 290
 
 ### Recently changed files
 - `kaggle_backend.py`
 - `.github/workflows/deadline-zero-live-pilot.yml`
-- `generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`
