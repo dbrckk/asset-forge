@@ -374,7 +374,8 @@ def execute_generated_3d_job(
     godot_delivery_reporter: Callable,
     lod_reporter: Callable = generate_lod_chain,
     generator: Callable = execute_generated_3d_asset,
-    model: str = "microsoft/trellis-2",
+    backend: str = "auto",
+    model: str | None = None,
     resolution: str = "low",
     timeout_seconds: float = 600.0,
     source_path: Path | None = None,
@@ -414,6 +415,7 @@ def execute_generated_3d_job(
         generation = generator(
             job,
             out,
+            backend=backend,
             model=model,
             resolution=resolution,
             timeout_seconds=timeout_seconds,
