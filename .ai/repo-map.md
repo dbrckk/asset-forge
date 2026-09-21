@@ -3098,6 +3098,12 @@ def test_prompt_preserves_hard_sprite_constraints(self)
 ⋮----
 prompt = build_generation_prompt(job())
 ⋮----
+def test_prompt_adds_alpha_and_premium_quality_guards(self)
+⋮----
+value = job()
+⋮----
+prompt = build_generation_prompt(value)
+⋮----
 def test_pollinations_command_never_contains_api_key(self)
 ⋮----
 command = pollinations_command(
@@ -3283,8 +3289,6 @@ scores = iter([0.20, 0.73])
 generation_calls = []
 ⋮----
 def test_visual_similarity_fails_after_retry_budget(self)
-⋮----
-value = job()
 ⋮----
 def test_technical_quality_retries_without_visual_reference(self)
 ⋮----

@@ -96,20 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T19:00:49Z
+Generated: 2026-09-21T19:08:50Z
 
 ### Git
 - Branch: `main`
-- Head: `971dded0a521`
-- Commit date: 2026-09-21T21:00:27+02:00
-- Commit: feat: route away from high-retry backends adaptively
+- Head: `b8b4f4161bd8`
+- Commit date: 2026-09-21T21:08:23+02:00
+- Commit: test: lock premium prompt quality guards
 - Tracked files: 305
 
 ### Recently changed files
+- `tests/test_generator_backends.py`
+- `generator_backends.py`
 - `backend_history.py`
 - `tests/test_backend_history.py`
-- `generator_backends.py`
-- `.github/workflows/deadline-zero-live-pilot.yml`
 
 ### Project signals
 - `pyproject.toml`
