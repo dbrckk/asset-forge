@@ -139,7 +139,11 @@ def backend_score(history: dict, backend: str, *, prior: float) -> float:
         return prior
     attempts = int(value.get("attempts") or 0)
     if attempts < MIN_SAMPLES_FOR_ADAPTIVE_ROUTING:
-        return prior
+        # Keep the configured order while a backend is unproven, but give
+        # sufficiently observed reliable backends room to outrank unknown
+        # alternatives. This avoids needless provider churn after a few
+        # successful production runs.
+        return 0.8 * prior
 
     successes = int(value.get("successes") or 0)
     quality_samples = int(value.get("qualitySamples") or 0)
