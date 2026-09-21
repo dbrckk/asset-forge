@@ -134,6 +134,7 @@ art_quality.py
 asset_forge.py
 asset_library.py
 asset_profile_validation.py
+backend_history.py
 blender_adapter.py
 cloudflare_backend.py
 colab_queue.py
@@ -5862,6 +5863,88 @@ group = {}
 path = root / "profiles" / folder / f"{profile}.json"
 ⋮----
 valid = valid and not errors
+````
+
+## File: backend_history.py
+````python
+SCHEMA = "asset-forge/backend-history/v1"
+MIN_SAMPLES_FOR_ADAPTIVE_ROUTING = 3
+DEFAULT_QUALITY = 0.5
+⋮----
+def empty_history() -> dict
+⋮----
+def load_history(path: Path | str | None) -> dict
+⋮----
+target = Path(path)
+⋮----
+value = json.loads(target.read_text(encoding="utf-8"))
+⋮----
+backends = value.get("backends")
+⋮----
+def _stats(history: dict, backend: str) -> dict
+⋮----
+backends = history.setdefault("backends", {})
+value = backends.get(backend)
+⋮----
+value = {
+⋮----
+def _quality_from_generation(result: dict) -> float | None
+⋮----
+samples = []
+⋮----
+value = result.get(key)
+⋮----
+attempts = value.get("attempts")
+⋮----
+score = attempts[-1].get("score") if isinstance(attempts[-1], dict) else None
+⋮----
+name = str(backend or "").strip()
+⋮----
+stats = _stats(history, name)
+⋮----
+bounded = max(0.0, min(1.0, float(quality)))
+⋮----
+def record_generation_result(path: Path | str | None, result: dict) -> dict
+⋮----
+history = load_history(path)
+quality = _quality_from_generation(result)
+⋮----
+failed_backends = set()
+fallbacks = result.get("fallbacks")
+⋮----
+reason = str(fallback.get("reason") or "")
+source = str(fallback.get("from") or "").strip()
+⋮----
+final_backend = str(result.get("backend") or "").strip()
+⋮----
+metadata = result.get("metadata")
+raster_backend = (
+⋮----
+temporary = target.with_suffix(target.suffix + ".tmp")
+⋮----
+def backend_score(history: dict, backend: str, *, prior: float) -> float
+⋮----
+value = history.get("backends", {}).get(backend)
+⋮----
+attempts = int(value.get("attempts") or 0)
+⋮----
+successes = int(value.get("successes") or 0)
+quality_samples = int(value.get("qualitySamples") or 0)
+quality_sum = float(value.get("qualitySum") or 0.0)
+⋮----
+reliability = max(0.0, min(1.0, successes / max(1, attempts)))
+quality = (
+⋮----
+ready = [str(value) for value in ready_backends if str(value)]
+⋮----
+order = list(default_order or ready)
+priority = {
+history = load_history(history_path)
+⋮----
+candidates = []
+⋮----
+prior = priority.get(backend, 0.5)
+score = backend_score(history, backend, prior=prior)
 ````
 
 ## File: blender_adapter.py

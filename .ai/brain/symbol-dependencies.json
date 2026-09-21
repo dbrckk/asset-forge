@@ -5,1021 +5,165 @@
   "semantic": false,
   "note": "Dependencies are known symbol names lexically present inside the symbol's AST/source range.",
   "symbols": {
-    "VectorBackendTests": {
+    "empty_history": {
       "source": {
-        "file": "tests/test_vector_backend.py",
-        "start": 10,
-        "end": 99
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "Config",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 30,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "PanicLike",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 73,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "VectorizationError",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 12,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "convert_file",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 35,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "legacy",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 58,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 82,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "poster",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 32,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "status",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 16,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "test_config_api_vectorizes_to_svg",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 23,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_legacy_api_remains_supported",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_missing_input_fails_closed",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 93,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_rust_panic_is_wrapped_as_vectorization_error",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 72,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_status_reports_optional_dependency",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 11,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "vectorize_raster",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 13
-    },
-    "test_status_reports_optional_dependency": {
-      "source": {
-        "file": "tests/test_vector_backend.py",
-        "start": 11,
-        "end": 21
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "status",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 16,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "test_config_api_vectorizes_to_svg": {
-      "source": {
-        "file": "tests/test_vector_backend.py",
-        "start": 23,
-        "end": 49
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "Config",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 30,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "convert_file",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 35,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "poster",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 32,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "vectorize_raster",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 4
-    },
-    "Config": {
-      "source": {
-        "file": "tests/test_vector_backend.py",
-        "start": 30,
-        "end": 150
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "PanicLike",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 73,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "VectorizationError",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 12,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "convert_file",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 35,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "legacy",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 58,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 82,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "poster",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 32,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_legacy_api_remains_supported",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_missing_input_fails_closed",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 93,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_rust_panic_is_wrapped_as_vectorization_error",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 72,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "vectorize_raster",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 9
-    },
-    "poster": {
-      "source": {
-        "file": "tests/test_vector_backend.py",
-        "start": 32,
-        "end": 152
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "Config",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 30,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "PanicLike",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 73,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "VectorizationError",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 12,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "convert_file",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 35,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "legacy",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 58,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 82,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_legacy_api_remains_supported",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_missing_input_fails_closed",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 93,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_rust_panic_is_wrapped_as_vectorization_error",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 72,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "vectorize_raster",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 9
-    },
-    "convert_file": {
-      "source": {
-        "file": "tests/test_vector_backend.py",
-        "start": 35,
-        "end": 155
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "Config",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 30,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "PanicLike",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 73,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "VectorizationError",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 12,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "legacy",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 58,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 82,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "poster",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 32,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_legacy_api_remains_supported",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 51,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_missing_input_fails_closed",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 93,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_rust_panic_is_wrapped_as_vectorization_error",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 72,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "vectorize_raster",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 9
-    },
-    "test_legacy_api_remains_supported": {
-      "source": {
-        "file": "tests/test_vector_backend.py",
-        "start": 51,
-        "end": 70
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "legacy",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 58,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 82,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "vectorize_raster",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "legacy": {
-      "source": {
-        "file": "tests/test_vector_backend.py",
-        "start": 58,
-        "end": 178
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "PanicLike",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 73,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "VectorizationError",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 12,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "test_missing_input_fails_closed",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 93,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_rust_panic_is_wrapped_as_vectorization_error",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 72,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "vectorize_raster",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 5
-    },
-    "test_rust_panic_is_wrapped_as_vectorization_error": {
-      "source": {
-        "file": "tests/test_vector_backend.py",
-        "start": 72,
-        "end": 91
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "PanicLike",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 73,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "VectorizationError",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 12,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "legacy",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 58,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 82,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "vectorize_raster",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 4
-    },
-    "PanicLike": {
-      "source": {
-        "file": "tests/test_vector_backend.py",
-        "start": 73,
-        "end": 193
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "VectorizationError",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 12,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "legacy",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 58,
-              "kind": "function",
-              "language": "python"
-            },
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 82,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "test_missing_input_fails_closed",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 93,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "vectorize_raster",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 4
-    },
-    "test_missing_input_fails_closed": {
-      "source": {
-        "file": "tests/test_vector_backend.py",
-        "start": 93,
-        "end": 99
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "VectorizationError",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 12,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        },
-        {
-          "symbol": "vectorize_raster",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 68,
-              "kind": "function",
-              "language": "python"
-            }
-          ],
-          "relation": "imported_module"
-        }
-      ],
-      "dependency_count": 2
-    },
-    "VectorizationError": {
-      "source": {
-        "file": "vector_backend.py",
+        "file": "backend_history.py",
         "start": 12,
-        "end": 13
+        "end": 16
       },
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "status": {
+    "load_history": {
       "source": {
-        "file": "vector_backend.py",
-        "start": 16,
-        "end": 31
-      },
-      "symbol_dependencies": [],
-      "dependency_count": 0
-    },
-    "_validate_input": {
-      "source": {
-        "file": "vector_backend.py",
-        "start": 34,
-        "end": 49
+        "file": "backend_history.py",
+        "start": 19,
+        "end": 34
       },
       "symbol_dependencies": [
         {
-          "symbol": "VectorizationError",
+          "symbol": "empty_history",
           "definitions": [
             {
-              "file": "vector_backend.py",
+              "file": "backend_history.py",
               "line": 12,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "_validate_output": {
-      "source": {
-        "file": "vector_backend.py",
-        "start": 52,
-        "end": 65
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "VectorizationError",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 12,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        }
-      ],
-      "dependency_count": 1
-    },
-    "vectorize_raster": {
-      "source": {
-        "file": "vector_backend.py",
-        "start": 68,
-        "end": 138
-      },
-      "symbol_dependencies": [
-        {
-          "symbol": "Config",
-          "definitions": [
-            {
-              "file": "tests/test_vector_backend.py",
-              "line": 30,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "class_like"
-        },
-        {
-          "symbol": "VectorizationError",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 12,
-              "kind": "class",
-              "language": "python"
-            }
-          ],
-          "relation": "same_file"
-        },
-        {
-          "symbol": "_validate_input",
-          "definitions": [
-            {
-              "file": "vector_backend.py",
-              "line": 34,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "same_file"
-        },
+        }
+      ],
+      "dependency_count": 1
+    },
+    "_stats": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 37,
+        "end": 49
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_quality_from_generation": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 52,
+        "end": 66
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "_record": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 69,
+        "end": 88
+      },
+      "symbol_dependencies": [
         {
-          "symbol": "_validate_output",
+          "symbol": "_stats",
           "definitions": [
             {
-              "file": "vector_backend.py",
+              "file": "backend_history.py",
+              "line": 37,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "record_generation_result": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 91,
+        "end": 133
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "_quality_from_generation",
+          "definitions": [
+            {
+              "file": "backend_history.py",
               "line": 52,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "same_file"
+        },
+        {
+          "symbol": "_record",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 69,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "load_history",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 19,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
         }
       ],
-      "dependency_count": 4
+      "dependency_count": 3
+    },
+    "backend_score": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 136,
+        "end": 154
+      },
+      "symbol_dependencies": [],
+      "dependency_count": 0
+    },
+    "choose_backend": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 157,
+        "end": 180
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "backend_score",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 136,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "load_history",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 19,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 2
     }
   }
 }

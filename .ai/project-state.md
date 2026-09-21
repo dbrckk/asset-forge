@@ -96,20 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:36:27Z
+Generated: 2026-09-21T16:37:45Z
 
 ### Git
 - Branch: `main`
-- Head: `a555a2396db5`
-- Commit date: 2026-09-21T18:36:01+02:00
-- Commit: test: cover VTracer Rust panic containment
-- Tracked files: 293
+- Head: `5e9450e197b5`
+- Commit date: 2026-09-21T18:37:32+02:00
+- Commit: feat: add adaptive backend performance history
+- Tracked files: 294
 
 ### Recently changed files
+- `backend_history.py`
 - `tests/test_vector_backend.py`
 - `.github/workflows/validate.yml`
 - `vector_backend.py`
-- `tests/test_operational_status.py`
 
 ### Project signals
 - `pyproject.toml`

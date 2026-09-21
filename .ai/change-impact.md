@@ -1,13 +1,13 @@
 # Change impact
 
-Base: e243af0fa14812d94c9f252419d1e4167f2ab72c
-Head: a555a2396db59c692cadab7cc7f1a8296825ec80
+Base: 03d7a2ffd9a51cefd5acc52e4fdafe166ceb6faa
+Head: 5e9450e197b5fef189371f2a788a3d911b21c590
 
 ## Changed files
-- M tests/test_vector_backend.py
+- A backend_history.py
 
 ## Affected areas
-- tests
+- (root)
 
 ## Related test candidates
 - No direct filename-based test match detected.

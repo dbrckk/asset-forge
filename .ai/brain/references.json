@@ -5,1255 +5,213 @@
   "semantic": false,
   "note": "Occurrences are lexical word matches; verify source/LSP/compiler data before relying on them.",
   "symbols": {
-    "VectorBackendTests": {
+    "empty_history": {
       "definition": {
-        "file": "tests/test_vector_backend.py",
-        "line": 10,
-        "kind": "class",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 10,
-          "preview": "class VectorBackendTests(unittest.TestCase):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_status_reports_optional_dependency": {
-      "definition": {
-        "file": "tests/test_vector_backend.py",
-        "line": 11,
+        "file": "backend_history.py",
+        "line": 12,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
-          "file": "tests/test_vector_backend.py",
-          "line": 11,
-          "preview": "def test_status_reports_optional_dependency(self):",
+          "file": "backend_history.py",
+          "line": 12,
+          "preview": "def empty_history() -> dict:",
           "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "test_config_api_vectorizes_to_svg": {
-      "definition": {
-        "file": "tests/test_vector_backend.py",
-        "line": 23,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
+        },
         {
-          "file": "tests/test_vector_backend.py",
-          "line": 23,
-          "preview": "def test_config_api_vectorizes_to_svg(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "Config": {
-      "definition": {
-        "file": "tests/test_vector_backend.py",
-        "line": 30,
-        "kind": "class",
-        "language": "python"
-      },
-      "occurrences": [
+          "file": "backend_history.py",
+          "line": 21,
+          "preview": "return empty_history()",
+          "definition_candidate": false
+        },
         {
-          "file": "tests/test_vector_backend.py",
+          "file": "backend_history.py",
+          "line": 24,
+          "preview": "return empty_history()",
+          "definition_candidate": false
+        },
+        {
+          "file": "backend_history.py",
+          "line": 28,
+          "preview": "return empty_history()",
+          "definition_candidate": false
+        },
+        {
+          "file": "backend_history.py",
           "line": 30,
-          "preview": "class Config:",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 41,
-          "preview": "fake = SimpleNamespace(Config=Config)",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 89,
-          "preview": "config_type = getattr(vtracer, \"Config\", None)",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 3
-    },
-    "poster": {
-      "definition": {
-        "file": "tests/test_vector_backend.py",
-        "line": 32,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "generator_backends.py",
-          "line": 842,
-          "preview": "preset=\"poster\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 565,
-          "preview": "self.assertEqual(seen[\"preset\"], \"poster\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 32,
-          "preview": "def poster(cls):",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 47,
-          "preview": "self.assertEqual(result[\"preset\"], \"poster\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 72,
-          "preview": "preset: str = \"poster\",",
+          "preview": "return empty_history()",
           "definition_candidate": false
         }
       ],
       "occurrence_count": 5
     },
-    "convert_file": {
+    "load_history": {
       "definition": {
-        "file": "tests/test_vector_backend.py",
-        "line": 35,
+        "file": "backend_history.py",
+        "line": 19,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
-          "file": "tests/test_vector_backend.py",
-          "line": 35,
-          "preview": "def convert_file(self, input_path, output_path):",
+          "file": "backend_history.py",
+          "line": 19,
+          "preview": "def load_history(path: Path | str | None) -> dict:",
           "definition_candidate": true
         },
         {
-          "file": "vector_backend.py",
-          "line": 96,
-          "preview": "result = config.convert_file(str(source), str(output))",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 2
-    },
-    "test_legacy_api_remains_supported": {
-      "definition": {
-        "file": "tests/test_vector_backend.py",
-        "line": 51,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 51,
-          "preview": "def test_legacy_api_remains_supported(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "legacy": {
-      "definition": {
-        "file": "tests/test_vector_backend.py",
-        "line": 58,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 58,
-          "preview": "def legacy(input_path, output_path, **kwargs):",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 65,
-          "preview": "fake = SimpleNamespace(convert_image_to_svg_py=legacy)",
+          "file": "backend_history.py",
+          "line": 92,
+          "preview": "history = load_history(path)",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_vector_backend.py",
-          "line": 69,
-          "preview": "self.assertEqual(result[\"engine\"], \"legacy-api\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 82,
-          "preview": "def legacy(*args, **kwargs):",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 85,
-          "preview": "fake = SimpleNamespace(convert_image_to_svg_py=legacy)",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 101,
-          "preview": "legacy = getattr(vtracer, \"convert_image_to_svg_py\", None)",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 102,
-          "preview": "if not callable(legacy):",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 106,
-          "preview": "legacy(",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 121,
-          "preview": "engine = \"legacy-api\"",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 9
-    },
-    "test_rust_panic_is_wrapped_as_vectorization_error": {
-      "definition": {
-        "file": "tests/test_vector_backend.py",
-        "line": 72,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 72,
-          "preview": "def test_rust_panic_is_wrapped_as_vectorization_error(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "PanicLike": {
-      "definition": {
-        "file": "tests/test_vector_backend.py",
-        "line": 73,
-        "kind": "class",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 73,
-          "preview": "class PanicLike(BaseException):",
-          "definition_candidate": true
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 83,
-          "preview": "raise PanicLike(\"rust panic\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 89,
-          "preview": "\"PanicLike: rust panic\",",
+          "file": "backend_history.py",
+          "line": 172,
+          "preview": "history = load_history(history_path)",
           "definition_candidate": false
         }
       ],
       "occurrence_count": 3
     },
-    "test_missing_input_fails_closed": {
+    "_stats": {
       "definition": {
-        "file": "tests/test_vector_backend.py",
-        "line": 93,
+        "file": "backend_history.py",
+        "line": 37,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
-          "file": "tests/test_vector_backend.py",
-          "line": 93,
-          "preview": "def test_missing_input_fails_closed(self):",
-          "definition_candidate": true
-        }
-      ],
-      "occurrence_count": 1
-    },
-    "VectorizationError": {
-      "definition": {
-        "file": "vector_backend.py",
-        "line": 12,
-        "kind": "class",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "generator_backends.py",
-          "line": 35,
-          "preview": "VectorizationError,",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 844,
-          "preview": "except (VectorizationError, OSError, ValueError) as exc:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 7,
-          "preview": "from vector_backend import VectorizationError, status, vectorize_raster",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 88,
-          "preview": "VectorizationError,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 95,
-          "preview": "with self.assertRaisesRegex(VectorizationError, \"missing\"):",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 12,
-          "preview": "class VectorizationError(RuntimeError):",
+          "file": "backend_history.py",
+          "line": 37,
+          "preview": "def _stats(history: dict, backend: str) -> dict:",
           "definition_candidate": true
         },
         {
-          "file": "vector_backend.py",
-          "line": 37,
-          "preview": "raise VectorizationError(",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 41,
-          "preview": "raise VectorizationError(\"vtracer input file is missing\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 43,
-          "preview": "raise VectorizationError(\"vtracer input must not be a symlink\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 46,
-          "preview": "raise VectorizationError(\"vtracer input file is empty\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 48,
-          "preview": "raise VectorizationError(\"vtracer input exceeds 64 MiB safety limit\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 55,
-          "preview": "raise VectorizationError(\"vtracer did not produce an SVG output\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 59,
-          "preview": "raise VectorizationError(\"vtracer output is not UTF-8 SVG\") from exc",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 61,
-          "preview": "raise VectorizationError(\"vtracer output does not contain an SVG root\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 77,
-          "preview": "raise VectorizationError(\"vtracer output path must use .svg\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 83,
-          "preview": "raise VectorizationError(",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 103,
-          "preview": "raise VectorizationError(",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 122,
-          "preview": "except VectorizationError:",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 127,
-          "preview": "raise VectorizationError(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 19
-    },
-    "status": {
-      "definition": {
-        "file": "vector_backend.py",
-        "line": 16,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "asset_forge.py",
-          "line": 262,
-          "preview": "\"status\": tool.get(\"status\"),",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 267,
-          "preview": "matches.sort(key=lambda item: (status_rank.get(item.get(\"status\"), 9), item.get(\"id\") or \"\"))",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 551,
-          "preview": "generator_status = sub.add_parser(\"generator-backend-status\", help=\"inspect available generation backends\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 552,
-          "preview": "operational_status = sub.add_parser(\"operational-status\", help=\"report machine-readable production readiness\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 723,
-          "preview": "raster_status = sub.add_parser(\"raster-backend-status\", help=\"detect optional raster pixel backends\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 724,
-          "preview": "toolchain_status = sub.add_parser(\"3d-toolchain-status\", help=\"detect available external 3D tools\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 754,
-          "preview": "if args.command == \"raster-backend-status\":",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 795,
-          "preview": "if args.command == \"generator-backend-status\":",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 798,
-          "preview": "if args.command == \"operational-status\":",
-          "definition_candidate": false
-        },
-        {
-          "file": "asset_forge.py",
-          "line": 1304,
-          "preview": "if args.command == \"3d-toolchain-status\":",
-          "definition_candidate": false
-        },
-        {
-          "file": "cloudflare_backend.py",
-          "line": 19,
-          "preview": "def status(*, environ=None) -> dict:",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 20,
-          "preview": "status as cloudflare_status,",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 26,
-          "preview": "status as kaggle_status,",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 36,
-          "preview": "status as vectorizer_status,",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 433,
-          "preview": "status = generator_backend_status()",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 434,
-          "preview": "pollinations = status.get(\"pollinations\", {})",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 435,
-          "preview": "cloudflare = status.get(\"cloudflare\", {})",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 436,
-          "preview": "kaggle = status.get(\"kaggleQwen\", {})",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 437,
-          "preview": "imagen_codex = status.get(\"imagenCodex\", {})",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 438,
-          "preview": "vtracer = status.get(\"vtracer\", {})",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 1286,
-          "preview": "status = int(getattr(response, \"status\", 200))",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 1287,
-          "preview": "if status != 200:",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 1288,
-          "preview": "raise GenerationError(f\"Pollinations 3D returned HTTP {status}\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_backend.py",
-          "line": 21,
-          "preview": "def status(*, environ=None) -> dict:",
-          "definition_candidate": false
-        },
-        {
-          "file": "kaggle_backend.py",
-          "line": 309,
-          "preview": "[executable, \"kernels\", \"status\", kernel_id],",
-          "definition_candidate": false
-        },
-        {
-          "file": "operational_status.py",
-          "line": 11,
-          "preview": "for name, status in candidates:",
-          "definition_candidate": false
-        },
-        {
-          "file": "operational_status.py",
-          "line": 12,
-          "preview": "if isinstance(status, dict) and status.get(\"rasterReady\") is True:",
-          "definition_candidate": false
-        },
-        {
-          "file": "operational_status.py",
-          "line": 129,
-          "preview": "\"schema\": \"asset-forge/operational-status/v1\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "production_contract.py",
-          "line": 71,
-          "preview": "\"status\": \"ready\",",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_backend.py",
-          "line": 41,
-          "preview": "status = detect_pillow_webp()",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_backend.py",
-          "line": 42,
-          "preview": "if not status[\"available\"]:",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_backend.py",
-          "line": 82,
-          "preview": "status = detect_pillow_webp()",
-          "definition_candidate": false
-        },
-        {
-          "file": "raster_backend.py",
-          "line": 83,
-          "preview": "if not status[\"available\"]:",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 1169,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 1193,
-          "preview": "fetchImpl: async () => ({ ok: false, status: 404 }),",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 1214,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 1246,
-          "preview": "status: url === \"bad.png\" ? 500 : 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 1268,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 1316,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 1495,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 1611,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 1787,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 1873,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 2046,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 2215,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 2265,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 2632,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 2681,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 2836,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 2883,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 3033,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 3157,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 3416,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 3592,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 3769,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 3840,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 3984,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 4128,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 4242,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/runtime_atlas_web.test.mjs",
-          "line": 4313,
-          "preview": "status: 200,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_cloudflare_backend.py",
-          "line": 12,
-          "preview": "status,",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_cloudflare_backend.py",
-          "line": 37,
-          "preview": "self.assertFalse(status(environ={})[\"rasterReady\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_cloudflare_backend.py",
-          "line": 38,
-          "preview": "self.assertTrue(status(environ={",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
+          "file": "backend_history.py",
           "line": 79,
-          "preview": "status = generator_backend_status(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 83,
-          "preview": "self.assertTrue(status[\"pollinations\"][\"authenticated\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 84,
-          "preview": "self.assertTrue(status[\"pollinations\"][\"rasterVectorReady\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 85,
-          "preview": "self.assertTrue(status[\"pollinations\"][\"threeDReady\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 86,
-          "preview": "self.assertEqual(status[\"pollinations\"][\"credentialSource\"], \"environment\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 87,
-          "preview": "self.assertNotIn(\"super-secret-value\", repr(status))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 178,
-          "preview": "status = generator_backend_status(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 183,
-          "preview": "self.assertTrue(status[\"imagenCodex\"][\"installed\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 184,
-          "preview": "self.assertTrue(status[\"imagenCodex\"][\"authenticated\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 185,
-          "preview": "self.assertTrue(status[\"imagenCodex\"][\"rasterReady\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 186,
-          "preview": "self.assertFalse(status[\"imagenCodex\"][\"vectorSvgReady\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 187,
-          "preview": "self.assertNotIn(\"codex-secret\", repr(status))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_generator_backends.py",
-          "line": 703,
-          "preview": "status = 200",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_kaggle_backend.py",
-          "line": 6,
-          "preview": "from kaggle_backend import KaggleGenerationError, _runner_source, status",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_kaggle_backend.py",
-          "line": 12,
-          "preview": "self.assertFalse(status(environ={})[\"rasterReady\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_kaggle_backend.py",
-          "line": 13,
-          "preview": "self.assertTrue(status(environ={",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_kaggle_backend.py",
-          "line": 20,
-          "preview": "value = status(environ={",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 28,
-          "preview": "status = build_operational_status(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 34,
-          "preview": "self.assertEqual(status[\"schema\"], \"asset-forge/operational-status/v1\")",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 35,
-          "preview": "self.assertTrue(status[\"ready\"][\"full\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 36,
-          "preview": "self.assertTrue(status[\"capabilities\"][\"rasterPng\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 37,
-          "preview": "self.assertTrue(status[\"capabilities\"][\"rasterWebp\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 38,
-          "preview": "self.assertTrue(status[\"capabilities\"][\"vectorSvg\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 39,
-          "preview": "self.assertTrue(status[\"capabilities\"][\"threeDGlb\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 40,
-          "preview": "self.assertTrue(status[\"capabilities\"][\"godotImport\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 41,
-          "preview": "self.assertNotIn(\"secret\", repr(status))",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 55,
-          "preview": "status = build_operational_status(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 61,
-          "preview": "self.assertFalse(status[\"ready\"][\"anyGeneratedAsset\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 62,
-          "preview": "self.assertFalse(status[\"ready\"][\"full\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 63,
-          "preview": "self.assertTrue(status[\"blockers\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 81,
-          "preview": "status = build_operational_status(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 87,
-          "preview": "self.assertFalse(status[\"capabilities\"][\"imagenCodexRaster\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 90,
-          "preview": "for value in status[\"blockers\"]",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 128,
-          "preview": "status = build_operational_status(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 134,
-          "preview": "self.assertTrue(status[\"ready\"][\"anyGeneratedAsset\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 135,
-          "preview": "self.assertTrue(status[\"ready\"][\"raster\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 136,
-          "preview": "self.assertTrue(status[\"capabilities\"][\"freeRaster\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 137,
-          "preview": "self.assertTrue(status[\"capabilities\"][\"cloudflareRaster\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 138,
-          "preview": "self.assertTrue(status[\"capabilities\"][\"autoRaster\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 139,
-          "preview": "self.assertTrue(status[\"ready\"][\"autoRaster\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 141,
-          "preview": "status[\"routing\"][\"preferredRasterBackend\"],",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 145,
-          "preview": "any(\"no authenticated raster generation backend\" in value for value in status[\"blockers\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 183,
-          "preview": "status = build_operational_status(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 189,
-          "preview": "self.assertTrue(status[\"capabilities\"][\"vectorSvg\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 190,
-          "preview": "self.assertTrue(status[\"capabilities\"][\"freeVectorSvg\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 191,
-          "preview": "self.assertTrue(status[\"capabilities\"][\"vtracerVector\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 193,
-          "preview": "status[\"routing\"][\"preferredVectorBackend\"],",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 196,
-          "preview": "self.assertTrue(status[\"routing\"][\"freeVectorReady\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 199,
-          "preview": "for value in status[\"blockers\"]",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 232,
-          "preview": "status = build_operational_status(",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 238,
-          "preview": "self.assertTrue(status[\"ready\"][\"raster\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 239,
-          "preview": "self.assertFalse(status[\"ready\"][\"autoRaster\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 240,
-          "preview": "self.assertFalse(status[\"capabilities\"][\"autoRaster\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 241,
-          "preview": "self.assertIsNone(status[\"routing\"][\"preferredRasterBackend\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 242,
-          "preview": "self.assertFalse(status[\"routing\"][\"autoRasterReady\"])",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 245,
-          "preview": "for value in status[\"blockers\"]",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_operational_status.py",
-          "line": 276,
-          "preview": "status = build_operational_status(",
-          "definition_candidate": false
-        }
-      ],
-      "occurrence_count": 120
-    },
-    "_validate_input": {
-      "definition": {
-        "file": "vector_backend.py",
-        "line": 34,
-        "kind": "function",
-        "language": "python"
-      },
-      "occurrences": [
-        {
-          "file": "vector_backend.py",
-          "line": 34,
-          "preview": "def _validate_input(path: Path) -> Path:",
-          "definition_candidate": true
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 74,
-          "preview": "source = _validate_input(Path(input_path))",
+          "preview": "stats = _stats(history, name)",
           "definition_candidate": false
         }
       ],
       "occurrence_count": 2
     },
-    "_validate_output": {
+    "_quality_from_generation": {
       "definition": {
-        "file": "vector_backend.py",
+        "file": "backend_history.py",
         "line": 52,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
-          "file": "vector_backend.py",
+          "file": "backend_history.py",
           "line": 52,
-          "preview": "def _validate_output(path: Path) -> dict:",
+          "preview": "def _quality_from_generation(result: dict) -> float | None:",
           "definition_candidate": true
         },
         {
-          "file": "vector_backend.py",
-          "line": 131,
-          "preview": "result = _validate_output(output)",
+          "file": "backend_history.py",
+          "line": 93,
+          "preview": "quality = _quality_from_generation(result)",
           "definition_candidate": false
         }
       ],
       "occurrence_count": 2
     },
-    "vectorize_raster": {
+    "_record": {
       "definition": {
-        "file": "vector_backend.py",
-        "line": 68,
+        "file": "backend_history.py",
+        "line": 69,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
-          "file": "generator_backends.py",
-          "line": 37,
-          "preview": "vectorize_raster,",
+          "file": "backend_history.py",
+          "line": 69,
+          "preview": "def _record(",
+          "definition_candidate": true
+        },
+        {
+          "file": "backend_history.py",
+          "line": 104,
+          "preview": "_record(history, source, success=False)",
           "definition_candidate": false
         },
         {
-          "file": "generator_backends.py",
-          "line": 557,
-          "preview": "vectorizer: Callable[..., dict] = vectorize_raster,",
+          "file": "backend_history.py",
+          "line": 109,
+          "preview": "_record(history, final_backend, success=True, quality=quality)",
           "definition_candidate": false
         },
         {
-          "file": "tests/test_vector_backend.py",
-          "line": 7,
-          "preview": "from vector_backend import VectorizationError, status, vectorize_raster",
+          "file": "backend_history.py",
+          "line": 122,
+          "preview": "_record(history, raster_backend, success=True, quality=quality)",
           "definition_candidate": false
-        },
+        }
+      ],
+      "occurrence_count": 4
+    },
+    "record_generation_result": {
+      "definition": {
+        "file": "backend_history.py",
+        "line": 91,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
         {
-          "file": "tests/test_vector_backend.py",
-          "line": 43,
-          "preview": "result = vectorize_raster(source, output)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 67,
-          "preview": "result = vectorize_raster(source, output)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_vector_backend.py",
+          "file": "backend_history.py",
           "line": 91,
-          "preview": "vectorize_raster(source, output)",
-          "definition_candidate": false
-        },
-        {
-          "file": "tests/test_vector_backend.py",
-          "line": 96,
-          "preview": "vectorize_raster(",
-          "definition_candidate": false
-        },
-        {
-          "file": "vector_backend.py",
-          "line": 68,
-          "preview": "def vectorize_raster(",
+          "preview": "def record_generation_result(path: Path | str | None, result: dict) -> dict:",
           "definition_candidate": true
         }
       ],
-      "occurrence_count": 8
+      "occurrence_count": 1
+    },
+    "backend_score": {
+      "definition": {
+        "file": "backend_history.py",
+        "line": 136,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "backend_history.py",
+          "line": 136,
+          "preview": "def backend_score(history: dict, backend: str, *, prior: float) -> float:",
+          "definition_candidate": true
+        },
+        {
+          "file": "backend_history.py",
+          "line": 177,
+          "preview": "score = backend_score(history, backend, prior=prior)",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 2
+    },
+    "choose_backend": {
+      "definition": {
+        "file": "backend_history.py",
+        "line": 157,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "backend_history.py",
+          "line": 157,
+          "preview": "def choose_backend(",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
     }
   }
 }
