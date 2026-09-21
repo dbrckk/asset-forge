@@ -25,11 +25,11 @@ class KaggleBackendTests(unittest.TestCase):
             self.assertFalse(value["installed"])
 
 
-    def test_runner_quantizes_transformer_only(self):
+    def test_runner_quantizes_transformer_and_text_encoder(self):
         source = _runner_source()
-        self.assertIn('components_to_quantize=["transformer"]', source)
-        self.assertNotIn('components_to_quantize=["transformer", "text_encoder"]', source)
+        self.assertIn('components_to_quantize=["transformer", "text_encoder"]', source)
         self.assertIn("pipe.enable_model_cpu_offload()", source)
+        self.assertNotIn("pipe.enable_sequential_cpu_offload()", source)
 
 
 if __name__ == "__main__":
