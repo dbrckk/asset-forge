@@ -1,13 +1,13 @@
 # Change impact
 
-Base: 8f4e4edda8cde7ce4d9656978be9d4ec21ac82fa
-Head: debdd3a63169bce25efebc5e5abe2b67979681a1
+Base: debdd3a63169bce25efebc5e5abe2b67979681a1
+Head: cf1a165b6ed0417d80c348d4bb7ee07245fc1d81
 
 ## Changed files
-- M .github/workflows/production-os-batch.yml
+- M README.md
 
 ## Affected areas
-- .github
+- (root)
 
 ## Related test candidates
 - No direct filename-based test match detected.

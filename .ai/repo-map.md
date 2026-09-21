@@ -7969,7 +7969,9 @@ Inspect what the current worker can actually produce before advertising visual c
 asset-forge operational-status
 ```
 
-The JSON readiness report distinguishes PNG, WebP, SVG, generated GLB and real Godot import validation. Raster/vector generation currently uses the Pollinations CLI when available and authenticated. Server-side generated 3D additionally requires `POLLINATIONS_API_KEY`; WebP output requires Pillow/libwebp; real Godot import validation requires a Godot executable.
+The JSON readiness report distinguishes direct raster generation, queued Qwen raster generation, WebP encoding, SVG, generated GLB, and real Godot import validation. Raster `--backend auto` is free-first: it selects Cloudflare Workers AI when configured, then Kaggle Qwen Image 2.1. If a Cloudflare runtime request fails and Kaggle is ready, automatic production falls back to Kaggle and records the route in `production-report.json`. Production batches open a circuit breaker after repeated Cloudflare runtime failures so later assets do not repeat the same failed call.
+
+Pollinations remains the explicit SVG/3D path; server-side generated 3D requires `POLLINATIONS_API_KEY`. `qwen-colab` is reported separately as a queued batch capability rather than a direct synchronous raster backend. WebP output requires Pillow/libwebp, and real Godot import validation requires a Godot executable. Production reports and Production OS batch results expose the requested, initial, and final backend plus fallback history for diagnostics.
 
 For debugging or staged orchestration, the two lower-level commands remain available:
 

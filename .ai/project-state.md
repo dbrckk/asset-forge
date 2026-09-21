@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T16:11:39Z
+Generated: 2026-09-21T16:12:24Z
 
 ### Git
 - Branch: `main`
-- Head: `debdd3a63169`
-- Commit date: 2026-09-21T18:11:16+02:00
-- Commit: ci: expose batch backend circuit breaker state
+- Head: `0f41688d535a`
+- Commit date: 2026-09-21T16:12:10Z
+- Commit: chore(ai): refresh unified AI context
 - Tracked files: 291
 
 ### Recently changed files
+- `README.md`
 - `.github/workflows/production-os-batch.yml`
 - `tests/test_remote_batch.py`
 - `remote_batch.py`
 - `tests/test_operational_status.py`
-- `operational_status.py`
 
 ### Project signals
 - `pyproject.toml`
