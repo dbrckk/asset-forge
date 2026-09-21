@@ -121,7 +121,9 @@ def vectorize_raster(
             engine = "legacy-api"
     except VectorizationError:
         raise
-    except Exception as exc:
+    except BaseException as exc:
+        if isinstance(exc, (KeyboardInterrupt, SystemExit, GeneratorExit)):
+            raise
         raise VectorizationError(
             f"vtracer vectorization failed: {type(exc).__name__}: {exc}"
         ) from exc
