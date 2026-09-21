@@ -176,8 +176,11 @@ def _extract_kaggle_diagnostic(path: Path) -> str:
     positions = [preferred.rfind(marker) for marker in markers if marker in preferred]
     positions = [pos for pos in positions if pos >= 0]
     if positions:
-        preferred = preferred[min(positions):]
-    return preferred[-16000:]
+        # Start at the most recent diagnostic marker. Using the earliest marker
+        # could leave a very long traceback that is later tail-truncated before
+        # the actual exception message.
+        preferred = preferred[max(positions):]
+    return preferred[-24000:]
 
 
 def _run(command: list[str], *, timeout: float, runner=subprocess.run) -> subprocess.CompletedProcess:
