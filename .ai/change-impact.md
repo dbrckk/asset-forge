@@ -1,13 +1,13 @@
 # Change impact
 
-Base: 7885c0e9c005800f4c490f440577013e4ca09ab9
-Head: 74b6d9f9f49f2fbba9c1b70bea330898700f4403
+Base: 074b0e635cc3e62b48d1aff74c400920a9baf663
+Head: 1b6cd87eb59a5bc10b2871968d24d9460004ea43
 
 ## Changed files
-- M tests/test_kaggle_backend.py
+- M .github/workflows/deadline-zero-live-pilot.yml
 
 ## Affected areas
-- tests
+- .github
 
 ## Related test candidates
 - No direct filename-based test match detected.

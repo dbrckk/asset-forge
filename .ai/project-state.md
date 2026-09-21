@@ -96,21 +96,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T15:01:46Z
+Generated: 2026-09-21T15:43:54Z
 
 ### Git
 - Branch: `main`
-- Head: `74b6d9f9f49f`
-- Commit date: 2026-09-21T17:01:29+02:00
-- Commit: test: lock memory-safe dual quantization
+- Head: `1b6cd87eb59a`
+- Commit date: 2026-09-21T17:43:29+02:00
+- Commit: chore: align live pilot artifact naming
 - Tracked files: 291
 
 ### Recently changed files
+- `.github/workflows/deadline-zero-live-pilot.yml`
 - `tests/test_kaggle_backend.py`
 - `kaggle_backend.py`
-- `.github/workflows/deadline-zero-live-pilot.yml`
 - `.github/workflows/live-generation.yml`
-- `examples/production-request-live-raster.json`
 
 ### Project signals
 - `pyproject.toml`

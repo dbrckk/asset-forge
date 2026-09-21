@@ -212,7 +212,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: deadline-zero-live-premium-pilot
+  group: deadline-zero-live-visual-pilot
   cancel-in-progress: true
 
 jobs:
@@ -326,11 +326,11 @@ jobs:
               fh.write(f"- Minimum consistency score: {result['quality_summary']['minimum_score']}\n")
           PY
 
-      - name: Upload live premium pilot
+      - name: Upload live visual pilot
         if: always() && hashFiles('build/deadline-zero-live-pilot/**') != ''
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: deadline-zero-live-premium-pilot
+          name: deadline-zero-live-visual-pilot
           path: build/deadline-zero-live-pilot
           if-no-files-found: error
           retention-days: 14
