@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from kaggle_backend import KaggleGenerationError, status
+from kaggle_backend import KaggleGenerationError, _runner_source, status
 
 
 class KaggleBackendTests(unittest.TestCase):
@@ -23,6 +23,13 @@ class KaggleBackendTests(unittest.TestCase):
             })
             self.assertFalse(value["rasterReady"])
             self.assertFalse(value["installed"])
+
+
+    def test_runner_quantizes_transformer_only(self):
+        source = _runner_source()
+        self.assertIn('components_to_quantize=["transformer"]', source)
+        self.assertNotIn('components_to_quantize=["transformer", "text_encoder"]', source)
+        self.assertIn("pipe.enable_model_cpu_offload()", source)
 
 
 if __name__ == "__main__":
