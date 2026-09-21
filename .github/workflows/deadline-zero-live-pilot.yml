@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/deadline-zero-live-pilot.yml"
       - "examples/deadline-zero-live-pilot-batch.json"
+      - "remote_batch.py"
   workflow_dispatch:
 
 permissions:
@@ -137,7 +138,7 @@ jobs:
           PY
 
       - name: Upload live premium pilot
-        if: always()
+        if: always() && hashFiles('build/deadline-zero-live-pilot/**') != ''
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: deadline-zero-live-premium-pilot
