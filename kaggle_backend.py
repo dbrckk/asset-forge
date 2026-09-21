@@ -34,6 +34,7 @@ def status(*, environ=None) -> dict:
         "credentialSource": "environment" if token and username else None,
         "model": DEFAULT_MODEL,
         "accelerator": DEFAULT_ACCELERATOR,
+        "quantization": "bitsandbytes_4bit_nf4",
     }
 
 
@@ -56,13 +57,13 @@ from pathlib import Path
 subprocess.run([sys.executable, "-m", "pip", "uninstall", "-q", "-y", "torchao"], check=False)
 subprocess.run([
     sys.executable, "-m", "pip", "install", "-q", "-U",
-    "transformers>=5.17", "accelerate", "pillow",
+    "transformers>=5.17", "accelerate", "pillow", "bitsandbytes",
     "git+https://github.com/huggingface/diffusers",
 ], check=True)
 
 import torch
 from PIL import Image
-from diffusers import QwenImage21Pipeline
+from diffusers import PipelineQuantizationConfig, QwenImage21Pipeline
 
 def _input_file(name):
     candidates = [
@@ -77,8 +78,22 @@ def _input_file(name):
 
 job = __ASSET_FORGE_JOB__
 model = job.get("model") or "Qwen/Qwen-Image-2.1"
-pipe = QwenImage21Pipeline.from_pretrained(model, torch_dtype=torch.float16)
-pipe.enable_model_cpu_offload()
+quantization_config = PipelineQuantizationConfig(
+    quant_backend="bitsandbytes_4bit",
+    quant_kwargs={
+        "load_in_4bit": True,
+        "bnb_4bit_quant_type": "nf4",
+        "bnb_4bit_compute_dtype": torch.float16,
+    },
+    components_to_quantize=["transformer", "text_encoder"],
+)
+pipe = QwenImage21Pipeline.from_pretrained(
+    model,
+    torch_dtype=torch.float16,
+    low_cpu_mem_usage=True,
+    quantization_config=quantization_config,
+    device_map="cuda",
+)
 
 kwargs = {
     "prompt": job["prompt"],
@@ -347,5 +362,6 @@ def generate(
         "steps": steps,
         "seed": int(seed),
         "reference": reference_path is not None,
+        "quantization": "bitsandbytes_4bit_nf4",
         "result": metadata_out,
     }
