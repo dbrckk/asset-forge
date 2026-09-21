@@ -52,8 +52,8 @@ from pathlib import Path
 
 # Kaggle images can ship an older torchao that is incompatible with the
 # current Diffusers import graph (missing FqnToConfig). Qwen-Image does not
-# require torchao for this fp16/offload path, so remove the stale optional
-# package before importing Diffusers.
+# require torchao for this mixed 4-bit/fp16 offload path, so remove the stale
+# optional package before importing Diffusers.
 subprocess.run([sys.executable, "-m", "pip", "uninstall", "-q", "-y", "torchao"], check=False)
 subprocess.run([
     sys.executable, "-m", "pip", "install", "-q", "-U",
@@ -85,7 +85,7 @@ quantization_config = PipelineQuantizationConfig(
         "bnb_4bit_quant_type": "nf4",
         "bnb_4bit_compute_dtype": torch.float16,
     },
-    components_to_quantize=["transformer", "text_encoder"],
+    components_to_quantize=["transformer"],
 )
 pipe = QwenImage21Pipeline.from_pretrained(
     model,
@@ -93,9 +93,9 @@ pipe = QwenImage21Pipeline.from_pretrained(
     low_cpu_mem_usage=True,
     quantization_config=quantization_config,
 )
-# Sequential CPU offload trades some speed for the lowest practical VRAM
-# footprint on Kaggle T4. This prevents the denoising transformer from
-# competing with the VAE/text encoder for the full 16 GB device.
+# Keep the text encoder in fp16 and quantize only the denoising transformer.
+# Model CPU offload avoids the meta-tensor failures seen when a quantized text
+# encoder is combined with aggressive sequential offload on Kaggle T4.
 pipe.enable_model_cpu_offload()
 pipe.enable_attention_slicing()
 
