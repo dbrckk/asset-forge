@@ -1439,7 +1439,7 @@ def execute_generated_3d_asset(
                 raise GenerationError(
                     "kaggle-triposr generation did not produce a GLB"
                 )
-            return {
+            result = {
                 "success": True,
                 "backend": "kaggle-triposr",
                 "requestedBackend": requested_backend,
@@ -1456,6 +1456,13 @@ def execute_generated_3d_asset(
                 "sourcePath": str(output),
                 "sourceBytes": output.stat().st_size,
             }
+            history_path = _backend_history_path(environ=env)
+            if history_path is not None:
+                try:
+                    record_generation_result(history_path, result)
+                except (OSError, ValueError, TypeError):
+                    pass
+            return result
 
     if selected_backend != "pollinations":
         raise GenerationError("3D backend routing reached an invalid state")
@@ -1523,7 +1530,7 @@ def execute_generated_3d_asset(
 
     output = out / "generated-source.glb"
     output.write_bytes(raw)
-    return {
+    result = {
         "success": True,
         "backend": "pollinations",
         "requestedBackend": requested_backend,
@@ -1540,3 +1547,10 @@ def execute_generated_3d_asset(
         "sourcePath": str(output),
         "sourceBytes": len(raw),
     }
+    history_path = _backend_history_path(environ=env)
+    if history_path is not None:
+        try:
+            record_generation_result(history_path, result)
+        except (OSError, ValueError, TypeError):
+            pass
+    return result
