@@ -56,6 +56,51 @@ class ProductionExecutorTests(unittest.TestCase):
             self.assertEqual(report["provenance"]["source"]["mode"], None)
             self.assertTrue((root / "production-report.json").is_file())
 
+    def test_raster_report_exposes_backend_routing(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+
+            def generator(value, output_dir, **kwargs):
+                source = Path(output_dir) / "generated-source.png"
+                source.write_bytes(b"source")
+                return {
+                    "success": True,
+                    "sourcePath": str(source),
+                    "backend": "kaggle-qwen",
+                    "requestedBackend": "auto",
+                    "initialBackend": "cloudflare",
+                    "fallbacks": [{
+                        "from": "cloudflare",
+                        "to": "kaggle-qwen",
+                        "reason": "cloudflare-generation-error",
+                        "attempt": 1,
+                    }],
+                }
+
+            report = execute_generated_raster_job(
+                job(),
+                root,
+                validator=lambda path, manifest: ({"format": "png"}, []),
+                png_optimizer=lambda source, output: (
+                    output.write_bytes(b"png") and {"output": str(output)}
+                ),
+                webp_encoder=lambda *a, **k: self.fail("webp encoder must not run"),
+                generator=generator,
+                art_quality_reporter=lambda path, manifest: {
+                    "errors": [],
+                    "warnings": [],
+                },
+            )
+
+            self.assertEqual(report["routing"]["requestedBackend"], "auto")
+            self.assertEqual(report["routing"]["initialBackend"], "cloudflare")
+            self.assertEqual(report["routing"]["finalBackend"], "kaggle-qwen")
+            self.assertEqual(report["routing"]["fallbackCount"], 1)
+            self.assertEqual(
+                report["routing"]["fallbacks"][0]["reason"],
+                "cloudflare-generation-error",
+            )
+
     def test_webp_target_encodes_before_validation(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
