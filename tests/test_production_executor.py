@@ -278,6 +278,55 @@ class ProductionExecutorTests(unittest.TestCase):
             self.assertIn("quality warning", report["validation"]["warnings"])
             self.assertTrue((root / "production-report.json").is_file())
 
+    def test_3d_backend_and_model_are_forwarded_to_generator(self):
+        three_d = job("glb")
+        three_d["assetType"] = "prop"
+        seen = {}
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+
+            def generator(value, output_dir, **kwargs):
+                seen.update(kwargs)
+                source = Path(output_dir) / "generated-source.glb"
+                source.write_bytes(b"glTF" + b"\x00" * 16)
+                return {
+                    "success": True,
+                    "backend": kwargs.get("backend"),
+                    "model": kwargs.get("model"),
+                    "sourcePath": str(source),
+                }
+
+            report = execute_generated_3d_job(
+                three_d,
+                root,
+                structural_validator=lambda p: ({}, [], []),
+                profile_validator=lambda p, profile: ({}, [], []),
+                quality_reporter=lambda p, profile: {
+                    "evaluation": {"passed": True, "errors": [], "warnings": []}
+                },
+                godot_delivery_reporter=lambda p, profile: {
+                    "ready": True,
+                    "errors": [],
+                    "warnings": [],
+                },
+                generator=generator,
+                backend="kaggle-triposr",
+                model="stabilityai/TripoSR",
+                resolution="medium",
+                timeout_seconds=321,
+            )
+
+            self.assertTrue(report["success"])
+            self.assertEqual(seen["backend"], "kaggle-triposr")
+            self.assertEqual(seen["model"], "stabilityai/TripoSR")
+            self.assertEqual(seen["resolution"], "medium")
+            self.assertEqual(seen["timeout_seconds"], 321)
+            self.assertEqual(
+                report["routing"]["finalBackend"],
+                "kaggle-triposr",
+            )
+
     def test_godot_3d_emits_runtime_plan_sidecar(self):
         three_d = job("glb")
         three_d["assetType"] = "prop"
