@@ -187,6 +187,7 @@ def generate(
 
         deadline = time.monotonic() + timeout_seconds
         last_status = ""
+        terminal_error = None
         while time.monotonic() < deadline:
             status_result = _run(
                 [executable, "kernels", "status", kernel_id],
@@ -198,18 +199,36 @@ def generate(
             if any(word in text for word in ("complete", "completed")):
                 break
             if any(word in text for word in ("error", "failed", "cancelled")):
-                raise KaggleGenerationError(f"Kaggle kernel failed: {last_status[:1200]}")
+                terminal_error = f"Kaggle kernel failed: {last_status[:1200]}"
+                break
             time.sleep(15)
         else:
             raise KaggleGenerationError("Kaggle kernel timed out")
 
         download_dir = root / "download"
         download_dir.mkdir()
-        _run(
-            [executable, "kernels", "output", kernel_id, "-p", str(download_dir), "-o"],
-            timeout=180,
-            runner=runner,
-        )
+        try:
+            _run(
+                [executable, "kernels", "output", kernel_id, "-p", str(download_dir), "-o"],
+                timeout=180,
+                runner=runner,
+            )
+        except KaggleGenerationError as output_exc:
+            if terminal_error:
+                raise KaggleGenerationError(f"{terminal_error}; output retrieval failed: {output_exc}") from output_exc
+            raise
+        if terminal_error:
+            diagnostics = []
+            for candidate in sorted(download_dir.rglob("*")):
+                if candidate.is_file() and candidate.suffix.lower() in {".log", ".txt", ".json"}:
+                    try:
+                        body = candidate.read_text(encoding="utf-8", errors="replace").strip()
+                    except OSError:
+                        continue
+                    if body:
+                        diagnostics.append(f"{candidate.name}: {body[-4000:]}")
+            detail = "; ".join(diagnostics)[-8000:] if diagnostics else "no diagnostic output was returned"
+            raise KaggleGenerationError(f"{terminal_error}; diagnostics: {detail}")
         generated = download_dir / "asset.png"
         result_path = download_dir / "result.json"
         if not generated.is_file() or generated.stat().st_size <= 0:
