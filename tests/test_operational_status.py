@@ -91,5 +91,101 @@ class OperationalStatusTests(unittest.TestCase):
         ))
 
 
+    def test_cloudflare_free_raster_is_reported_as_ready_without_cli(self):
+        with patch(
+            "operational_status.generator_backend_status",
+            return_value={
+                "cloudflare": {
+                    "authenticated": True,
+                    "rasterReady": True,
+                    "model": "@cf/test",
+                },
+                "kaggleQwen": {"rasterReady": False},
+                "pollinations": {
+                    "installed": False,
+                    "authenticated": False,
+                    "rasterVectorReady": False,
+                    "threeDReady": False,
+                },
+                "imagenCodex": {
+                    "installed": False,
+                    "authenticated": False,
+                    "rasterReady": False,
+                },
+                "qwenColab": {"queueReady": False},
+            },
+        ), patch("operational_status.raster_backend_status") as raster, patch(
+            "operational_status.detect_3d_tools", return_value={}
+        ):
+            raster.return_value = {
+                "png": {"decode": True, "encode": True, "dependency": "builtin"},
+                "webp": {
+                    "inspect": True,
+                    "decode": {"available": True},
+                    "encode": {"available": True},
+                },
+            }
+            status = build_operational_status(
+                environ={},
+                home=Path("/not-real"),
+                which=lambda name: None,
+            )
+
+        self.assertTrue(status["ready"]["anyGeneratedAsset"])
+        self.assertTrue(status["ready"]["raster"])
+        self.assertTrue(status["capabilities"]["freeRaster"])
+        self.assertTrue(status["capabilities"]["cloudflareRaster"])
+        self.assertEqual(
+            status["routing"]["preferredRasterBackend"],
+            "cloudflare",
+        )
+        self.assertFalse(
+            any("no authenticated raster generation backend" in value for value in status["blockers"])
+        )
+
+    def test_qwen_colab_queue_counts_as_queued_generation_capability(self):
+        with patch(
+            "operational_status.generator_backend_status",
+            return_value={
+                "cloudflare": {"rasterReady": False},
+                "kaggleQwen": {"rasterReady": False},
+                "pollinations": {
+                    "rasterVectorReady": False,
+                    "threeDReady": False,
+                },
+                "imagenCodex": {
+                    "installed": False,
+                    "authenticated": False,
+                    "rasterReady": False,
+                },
+                "qwenColab": {"queueReady": True},
+            },
+        ), patch("operational_status.raster_backend_status") as raster, patch(
+            "operational_status.detect_3d_tools", return_value={}
+        ):
+            raster.return_value = {
+                "png": {"decode": True, "encode": True, "dependency": "builtin"},
+                "webp": {
+                    "inspect": True,
+                    "decode": {"available": True},
+                    "encode": {"available": True},
+                },
+            }
+            status = build_operational_status(
+                environ={},
+                home=Path("/not-real"),
+                which=lambda name: None,
+            )
+
+        self.assertTrue(status["ready"]["anyGeneratedAsset"])
+        self.assertFalse(status["ready"]["raster"])
+        self.assertTrue(status["ready"]["queuedRaster"])
+        self.assertTrue(status["capabilities"]["qwenColabQueue"])
+        self.assertEqual(status["routing"]["queuedRasterBackend"], "qwen-colab")
+        self.assertTrue(
+            any("Qwen Colab batch queue is available" in value for value in status["blockers"])
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
