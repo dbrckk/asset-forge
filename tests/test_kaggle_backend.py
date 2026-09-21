@@ -1,0 +1,29 @@
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+from kaggle_backend import KaggleGenerationError, status
+
+
+class KaggleBackendTests(unittest.TestCase):
+    def test_status_requires_cli_token_and_username(self):
+        with patch("kaggle_backend.shutil.which", return_value="/usr/bin/kaggle"):
+            self.assertFalse(status(environ={})["rasterReady"])
+            self.assertTrue(status(environ={
+                "KAGGLE_API_TOKEN": "token",
+                "KAGGLE_USERNAME": "user",
+            })["rasterReady"])
+
+    def test_status_rejects_missing_cli(self):
+        with patch("kaggle_backend.shutil.which", return_value=None):
+            value = status(environ={
+                "KAGGLE_API_TOKEN": "token",
+                "KAGGLE_USERNAME": "user",
+            })
+            self.assertFalse(value["rasterReady"])
+            self.assertFalse(value["installed"])
+
+
+if __name__ == "__main__":
+    unittest.main()
