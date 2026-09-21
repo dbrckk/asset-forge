@@ -325,22 +325,24 @@ class GeneratorBackendsTests(unittest.TestCase):
         ):
             self.assertEqual(select_generation_backend(job(), "auto"), "cloudflare")
 
-    def test_auto_backend_uses_pollinations_when_cloudflare_unavailable(self):
+    def test_auto_backend_uses_kaggle_when_cloudflare_unavailable(self):
         with patch(
             "generator_backends.generator_backend_status",
             return_value={
                 "cloudflare": {"rasterReady": False},
+                "kaggleQwen": {"rasterReady": True},
                 "pollinations": {"rasterVectorReady": True, "threeDReady": False},
                 "imagenCodex": {"rasterReady": True},
             },
         ):
-            self.assertEqual(select_generation_backend(job(), "auto"), "pollinations")
+            self.assertEqual(select_generation_backend(job(), "auto"), "kaggle-qwen")
 
     def test_auto_backend_does_not_fall_back_to_imagen_codex(self):
         with patch(
             "generator_backends.generator_backend_status",
             return_value={
                 "cloudflare": {"rasterReady": False},
+                "kaggleQwen": {"rasterReady": False},
                 "pollinations": {"rasterVectorReady": False, "threeDReady": False},
                 "qwenColab": {"rasterReady": False},
                 "imagenCodex": {"rasterReady": True},
