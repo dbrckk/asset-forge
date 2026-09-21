@@ -69,6 +69,27 @@ class VectorBackendTests(unittest.TestCase):
             self.assertEqual(result["engine"], "legacy-api")
             self.assertTrue(output.is_file())
 
+    def test_rust_panic_is_wrapped_as_vectorization_error(self):
+        class PanicLike(BaseException):
+            pass
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "source.png"
+            output = root / "asset.svg"
+            source.write_bytes(b"PNG")
+
+            def legacy(*args, **kwargs):
+                raise PanicLike("rust panic")
+
+            fake = SimpleNamespace(convert_image_to_svg_py=legacy)
+            with patch("vector_backend.importlib.import_module", return_value=fake):
+                with self.assertRaisesRegex(
+                    VectorizationError,
+                    "PanicLike: rust panic",
+                ):
+                    vectorize_raster(source, output)
+
     def test_missing_input_fails_closed(self):
         with tempfile.TemporaryDirectory() as td:
             with self.assertRaisesRegex(VectorizationError, "missing"):
