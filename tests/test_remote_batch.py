@@ -127,6 +127,87 @@ class RemoteBatchTests(unittest.TestCase):
             self.assertEqual(reference.name, "hero.png")
             self.assertTrue((root / "out" / "batch-result.json").is_file())
 
+    def test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            spec = root / "spec.json"
+            spec.write_text(json.dumps({"items": [
+                {
+                    "id": "asset-1",
+                    "request": request("request-1", "asset-1"),
+                    "target_path": "assets/art/asset-1.png",
+                },
+                {
+                    "id": "asset-2",
+                    "request": request("request-2", "asset-2"),
+                    "target_path": "assets/art/asset-2.png",
+                },
+                {
+                    "id": "asset-3",
+                    "request": request("request-3", "asset-3"),
+                    "target_path": "assets/art/asset-3.png",
+                },
+            ]}))
+            backends = []
+
+            def fake_run(cmd, **kwargs):
+                selected_backend = cmd[cmd.index("--backend") + 1]
+                backends.append(selected_backend)
+                request_path = Path(cmd[cmd.index("fulfill") + 1])
+                payload = json.loads(request_path.read_text())
+                output = Path(cmd[cmd.index("--output-dir") + 1])
+                output.mkdir(parents=True, exist_ok=True)
+                artifact = output / (payload["manifest"]["id"] + ".png")
+                artifact.write_bytes(payload["manifest"]["id"].encode())
+
+                if selected_backend == "auto":
+                    routing = {
+                        "requestedBackend": "auto",
+                        "initialBackend": "cloudflare",
+                        "finalBackend": "kaggle-qwen",
+                        "fallbackCount": 1,
+                        "fallbacks": [{
+                            "from": "cloudflare",
+                            "to": "kaggle-qwen",
+                            "reason": "cloudflare-generation-error",
+                            "attempt": 1,
+                        }],
+                    }
+                else:
+                    routing = {
+                        "requestedBackend": selected_backend,
+                        "initialBackend": selected_backend,
+                        "finalBackend": selected_backend,
+                        "fallbackCount": 0,
+                        "fallbacks": [],
+                    }
+
+                (output / "production-report.json").write_text(json.dumps({
+                    "success": True,
+                    "artifact": str(artifact),
+                    "generation": {},
+                    "validation": {},
+                    "routing": routing,
+                }))
+
+                class Result:
+                    returncode = 0
+                    stdout = ""
+                    stderr = ""
+
+                return Result()
+
+            with patch("remote_batch.subprocess.run", side_effect=fake_run):
+                result = run(spec, root / "out", backend="auto")
+
+            self.assertEqual(backends, ["auto", "auto", "kaggle-qwen"])
+            breaker = result["routing_summary"]["circuit_breaker"]
+            self.assertTrue(breaker["open"])
+            self.assertEqual(breaker["threshold"], 2)
+            self.assertEqual(breaker["cloudflare_runtime_failures"], 2)
+            self.assertEqual(breaker["override"], "kaggle-qwen")
+            self.assertEqual(result["routing_summary"]["fallback_count"], 2)
+
     def test_remote_batch_propagates_library_version_metadata(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
