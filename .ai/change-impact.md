@@ -1,16 +1,16 @@
 # Change impact
 
-Base: 6f40a0be93ac7e268b61c58a32a0066ac41ac9d4
-Head: abe4cf88c40a81d46cbe897b20434724859f3c77
+Base: 9c84002be440a67def2210b74e0b14b8a9b37444
+Head: 5f337092bc5654ba41ef06b6130755f5a74ed388
 
 ## Changed files
-- M .github/workflows/deadline-zero-live-pilot.yml
+- M remote_batch.py
 
 ## Affected areas
-- .github
+- (root)
 
 ## Related test candidates
-- No direct filename-based test match detected.
+- tests/test_remote_batch.py
 
 ## Agent guidance
 - Read this file before broad repository exploration.

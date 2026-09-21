@@ -1,20 +1,41 @@
 {
   "budget": {
-    "confidence": "medium",
+    "confidence": "high",
     "expand_to": 12,
-    "max_files": 6,
+    "max_files": 3,
     "requested_max_files": 12,
-    "score_margin": 0,
-    "tier": "bounded",
-    "top_score": 29
+    "score_margin": 6,
+    "tier": "narrow",
+    "top_score": 35
   },
   "cache": {
-    "fingerprint": "45f459e6afc501827ba6d7b10604eee9979a11f953076e19af00f5c2774e54e3",
+    "fingerprint": "4281f4f2d7e074469b211eac2524f0c1243ca43471f63878d374b98506b03748",
     "hit": false
   },
-  "candidate_count": 22,
+  "candidate_count": 20,
   "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
   "files": [
+    {
+      "learning_score": 0,
+      "matched_terms": [
+        "engine",
+        "game"
+      ],
+      "path": "tests/test_remote_batch.py",
+      "reasons": [
+        "impact",
+        "search-index"
+      ],
+      "score": 35,
+      "symbols": [
+        "RemoteBatchTests",
+        "Result",
+        "fake_run",
+        "request",
+        "test_dependency_order_and_reference_are_preserved",
+        "test_remote_batch_propagates_library_version_metadata"
+      ]
+    },
     {
       "learning_score": 0,
       "matched_terms": [
@@ -38,26 +59,6 @@
     {
       "learning_score": 0,
       "matched_terms": [
-        "engine",
-        "game"
-      ],
-      "path": "tests/test_remote_batch.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 29,
-      "symbols": [
-        "RemoteBatchTests",
-        "Result",
-        "fake_run",
-        "request",
-        "test_dependency_order_and_reference_are_preserved",
-        "test_remote_batch_propagates_library_version_metadata"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
         "engine"
       ],
       "path": "engine_profile_validation.py",
@@ -70,82 +71,6 @@
         "validate_all_godot_profiles",
         "validate_godot_profile_data",
         "validate_godot_profile_file"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine"
-      ],
-      "path": "tests/test_engine_profile_validation.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 27,
-      "symbols": [
-        "EngineProfileValidationTests",
-        "test_invalid_fps_fails",
-        "test_invalid_json_file_fails",
-        "test_missing_required_field_fails",
-        "test_profile_name_mismatch_fails",
-        "test_repository_profiles_all_validate",
-        "test_unknown_field_fails",
-        "test_valid_profile_passes",
-        "test_wrong_type_fails",
-        "valid_profile"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine"
-      ],
-      "path": "asset_forge.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 21,
-      "symbols": [
-        "_enrich_engine_handoff",
-        "_persist_enriched_production_report",
-        "_write_production_inputs",
-        "build_atlas_manifest",
-        "build_plan",
-        "cmd_atlas_manifest",
-        "cmd_plan",
-        "cmd_validate",
-        "cmd_validate_raster",
-        "execute_compiled_production_job",
-        "is_power_of_two",
-        "load_json",
-        "load_valid_manifest",
-        "main",
-        "parser",
-        "select_tools",
-        "sprite_grid",
-        "validate_manifest",
-        "validate_raster_file"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine"
-      ],
-      "path": "tests/test_fulfill.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 21,
-      "symbols": [
-        "FulfillCommandTests",
-        "test_compiled_job_forwards_provided_source",
-        "test_compiled_job_routes_raster_to_generated_raster_executor",
-        "test_godot_3d_gets_handoff_and_import_validation",
-        "test_godot_sprite_sheet_gets_engine_handoff",
-        "test_parser_accepts_end_to_end_fulfill_command",
-        "test_parser_accepts_provided_source",
-        "test_production_inputs_are_persisted_for_handoff_and_audit"
       ]
     }
   ],

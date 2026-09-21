@@ -95,9 +95,10 @@
         "tests/test_cloudflare_backend.py"
       ],
       "dependents": [
+        "generator_backends.py",
         "tests/test_cloudflare_backend.py"
       ],
-      "in_degree": 1,
+      "in_degree": 2,
       "out_degree": 1
     },
     "colab_queue.py": {
@@ -124,7 +125,9 @@
     "generator_backends.py": {
       "dependencies": [
         "art_quality.py",
+        "cloudflare_backend.py",
         "colab_queue.py",
+        "kaggle_backend.py",
         "tests/test_cloudflare_backend.py",
         "visual_similarity.py"
       ],
@@ -135,7 +138,7 @@
         "tests/test_generator_backends.py"
       ],
       "in_degree": 4,
-      "out_degree": 4
+      "out_degree": 6
     },
     "gltf_binary_metrics.py": {
       "dependencies": [
@@ -226,6 +229,15 @@
       ],
       "in_degree": 3,
       "out_degree": 1
+    },
+    "kaggle_backend.py": {
+      "dependencies": [],
+      "dependents": [
+        "generator_backends.py",
+        "tests/test_kaggle_backend.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 0
     },
     "lod_3d.py": {
       "dependencies": [
@@ -516,6 +528,14 @@
     "tests/test_godot_handoff.py": {
       "dependencies": [
         "godot_handoff.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 1
+    },
+    "tests/test_kaggle_backend.py": {
+      "dependencies": [
+        "kaggle_backend.py"
       ],
       "dependents": [],
       "in_degree": 0,

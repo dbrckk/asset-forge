@@ -96,18 +96,18 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T07:40:45Z
+Generated: 2026-09-21T07:47:49Z
 
 ### Git
 - Branch: `main`
-- Head: `abe4cf88c40a`
-- Commit date: 2026-09-21T09:40:30+02:00
-- Commit: fix: rerun live pilot when batch runner changes
+- Head: `5f337092bc56`
+- Commit date: 2026-09-21T09:47:37+02:00
+- Commit: fix: resolve repository-relative production artifacts in batches
 - Tracked files: 288
 
 ### Recently changed files
-- `.github/workflows/deadline-zero-live-pilot.yml`
 - `remote_batch.py`
+- `.github/workflows/deadline-zero-live-pilot.yml`
 - `tests/test_generator_backends.py`
 
 ### Project signals

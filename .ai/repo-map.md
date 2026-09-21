@@ -9711,7 +9711,11 @@ report = json.loads(report_path.read_text(encoding="utf-8"))
 ⋮----
 artifact = Path(str(report.get("artifact") or ""))
 ⋮----
-artifact = item_root / artifact
+# Production reports may return either a path relative to the
+# per-job directory or a repository-relative path that already
+# includes output_root. Accept both, then enforce containment.
+local_candidate = item_root / artifact
+artifact = local_candidate if local_candidate.is_file() else artifact
 ⋮----
 artifact = artifact.resolve()
 ⋮----
