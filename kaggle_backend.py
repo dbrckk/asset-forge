@@ -34,7 +34,7 @@ def status(*, environ=None) -> dict:
         "credentialSource": "environment" if token and username else None,
         "model": DEFAULT_MODEL,
         "accelerator": DEFAULT_ACCELERATOR,
-        "quantization": "bitsandbytes_4bit_nf4_transformer",
+        "quantization": "bitsandbytes_4bit_nf4_transformer_text_encoder",
     }
 
 
@@ -85,7 +85,7 @@ quantization_config = PipelineQuantizationConfig(
         "bnb_4bit_quant_type": "nf4",
         "bnb_4bit_compute_dtype": torch.float16,
     },
-    components_to_quantize=["transformer"],
+    components_to_quantize=["transformer", "text_encoder"],
 )
 pipe = QwenImage21Pipeline.from_pretrained(
     model,
@@ -93,9 +93,10 @@ pipe = QwenImage21Pipeline.from_pretrained(
     low_cpu_mem_usage=True,
     quantization_config=quantization_config,
 )
-# Keep the text encoder in fp16 and quantize only the denoising transformer.
-# Model CPU offload avoids the meta-tensor failures seen when a quantized text
-# encoder is combined with aggressive sequential offload on Kaggle T4.
+# Quantize both the transformer and the 17.5 GB Qwen3-VL text encoder. The
+# latter cannot fit on a Kaggle T4 in fp16. Model CPU offload is compatible
+# with this configuration; avoid sequential CPU offload, which previously
+# triggered meta-tensor failures with the quantized text encoder.
 pipe.enable_model_cpu_offload()
 pipe.enable_attention_slicing()
 
