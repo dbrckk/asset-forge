@@ -270,6 +270,17 @@ def run(
         and value["attempts"]
         and isinstance(value["attempts"][-1].get("score"), (int, float))
     ]
+    technical_quality = [
+        item["technical_art"]
+        for item in results
+        if isinstance(item.get("technical_art"), dict)
+        and isinstance(item["technical_art"].get("score"), (int, float))
+    ]
+    technical_scores = [
+        float(value["score"])
+        for value in technical_quality
+    ]
+    combined_scores = scores + technical_scores
     routed = [
         item["routing"]
         for item in results
@@ -305,12 +316,25 @@ def run(
             },
         },
         "quality_summary": {
-            "checked": len(quality),
+            "checked": sum(
+                1 for item in results
+                if item.get("visual_similarity")
+                or (
+                    isinstance(item.get("technical_art"), dict)
+                    and isinstance(item["technical_art"].get("score"), (int, float))
+                )
+            ),
+            "visual_checked": len(quality),
+            "technical_checked": len(technical_quality),
             "regenerated": sum(
                 1 for value in quality
                 if len(value.get("attempts") or []) > 1
             ),
-            "minimum_score": min(scores) if scores else None,
+            "minimum_score": min(combined_scores) if combined_scores else None,
+            "minimum_visual_score": min(scores) if scores else None,
+            "minimum_technical_score": (
+                min(technical_scores) if technical_scores else None
+            ),
         },
         "items": results,
     }
