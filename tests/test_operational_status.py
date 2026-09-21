@@ -199,6 +199,55 @@ class OperationalStatusTests(unittest.TestCase):
             for value in status["blockers"]
         ))
 
+    def test_free_kaggle_triposr_3d_route_is_reported(self):
+        with patch(
+            "operational_status.generator_backend_status",
+            return_value={
+                "cloudflare": {"rasterReady": False},
+                "kaggleQwen": {"rasterReady": False},
+                "kaggleTripoSR": {
+                    "threeDReady": True,
+                    "model": "stabilityai/TripoSR",
+                },
+                "vtracer": {"vectorSvgReady": False},
+                "pollinations": {
+                    "rasterVectorReady": False,
+                    "threeDReady": False,
+                },
+                "imagenCodex": {"rasterReady": False},
+                "qwenColab": {"queueReady": False},
+            },
+        ), patch("operational_status.raster_backend_status") as raster, patch(
+            "operational_status.detect_3d_tools", return_value={}
+        ):
+            raster.return_value = {
+                "png": {"decode": True, "encode": True, "dependency": "builtin"},
+                "webp": {
+                    "inspect": True,
+                    "decode": {"available": False},
+                    "encode": {"available": False},
+                },
+            }
+            status = build_operational_status(
+                environ={},
+                home=Path("/not-real"),
+                which=lambda name: None,
+            )
+
+        self.assertTrue(status["capabilities"]["threeDGlb"])
+        self.assertTrue(status["capabilities"]["freeThreeDGlb"])
+        self.assertTrue(status["capabilities"]["kaggleTripoSR3D"])
+        self.assertTrue(status["ready"]["threeD"])
+        self.assertEqual(
+            status["routing"]["preferredThreeDBackend"],
+            "kaggle-triposr",
+        )
+        self.assertTrue(status["routing"]["freeThreeDReady"])
+        self.assertFalse(any(
+            "no authenticated 3D generation backend" in value
+            for value in status["blockers"]
+        ))
+
     def test_manual_raster_backend_is_not_reported_as_auto_route(self):
         with patch(
             "operational_status.generator_backend_status",
