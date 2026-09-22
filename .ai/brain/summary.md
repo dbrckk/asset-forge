@@ -4,9 +4,9 @@
 - Files indexed: 77
 - Files reparsed this run: 2
 - Symbols: 1000
-- Internal import edges: 96
-- Impacted files: 4
-- Selected tests: 2
+- Internal import edges: 100
+- Impacted files: 3
+- Selected tests: 1
 
 ## Languages
 - python: 74 files

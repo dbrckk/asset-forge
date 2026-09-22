@@ -1,927 +1,491 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "f0831235448f91ed7b70dd9ae2aa8b11c6976bf9",
-  "head": "2036df02af36c9398cdee6c15bd7738ca5e8cdfc",
+  "base": "2036df02af36c9398cdee6c15bd7738ca5e8cdfc",
+  "head": "89b39accbc64dff1e2e332c75bca426c8ecbe2cd",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "backend_history.py",
+      "path": "production_executor.py",
       "status": "M"
     },
     {
-      "path": "tests/test_backend_history.py",
+      "path": "schemas/production-report.schema.json",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_production_executor.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
-    "backend_history.py",
-    "tests/test_backend_history.py"
+    "production_executor.py",
+    "tests/test_production_executor.py"
   ],
   "impacted_files": [
-    "backend_history.py",
-    "generator_backends.py",
-    "tests/test_backend_history.py",
-    "tests/test_generator_backends.py"
+    "asset_forge.py",
+    "production_executor.py",
+    "tests/test_production_executor.py"
   ],
   "impacted_symbols": [
     {
-      "name": "empty_history",
+      "name": "load_json",
       "kind": "function",
-      "file": "backend_history.py",
-      "line": 12
-    },
-    {
-      "name": "load_history",
-      "kind": "function",
-      "file": "backend_history.py",
-      "line": 19
-    },
-    {
-      "name": "_stats",
-      "kind": "function",
-      "file": "backend_history.py",
-      "line": 37
-    },
-    {
-      "name": "_quality_from_generation",
-      "kind": "function",
-      "file": "backend_history.py",
-      "line": 55
-    },
-    {
-      "name": "_record",
-      "kind": "function",
-      "file": "backend_history.py",
+      "file": "asset_forge.py",
       "line": 72
     },
     {
-      "name": "_record_retry_strategy",
+      "name": "validate_manifest",
       "kind": "function",
-      "file": "backend_history.py",
-      "line": 94
+      "file": "asset_forge.py",
+      "line": 80
     },
     {
-      "name": "record_generation_result",
+      "name": "is_power_of_two",
       "kind": "function",
-      "file": "backend_history.py",
-      "line": 113
+      "file": "asset_forge.py",
+      "line": 138
     },
     {
-      "name": "backend_score",
+      "name": "sprite_grid",
       "kind": "function",
-      "file": "backend_history.py",
-      "line": 223
+      "file": "asset_forge.py",
+      "line": 142
     },
     {
-      "name": "rank_retry_strategies",
+      "name": "build_atlas_manifest",
       "kind": "function",
-      "file": "backend_history.py",
-      "line": 267
+      "file": "asset_forge.py",
+      "line": 163
     },
     {
-      "name": "choose_backend",
+      "name": "validate_raster_file",
       "kind": "function",
-      "file": "backend_history.py",
-      "line": 313
+      "file": "asset_forge.py",
+      "line": 194
     },
     {
-      "name": "_sanitize_metadata",
+      "name": "select_tools",
       "kind": "function",
-      "file": "generator_backends.py",
-      "line": 65
+      "file": "asset_forge.py",
+      "line": 253
     },
     {
-      "name": "GenerationError",
+      "name": "build_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 271
+    },
+    {
+      "name": "load_valid_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 300
+    },
+    {
+      "name": "cmd_validate",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 316
+    },
+    {
+      "name": "cmd_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 324
+    },
+    {
+      "name": "cmd_validate_raster",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 332
+    },
+    {
+      "name": "cmd_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 346
+    },
+    {
+      "name": "execute_compiled_production_job",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 370
+    },
+    {
+      "name": "_write_production_inputs",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 425
+    },
+    {
+      "name": "_persist_enriched_production_report",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 441
+    },
+    {
+      "name": "_enrich_engine_handoff",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 454
+    },
+    {
+      "name": "parser",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 535
+    },
+    {
+      "name": "main",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 749
+    },
+    {
+      "name": "ProductionExecutionError",
       "kind": "class",
-      "file": "generator_backends.py",
-      "line": 92
+      "file": "production_executor.py",
+      "line": 14
     },
     {
-      "name": "_backend_history_path",
+      "name": "_safe_asset_id",
       "kind": "function",
-      "file": "generator_backends.py",
-      "line": 96
-    },
-    {
-      "name": "_select_free_raster_backend",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 102
-    },
-    {
-      "name": "generator_backend_status",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 115
-    },
-    {
-      "name": "_sprite_sheet_geometry",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 188
-    },
-    {
-      "name": "_generation_dimensions",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 223
-    },
-    {
-      "name": "_ensure_transparency",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 237
-    },
-    {
-      "name": "_normalize_raster_geometry",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 317
-    },
-    {
-      "name": "build_generation_prompt",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 361
-    },
-    {
-      "name": "_technical_retry_categories",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 429
-    },
-    {
-      "name": "_technical_retry_guidance",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 468
-    },
-    {
-      "name": "pollinations_command",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 517
-    },
-    {
-      "name": "select_generation_backend",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 558
-    },
-    {
-      "name": "imagen_codex_command",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 597
-    },
-    {
-      "name": "_imagen_output_path",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 639
-    },
-    {
-      "name": "execute_generated_asset",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 675
-    },
-    {
-      "name": "_NoCredentialRedirect",
-      "kind": "class",
-      "file": "generator_backends.py",
-      "line": 1368
-    },
-    {
-      "name": "redirect_request",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 1369
-    },
-    {
-      "name": "_default_3d_opener",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 1373
-    },
-    {
-      "name": "_upload_reference_image",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 1380
-    },
-    {
-      "name": "execute_generated_3d_asset",
-      "kind": "function",
-      "file": "generator_backends.py",
-      "line": 1412
-    },
-    {
-      "name": "BackendHistoryTests",
-      "kind": "class",
-      "file": "tests/test_backend_history.py",
-      "line": 17
-    },
-    {
-      "name": "test_missing_or_invalid_history_falls_back_safely",
-      "kind": "function",
-      "file": "tests/test_backend_history.py",
+      "file": "production_executor.py",
       "line": 18
     },
     {
-      "name": "test_default_order_is_preserved_without_enough_samples",
+      "name": "_trusted_generated_source",
       "kind": "function",
-      "file": "tests/test_backend_history.py",
-      "line": 28
+      "file": "production_executor.py",
+      "line": 32
     },
     {
-      "name": "test_repeated_cloudflare_failures_move_auto_route_to_kaggle",
+      "name": "_provenance_from_manifest",
       "kind": "function",
-      "file": "tests/test_backend_history.py",
-      "line": 40
+      "file": "production_executor.py",
+      "line": 49
     },
     {
-      "name": "test_reliable_observed_cloudflare_stays_ahead_of_unknown_kaggle",
+      "name": "_routing_from_generation",
       "kind": "function",
-      "file": "tests/test_backend_history.py",
-      "line": 73
+      "file": "production_executor.py",
+      "line": 69
     },
     {
-      "name": "test_record_generation_result_tracks_fallback_and_quality",
+      "name": "_stage_provided_source",
       "kind": "function",
-      "file": "tests/test_backend_history.py",
-      "line": 90
+      "file": "production_executor.py",
+      "line": 100
     },
     {
-      "name": "test_record_generation_result_tracks_regeneration_pressure",
+      "name": "execute_generated_raster_job",
       "kind": "function",
-      "file": "tests/test_backend_history.py",
+      "file": "production_executor.py",
       "line": 126
     },
     {
-      "name": "test_retry_strategy_effectiveness_is_learned",
+      "name": "execute_generated_vector_job",
       "kind": "function",
-      "file": "tests/test_backend_history.py",
-      "line": 152
+      "file": "production_executor.py",
+      "line": 280
     },
     {
-      "name": "test_retry_strategy_ranking_prefers_proven_corrections",
+      "name": "execute_generated_3d_job",
       "kind": "function",
-      "file": "tests/test_backend_history.py",
-      "line": 184
-    },
-    {
-      "name": "test_3d_result_learns_from_nested_reference_generation",
-      "kind": "function",
-      "file": "tests/test_backend_history.py",
-      "line": 223
-    },
-    {
-      "name": "test_vector_result_records_underlying_raster_backend",
-      "kind": "function",
-      "file": "tests/test_backend_history.py",
-      "line": 250
+      "file": "production_executor.py",
+      "line": 385
     },
     {
       "name": "job",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 21
+      "file": "tests/test_production_executor.py",
+      "line": 13
     },
     {
-      "name": "GeneratorBackendsTests",
+      "name": "ProductionExecutorTests",
       "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 39
+      "file": "tests/test_production_executor.py",
+      "line": 27
     },
     {
-      "name": "test_prompt_preserves_hard_sprite_constraints",
+      "name": "test_generated_png_flows_through_processing_validation_and_report",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 40
+      "file": "tests/test_production_executor.py",
+      "line": 28
     },
     {
-      "name": "test_prompt_adds_alpha_and_premium_quality_guards",
+      "name": "generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 48
+      "file": "tests/test_production_executor.py",
+      "line": 32
     },
     {
-      "name": "test_technical_retry_guidance_targets_measured_failures",
+      "name": "optimizer",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
+      "file": "tests/test_production_executor.py",
+      "line": 37
+    },
+    {
+      "name": "validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 41
+    },
+    {
+      "name": "test_raster_report_exposes_backend_routing",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
       "line": 59
     },
     {
-      "name": "test_pollinations_command_never_contains_api_key",
+      "name": "generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 78
+      "file": "tests/test_production_executor.py",
+      "line": 63
     },
     {
-      "name": "test_vector_generation_defaults_to_recraft_svg_model",
+      "name": "test_webp_target_encodes_before_validation",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 94
-    },
-    {
-      "name": "test_backend_status_reports_auth_without_secret_value",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 111
-    },
-    {
-      "name": "test_execute_generated_asset_uses_bounded_subprocess_and_output",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 123
-    },
-    {
-      "name": "runner",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
+      "file": "tests/test_production_executor.py",
       "line": 126
     },
     {
-      "name": "Result",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 129
-    },
-    {
-      "name": "test_generator_metadata_redacts_credentials_before_reporting",
+      "name": "generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 161
+      "file": "tests/test_production_executor.py",
+      "line": 130
     },
     {
-      "name": "runner",
+      "name": "encode",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 165
+      "file": "tests/test_production_executor.py",
+      "line": 135
     },
     {
-      "name": "Result",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 169
-    },
-    {
-      "name": "test_backend_status_reports_imagen_codex_without_exposing_token",
+      "name": "validator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 207
+      "file": "tests/test_production_executor.py",
+      "line": 140
     },
     {
-      "name": "which",
+      "name": "test_validation_errors_block_artifact_promotion",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 208
+      "file": "tests/test_production_executor.py",
+      "line": 154
     },
     {
-      "name": "test_imagen_codex_command_uses_raster_output_and_no_token_argument",
+      "name": "generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
+      "file": "tests/test_production_executor.py",
+      "line": 158
+    },
+    {
+      "name": "optimizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 163
+    },
+    {
+      "name": "test_generated_vector_is_sanitized_normalized_and_validated",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 179
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 186
+    },
+    {
+      "name": "sanitizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 194
+    },
+    {
+      "name": "normalizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 198
+    },
+    {
+      "name": "profile_validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 205
+    },
+    {
+      "name": "test_vector_validation_errors_block_promotion",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
       "line": 223
     },
     {
-      "name": "test_imagen_codex_rejects_vector_generation",
+      "name": "generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 238
+      "file": "tests/test_production_executor.py",
+      "line": 230
     },
     {
-      "name": "test_execute_generated_asset_supports_imagen_codex_raster",
+      "name": "copy_step",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 244
+      "file": "tests/test_production_executor.py",
+      "line": 235
     },
     {
-      "name": "runner",
+      "name": "test_generated_3d_flows_through_profile_quality_and_godot_gates",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 248
+      "file": "tests/test_production_executor.py",
+      "line": 253
     },
     {
-      "name": "Result",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 252
-    },
-    {
-      "name": "which",
+      "name": "generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 259
+      "file": "tests/test_production_executor.py",
+      "line": 261
     },
     {
-      "name": "test_imagen_codex_command_accepts_local_visual_references",
+      "name": "profile_validator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 285
+      "file": "tests/test_production_executor.py",
+      "line": 270
     },
     {
-      "name": "test_execute_generated_asset_supports_imagen_visual_reference_and_retry",
+      "name": "quality",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 300
+      "file": "tests/test_production_executor.py",
+      "line": 275
     },
     {
-      "name": "runner",
+      "name": "godot",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 308
+      "file": "tests/test_production_executor.py",
+      "line": 284
     },
     {
-      "name": "Result",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 313
-    },
-    {
-      "name": "test_cloudflare_reference_routes_directly_to_kaggle_qwen",
+      "name": "test_3d_backend_and_model_are_forwarded_to_generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
+      "file": "tests/test_production_executor.py",
+      "line": 303
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 311
+    },
+    {
+      "name": "test_godot_3d_emits_runtime_plan_sidecar",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
       "line": 352
     },
     {
-      "name": "fake_kaggle",
+      "name": "generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 359
+      "file": "tests/test_production_executor.py",
+      "line": 360
     },
     {
-      "name": "test_auto_cloudflare_failure_falls_back_to_kaggle_qwen",
+      "name": "test_generated_character_3d_fails_when_profile_quality_fails",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 394
-    },
-    {
-      "name": "fake_kaggle",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 398
-    },
-    {
-      "name": "test_explicit_cloudflare_failure_does_not_silently_fallback",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 446
-    },
-    {
-      "name": "test_auto_backend_uses_adaptive_history_after_enough_samples",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 474
-    },
-    {
-      "name": "test_auto_kaggle_failure_can_fall_back_to_cloudflare",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 522
-    },
-    {
-      "name": "fake_cloudflare",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 526
-    },
-    {
-      "name": "test_successful_generation_persists_backend_history",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 570
-    },
-    {
-      "name": "fake_cloudflare",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 579
-    },
-    {
-      "name": "test_auto_backend_prefers_cloudflare_for_raster_when_ready",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 613
-    },
-    {
-      "name": "test_auto_backend_uses_kaggle_when_cloudflare_unavailable",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 624
-    },
-    {
-      "name": "test_auto_backend_does_not_fall_back_to_imagen_codex",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 636
-    },
-    {
-      "name": "test_auto_vector_prefers_vtracer_with_free_raster_source",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 650
-    },
-    {
-      "name": "test_auto_vector_falls_back_to_pollinations_when_vtracer_unavailable",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 668
-    },
-    {
-      "name": "test_vtracer_vector_generation_uses_free_cloudflare_source",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 686
-    },
-    {
-      "name": "fake_cloudflare",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 695
-    },
-    {
-      "name": "fake_vectorizer",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 702
-    },
-    {
-      "name": "test_vtracer_vector_source_falls_back_to_kaggle",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 742
-    },
-    {
-      "name": "fake_kaggle",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 750
-    },
-    {
-      "name": "fake_vectorizer",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 754
-    },
-    {
-      "name": "test_auto_backend_rejects_vector_when_only_imagen_is_ready",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 791
-    },
-    {
-      "name": "test_required_alpha_runs_transparency_processor_before_normalization",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 807
-    },
-    {
-      "name": "runner",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 815
-    },
-    {
-      "name": "Result",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 818
-    },
-    {
-      "name": "transparency",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 824
-    },
-    {
-      "name": "normalize",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 828
-    },
-    {
-      "name": "test_3d_prompt_is_reference_image_oriented",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 847
-    },
-    {
-      "name": "test_execute_generated_3d_uses_uploaded_reference_and_bearer_auth",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 855
+      "file": "tests/test_production_executor.py",
+      "line": 399
     },
     {
       "name": "generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 860
+      "file": "tests/test_production_executor.py",
+      "line": 406
     },
     {
-      "name": "upload_runner",
+      "name": "test_provided_png_source_skips_generator_and_is_staged",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 866
+      "file": "tests/test_production_executor.py",
+      "line": 434
     },
     {
-      "name": "Result",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 869
-    },
-    {
-      "name": "Response",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 875
-    },
-    {
-      "name": "__enter__",
+      "name": "optimizer",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 877
+      "file": "tests/test_production_executor.py",
+      "line": 443
     },
     {
-      "name": "__exit__",
+      "name": "test_provided_source_symlink_is_rejected",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 879
+      "file": "tests/test_production_executor.py",
+      "line": 464
     },
     {
-      "name": "read",
+      "name": "test_generator_source_must_stay_inside_job_output",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 881
-    },
-    {
-      "name": "opener",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 884
-    },
-    {
-      "name": "test_3d_generation_requires_configured_backend",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 914
-    },
-    {
-      "name": "test_auto_3d_secondary_prefers_free_kaggle_triposr",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 927
+      "file": "tests/test_production_executor.py",
+      "line": 492
     },
     {
       "name": "generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 932
+      "file": "tests/test_production_executor.py",
+      "line": 498
     },
     {
-      "name": "kaggle_generator",
+      "name": "test_asset_id_cannot_escape_job_output",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 943
+      "file": "tests/test_production_executor.py",
+      "line": 514
     },
     {
-      "name": "test_3d_generation_persists_backend_history",
+      "name": "test_non_raster_target_fails_closed",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 983
+      "file": "tests/test_production_executor.py",
+      "line": 532
+    },
+    {
+      "name": "test_generated_3d_reports_lod_artifacts_when_enabled",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 545
     },
     {
       "name": "generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 988
+      "file": "tests/test_production_executor.py",
+      "line": 556
     },
     {
-      "name": "kaggle_generator",
+      "name": "lod_reporter",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1001
+      "file": "tests/test_production_executor.py",
+      "line": 561
     },
     {
-      "name": "test_auto_3d_primary_prefers_pollinations_trellis",
+      "name": "test_required_collision_blocks_godot_prop_without_collision_node",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1045
+      "file": "tests/test_production_executor.py",
+      "line": 594
     },
     {
       "name": "generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1050
+      "file": "tests/test_production_executor.py",
+      "line": 603
     },
     {
-      "name": "upload_runner",
+      "name": "test_required_lod_toolchain_unavailable_blocks_3d_promotion",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1057
-    },
-    {
-      "name": "Result",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 1058
-    },
-    {
-      "name": "Response",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 1064
-    },
-    {
-      "name": "__enter__",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1066
-    },
-    {
-      "name": "__exit__",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1068
-    },
-    {
-      "name": "read",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1070
-    },
-    {
-      "name": "test_auto_3d_triposr_failure_falls_back_to_pollinations",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1105
+      "file": "tests/test_production_executor.py",
+      "line": 628
     },
     {
       "name": "generator",
       "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1109
-    },
-    {
-      "name": "upload_runner",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1115
-    },
-    {
-      "name": "Result",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 1116
-    },
-    {
-      "name": "Response",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 1122
-    },
-    {
-      "name": "__enter__",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1124
-    },
-    {
-      "name": "__exit__",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1126
-    },
-    {
-      "name": "read",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1128
-    },
-    {
-      "name": "test_unsupported_generated_type_fails_closed",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1167
-    },
-    {
-      "name": "test_raster_generation_uploads_and_passes_visual_reference",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1174
-    },
-    {
-      "name": "runner",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1181
-    },
-    {
-      "name": "Upload",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 1184
-    },
-    {
-      "name": "Generate",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 1191
-    },
-    {
-      "name": "test_visual_reference_rejects_vector_generation",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1232
-    },
-    {
-      "name": "test_visual_similarity_retries_until_threshold_passes",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1250
-    },
-    {
-      "name": "runner",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1258
-    },
-    {
-      "name": "Upload",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 1260
-    },
-    {
-      "name": "Generate",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 1268
-    },
-    {
-      "name": "test_visual_similarity_fails_after_retry_budget",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1298
-    },
-    {
-      "name": "runner",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1307
-    },
-    {
-      "name": "Upload",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 1309
-    },
-    {
-      "name": "Generate",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 1316
-    },
-    {
-      "name": "test_technical_quality_retries_without_visual_reference",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1342
-    },
-    {
-      "name": "runner",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1351
-    },
-    {
-      "name": "Generate",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 1355
-    },
-    {
-      "name": "test_technical_quality_rejects_after_retry_budget",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1386
-    },
-    {
-      "name": "runner",
-      "kind": "function",
-      "file": "tests/test_generator_backends.py",
-      "line": 1394
-    },
-    {
-      "name": "Generate",
-      "kind": "class",
-      "file": "tests/test_generator_backends.py",
-      "line": 1398
+      "file": "tests/test_production_executor.py",
+      "line": 639
     }
   ],
   "selected_tests": [
-    "tests/test_backend_history.py",
-    "tests/test_generator_backends.py"
+    "tests/test_production_executor.py"
   ]
 }

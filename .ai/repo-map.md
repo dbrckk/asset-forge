@@ -2165,6 +2165,17 @@ updates:
         "fallbackCount": {
           "type": "integer",
           "minimum": 0
+        },
+        "retryCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retryStrategies": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
         }
       },
       "additionalProperties": true
@@ -7844,6 +7855,14 @@ def _routing_from_generation(generation: dict) -> dict
 value = generation if isinstance(generation, dict) else {}
 fallbacks = value.get("fallbacks")
 fallbacks = fallbacks if isinstance(fallbacks, list) else []
+⋮----
+retry_strategies = {}
+technical = value.get("technicalQuality")
+attempts = technical.get("attempts") if isinstance(technical, dict) else None
+⋮----
+categories = attempt.get("retryCategories")
+⋮----
+name = str(category or "").strip()
 ⋮----
 def _stage_provided_source(source_path: Path, output_dir: Path, *, suffix: str) -> dict
 ⋮----

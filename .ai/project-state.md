@@ -96,19 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-22T05:57:54Z
+Generated: 2026-09-22T06:15:42Z
 
 ### Git
 - Branch: `main`
-- Head: `2036df02af36`
-- Commit date: 2026-09-22T07:57:28+02:00
-- Commit: test: preserve adaptive retry exploration ordering
+- Head: `89b39accbc64`
+- Commit date: 2026-09-22T08:15:26+02:00
+- Commit: test: cover retry telemetry in production reports
 - Tracked files: 305
 
 ### Recently changed files
+- `tests/test_production_executor.py`
+- `schemas/production-report.schema.json`
+- `production_executor.py`
 - `tests/test_backend_history.py`
 - `backend_history.py`
-- `generator_backends.py`
 
 ### Project signals
 - `pyproject.toml`
