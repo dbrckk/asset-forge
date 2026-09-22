@@ -2907,6 +2907,10 @@ def test_retry_strategy_effectiveness_is_learned(self)
 ⋮----
 strategies = history["backends"]["kaggle-qwen"]["retryStrategies"]
 ⋮----
+def test_retry_strategy_ranking_prefers_proven_corrections(self)
+⋮----
+ranked = rank_retry_strategies(
+⋮----
 def test_3d_result_learns_from_nested_reference_generation(self)
 ⋮----
 triposr = history["backends"]["kaggle-triposr"]
@@ -6172,11 +6176,26 @@ pressure_penalty = 0.04 * fallback_pressure + 0.04 * regeneration_pressure
 # not yet emit quality telemetry. Reliability plus configured priority
 # must still be able to outrank an entirely unknown alternative.
 ⋮----
+ordered = [str(value) for value in categories if str(value)]
+⋮----
+history = load_history(history_path)
+stats = history.get("backends", {}).get(str(backend))
+strategies = stats.get("retryStrategies") if isinstance(stats, dict) else None
+⋮----
+ranked = []
+⋮----
+improvements = int(value.get("improvements") or 0)
+passes = int(value.get("passes") or 0)
+delta_sum = float(value.get("scoreDeltaSum") or 0.0)
+pass_rate = max(0.0, min(1.0, passes / attempts))
+improvement_rate = max(0.0, min(1.0, improvements / attempts))
+average_delta = max(-1.0, min(1.0, delta_sum / attempts))
+score = (
+⋮----
 ready = [str(value) for value in ready_backends if str(value)]
 ⋮----
 order = list(default_order or ready)
 priority = {
-history = load_history(history_path)
 ⋮----
 candidates = []
 ⋮----
@@ -6474,9 +6493,9 @@ drift = metrics.get("maxFrameCenterDrift")
 ⋮----
 combined = " ".join(errors + warnings).lower()
 ⋮----
-def _technical_retry_guidance(result: dict | None) -> str
-⋮----
-guidance = []
+categories = _technical_retry_categories(result)
+guidance_by_category = {
+ordered = []
 ⋮----
 prompt = build_generation_prompt(job)
 ⋮----

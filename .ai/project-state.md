@@ -96,20 +96,19 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-21T19:46:38Z
+Generated: 2026-09-22T05:20:36Z
 
 ### Git
 - Branch: `main`
-- Head: `76a4a0c82fb7`
-- Commit date: 2026-09-21T21:46:14+02:00
-- Commit: test: cover corrective retry learning
+- Head: `f0831235448f`
+- Commit date: 2026-09-22T07:20:24+02:00
+- Commit: test: cover adaptive retry strategy ranking
 - Tracked files: 305
 
 ### Recently changed files
 - `tests/test_backend_history.py`
-- `backend_history.py`
 - `generator_backends.py`
-- `tests/test_generator_backends.py`
+- `backend_history.py`
 
 ### Project signals
 - `pyproject.toml`

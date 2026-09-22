@@ -51,13 +51,13 @@
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 21,
+          "line": 22,
           "preview": "self.assertEqual(load_history(missing), empty_history())",
           "definition_candidate": false
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 25,
+          "line": 26,
           "preview": "self.assertEqual(load_history(invalid), empty_history())",
           "definition_candidate": false
         }
@@ -86,7 +86,13 @@
         },
         {
           "file": "backend_history.py",
-          "line": 282,
+          "line": 277,
+          "preview": "history = load_history(history_path)",
+          "definition_candidate": false
+        },
+        {
+          "file": "backend_history.py",
+          "line": 325,
           "preview": "history = load_history(history_path)",
           "definition_candidate": false
         },
@@ -98,19 +104,19 @@
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 21,
+          "line": 22,
           "preview": "self.assertEqual(load_history(missing), empty_history())",
           "definition_candidate": false
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 25,
+          "line": 26,
           "preview": "self.assertEqual(load_history(invalid), empty_history())",
           "definition_candidate": false
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 122,
+          "line": 123,
           "preview": "persisted = load_history(path)",
           "definition_candidate": false
         },
@@ -127,7 +133,7 @@
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 9
+      "occurrence_count": 10
     },
     "_stats": {
       "definition": {
@@ -286,24 +292,24 @@
         {
           "file": "generator_backends.py",
           "line": 15,
-          "preview": "from backend_history import choose_backend, record_generation_result",
+          "preview": "from backend_history import choose_backend, rank_retry_strategies, record_generation_result",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1366,
+          "line": 1360,
           "preview": "record_generation_result(history_path, result)",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1593,
+          "line": 1587,
           "preview": "record_generation_result(history_path, result)",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1684,
+          "line": 1678,
           "preview": "record_generation_result(history_path, result)",
           "definition_candidate": false
         },
@@ -315,31 +321,31 @@
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 108,
+          "line": 109,
           "preview": "history = record_generation_result(path, result)",
           "definition_candidate": false
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 128,
+          "line": 129,
           "preview": "history = record_generation_result(path, {",
           "definition_candidate": false
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 154,
+          "line": 155,
           "preview": "history = record_generation_result(path, {",
           "definition_candidate": false
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 186,
+          "line": 225,
           "preview": "history = record_generation_result(path, {",
           "definition_candidate": false
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 213,
+          "line": 252,
           "preview": "history = record_generation_result(path, {",
           "definition_candidate": false
         }
@@ -362,7 +368,7 @@
         },
         {
           "file": "backend_history.py",
-          "line": 287,
+          "line": 330,
           "preview": "score = backend_score(history, backend, prior=prior)",
           "definition_candidate": false
         },
@@ -374,20 +380,20 @@
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 85,
+          "line": 86,
           "preview": "cloudflare = backend_score(history, \"cloudflare\", prior=1.0)",
           "definition_candidate": false
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 86,
+          "line": 87,
           "preview": "unknown_kaggle = backend_score(history, \"kaggle-qwen\", prior=0.98)",
           "definition_candidate": false
         }
       ],
       "occurrence_count": 5
     },
-    "choose_backend": {
+    "rank_retry_strategies": {
       "definition": {
         "file": "backend_history.py",
         "line": 267,
@@ -398,13 +404,54 @@
         {
           "file": "backend_history.py",
           "line": 267,
+          "preview": "def rank_retry_strategies(",
+          "definition_candidate": true
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 15,
+          "preview": "from backend_history import choose_backend, rank_retry_strategies, record_generation_result",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 850,
+          "preview": "rank_retry_strategies(",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_backend_history.py",
+          "line": 13,
+          "preview": "rank_retry_strategies,",
+          "definition_candidate": false
+        },
+        {
+          "file": "tests/test_backend_history.py",
+          "line": 214,
+          "preview": "ranked = rank_retry_strategies(",
+          "definition_candidate": false
+        }
+      ],
+      "occurrence_count": 5
+    },
+    "choose_backend": {
+      "definition": {
+        "file": "backend_history.py",
+        "line": 310,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "backend_history.py",
+          "line": 310,
           "preview": "def choose_backend(",
           "definition_candidate": true
         },
         {
           "file": "generator_backends.py",
           "line": 15,
-          "preview": "from backend_history import choose_backend, record_generation_result",
+          "preview": "from backend_history import choose_backend, rank_retry_strategies, record_generation_result",
           "definition_candidate": false
         },
         {
@@ -421,13 +468,13 @@
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 31,
+          "line": 32,
           "preview": "choose_backend(",
           "definition_candidate": false
         },
         {
           "file": "tests/test_backend_history.py",
-          "line": 64,
+          "line": 65,
           "preview": "choose_backend(",
           "definition_candidate": false
         }
@@ -462,37 +509,37 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 657,
+          "line": 644,
           "preview": "metadata = _sanitize_metadata(parsed)",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1019,
+          "line": 1013,
           "preview": "metadata = _sanitize_metadata({",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1046,
+          "line": 1040,
           "preview": "metadata = _sanitize_metadata(colab_result.get(\"metadata\") or {})",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1160,
+          "line": 1154,
           "preview": "metadata = _sanitize_metadata(metadata)",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1215,
+          "line": 1209,
           "preview": "metadata = _sanitize_metadata(parsed)",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1586,
+          "line": 1580,
           "preview": "\"metadata\": _sanitize_metadata(metadata),",
           "definition_candidate": false
         }
@@ -593,356 +640,362 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 575,
+          "line": 562,
           "preview": "raise GenerationError(f\"unsupported generator backend: {requested}\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 588,
+          "line": 575,
           "preview": "raise GenerationError(\"no authenticated free raster generation backend is ready\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 595,
+          "line": 582,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 603,
+          "line": 590,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 607,
+          "line": 594,
           "preview": "raise GenerationError(f\"unsupported generated asset type: {asset_type or '<missing>'}\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 621,
+          "line": 608,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 671,
+          "line": 658,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 685,
+          "line": 672,
           "preview": "raise GenerationError(\"imagen-codex did not produce a PNG output\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 705,
+          "line": 692,
           "preview": "raise GenerationError(\"production job does not require a generator\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 712,
+          "line": 699,
           "preview": "raise GenerationError(f\"unsupported generated asset type: {asset_type or '<missing>'}\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 720,
+          "line": 707,
           "preview": "raise GenerationError(\"polli executable not found; install @pollinations/cli\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 721,
+          "line": 708,
           "preview": "raise GenerationError(\"imagen executable not found\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 726,
+          "line": 713,
           "preview": "raise GenerationError(\"timeout_seconds must be positive\") from exc",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 728,
+          "line": 715,
           "preview": "raise GenerationError(\"timeout_seconds must be positive\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 745,
+          "line": 732,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 751,
+          "line": 738,
           "preview": "raise GenerationError(\"visual references are currently supported for raster generation only\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 753,
+          "line": 740,
           "preview": "raise GenerationError(\"selected backend does not support visual references\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 755,
+          "line": 742,
           "preview": "raise GenerationError(\"at most 4 visual references are supported\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 758,
+          "line": 745,
           "preview": "raise GenerationError(f\"visual reference file missing or empty: {reference}\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 834,
+          "line": 821,
           "preview": "raise GenerationError(\"visual and technical quality controls must be numeric\") from exc",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 836,
+          "line": 823,
           "preview": "raise GenerationError(\"visualSimilarityMin must be between 0 and 1\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 838,
+          "line": 825,
           "preview": "raise GenerationError(\"visualSimilarityRetries must be between 0 and 4\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 840,
+          "line": 827,
           "preview": "raise GenerationError(\"technicalQualityMin must be between 0 and 1\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 842,
+          "line": 829,
           "preview": "raise GenerationError(\"technicalQualityRetries must be between 0 and 4\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 936,
+          "line": 930,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 960,
+          "line": 954,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 979,
+          "line": 973,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1003,
+          "line": 997,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1008,
+          "line": 1002,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1018,
+          "line": 1012,
           "preview": "raise GenerationError(f\"vtracer vectorization failed: {exc}\") from exc",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1045,
+          "line": 1039,
           "preview": "raise GenerationError(f\"qwen-colab generation failed: {exc}\") from exc",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1105,
+          "line": 1099,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1110,
+          "line": 1104,
           "preview": "raise GenerationError(f\"cloudflare generation failed: {exc}\") from exc",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1154,
+          "line": 1148,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1159,
+          "line": 1153,
           "preview": "raise GenerationError(f\"kaggle-qwen generation failed: {exc}\") from exc",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1180,
+          "line": 1174,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1191,
+          "line": 1185,
           "preview": "raise GenerationError(f\"{backend} generation did not produce an output file\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1207,
+          "line": 1201,
           "preview": "raise GenerationError(\"raster normalization did not produce an output file\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1225,
+          "line": 1219,
           "preview": "raise GenerationError(\"visual similarity evaluator returned no numeric score\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1249,
+          "line": 1243,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1259,
+          "line": 1253,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1303,
+          "line": 1297,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1376,
+          "line": 1370,
           "preview": "raise GenerationError(\"credential-bearing 3D redirects are refused\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1402,
+          "line": 1396,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1409,
+          "line": 1403,
           "preview": "raise GenerationError(\"pollinations upload returned invalid JSON\") from exc",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1411,
+          "line": 1405,
           "preview": "raise GenerationError(\"pollinations upload response must be an object\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1414,
+          "line": 1408,
           "preview": "raise GenerationError(\"pollinations upload response missing trusted media URL\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1433,
+          "line": 1427,
           "preview": "raise GenerationError(\"production job does not require a generator\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1436,
+          "line": 1430,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1440,
+          "line": 1434,
           "preview": "raise GenerationError(\"3D resolution must be low, medium, or high\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1445,
+          "line": 1439,
           "preview": "raise GenerationError(\"timeout_seconds must be positive\") from exc",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1447,
+          "line": 1441,
           "preview": "raise GenerationError(\"timeout_seconds must be positive\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1478,
+          "line": 1472,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1485,
+          "line": 1479,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1510,
+          "line": 1504,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1532,
+          "line": 1526,
           "preview": "raise GenerationError(\"3D reference generation did not produce an image\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1565,
+          "line": 1559,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1570,
+          "line": 1564,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1599,
+          "line": 1593,
           "preview": "raise GenerationError(\"3D backend routing reached an invalid state\")",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1595,
+          "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
@@ -953,43 +1006,37 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 1607,
-          "preview": "raise GenerationError(",
-          "definition_candidate": false
-        },
-        {
-          "file": "generator_backends.py",
-          "line": 1612,
+          "line": 1606,
           "preview": "raise GenerationError(\"polli executable not found; install @pollinations/cli\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1644,
+          "line": 1638,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1649,
+          "line": 1643,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1653,
+          "line": 1647,
           "preview": "raise GenerationError(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1658,
+          "line": 1652,
           "preview": "raise GenerationError(\"generated GLB exceeds 100MB safety limit\")",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1660,
+          "line": 1654,
           "preview": "raise GenerationError(\"Pollinations 3D response is not a GLB\")",
           "definition_candidate": false
         },
@@ -1078,24 +1125,30 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 1363,
+          "line": 853,
+          "preview": "history_path=_backend_history_path(),",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 1357,
           "preview": "history_path = _backend_history_path() if record_history else None",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1590,
+          "line": 1584,
           "preview": "history_path = _backend_history_path(environ=env)",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1681,
+          "line": 1675,
           "preview": "history_path = _backend_history_path(environ=env)",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 5
+      "occurrence_count": 6
     },
     "_select_free_raster_backend": {
       "definition": {
@@ -1113,19 +1166,19 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 585,
+          "line": 572,
           "preview": "selected = _select_free_raster_backend(status)",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 920,
+          "line": 914,
           "preview": "raster_backend = _select_free_raster_backend(statuses)",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1505,
+          "line": 1499,
           "preview": "reference_backend = _select_free_raster_backend(",
           "definition_candidate": false
         }
@@ -1160,37 +1213,37 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 578,
+          "line": 565,
           "preview": "status = generator_backend_status()",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 766,
+          "line": 753,
           "preview": "and generator_backend_status().get(\"kaggleQwen\", {}).get(\"rasterReady\") is True",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 911,
+          "line": 905,
           "preview": "statuses = generator_backend_status()",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1077,
+          "line": 1071,
           "preview": "generator_backend_status()",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1126,
+          "line": 1120,
           "preview": "generator_backend_status()",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1450,
+          "line": 1444,
           "preview": "statuses = generator_backend_status(environ=env)",
           "definition_candidate": false
         },
@@ -1393,7 +1446,7 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 735,
+          "line": 722,
           "preview": "and _sprite_sheet_geometry(job) is not None",
           "definition_candidate": false
         }
@@ -1416,13 +1469,13 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 563,
+          "line": 550,
           "preview": "dimensions = _generation_dimensions(job)",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1055,
+          "line": 1049,
           "preview": "dimensions = _generation_dimensions(attempt_job) or (1024, 1024)",
           "definition_candidate": false
         }
@@ -1445,7 +1498,7 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 698,
+          "line": 685,
           "preview": "transparency_processor: Callable[..., dict | None] = _ensure_transparency,",
           "definition_candidate": false
         }
@@ -1468,7 +1521,7 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 697,
+          "line": 684,
           "preview": "raster_normalizer: Callable[[Path, Path, dict], dict | None] = _normalize_raster_geometry,",
           "definition_candidate": false
         }
@@ -1491,25 +1544,25 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 538,
+          "line": 525,
           "preview": "prompt = build_generation_prompt(job)",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 624,
+          "line": 611,
           "preview": "prompt = build_generation_prompt(job)",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 904,
+          "line": 898,
           "preview": "prompt = build_generation_prompt(attempt_job)",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1048,
+          "line": 1042,
           "preview": "prompt = build_generation_prompt(attempt_job)",
           "definition_candidate": false
         },
@@ -1568,12 +1621,18 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 863,
-          "preview": "_technical_retry_categories(previous_technical_result)",
+          "line": 479,
+          "preview": "categories = _technical_retry_categories(result)",
+          "definition_candidate": false
+        },
+        {
+          "file": "generator_backends.py",
+          "line": 851,
+          "preview": "_technical_retry_categories(previous_technical_result),",
           "definition_candidate": false
         }
       ],
-      "occurrence_count": 2
+      "occurrence_count": 3
     },
     "_technical_retry_guidance": {
       "definition": {
@@ -1586,13 +1645,13 @@
         {
           "file": "generator_backends.py",
           "line": 468,
-          "preview": "def _technical_retry_guidance(result: dict | None) -> str:",
+          "preview": "def _technical_retry_guidance(",
           "definition_candidate": true
         },
         {
           "file": "generator_backends.py",
-          "line": 876,
-          "preview": "_technical_retry_guidance(previous_technical_result)",
+          "line": 867,
+          "preview": "_technical_retry_guidance(",
           "definition_candidate": false
         },
         {
@@ -1613,20 +1672,20 @@
     "pollinations_command": {
       "definition": {
         "file": "generator_backends.py",
-        "line": 530,
+        "line": 517,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "generator_backends.py",
-          "line": 530,
+          "line": 517,
           "preview": "def pollinations_command(",
           "definition_candidate": true
         },
         {
           "file": "generator_backends.py",
-          "line": 801,
+          "line": 788,
           "preview": "command = pollinations_command(",
           "definition_candidate": false
         },
@@ -1654,20 +1713,20 @@
     "select_generation_backend": {
       "definition": {
         "file": "generator_backends.py",
-        "line": 571,
+        "line": 558,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "generator_backends.py",
-          "line": 571,
+          "line": 558,
           "preview": "def select_generation_backend(job: dict, requested: str = \"auto\") -> str:",
           "definition_candidate": true
         },
         {
           "file": "generator_backends.py",
-          "line": 707,
+          "line": 694,
           "preview": "backend = select_generation_backend(job, backend)",
           "definition_candidate": false
         },
@@ -1737,20 +1796,20 @@
     "imagen_codex_command": {
       "definition": {
         "file": "generator_backends.py",
-        "line": 610,
+        "line": 597,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "generator_backends.py",
-          "line": 610,
+          "line": 597,
           "preview": "def imagen_codex_command(",
           "definition_candidate": true
         },
         {
           "file": "generator_backends.py",
-          "line": 809,
+          "line": 796,
           "preview": "command = imagen_codex_command(",
           "definition_candidate": false
         },
@@ -1784,20 +1843,20 @@
     "_imagen_output_path": {
       "definition": {
         "file": "generator_backends.py",
-        "line": 652,
+        "line": 639,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "generator_backends.py",
-          "line": 652,
+          "line": 639,
           "preview": "def _imagen_output_path(output_dir: Path, stdout: str) -> tuple[Path, dict | None]:",
           "definition_candidate": true
         },
         {
           "file": "generator_backends.py",
-          "line": 1189,
+          "line": 1183,
           "preview": "current_output, metadata = _imagen_output_path(output_dir, stdout)",
           "definition_candidate": false
         }
@@ -1807,7 +1866,7 @@
     "execute_generated_asset": {
       "definition": {
         "file": "generator_backends.py",
-        "line": 688,
+        "line": 675,
         "kind": "function",
         "language": "python"
       },
@@ -1826,19 +1885,19 @@
         },
         {
           "file": "generator_backends.py",
-          "line": 688,
+          "line": 675,
           "preview": "def execute_generated_asset(",
           "definition_candidate": true
         },
         {
           "file": "generator_backends.py",
-          "line": 1427,
+          "line": 1421,
           "preview": "generator: Callable = execute_generated_asset,",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1521,
+          "line": 1515,
           "preview": "if generator is execute_generated_asset:",
           "definition_candidate": false
         },
@@ -1980,20 +2039,20 @@
     "_NoCredentialRedirect": {
       "definition": {
         "file": "generator_backends.py",
-        "line": 1374,
+        "line": 1368,
         "kind": "class",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "generator_backends.py",
-          "line": 1374,
+          "line": 1368,
           "preview": "class _NoCredentialRedirect(urllib.request.HTTPRedirectHandler):",
           "definition_candidate": true
         },
         {
           "file": "generator_backends.py",
-          "line": 1380,
+          "line": 1374,
           "preview": "return urllib.request.build_opener(_NoCredentialRedirect()).open(",
           "definition_candidate": false
         }
@@ -2003,14 +2062,14 @@
     "redirect_request": {
       "definition": {
         "file": "generator_backends.py",
-        "line": 1375,
+        "line": 1369,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "generator_backends.py",
-          "line": 1375,
+          "line": 1369,
           "preview": "def redirect_request(self, req, fp, code, msg, headers, newurl):",
           "definition_candidate": true
         }
@@ -2020,20 +2079,20 @@
     "_default_3d_opener": {
       "definition": {
         "file": "generator_backends.py",
-        "line": 1379,
+        "line": 1373,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "generator_backends.py",
-          "line": 1379,
+          "line": 1373,
           "preview": "def _default_3d_opener(request, timeout):",
           "definition_candidate": true
         },
         {
           "file": "generator_backends.py",
-          "line": 1430,
+          "line": 1424,
           "preview": "opener: Callable = _default_3d_opener,",
           "definition_candidate": false
         }
@@ -2043,26 +2102,26 @@
     "_upload_reference_image": {
       "definition": {
         "file": "generator_backends.py",
-        "line": 1386,
+        "line": 1380,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "generator_backends.py",
-          "line": 790,
+          "line": 777,
           "preview": "_upload_reference_image(",
           "definition_candidate": false
         },
         {
           "file": "generator_backends.py",
-          "line": 1386,
+          "line": 1380,
           "preview": "def _upload_reference_image(",
           "definition_candidate": true
         },
         {
           "file": "generator_backends.py",
-          "line": 1614,
+          "line": 1608,
           "preview": "image_url = _upload_reference_image(",
           "definition_candidate": false
         }
@@ -2072,14 +2131,14 @@
     "execute_generated_3d_asset": {
       "definition": {
         "file": "generator_backends.py",
-        "line": 1418,
+        "line": 1412,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "generator_backends.py",
-          "line": 1418,
+          "line": 1412,
           "preview": "def execute_generated_3d_asset(",
           "definition_candidate": true
         },
@@ -2143,14 +2202,14 @@
     "BackendHistoryTests": {
       "definition": {
         "file": "tests/test_backend_history.py",
-        "line": 16,
+        "line": 17,
         "kind": "class",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_backend_history.py",
-          "line": 16,
+          "line": 17,
           "preview": "class BackendHistoryTests(unittest.TestCase):",
           "definition_candidate": true
         }
@@ -2160,14 +2219,14 @@
     "test_missing_or_invalid_history_falls_back_safely": {
       "definition": {
         "file": "tests/test_backend_history.py",
-        "line": 17,
+        "line": 18,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_backend_history.py",
-          "line": 17,
+          "line": 18,
           "preview": "def test_missing_or_invalid_history_falls_back_safely(self):",
           "definition_candidate": true
         }
@@ -2177,14 +2236,14 @@
     "test_default_order_is_preserved_without_enough_samples": {
       "definition": {
         "file": "tests/test_backend_history.py",
-        "line": 27,
+        "line": 28,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_backend_history.py",
-          "line": 27,
+          "line": 28,
           "preview": "def test_default_order_is_preserved_without_enough_samples(self):",
           "definition_candidate": true
         }
@@ -2194,14 +2253,14 @@
     "test_repeated_cloudflare_failures_move_auto_route_to_kaggle": {
       "definition": {
         "file": "tests/test_backend_history.py",
-        "line": 39,
+        "line": 40,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_backend_history.py",
-          "line": 39,
+          "line": 40,
           "preview": "def test_repeated_cloudflare_failures_move_auto_route_to_kaggle(self):",
           "definition_candidate": true
         }
@@ -2211,14 +2270,14 @@
     "test_reliable_observed_cloudflare_stays_ahead_of_unknown_kaggle": {
       "definition": {
         "file": "tests/test_backend_history.py",
-        "line": 72,
+        "line": 73,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_backend_history.py",
-          "line": 72,
+          "line": 73,
           "preview": "def test_reliable_observed_cloudflare_stays_ahead_of_unknown_kaggle(self):",
           "definition_candidate": true
         }
@@ -2228,14 +2287,14 @@
     "test_record_generation_result_tracks_fallback_and_quality": {
       "definition": {
         "file": "tests/test_backend_history.py",
-        "line": 89,
+        "line": 90,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_backend_history.py",
-          "line": 89,
+          "line": 90,
           "preview": "def test_record_generation_result_tracks_fallback_and_quality(self):",
           "definition_candidate": true
         }
@@ -2245,14 +2304,14 @@
     "test_record_generation_result_tracks_regeneration_pressure": {
       "definition": {
         "file": "tests/test_backend_history.py",
-        "line": 125,
+        "line": 126,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_backend_history.py",
-          "line": 125,
+          "line": 126,
           "preview": "def test_record_generation_result_tracks_regeneration_pressure(self):",
           "definition_candidate": true
         }
@@ -2262,15 +2321,32 @@
     "test_retry_strategy_effectiveness_is_learned": {
       "definition": {
         "file": "tests/test_backend_history.py",
-        "line": 151,
+        "line": 152,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_backend_history.py",
-          "line": 151,
+          "line": 152,
           "preview": "def test_retry_strategy_effectiveness_is_learned(self):",
+          "definition_candidate": true
+        }
+      ],
+      "occurrence_count": 1
+    },
+    "test_retry_strategy_ranking_prefers_proven_corrections": {
+      "definition": {
+        "file": "tests/test_backend_history.py",
+        "line": 184,
+        "kind": "function",
+        "language": "python"
+      },
+      "occurrences": [
+        {
+          "file": "tests/test_backend_history.py",
+          "line": 184,
+          "preview": "def test_retry_strategy_ranking_prefers_proven_corrections(self):",
           "definition_candidate": true
         }
       ],
@@ -2279,14 +2355,14 @@
     "test_3d_result_learns_from_nested_reference_generation": {
       "definition": {
         "file": "tests/test_backend_history.py",
-        "line": 183,
+        "line": 222,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_backend_history.py",
-          "line": 183,
+          "line": 222,
           "preview": "def test_3d_result_learns_from_nested_reference_generation(self):",
           "definition_candidate": true
         }
@@ -2296,14 +2372,14 @@
     "test_vector_result_records_underlying_raster_backend": {
       "definition": {
         "file": "tests/test_backend_history.py",
-        "line": 210,
+        "line": 249,
         "kind": "function",
         "language": "python"
       },
       "occurrences": [
         {
           "file": "tests/test_backend_history.py",
-          "line": 210,
+          "line": 249,
           "preview": "def test_vector_result_records_underlying_raster_backend(self):",
           "definition_candidate": true
         }

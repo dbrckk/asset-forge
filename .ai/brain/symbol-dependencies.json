@@ -164,11 +164,33 @@
       "symbol_dependencies": [],
       "dependency_count": 0
     },
-    "choose_backend": {
+    "rank_retry_strategies": {
       "source": {
         "file": "backend_history.py",
         "start": 267,
-        "end": 290
+        "end": 307
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "load_history",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 19,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
+    },
+    "choose_backend": {
+      "source": {
+        "file": "backend_history.py",
+        "start": 310,
+        "end": 333
       },
       "symbol_dependencies": [
         {
@@ -249,7 +271,7 @@
           "definitions": [
             {
               "file": "backend_history.py",
-              "line": 267,
+              "line": 310,
               "kind": "function",
               "language": "python"
             }
@@ -432,16 +454,29 @@
       "source": {
         "file": "generator_backends.py",
         "start": 468,
-        "end": 527
+        "end": 514
       },
-      "symbol_dependencies": [],
-      "dependency_count": 0
+      "symbol_dependencies": [
+        {
+          "symbol": "_technical_retry_categories",
+          "definitions": [
+            {
+              "file": "generator_backends.py",
+              "line": 429,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        }
+      ],
+      "dependency_count": 1
     },
     "pollinations_command": {
       "source": {
         "file": "generator_backends.py",
-        "start": 530,
-        "end": 568
+        "start": 517,
+        "end": 555
       },
       "symbol_dependencies": [
         {
@@ -474,8 +509,8 @@
     "select_generation_backend": {
       "source": {
         "file": "generator_backends.py",
-        "start": 571,
-        "end": 607
+        "start": 558,
+        "end": 594
       },
       "symbol_dependencies": [
         {
@@ -550,8 +585,8 @@
     "imagen_codex_command": {
       "source": {
         "file": "generator_backends.py",
-        "start": 610,
-        "end": 649
+        "start": 597,
+        "end": 636
       },
       "symbol_dependencies": [
         {
@@ -584,8 +619,8 @@
     "_imagen_output_path": {
       "source": {
         "file": "generator_backends.py",
-        "start": 652,
-        "end": 685
+        "start": 639,
+        "end": 672
       },
       "symbol_dependencies": [
         {
@@ -618,8 +653,8 @@
     "execute_generated_asset": {
       "source": {
         "file": "generator_backends.py",
-        "start": 688,
-        "end": 1371
+        "start": 675,
+        "end": 1365
       },
       "symbol_dependencies": [
         {
@@ -735,7 +770,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 652,
+              "line": 639,
               "kind": "function",
               "language": "python"
             }
@@ -819,7 +854,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 1386,
+              "line": 1380,
               "kind": "function",
               "language": "python"
             }
@@ -915,7 +950,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 610,
+              "line": 597,
               "kind": "function",
               "language": "python"
             }
@@ -927,12 +962,24 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 530,
+              "line": 517,
               "kind": "function",
               "language": "python"
             }
           ],
           "relation": "same_file"
+        },
+        {
+          "symbol": "rank_retry_strategies",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
         },
         {
           "symbol": "record_generation_result",
@@ -951,7 +998,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 571,
+              "line": 558,
               "kind": "function",
               "language": "python"
             }
@@ -971,13 +1018,13 @@
           "relation": "imported_module"
         }
       ],
-      "dependency_count": 28
+      "dependency_count": 29
     },
     "_NoCredentialRedirect": {
       "source": {
         "file": "generator_backends.py",
-        "start": 1374,
-        "end": 1376
+        "start": 1368,
+        "end": 1370
       },
       "symbol_dependencies": [
         {
@@ -997,7 +1044,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 1375,
+              "line": 1369,
               "kind": "function",
               "language": "python"
             }
@@ -1010,8 +1057,8 @@
     "redirect_request": {
       "source": {
         "file": "generator_backends.py",
-        "start": 1375,
-        "end": 1376
+        "start": 1369,
+        "end": 1370
       },
       "symbol_dependencies": [
         {
@@ -1032,8 +1079,8 @@
     "_default_3d_opener": {
       "source": {
         "file": "generator_backends.py",
-        "start": 1379,
-        "end": 1383
+        "start": 1373,
+        "end": 1377
       },
       "symbol_dependencies": [
         {
@@ -1041,7 +1088,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 1374,
+              "line": 1368,
               "kind": "class",
               "language": "python"
             }
@@ -1054,8 +1101,8 @@
     "_upload_reference_image": {
       "source": {
         "file": "generator_backends.py",
-        "start": 1386,
-        "end": 1415
+        "start": 1380,
+        "end": 1409
       },
       "symbol_dependencies": [
         {
@@ -1076,8 +1123,8 @@
     "execute_generated_3d_asset": {
       "source": {
         "file": "generator_backends.py",
-        "start": 1418,
-        "end": 1687
+        "start": 1412,
+        "end": 1681
       },
       "symbol_dependencies": [
         {
@@ -1121,7 +1168,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 1379,
+              "line": 1373,
               "kind": "function",
               "language": "python"
             }
@@ -1157,7 +1204,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 1386,
+              "line": 1380,
               "kind": "function",
               "language": "python"
             }
@@ -1169,7 +1216,7 @@
           "definitions": [
             {
               "file": "generator_backends.py",
-              "line": 688,
+              "line": 675,
               "kind": "function",
               "language": "python"
             }
@@ -1236,8 +1283,8 @@
     "BackendHistoryTests": {
       "source": {
         "file": "tests/test_backend_history.py",
-        "start": 16,
-        "end": 222
+        "start": 17,
+        "end": 261
       },
       "symbol_dependencies": [
         {
@@ -1257,7 +1304,7 @@
           "definitions": [
             {
               "file": "backend_history.py",
-              "line": 267,
+              "line": 310,
               "kind": "function",
               "language": "python"
             }
@@ -1289,6 +1336,18 @@
           "relation": "imported_module"
         },
         {
+          "symbol": "rank_retry_strategies",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        },
+        {
           "symbol": "record_generation_result",
           "definitions": [
             {
@@ -1305,7 +1364,7 @@
           "definitions": [
             {
               "file": "tests/test_backend_history.py",
-              "line": 183,
+              "line": 222,
               "kind": "function",
               "language": "python"
             }
@@ -1317,7 +1376,7 @@
           "definitions": [
             {
               "file": "tests/test_backend_history.py",
-              "line": 27,
+              "line": 28,
               "kind": "function",
               "language": "python"
             }
@@ -1329,7 +1388,7 @@
           "definitions": [
             {
               "file": "tests/test_backend_history.py",
-              "line": 17,
+              "line": 18,
               "kind": "function",
               "language": "python"
             }
@@ -1341,7 +1400,7 @@
           "definitions": [
             {
               "file": "tests/test_backend_history.py",
-              "line": 89,
+              "line": 90,
               "kind": "function",
               "language": "python"
             }
@@ -1353,7 +1412,7 @@
           "definitions": [
             {
               "file": "tests/test_backend_history.py",
-              "line": 125,
+              "line": 126,
               "kind": "function",
               "language": "python"
             }
@@ -1365,7 +1424,7 @@
           "definitions": [
             {
               "file": "tests/test_backend_history.py",
-              "line": 72,
+              "line": 73,
               "kind": "function",
               "language": "python"
             }
@@ -1377,7 +1436,7 @@
           "definitions": [
             {
               "file": "tests/test_backend_history.py",
-              "line": 39,
+              "line": 40,
               "kind": "function",
               "language": "python"
             }
@@ -1389,7 +1448,19 @@
           "definitions": [
             {
               "file": "tests/test_backend_history.py",
-              "line": 151,
+              "line": 152,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "same_file"
+        },
+        {
+          "symbol": "test_retry_strategy_ranking_prefers_proven_corrections",
+          "definitions": [
+            {
+              "file": "tests/test_backend_history.py",
+              "line": 184,
               "kind": "function",
               "language": "python"
             }
@@ -1401,7 +1472,7 @@
           "definitions": [
             {
               "file": "tests/test_backend_history.py",
-              "line": 210,
+              "line": 249,
               "kind": "function",
               "language": "python"
             }
@@ -1409,13 +1480,13 @@
           "relation": "same_file"
         }
       ],
-      "dependency_count": 14
+      "dependency_count": 16
     },
     "test_missing_or_invalid_history_falls_back_safely": {
       "source": {
         "file": "tests/test_backend_history.py",
-        "start": 17,
-        "end": 25
+        "start": 18,
+        "end": 26
       },
       "symbol_dependencies": [
         {
@@ -1448,8 +1519,8 @@
     "test_default_order_is_preserved_without_enough_samples": {
       "source": {
         "file": "tests/test_backend_history.py",
-        "start": 27,
-        "end": 37
+        "start": 28,
+        "end": 38
       },
       "symbol_dependencies": [
         {
@@ -1457,7 +1528,7 @@
           "definitions": [
             {
               "file": "backend_history.py",
-              "line": 267,
+              "line": 310,
               "kind": "function",
               "language": "python"
             }
@@ -1470,8 +1541,8 @@
     "test_repeated_cloudflare_failures_move_auto_route_to_kaggle": {
       "source": {
         "file": "tests/test_backend_history.py",
-        "start": 39,
-        "end": 70
+        "start": 40,
+        "end": 71
       },
       "symbol_dependencies": [
         {
@@ -1479,7 +1550,7 @@
           "definitions": [
             {
               "file": "backend_history.py",
-              "line": 267,
+              "line": 310,
               "kind": "function",
               "language": "python"
             }
@@ -1492,8 +1563,8 @@
     "test_reliable_observed_cloudflare_stays_ahead_of_unknown_kaggle": {
       "source": {
         "file": "tests/test_backend_history.py",
-        "start": 72,
-        "end": 87
+        "start": 73,
+        "end": 88
       },
       "symbol_dependencies": [
         {
@@ -1514,8 +1585,8 @@
     "test_record_generation_result_tracks_fallback_and_quality": {
       "source": {
         "file": "tests/test_backend_history.py",
-        "start": 89,
-        "end": 123
+        "start": 90,
+        "end": 124
       },
       "symbol_dependencies": [
         {
@@ -1548,8 +1619,8 @@
     "test_record_generation_result_tracks_regeneration_pressure": {
       "source": {
         "file": "tests/test_backend_history.py",
-        "start": 125,
-        "end": 149
+        "start": 126,
+        "end": 150
       },
       "symbol_dependencies": [
         {
@@ -1570,8 +1641,8 @@
     "test_retry_strategy_effectiveness_is_learned": {
       "source": {
         "file": "tests/test_backend_history.py",
-        "start": 151,
-        "end": 181
+        "start": 152,
+        "end": 182
       },
       "symbol_dependencies": [
         {
@@ -1589,11 +1660,33 @@
       ],
       "dependency_count": 1
     },
+    "test_retry_strategy_ranking_prefers_proven_corrections": {
+      "source": {
+        "file": "tests/test_backend_history.py",
+        "start": 184,
+        "end": 220
+      },
+      "symbol_dependencies": [
+        {
+          "symbol": "rank_retry_strategies",
+          "definitions": [
+            {
+              "file": "backend_history.py",
+              "line": 267,
+              "kind": "function",
+              "language": "python"
+            }
+          ],
+          "relation": "imported_module"
+        }
+      ],
+      "dependency_count": 1
+    },
     "test_3d_result_learns_from_nested_reference_generation": {
       "source": {
         "file": "tests/test_backend_history.py",
-        "start": 183,
-        "end": 208
+        "start": 222,
+        "end": 247
       },
       "symbol_dependencies": [
         {
@@ -1614,8 +1707,8 @@
     "test_vector_result_records_underlying_raster_backend": {
       "source": {
         "file": "tests/test_backend_history.py",
-        "start": 210,
-        "end": 222
+        "start": 249,
+        "end": 261
       },
       "symbol_dependencies": [
         {
