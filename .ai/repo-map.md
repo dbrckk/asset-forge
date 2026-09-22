@@ -6184,6 +6184,10 @@ strategies = stats.get("retryStrategies") if isinstance(stats, dict) else None
 ⋮----
 ranked = []
 ⋮----
+# Keep untried strategies above repeatedly weak ones so the system
+# retains bounded exploration instead of getting stuck exploiting
+# a correction that has already underperformed.
+⋮----
 improvements = int(value.get("improvements") or 0)
 passes = int(value.get("passes") or 0)
 delta_sum = float(value.get("scoreDeltaSum") or 0.0)

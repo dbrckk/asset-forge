@@ -1,7 +1,7 @@
 # Change impact
 
-Base: e5919aec4c191aab418b3200332c3e5ab43a24da
-Head: f0831235448f91ed7b70dd9ae2aa8b11c6976bf9
+Base: a2adba5d3b50374067f8732bf85dde491e267e4c
+Head: 2036df02af36c9398cdee6c15bd7738ca5e8cdfc
 
 ## Changed files
 - M tests/test_backend_history.py
