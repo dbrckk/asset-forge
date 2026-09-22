@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Callable
 
 from art_quality import ArtQualityError, evaluate_raster_art
-from backend_history import choose_backend, record_generation_result
+from backend_history import choose_backend, rank_retry_strategies, record_generation_result
 from visual_similarity import compare_against_references
 from cloudflare_backend import (
     CloudflareGenerationError,
@@ -465,7 +465,10 @@ def _technical_retry_categories(result: dict | None) -> list[str]:
     return list(dict.fromkeys(categories or ["general-quality"]))
 
 
-def _technical_retry_guidance(result: dict | None) -> str:
+def _technical_retry_guidance(
+    result: dict | None,
+    category_order: list[str] | None = None,
+) -> str:
     if not isinstance(result, dict):
         return (
             "The previous variant failed technical game-art quality. "
@@ -473,58 +476,42 @@ def _technical_retry_guidance(result: dict | None) -> str:
             "frame stability, contrast, and animation-frame distinctness."
         )
 
-    metrics = result.get("metrics") if isinstance(result.get("metrics"), dict) else {}
-    errors = [str(v) for v in (result.get("errors") or [])]
-    warnings = [str(v) for v in (result.get("warnings") or [])]
-    guidance = []
-
-    border = metrics.get("borderAlphaRatio")
-    if isinstance(border, (int, float)) and float(border) > 0.08:
-        guidance.append(
+    categories = _technical_retry_categories(result)
+    guidance_by_category = {
+        "border-clearance": (
             "Move all visible artwork farther from the image borders and preserve clear transparent padding."
-        )
-
-    occupancy = metrics.get("occupancy")
-    if isinstance(occupancy, (int, float)):
-        if float(occupancy) > 0.78:
-            guidance.append(
-                "Reduce subject scale so the full silhouette fits comfortably inside the canvas."
-            )
-        elif float(occupancy) < 0.08:
-            guidance.append(
-                "Increase subject scale so the asset uses the canvas effectively without touching borders."
-            )
-
-    contrast = metrics.get("contrastSpan")
-    if isinstance(contrast, (int, float)) and float(contrast) < 70:
-        guidance.append(
+        ),
+        "scale-down": (
+            "Reduce subject scale so the full silhouette fits comfortably inside the canvas."
+        ),
+        "scale-up": (
+            "Increase subject scale so the asset uses the canvas effectively without touching borders."
+        ),
+        "contrast": (
             "Increase local value contrast and separate the focal subject more clearly from secondary details."
-        )
-
-    unique = metrics.get("uniqueFrameRatio")
-    if isinstance(unique, (int, float)) and float(unique) < 0.75:
-        guidance.append(
+        ),
+        "frame-diversity": (
             "Make each animation frame visibly distinct while preserving the same subject identity and proportions."
-        )
-
-    drift = metrics.get("maxFrameCenterDrift")
-    if isinstance(drift, (int, float)) and float(drift) > 0.18:
-        guidance.append(
+        ),
+        "frame-anchor": (
             "Keep the subject anchored to a stable frame center with consistent scale across the sprite sequence."
-        )
-
-    combined = " ".join(errors + warnings).lower()
-    if "fully opaque" in combined or "transparent background" in combined:
-        guidance.append(
+        ),
+        "transparency": (
             "Use true transparency around the subject; do not render a matte, floor, card, checkerboard, or backdrop."
-        )
-
-    if not guidance:
-        guidance.append(
+        ),
+        "general-quality": (
             "Improve technical game-art quality with a cleaner silhouette, controlled detail hierarchy, "
             "stronger readable contrast, and more consistent production-ready framing."
-        )
-    return " ".join(dict.fromkeys(guidance))
+        ),
+    }
+    ordered = []
+    for category in category_order or []:
+        if category in categories and category not in ordered:
+            ordered.append(category)
+    for category in categories:
+        if category not in ordered:
+            ordered.append(category)
+    return " ".join(guidance_by_category[category] for category in ordered)
 
 
 def pollinations_command(
@@ -860,7 +847,11 @@ def execute_generated_asset(
     previous_technical_result = None
     for attempt in range(retry_budget + 1):
         applied_retry_categories = (
-            _technical_retry_categories(previous_technical_result)
+            rank_retry_strategies(
+                _technical_retry_categories(previous_technical_result),
+                backend=backend,
+                history_path=_backend_history_path(),
+            )
             if attempt > 0 and previous_technical_failed
             else []
         )
@@ -873,7 +864,10 @@ def execute_generated_asset(
                 )
             if previous_technical_failed:
                 retry_guidance.append(
-                    _technical_retry_guidance(previous_technical_result)
+                    _technical_retry_guidance(
+                        previous_technical_result,
+                        applied_retry_categories,
+                    )
                 )
 
         if backend in {"qwen-colab", "cloudflare", "kaggle-qwen", "vtracer"}:
