@@ -10,6 +10,7 @@ from backend_history import (
     empty_history,
     load_history,
     record_generation_result,
+    rank_retry_strategies,
 )
 
 
@@ -179,6 +180,44 @@ class BackendHistoryTests(unittest.TestCase):
             self.assertEqual(strategies["border-clearance"]["attempts"], 1)
             self.assertEqual(strategies["border-clearance"]["improvements"], 1)
             self.assertEqual(strategies["border-clearance"]["passes"], 0)
+
+    def test_retry_strategy_ranking_prefers_proven_corrections(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "history.json"
+            history = {
+                "schema": SCHEMA,
+                "backends": {
+                    "kaggle-qwen": {
+                        "attempts": 6,
+                        "successes": 6,
+                        "failures": 0,
+                        "qualitySamples": 0,
+                        "qualitySum": 0.0,
+                        "retryStrategies": {
+                            "contrast": {
+                                "attempts": 4,
+                                "improvements": 4,
+                                "passes": 3,
+                                "scoreDeltaSum": 0.8,
+                            },
+                            "border-clearance": {
+                                "attempts": 4,
+                                "improvements": 1,
+                                "passes": 0,
+                                "scoreDeltaSum": 0.05,
+                            },
+                        },
+                    }
+                },
+            }
+            path.write_text(json.dumps(history), encoding="utf-8")
+            ranked = rank_retry_strategies(
+                ["border-clearance", "contrast", "frame-anchor"],
+                backend="kaggle-qwen",
+                history_path=path,
+            )
+            self.assertEqual(ranked[0], "contrast")
+            self.assertEqual(ranked[-1], "border-clearance")
 
     def test_3d_result_learns_from_nested_reference_generation(self):
         with tempfile.TemporaryDirectory() as td:
