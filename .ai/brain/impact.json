@@ -1,491 +1,164 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "2036df02af36c9398cdee6c15bd7738ca5e8cdfc",
-  "head": "89b39accbc64dff1e2e332c75bca426c8ecbe2cd",
+  "base": "89b39accbc64dff1e2e332c75bca426c8ecbe2cd",
+  "head": "90029761688cdf7777336c3ee4cdd8a93e87eb79",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": "production_executor.py",
+      "path": ".github/workflows/production-os-batch.yml",
       "status": "M"
     },
     {
-      "path": "schemas/production-report.schema.json",
+      "path": "README.md",
       "status": "M"
     },
     {
-      "path": "tests/test_production_executor.py",
+      "path": "remote_batch.py",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_remote_batch.py",
       "status": "M"
     }
   ],
   "changed_source_files": [
-    "production_executor.py",
-    "tests/test_production_executor.py"
+    "remote_batch.py",
+    "tests/test_remote_batch.py"
   ],
   "impacted_files": [
-    "asset_forge.py",
-    "production_executor.py",
-    "tests/test_production_executor.py"
+    "remote_batch.py",
+    "tests/test_remote_batch.py"
   ],
   "impacted_symbols": [
     {
-      "name": "load_json",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 72
+      "name": "RemoteBatchError",
+      "kind": "class",
+      "file": "remote_batch.py",
+      "line": 15
     },
     {
-      "name": "validate_manifest",
+      "name": "_fallback_count",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 80
+      "file": "remote_batch.py",
+      "line": 19
     },
     {
-      "name": "is_power_of_two",
+      "name": "_cloudflare_runtime_fallback_count",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 138
+      "file": "remote_batch.py",
+      "line": 27
     },
     {
-      "name": "sprite_grid",
+      "name": "_safe_id",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 142
+      "file": "remote_batch.py",
+      "line": 41
     },
     {
-      "name": "build_atlas_manifest",
+      "name": "_ordered_items",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 163
+      "file": "remote_batch.py",
+      "line": 48
     },
     {
-      "name": "validate_raster_file",
+      "name": "run",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 194
-    },
-    {
-      "name": "select_tools",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 253
-    },
-    {
-      "name": "build_plan",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 271
-    },
-    {
-      "name": "load_valid_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 300
-    },
-    {
-      "name": "cmd_validate",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 316
-    },
-    {
-      "name": "cmd_plan",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 324
-    },
-    {
-      "name": "cmd_validate_raster",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 332
-    },
-    {
-      "name": "cmd_atlas_manifest",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 346
-    },
-    {
-      "name": "execute_compiled_production_job",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 370
-    },
-    {
-      "name": "_write_production_inputs",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 425
-    },
-    {
-      "name": "_persist_enriched_production_report",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 441
-    },
-    {
-      "name": "_enrich_engine_handoff",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 454
-    },
-    {
-      "name": "parser",
-      "kind": "function",
-      "file": "asset_forge.py",
-      "line": 535
+      "file": "remote_batch.py",
+      "line": 100
     },
     {
       "name": "main",
       "kind": "function",
-      "file": "asset_forge.py",
-      "line": 749
+      "file": "remote_batch.py",
+      "line": 365
     },
     {
-      "name": "ProductionExecutionError",
+      "name": "request",
+      "kind": "function",
+      "file": "tests/test_remote_batch.py",
+      "line": 10
+    },
+    {
+      "name": "RemoteBatchTests",
       "kind": "class",
-      "file": "production_executor.py",
-      "line": 14
-    },
-    {
-      "name": "_safe_asset_id",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 18
-    },
-    {
-      "name": "_trusted_generated_source",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 32
-    },
-    {
-      "name": "_provenance_from_manifest",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 49
-    },
-    {
-      "name": "_routing_from_generation",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 69
-    },
-    {
-      "name": "_stage_provided_source",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 100
-    },
-    {
-      "name": "execute_generated_raster_job",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 126
-    },
-    {
-      "name": "execute_generated_vector_job",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 280
-    },
-    {
-      "name": "execute_generated_3d_job",
-      "kind": "function",
-      "file": "production_executor.py",
-      "line": 385
-    },
-    {
-      "name": "job",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 13
-    },
-    {
-      "name": "ProductionExecutorTests",
-      "kind": "class",
-      "file": "tests/test_production_executor.py",
-      "line": 27
-    },
-    {
-      "name": "test_generated_png_flows_through_processing_validation_and_report",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 28
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 32
-    },
-    {
-      "name": "optimizer",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
+      "file": "tests/test_remote_batch.py",
       "line": 37
     },
     {
-      "name": "validator",
+      "name": "test_dependency_order_and_reference_are_preserved",
       "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 41
+      "file": "tests/test_remote_batch.py",
+      "line": 38
     },
     {
-      "name": "test_raster_report_exposes_backend_routing",
+      "name": "fake_run",
       "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 59
+      "file": "tests/test_remote_batch.py",
+      "line": 57
     },
     {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 63
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_remote_batch.py",
+      "line": 106
     },
     {
-      "name": "test_webp_target_encodes_before_validation",
+      "name": "test_cached_assets_count_as_quality_checked_from_technical_validation",
       "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 126
+      "file": "tests/test_remote_batch.py",
+      "line": 141
     },
     {
-      "name": "generator",
+      "name": "fake_run",
       "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 130
+      "file": "tests/test_remote_batch.py",
+      "line": 151
     },
     {
-      "name": "encode",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 135
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_remote_batch.py",
+      "line": 174
     },
     {
-      "name": "validator",
+      "name": "test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures",
       "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 140
+      "file": "tests/test_remote_batch.py",
+      "line": 191
     },
     {
-      "name": "test_validation_errors_block_artifact_promotion",
+      "name": "fake_run",
       "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 154
+      "file": "tests/test_remote_batch.py",
+      "line": 214
     },
     {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 158
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_remote_batch.py",
+      "line": 254
     },
     {
-      "name": "optimizer",
+      "name": "test_remote_batch_propagates_library_version_metadata",
       "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 163
+      "file": "tests/test_remote_batch.py",
+      "line": 272
     },
     {
-      "name": "test_generated_vector_is_sanitized_normalized_and_validated",
+      "name": "fake_run",
       "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 179
+      "file": "tests/test_remote_batch.py",
+      "line": 282
     },
     {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 186
-    },
-    {
-      "name": "sanitizer",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 194
-    },
-    {
-      "name": "normalizer",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 198
-    },
-    {
-      "name": "profile_validator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 205
-    },
-    {
-      "name": "test_vector_validation_errors_block_promotion",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 223
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 230
-    },
-    {
-      "name": "copy_step",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 235
-    },
-    {
-      "name": "test_generated_3d_flows_through_profile_quality_and_godot_gates",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 253
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 261
-    },
-    {
-      "name": "profile_validator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 270
-    },
-    {
-      "name": "quality",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 275
-    },
-    {
-      "name": "godot",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 284
-    },
-    {
-      "name": "test_3d_backend_and_model_are_forwarded_to_generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 303
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 311
-    },
-    {
-      "name": "test_godot_3d_emits_runtime_plan_sidecar",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 352
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 360
-    },
-    {
-      "name": "test_generated_character_3d_fails_when_profile_quality_fails",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 399
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 406
-    },
-    {
-      "name": "test_provided_png_source_skips_generator_and_is_staged",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 434
-    },
-    {
-      "name": "optimizer",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 443
-    },
-    {
-      "name": "test_provided_source_symlink_is_rejected",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 464
-    },
-    {
-      "name": "test_generator_source_must_stay_inside_job_output",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 492
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 498
-    },
-    {
-      "name": "test_asset_id_cannot_escape_job_output",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 514
-    },
-    {
-      "name": "test_non_raster_target_fails_closed",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 532
-    },
-    {
-      "name": "test_generated_3d_reports_lod_artifacts_when_enabled",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 545
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 556
-    },
-    {
-      "name": "lod_reporter",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 561
-    },
-    {
-      "name": "test_required_collision_blocks_godot_prop_without_collision_node",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 594
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 603
-    },
-    {
-      "name": "test_required_lod_toolchain_unavailable_blocks_3d_promotion",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 628
-    },
-    {
-      "name": "generator",
-      "kind": "function",
-      "file": "tests/test_production_executor.py",
-      "line": 639
+      "name": "Result",
+      "kind": "class",
+      "file": "tests/test_remote_batch.py",
+      "line": 306
     }
   ],
   "selected_tests": [
-    "tests/test_production_executor.py"
+    "tests/test_remote_batch.py"
   ]
 }

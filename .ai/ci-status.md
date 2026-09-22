@@ -1,10 +1,10 @@
 # CI status
 
-Summary: 2 success / 0 failure / 2 active
+Summary: 3 success / 0 failure / 1 active
 
-- Validate asset-forge: in_progress / pending (89b39acc)
-- Validate asset-forge: completed / success (4a4d50ae)
-- Live generation smoke: in_progress / pending (6e427703)
-- Validate asset-forge: completed / success (6e427703)
+- Validate asset-forge: in_progress / pending (90029761)
+- Validate asset-forge: completed / success (bd81c832)
+- Validate asset-forge: completed / success (ddcd36d6)
+- Validate asset-forge: completed / success (6c705cd3)
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.

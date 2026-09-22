@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-22T06:15:42Z
+Generated: 2026-09-22T06:23:26Z
 
 ### Git
 - Branch: `main`
-- Head: `89b39accbc64`
-- Commit date: 2026-09-22T08:15:26+02:00
-- Commit: test: cover retry telemetry in production reports
+- Head: `90029761688c`
+- Commit date: 2026-09-22T08:23:08+02:00
+- Commit: docs: document adaptive corrective production loop
 - Tracked files: 305
 
 ### Recently changed files
+- `README.md`
+- `.github/workflows/production-os-batch.yml`
+- `tests/test_remote_batch.py`
+- `remote_batch.py`
 - `tests/test_production_executor.py`
-- `schemas/production-report.schema.json`
-- `production_executor.py`
-- `tests/test_backend_history.py`
-- `backend_history.py`
 
 ### Project signals
 - `pyproject.toml`

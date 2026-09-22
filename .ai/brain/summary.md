@@ -4,8 +4,8 @@
 - Files indexed: 77
 - Files reparsed this run: 2
 - Symbols: 1000
-- Internal import edges: 100
-- Impacted files: 3
+- Internal import edges: 96
+- Impacted files: 2
 - Selected tests: 1
 
 ## Languages
