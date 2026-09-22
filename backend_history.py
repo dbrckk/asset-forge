@@ -264,6 +264,49 @@ def backend_score(history: dict, backend: str, *, prior: float) -> float:
     )
 
 
+def rank_retry_strategies(
+    categories: list[str],
+    *,
+    backend: str,
+    history_path: Path | str | None = None,
+) -> list[str]:
+    ordered = [str(value) for value in categories if str(value)]
+    if len(ordered) < 2:
+        return ordered
+
+    history = load_history(history_path)
+    stats = history.get("backends", {}).get(str(backend))
+    strategies = stats.get("retryStrategies") if isinstance(stats, dict) else None
+    if not isinstance(strategies, dict):
+        return ordered
+
+    ranked = []
+    for index, category in enumerate(ordered):
+        value = strategies.get(category)
+        if not isinstance(value, dict):
+            ranked.append((0.0, -index, category))
+            continue
+        attempts = int(value.get("attempts") or 0)
+        if attempts < 2:
+            ranked.append((0.0, -index, category))
+            continue
+        improvements = int(value.get("improvements") or 0)
+        passes = int(value.get("passes") or 0)
+        delta_sum = float(value.get("scoreDeltaSum") or 0.0)
+        pass_rate = max(0.0, min(1.0, passes / attempts))
+        improvement_rate = max(0.0, min(1.0, improvements / attempts))
+        average_delta = max(-1.0, min(1.0, delta_sum / attempts))
+        score = (
+            0.50 * pass_rate
+            + 0.30 * improvement_rate
+            + 0.20 * average_delta
+        )
+        ranked.append((score, -index, category))
+
+    ranked.sort(reverse=True)
+    return [category for _, _, category in ranked]
+
+
 def choose_backend(
     ready_backends: list[str],
     *,
