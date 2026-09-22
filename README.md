@@ -51,7 +51,9 @@ The JSON readiness report distinguishes direct raster generation, queued Qwen ra
 
 SVG and 3D production now have free/open fallbacks. SVG `auto` uses the local MIT-licensed VTracer path when a free raster backend is ready, then falls back to explicit Pollinations SVG generation when needed. For 3D, `auto` is quality-aware: primary/hero/critical assets prefer Pollinations + TRELLIS when available, while secondary assets can use the MIT-licensed TripoSR path on Kaggle. If TripoSR fails during automatic production and TRELLIS is available, the run falls back to Pollinations and records the route. Every produced GLB still passes the existing structural, profile, quality, LOD/collision, and engine handoff gates before promotion.
 
-Raster routing also learns from recent production history when `ASSET_FORGE_BACKEND_HISTORY` is configured. Production OS persists this lightweight history between runs so repeated Cloudflare/Kaggle successes, failures, and quality scores can influence later `auto` choices without overriding explicit backend selections.
+Raster routing also learns from recent production history when `ASSET_FORGE_BACKEND_HISTORY` is configured. Production OS persists this lightweight history between runs so repeated Cloudflare/Kaggle successes, failures, quality scores, fallback pressure, and regeneration pressure can influence later `auto` choices without overriding explicit backend selections.
+
+Quality retries are diagnostic-aware rather than blind reruns. Technical validation classifies failures such as border clearance, incorrect subject scale, low contrast, weak frame diversity, unstable animation anchors, and missing transparency. Asset Forge records which corrective strategies improve scores and pass quality gates, retains bounded exploration for untried corrections, and prioritizes strategies with stronger production history. Per-asset reports expose `routing.retryCount` and `routing.retryStrategies`; Production OS batch results aggregate the same telemetry so expensive or repeatedly rejected paths are visible at batch level.
 
 For debugging or staged orchestration, the two lower-level commands remain available:
 
