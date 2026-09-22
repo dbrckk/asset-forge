@@ -75,6 +75,22 @@ class ProductionExecutorTests(unittest.TestCase):
                         "reason": "cloudflare-generation-error",
                         "attempt": 1,
                     }],
+                    "technicalQuality": {
+                        "attempts": [
+                            {
+                                "attempt": 1,
+                                "score": 0.61,
+                                "passed": False,
+                                "retryCategories": [],
+                            },
+                            {
+                                "attempt": 2,
+                                "score": 0.87,
+                                "passed": True,
+                                "retryCategories": ["contrast", "border-clearance"],
+                            },
+                        ]
+                    },
                 }
 
             report = execute_generated_raster_job(
@@ -99,6 +115,12 @@ class ProductionExecutorTests(unittest.TestCase):
             self.assertEqual(
                 report["routing"]["fallbacks"][0]["reason"],
                 "cloudflare-generation-error",
+            )
+            self.assertEqual(report["routing"]["retryCount"], 1)
+            self.assertEqual(report["routing"]["retryStrategies"]["contrast"], 1)
+            self.assertEqual(
+                report["routing"]["retryStrategies"]["border-clearance"],
+                1,
             )
 
     def test_webp_target_encodes_before_validation(self):
