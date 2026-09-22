@@ -96,21 +96,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-22T06:23:26Z
+Generated: 2026-09-22T06:24:22Z
 
 ### Git
 - Branch: `main`
-- Head: `90029761688c`
-- Commit date: 2026-09-22T08:23:08+02:00
-- Commit: docs: document adaptive corrective production loop
-- Tracked files: 305
+- Head: `4eed3f62aee0`
+- Commit date: 2026-09-22T08:24:06+02:00
+- Commit: docs: add 1.0.0 stable release changelog
+- Tracked files: 306
 
 ### Recently changed files
+- `CHANGELOG.md`
+- `pyproject.toml`
 - `README.md`
 - `.github/workflows/production-os-batch.yml`
 - `tests/test_remote_batch.py`
-- `remote_batch.py`
-- `tests/test_production_executor.py`
 
 ### Project signals
 - `pyproject.toml`

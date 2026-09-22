@@ -1,10 +1,10 @@
 # Change impact
 
-Base: bd81c832fa7b623ea65e5912eb8eb6840c34328a
-Head: 90029761688cdf7777336c3ee4cdd8a93e87eb79
+Base: b8e6062eb118a72708f02c6f43a983a82efb02f3
+Head: 4eed3f62aee0494c36f8a434f86810f41fe47aa2
 
 ## Changed files
-- M README.md
+- A CHANGELOG.md
 
 ## Affected areas
 - (root)

@@ -7987,7 +7987,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "asset-forge"
-version = "0.1.0"
+version = "1.0.0"
 description = "Production-grade visual asset pipeline for raster, vector, 3D, runtime atlases, and engine handoff."
 readme = "README.md"
 requires-python = ">=3.11"
