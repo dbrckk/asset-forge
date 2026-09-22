@@ -217,6 +217,7 @@ class BackendHistoryTests(unittest.TestCase):
                 history_path=path,
             )
             self.assertEqual(ranked[0], "contrast")
+            self.assertEqual(ranked[1], "frame-anchor")
             self.assertEqual(ranked[-1], "border-clearance")
 
     def test_3d_result_learns_from_nested_reference_generation(self):
