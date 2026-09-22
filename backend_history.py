@@ -284,11 +284,14 @@ def rank_retry_strategies(
     for index, category in enumerate(ordered):
         value = strategies.get(category)
         if not isinstance(value, dict):
-            ranked.append((0.0, -index, category))
+            # Keep untried strategies above repeatedly weak ones so the system
+            # retains bounded exploration instead of getting stuck exploiting
+            # a correction that has already underperformed.
+            ranked.append((0.25, -index, category))
             continue
         attempts = int(value.get("attempts") or 0)
         if attempts < 2:
-            ranked.append((0.0, -index, category))
+            ranked.append((0.20, -index, category))
             continue
         improvements = int(value.get("improvements") or 0)
         passes = int(value.get("passes") or 0)
