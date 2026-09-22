@@ -176,6 +176,13 @@ jobs:
                   f"- Final backends: `{json.dumps(routing.get('final_backends', {}), sort_keys=True)}`\n"
               )
               fh.write(
+                  f"- Retries: `{routing.get('retry_count', 0)}` "
+                  f"across `{routing.get('items_with_retry', 0)}` assets\n"
+              )
+              fh.write(
+                  f"- Retry strategies: `{json.dumps(routing.get('retry_strategies', {}), sort_keys=True)}`\n"
+              )
+              fh.write(
                   f"- Circuit breaker: `{'open' if breaker.get('open') else 'closed'}`"
                   f" (override: `{breaker.get('override')}`)\n"
               )
