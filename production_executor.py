@@ -70,12 +70,30 @@ def _routing_from_generation(generation: dict) -> dict:
     value = generation if isinstance(generation, dict) else {}
     fallbacks = value.get("fallbacks")
     fallbacks = fallbacks if isinstance(fallbacks, list) else []
+
+    retry_strategies = {}
+    technical = value.get("technicalQuality")
+    attempts = technical.get("attempts") if isinstance(technical, dict) else None
+    if isinstance(attempts, list):
+        for attempt in attempts:
+            if not isinstance(attempt, dict):
+                continue
+            categories = attempt.get("retryCategories")
+            if not isinstance(categories, list):
+                continue
+            for category in categories:
+                name = str(category or "").strip()
+                if name:
+                    retry_strategies[name] = retry_strategies.get(name, 0) + 1
+
     return {
         "requestedBackend": value.get("requestedBackend"),
         "initialBackend": value.get("initialBackend") or value.get("backend"),
         "finalBackend": value.get("backend"),
         "fallbacks": fallbacks,
         "fallbackCount": len(fallbacks),
+        "retryCount": max(0, len(attempts) - 1) if isinstance(attempts, list) else 0,
+        "retryStrategies": retry_strategies,
     }
 
 
