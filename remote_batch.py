@@ -287,10 +287,24 @@ def run(
         if isinstance(item.get("routing"), dict)
     ]
     final_backends: dict[str, int] = {}
+    retry_strategies: dict[str, int] = {}
+    retry_count = 0
+    items_with_retry = 0
     for routing in routed:
         final_backend = str(routing.get("finalBackend") or "").strip()
         if final_backend:
             final_backends[final_backend] = final_backends.get(final_backend, 0) + 1
+        raw_retry_count = routing.get("retryCount")
+        if isinstance(raw_retry_count, int) and raw_retry_count >= 0:
+            retry_count += raw_retry_count
+            if raw_retry_count > 0:
+                items_with_retry += 1
+        raw_strategies = routing.get("retryStrategies")
+        if isinstance(raw_strategies, dict):
+            for name, count in raw_strategies.items():
+                key = str(name or "").strip()
+                if key and isinstance(count, int) and count >= 0:
+                    retry_strategies[key] = retry_strategies.get(key, 0) + count
 
     result = {
         "schema_version": "asset-forge/remote-batch-result/v1",
@@ -308,6 +322,9 @@ def run(
                 for routing in routed
             ),
             "final_backends": final_backends,
+            "items_with_retry": items_with_retry,
+            "retry_count": retry_count,
+            "retry_strategies": retry_strategies,
             "circuit_breaker": {
                 "threshold": AUTO_BACKEND_CIRCUIT_BREAKER_FAILURES,
                 "cloudflare_runtime_failures": cloudflare_runtime_failures,
