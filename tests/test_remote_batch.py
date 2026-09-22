@@ -87,6 +87,11 @@ class RemoteBatchTests(unittest.TestCase):
                                 "reason": "cloudflare-generation-error",
                                 "attempt": 1,
                             }],
+                            "retryCount": 2,
+                            "retryStrategies": {
+                                "contrast": 2,
+                                "frame-anchor": 1,
+                            },
                         }
                         if payload["manifest"]["id"] == "run"
                         else {
@@ -116,6 +121,12 @@ class RemoteBatchTests(unittest.TestCase):
             self.assertEqual(
                 result["routing_summary"]["final_backends"],
                 {"cloudflare": 1, "kaggle-qwen": 1},
+            )
+            self.assertEqual(result["routing_summary"]["items_with_retry"], 1)
+            self.assertEqual(result["routing_summary"]["retry_count"], 2)
+            self.assertEqual(
+                result["routing_summary"]["retry_strategies"],
+                {"contrast": 2, "frame-anchor": 1},
             )
             self.assertEqual(
                 result["items"][1]["routing"]["finalBackend"],
