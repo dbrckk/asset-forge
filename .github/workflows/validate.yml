@@ -13,7 +13,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -53,7 +53,7 @@ jobs:
       - name: Validate 3D and vector profiles
         run: python asset_forge.py validate-asset-profiles
       - name: Checkout star-list
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: dbrckk/star-list
           path: star-list
@@ -72,7 +72,7 @@ jobs:
   webp-backend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
