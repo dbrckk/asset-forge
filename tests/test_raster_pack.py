@@ -1,3 +1,4 @@
+import random
 import struct
 import tempfile
 import unittest
@@ -190,16 +191,16 @@ class RasterPackTests(unittest.TestCase):
 
             width = 128
             height = 128
+            rng = random.Random(12345)
             pixels = bytes(
-                (
-                    (x * 17 + y * 31) % 256,
-                    (x * 47 + y * 13) % 256,
-                    (x * 7 + y * 61) % 256,
+                value
+                for _ in range(width * height)
+                for value in (
+                    rng.randrange(256),
+                    rng.randrange(256),
+                    rng.randrange(256),
                     255,
-                )[channel]
-                for y in range(height)
-                for x in range(width)
-                for channel in range(4)
+                )
             )
             encode_rgba(source, width, height, pixels, adaptive=False)
             recompressed = root / "recompressed.png"
