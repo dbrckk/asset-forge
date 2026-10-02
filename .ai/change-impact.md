@@ -1,21 +1,16 @@
 # Change impact
 
-Base: c9b51e5365fc3e6576df734e5fa0df61e2b1075a
-Head: 573cea0f23b3796c28cb26351f51610db7bb2c9a
+Base: 980734834b46559a14e567686a95b822ffafa24e
+Head: 77710214b0d117118fecead70b337fd45a29d2e8
 
 ## Changed files
-- M production_executor.py
-- M raster_pack.py
-- M tests/test_production_executor.py
-- M tests/test_raster_pack.py
+- M .github/workflows/production-os-ai-dev-server-live-e2e.yml
 
 ## Affected areas
-- (root)
-- tests
+- .github
 
 ## Related test candidates
-- tests/test_production_executor.py
-- tests/test_raster_pack.py
+- No direct filename-based test match detected.
 
 ## Agent guidance
 - Read this file before broad repository exploration.

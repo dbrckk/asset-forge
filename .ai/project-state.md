@@ -96,27 +96,26 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-10-02T18:58:28Z
+Generated: 2026-10-02T18:59:45Z
 
 ### Git
 - Branch: `main`
-- Head: `573cea0f23b3`
-- Commit date: 2026-10-02T20:58:16+02:00
-- Commit: fix(raster): enforce generated PNG maxBytes
+- Head: `77710214b0d1`
+- Commit date: 2026-10-02T20:59:34+02:00
+- Commit: test(e2e): requalify raster size enforcement live
 - Tracked files: 308
 
 ### Recently changed files
+- `.github/workflows/production-os-ai-dev-server-live-e2e.yml`
 - `production_executor.py`
 - `raster_pack.py`
 - `tests/test_production_executor.py`
 - `tests/test_raster_pack.py`
-- `.github/workflows/production-os-ai-dev-server-live-e2e.yml`
 - `tests/test_production_os_ai_dev_server_live_e2e_workflow.py`
 - `.github/workflows/deadline-zero-live-pilot.yml`
 - `.github/workflows/live-generation.yml`
 - `.github/workflows/repo-standards.yml`
 - `CHANGELOG.md`
-- `pyproject.toml`
 
 ### Project signals
 - `pyproject.toml`

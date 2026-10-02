@@ -442,6 +442,7 @@ jobs:
 ## File: .github/workflows/production-os-ai-dev-server-live-e2e.yml
 ````yaml
 name: Production OS AI Dev Server Asset Forge Live E2E
+# Requalify the live path whenever production raster constraints change.
 
 on:
   push:
