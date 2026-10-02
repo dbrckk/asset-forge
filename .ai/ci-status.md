@@ -1,14 +1,18 @@
 # CI status
 
-Summary: 5 success / 0 failure / 3 active
+Summary: 5 success / 1 failure / 2 active
 
-- Validate asset-forge: in_progress / pending (98d35f14)
-- Deadline Zero live visual pilot: in_progress / pending (98d35f14)
-- Live generation smoke: in_progress / pending (98d35f14)
+- Production OS AI Dev Server Asset Forge Live E2E: in_progress / pending (5fbe0f63)
+- Validate asset-forge: in_progress / pending (5fbe0f63)
+- Validate asset-forge: completed / success (5f3f1210)
+- Validate asset-forge: completed / failure (3906aa64)
+- Validate asset-forge: completed / success (98d35f14)
+- Deadline Zero live visual pilot: completed / success (98d35f14)
+- Live generation smoke: completed / success (98d35f14)
 - Validate asset-forge: completed / success (ee53593b)
-- Precise semantic refresh: completed / success (1a8c02af)
-- Validate asset-forge: completed / success (531fcb67)
-- Validate asset-forge: completed / success (38df8d21)
-- github_actions in /. - Update #1592739031: completed / success (1a8c02af)
+
+## Latest failed run structure
+- Job: test
+  - Failed step: Compile
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.

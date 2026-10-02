@@ -43,6 +43,7 @@ The content is organized as follows:
     ai-repo-map.yml
     deadline-zero-live-pilot.yml
     live-generation.yml
+    production-os-ai-dev-server-live-e2e.yml
     production-os-batch.yml
     production-os-dispatch.yml
     release.yml
@@ -116,6 +117,7 @@ tests/
   test_operational_status.py
   test_production_contract.py
   test_production_executor.py
+  test_production_os_ai_dev_server_live_e2e_workflow.py
   test_raster_backend.py
   test_raster_pack.py
   test_remote_batch.py
@@ -435,6 +437,249 @@ jobs:
           path: build/live-raster-smoke/
           if-no-files-found: error
           retention-days: 7
+````
+
+## File: .github/workflows/production-os-ai-dev-server-live-e2e.yml
+````yaml
+name: Production OS AI Dev Server Asset Forge Live E2E
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/production-os-ai-dev-server-live-e2e.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-os-ai-dev-server-asset-forge-live-e2e
+  cancel-in-progress: true
+
+jobs:
+  live-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+      POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+    steps:
+      - name: Checkout current Asset Forge
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Checkout current AI Dev Server
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: dbrckk/ai-dev-server
+          path: ai-dev-server
+
+      - name: Checkout Deadline Zero
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: dbrckk/deadline-zero
+          path: deadline-zero
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Select live generation backend
+        id: credential
+        shell: bash
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "backend=cloudflare" >> "$GITHUB_OUTPUT"
+          elif [ -n "$KAGGLE_API_TOKEN" ] && [ -n "$KAGGLE_USERNAME" ]; then
+            echo "backend=kaggle-qwen" >> "$GITHUB_OUTPUT"
+          elif [ -n "$POLLINATIONS_API_KEY" ]; then
+            echo "backend=pollinations" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::No real Asset Forge image-generation backend is configured."
+            exit 2
+          fi
+
+      - name: Install live toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install ".[generation]"
+          if [ "${{ steps.credential.outputs.backend }}" = "kaggle-qwen" ]; then
+            python -m pip install -U kaggle
+          elif [ "${{ steps.credential.outputs.backend }}" = "pollinations" ]; then
+            npm install --global @pollinations/cli@0.1.15
+          fi
+
+      - name: Verify Asset Forge readiness
+        env:
+          BACKEND: ${{ steps.credential.outputs.backend }}
+        run: |
+          asset-forge operational-status > build-operational-status.json
+          python - <<'PY'
+          import json, os
+          data=json.load(open("build-operational-status.json"))
+          backend=os.environ["BACKEND"]
+          if backend == "cloudflare":
+              assert data["generation"]["cloudflare"]["rasterReady"] is True, data
+          elif backend == "kaggle-qwen":
+              assert data["generation"]["kaggleQwen"]["rasterReady"] is True, data
+          elif backend == "pollinations":
+              assert data["generation"]["pollinations"]["authenticated"] is True, data
+          else:
+              raise AssertionError(backend)
+          PY
+
+      - name: Materialize Production OS handoff through AI Dev Server
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/live-e2e
+          PYTHONPATH="$GITHUB_WORKSPACE/ai-dev-server/studio" python - <<'PY'
+          import json
+          from pathlib import Path
+          from core import request_check
+          from production_os_worker import build_studio_request
+
+          job = {
+              "key": "deadline-zero-live-visual-e2e",
+              "repository": "dbrckk/deadline-zero",
+              "task": "Generate and integrate a live secondary Deadline Zero UI icon",
+              "payload": {
+                  "workflow_id": "asset-forge-live-e2e",
+                  "workflow_task_id": "deadline-zero-live-secondary-icon",
+                  "handoff": {
+                      "repository": "dbrckk/deadline-zero",
+                      "task": "Generate and integrate a live secondary Deadline Zero UI icon",
+                      "final_goal": "Prove Production OS -> AI Dev Server -> Asset Forge -> target repository.",
+                      "agent_preference": "codex",
+                      "token_budget": 50000,
+                      "tool_contracts": {
+                          "asset_forge": {
+                              "request_schema": "asset-forge/production-request/v1",
+                              "report_schema": "asset-forge/production-report/v1",
+                              "command": "asset-forge fulfill",
+                              "required_capability": "visual-asset-production"
+                          }
+                      }
+                  }
+              }
+          }
+          request=request_check(build_studio_request(job))
+          assert request["tool_contracts"]["asset_forge"]["command"] == "asset-forge fulfill"
+          Path("build/live-e2e/studio-request.json").write_text(
+              json.dumps(request, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Create Asset Forge production request
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          request = {
+              "schema": "asset-forge/production-request/v1",
+              "requestId": "deadline-zero-live-secondary-icon",
+              "instruction": "Create a premium dark sci-fi game UI icon for Deadline Zero representing an autonomous production pipeline: one strong geometric forge/core symbol, high contrast silhouette, subtle industrial cyberpunk character, no text, no letters, no watermark, no mockup background.",
+              "manifest": {
+                  "id": "live-production-pipeline-icon",
+                  "project": "deadline-zero",
+                  "type": "pixel-art",
+                  "importance": "secondary",
+                  "source": {"mode": "generated"},
+                  "license": {
+                      "id": "project-owned",
+                      "commercialUse": True,
+                      "derivatives": True,
+                      "attributionRequired": False
+                  },
+                  "target": {
+                      "engine": "libgdx",
+                      "format": "png",
+                      "maxBytes": 1048576
+                  },
+                  "constraints": {}
+              },
+              "delivery": {
+                  "engine": "libgdx",
+                  "outputDir": "build/live-e2e/fulfilled"
+              }
+          }
+          Path("build/live-e2e/production-request.json").write_text(
+              json.dumps(request, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Generate and validate real asset
+        env:
+          BACKEND: ${{ steps.credential.outputs.backend }}
+        run: |
+          asset-forge fulfill             build/live-e2e/production-request.json             --output-dir build/live-e2e/fulfilled             --backend "$BACKEND"
+          asset-forge validate-production-report             build/live-e2e/fulfilled/production-report.json
+          test -s build/live-e2e/fulfilled/live-production-pipeline-icon.png
+
+      - name: Inject asset into Deadline Zero
+        run: |
+          install -D             build/live-e2e/fulfilled/live-production-pipeline-icon.png             deadline-zero/assets/art/live-production-pipeline-icon.png
+          test -s deadline-zero/assets/art/live-production-pipeline-icon.png
+
+      - name: Validate and compile target repository
+        working-directory: deadline-zero
+        run: |
+          python3 tools/validate_final_sprite_layout.py
+          python3 tools/sprites/validate_actor_production_contracts.py
+          gradle :core:compileJava :core:test :desktop:compileJava
+
+      - name: Record cross-repository evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          root=Path("build/live-e2e")
+          asset=root/"fulfilled"/"live-production-pipeline-icon.png"
+          report=json.loads((root/"fulfilled"/"production-report.json").read_text())
+          studio=json.loads((root/"studio-request.json").read_text())
+          evidence={
+              "schema":"asset-forge/production-os-ai-dev-server-live-e2e/v1",
+              "productionOsCorrelation":studio["production_os"],
+              "targetRepo":studio["target_repo"],
+              "toolContract":studio["tool_contracts"]["asset_forge"],
+              "assetForgeReportSuccess":report.get("success") is True,
+              "liveGeneration":True,
+              "artifactSha256":hashlib.sha256(asset.read_bytes()).hexdigest(),
+              "deadlineZeroCompileAndTests":True,
+          }
+          assert evidence["assetForgeReportSuccess"]
+          (root/"e2e-evidence.json").write_text(
+              json.dumps(evidence,indent=2,sort_keys=True)+"\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Upload live E2E evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: production-os-ai-dev-server-asset-forge-live-e2e
+          path: build/live-e2e/
+          if-no-files-found: error
+          retention-days: 14
 ````
 
 ## File: .github/workflows/production-os-batch.yml
@@ -3839,6 +4084,19 @@ lod = output_dir / "hero-run.lod1.glb"
 def test_required_collision_blocks_godot_prop_without_collision_node(self)
 ⋮----
 def test_required_lod_toolchain_unavailable_blocks_3d_promotion(self)
+````
+
+## File: tests/test_production_os_ai_dev_server_live_e2e_workflow.py
+````python
+WORKFLOW = Path(
+⋮----
+def test_cross_repo_live_e2e_uses_current_collaborators()
+⋮----
+def test_cross_repo_live_e2e_requires_real_asset_backend()
+⋮----
+def test_cross_repo_live_e2e_generates_and_compiles_target()
+⋮----
+def test_cross_repo_live_e2e_persists_evidence()
 ````
 
 ## File: tests/test_raster_backend.py
