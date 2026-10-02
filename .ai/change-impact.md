@@ -1,13 +1,15 @@
 # Change impact
 
-Base: b8e6062eb118a72708f02c6f43a983a82efb02f3
-Head: 4eed3f62aee0494c36f8a434f86810f41fe47aa2
+Base: 1a8c02afe7f1cac38e406e322809f726842beeba
+Head: 98d35f14f21bfa4dfc10f9cea2945712a326a3ed
 
 ## Changed files
-- A CHANGELOG.md
+- M .github/workflows/deadline-zero-live-pilot.yml
+- M .github/workflows/live-generation.yml
+- D .github/workflows/repo-standards.yml
 
 ## Affected areas
-- (root)
+- .github
 
 ## Related test candidates
 - No direct filename-based test match detected.

@@ -96,21 +96,23 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-09-22T06:24:22Z
+Generated: 2026-10-02T17:01:32Z
 
 ### Git
 - Branch: `main`
-- Head: `4eed3f62aee0`
-- Commit date: 2026-09-22T08:24:06+02:00
-- Commit: docs: add 1.0.0 stable release changelog
+- Head: `98d35f14f21b`
+- Commit date: 2026-10-02T19:01:20+02:00
+- Commit: fix(ci): harden live checks before Production-OS testing
 - Tracked files: 306
 
 ### Recently changed files
+- `.github/workflows/deadline-zero-live-pilot.yml`
+- `.github/workflows/live-generation.yml`
+- `.github/workflows/repo-standards.yml`
 - `CHANGELOG.md`
 - `pyproject.toml`
 - `README.md`
 - `.github/workflows/production-os-batch.yml`
-- `tests/test_remote_batch.py`
 
 ### Project signals
 - `pyproject.toml`

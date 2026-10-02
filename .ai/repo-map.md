@@ -46,7 +46,6 @@ The content is organized as follows:
     production-os-batch.yml
     production-os-dispatch.yml
     release.yml
-    repo-standards.yml
     semantic-refresh.yml
     validate.yml
   dependabot.yml
@@ -277,6 +276,13 @@ jobs:
             echo "::notice::Deadline Zero live pilot requires Cloudflare Workers AI or Kaggle credentials."
           fi
 
+      - name: Require a live backend for manual pilot
+        if: github.event_name == 'workflow_dispatch' && steps.credential.outputs.ready != 'true'
+        shell: bash
+        run: |
+          echo "::error::Manual live visual pilot requires Cloudflare or Kaggle credentials."
+          exit 2
+
       - name: Produce Rex visual pilot
         if: steps.credential.outputs.ready == 'true'
         run: |
@@ -393,6 +399,13 @@ jobs:
             echo "configured=false" >> "$GITHUB_OUTPUT"
             echo "::notice::Cloudflare or Kaggle raster credentials are not configured; live generation smoke skipped."
           fi
+
+      - name: Require a live backend for manual smoke
+        if: github.event_name == 'workflow_dispatch' && steps.credential.outputs.configured != 'true'
+        shell: bash
+        run: |
+          echo "::error::Manual live generation smoke requires Cloudflare or Kaggle credentials."
+          exit 2
 
       - name: Check Asset Forge readiness
         if: steps.credential.outputs.configured == 'true'
@@ -847,30 +860,6 @@ jobs:
             dist/SHA256SUMS \
             --verify-tag \
             --generate-notes
-````
-
-## File: .github/workflows/repo-standards.yml
-````yaml
-name: Repository standards
-
-on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - ".ai/**"
-  workflow_dispatch:
-
-permissions:
-  contents: write
-  actions: read
-
-concurrency:
-  group: repo-standards-${{ github.repository }}-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
-  repository-standards:
-    uses: dbrckk/repo-standards/.github/workflows/reusable-unified.yml@v10
 ````
 
 ## File: .github/workflows/semantic-refresh.yml
