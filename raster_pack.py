@@ -931,6 +931,151 @@ def recompress_png(input_path: Path, output_path: Path) -> dict:
     }
 
 
+def _resize_rgba_nearest(
+    width: int,
+    height: int,
+    pixels: bytes,
+    target_width: int,
+    target_height: int,
+) -> bytes:
+    if width <= 0 or height <= 0 or target_width <= 0 or target_height <= 0:
+        raise ValueError("resize dimensions must be > 0")
+    if len(pixels) != width * height * 4:
+        raise ValueError("RGBA pixel buffer size does not match dimensions")
+
+    resized = bytearray(target_width * target_height * 4)
+    for target_y in range(target_height):
+        source_y = min(height - 1, target_y * height // target_height)
+        for target_x in range(target_width):
+            source_x = min(width - 1, target_x * width // target_width)
+            source_offset = (source_y * width + source_x) * 4
+            target_offset = (target_y * target_width + target_x) * 4
+            resized[target_offset : target_offset + 4] = pixels[
+                source_offset : source_offset + 4
+            ]
+    return bytes(resized)
+
+
+def fit_png_to_max_bytes(
+    input_path: Path,
+    output_path: Path,
+    max_bytes: int,
+    *,
+    min_dimension: int = 64,
+    max_iterations: int = 8,
+) -> dict:
+    max_bytes = int(max_bytes)
+    min_dimension = int(min_dimension)
+    max_iterations = int(max_iterations)
+    if max_bytes <= 0:
+        raise ValueError("max_bytes must be > 0")
+    if min_dimension <= 0:
+        raise ValueError("min_dimension must be > 0")
+    if max_iterations <= 0:
+        raise ValueError("max_iterations must be > 0")
+
+    source = Path(input_path)
+    before_bytes = source.stat().st_size
+    source_bytes = source.read_bytes()
+    original_width, original_height, original_pixels = decode_rgba(source)
+
+    recompressed = _png_bytes_rgba(
+        original_width,
+        original_height,
+        original_pixels,
+        adaptive=True,
+    )
+    if len(recompressed) < len(source_bytes):
+        best_bytes = recompressed
+    else:
+        best_bytes = source_bytes
+    best_width = original_width
+    best_height = original_height
+
+    current_width = original_width
+    current_height = original_height
+    current_pixels = original_pixels
+    iterations = []
+
+    for iteration in range(1, max_iterations + 1):
+        if len(best_bytes) <= max_bytes:
+            break
+        if current_width <= min_dimension and current_height <= min_dimension:
+            break
+
+        ratio = (max_bytes / max(1, len(best_bytes))) ** 0.5
+        scale = min(0.95, max(0.5, ratio * 0.97))
+        next_width = max(
+            min_dimension,
+            int(current_width * scale),
+        )
+        next_height = max(
+            min_dimension,
+            int(current_height * scale),
+        )
+
+        if next_width >= current_width and current_width > min_dimension:
+            next_width = max(min_dimension, current_width - 1)
+        if next_height >= current_height and current_height > min_dimension:
+            next_height = max(min_dimension, current_height - 1)
+        if next_width == current_width and next_height == current_height:
+            break
+
+        current_pixels = _resize_rgba_nearest(
+            current_width,
+            current_height,
+            current_pixels,
+            next_width,
+            next_height,
+        )
+        current_width = next_width
+        current_height = next_height
+        encoded = _png_bytes_rgba(
+            current_width,
+            current_height,
+            current_pixels,
+            adaptive=True,
+        )
+        iterations.append(
+            {
+                "iteration": iteration,
+                "width": current_width,
+                "height": current_height,
+                "bytes": len(encoded),
+            }
+        )
+        if len(encoded) < len(best_bytes):
+            best_bytes = encoded
+            best_width = current_width
+            best_height = current_height
+
+    output = Path(output_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_bytes(best_bytes)
+    after_bytes = len(best_bytes)
+    return {
+        "input": str(input_path),
+        "output": str(output_path),
+        "maxBytes": max_bytes,
+        "beforeBytes": before_bytes,
+        "afterBytes": after_bytes,
+        "originalWidth": original_width,
+        "originalHeight": original_height,
+        "width": best_width,
+        "height": best_height,
+        "resized": (best_width, best_height) != (original_width, original_height),
+        "fitted": after_bytes <= max_bytes,
+        "iterations": iterations,
+        "savedBytes": before_bytes - after_bytes,
+        "savedPercent": round(
+            ((before_bytes - after_bytes) / before_bytes * 100.0),
+            2,
+        )
+        if before_bytes
+        else 0.0,
+    }
+
+
 def _alpha_bounds(width: int, height: int, pixels: bytes) -> tuple[int, int, int, int] | None:
     min_x = width
     min_y = height

@@ -9,6 +9,7 @@ from art_quality import ArtQualityError, evaluate_raster_art
 from semantic_art_review import SemanticArtReviewError, review_raster_art
 from generator_backends import THREE_D_GENERATED_TYPES, VECTOR_GENERATED_TYPES, execute_generated_3d_asset, execute_generated_asset
 from lod_3d import LodGenerationError, generate_lod_chain
+from raster_pack import fit_png_to_max_bytes
 
 
 class ProductionExecutionError(RuntimeError):
@@ -130,6 +131,7 @@ def execute_generated_raster_job(
     validator: Callable,
     png_optimizer: Callable,
     webp_encoder: Callable,
+    png_size_fitter: Callable = fit_png_to_max_bytes,
     generator: Callable = execute_generated_asset,
     backend: str = "auto",
     model: str | None = None,
@@ -183,6 +185,17 @@ def execute_generated_raster_job(
     final = out / f"{asset_id}.{target_format}"
     if target_format == "png":
         processing = png_optimizer(source, final)
+        max_bytes = target.get("maxBytes")
+        if (
+            isinstance(max_bytes, int)
+            and not isinstance(max_bytes, bool)
+            and max_bytes > 0
+            and final.is_file()
+            and final.stat().st_size > max_bytes
+        ):
+            size_fit = png_size_fitter(final, final, max_bytes)
+            processing = dict(processing) if isinstance(processing, dict) else {}
+            processing["sizeFit"] = size_fit
     else:
         processing = webp_encoder(source, final, lossless=True)
 

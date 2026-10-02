@@ -56,6 +56,57 @@ class ProductionExecutorTests(unittest.TestCase):
             self.assertEqual(report["provenance"]["source"]["mode"], None)
             self.assertTrue((root / "production-report.json").is_file())
 
+    def test_generated_png_fits_max_bytes_before_validation(self):
+        constrained = job()
+        constrained["manifest"]["target"]["maxBytes"] = 4
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            calls = []
+
+            def generator(value, output_dir, **kwargs):
+                source = Path(output_dir) / "generated-source.png"
+                source.write_bytes(b"source")
+                return {"success": True, "sourcePath": str(source)}
+
+            def optimizer(source, output):
+                output.write_bytes(b"12345678")
+                return {"output": str(output), "afterBytes": 8}
+
+            def fitter(source, output, max_bytes):
+                calls.append((source, output, max_bytes))
+                output.write_bytes(b"1234")
+                return {
+                    "output": str(output),
+                    "maxBytes": max_bytes,
+                    "afterBytes": 4,
+                    "fitted": True,
+                    "resized": True,
+                }
+
+            def validator(path, manifest):
+                self.assertEqual(path.stat().st_size, 4)
+                return {"format": "png", "bytes": 4}, []
+
+            report = execute_generated_raster_job(
+                constrained,
+                root,
+                validator=validator,
+                png_optimizer=optimizer,
+                png_size_fitter=fitter,
+                webp_encoder=lambda *a, **k: self.fail("webp encoder must not run"),
+                generator=generator,
+                art_quality_reporter=lambda path, manifest: {
+                    "errors": [],
+                    "warnings": [],
+                },
+            )
+
+        self.assertTrue(report["success"])
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0][2], 4)
+        self.assertTrue(report["processing"]["sizeFit"]["fitted"])
+
     def test_raster_report_exposes_backend_routing(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)

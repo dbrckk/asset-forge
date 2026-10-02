@@ -1,3 +1,4 @@
+import random
 import struct
 import tempfile
 import unittest
@@ -5,7 +6,7 @@ import zlib
 from pathlib import Path
 from unittest.mock import patch
 
-from raster_pack import decode_rgba, encode_rgba, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png
+from raster_pack import decode_rgba, encode_rgba, fit_png_to_max_bytes, inspect_png, inspect_webp, inspect_webp_bytes, pack_compact_atlas, pack_uniform_atlas, recompress_png
 
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -181,6 +182,44 @@ class RasterPackTests(unittest.TestCase):
             report["savedBytes"],
             report["beforeBytes"] - report["afterBytes"],
         )
+
+    def test_fit_png_to_max_bytes_downscales_until_under_limit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source.png"
+            fitted = root / "fitted.png"
+
+            width = 128
+            height = 128
+            rng = random.Random(12345)
+            pixels = bytes(
+                value
+                for _ in range(width * height)
+                for value in (
+                    rng.randrange(256),
+                    rng.randrange(256),
+                    rng.randrange(256),
+                    255,
+                )
+            )
+            encode_rgba(source, width, height, pixels, adaptive=False)
+            recompressed = root / "recompressed.png"
+            recompress_png(source, recompressed)
+            max_bytes = max(256, int(recompressed.stat().st_size * 0.9))
+
+            report = fit_png_to_max_bytes(
+                source,
+                fitted,
+                max_bytes,
+                min_dimension=16,
+            )
+            fitted_width, fitted_height, _ = decode_rgba(fitted)
+
+        self.assertTrue(report["fitted"])
+        self.assertTrue(report["resized"])
+        self.assertLessEqual(report["afterBytes"], max_bytes)
+        self.assertLess(fitted_width, width)
+        self.assertLess(fitted_height, height)
 
     def test_grayscale_png_decodes_to_rgba(self):
         with tempfile.TemporaryDirectory() as tmp:
