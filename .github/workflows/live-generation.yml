@@ -46,6 +46,13 @@ jobs:
             echo "::notice::Cloudflare or Kaggle raster credentials are not configured; live generation smoke skipped."
           fi
 
+      - name: Require a live backend for manual smoke
+        if: github.event_name == 'workflow_dispatch' && steps.credential.outputs.configured != 'true'
+        shell: bash
+        run: |
+          echo "::error::Manual live generation smoke requires Cloudflare or Kaggle credentials."
+          exit 2
+
       - name: Check Asset Forge readiness
         if: steps.credential.outputs.configured == 'true'
         env:
