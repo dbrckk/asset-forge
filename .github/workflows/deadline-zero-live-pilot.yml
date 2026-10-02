@@ -76,6 +76,13 @@ jobs:
             echo "::notice::Deadline Zero live pilot requires Cloudflare Workers AI or Kaggle credentials."
           fi
 
+      - name: Require a live backend for manual pilot
+        if: github.event_name == 'workflow_dispatch' && steps.credential.outputs.ready != 'true'
+        shell: bash
+        run: |
+          echo "::error::Manual live visual pilot requires Cloudflare or Kaggle credentials."
+          exit 2
+
       - name: Produce Rex visual pilot
         if: steps.credential.outputs.ready == 'true'
         run: |
