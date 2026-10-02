@@ -9,7 +9,7 @@ WORKFLOW = Path(
 def test_cross_repo_live_e2e_uses_current_collaborators():
     assert "repository: dbrckk/ai-dev-server" in WORKFLOW
     assert "repository: dbrckk/deadline-zero" in WORKFLOW
-    assert "PYTHONPATH="$GITHUB_WORKSPACE/ai-dev-server/studio"" in WORKFLOW
+    assert 'PYTHONPATH="$GITHUB_WORKSPACE/ai-dev-server/studio"' in WORKFLOW
     assert "from production_os_worker import build_studio_request" in WORKFLOW
 
 
