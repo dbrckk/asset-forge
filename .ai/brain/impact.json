@@ -1,52 +1,1476 @@
 {
   "schema_version": 1,
   "generated_by": "dbrckk/repo-brain",
-  "base": "98d35f14f21bfa4dfc10f9cea2945712a326a3ed",
-  "head": "5fbe0f6369652ae183cce334abe2f1c94108da10",
+  "base": "5fbe0f6369652ae183cce334abe2f1c94108da10",
+  "head": "573cea0f23b3796c28cb26351f51610db7bb2c9a",
   "index_mode": "incremental",
   "changed_files": [
     {
-      "path": ".github/workflows/production-os-ai-dev-server-live-e2e.yml",
-      "status": "A"
+      "path": "production_executor.py",
+      "status": "M"
     },
     {
-      "path": "tests/test_production_os_ai_dev_server_live_e2e_workflow.py",
-      "status": "A"
+      "path": "raster_pack.py",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_production_executor.py",
+      "status": "M"
+    },
+    {
+      "path": "tests/test_raster_pack.py",
+      "status": "M"
     }
   ],
   "changed_source_files": [
-    "tests/test_production_os_ai_dev_server_live_e2e_workflow.py"
+    "production_executor.py",
+    "raster_pack.py",
+    "tests/test_production_executor.py",
+    "tests/test_raster_pack.py"
   ],
   "impacted_files": [
-    "tests/test_production_os_ai_dev_server_live_e2e_workflow.py"
+    "asset_forge.py",
+    "gltf_binary_metrics.py",
+    "operational_status.py",
+    "production_executor.py",
+    "raster_pack.py",
+    "tests/test_production_executor.py",
+    "tests/test_raster_backend.py",
+    "tests/test_raster_pack.py"
   ],
   "impacted_symbols": [
     {
-      "name": "test_cross_repo_live_e2e_uses_current_collaborators",
+      "name": "load_json",
       "kind": "function",
-      "file": "tests/test_production_os_ai_dev_server_live_e2e_workflow.py",
-      "line": 9
+      "file": "asset_forge.py",
+      "line": 72
     },
     {
-      "name": "test_cross_repo_live_e2e_requires_real_asset_backend",
+      "name": "validate_manifest",
       "kind": "function",
-      "file": "tests/test_production_os_ai_dev_server_live_e2e_workflow.py",
-      "line": 16
+      "file": "asset_forge.py",
+      "line": 80
     },
     {
-      "name": "test_cross_repo_live_e2e_generates_and_compiles_target",
+      "name": "is_power_of_two",
       "kind": "function",
-      "file": "tests/test_production_os_ai_dev_server_live_e2e_workflow.py",
+      "file": "asset_forge.py",
+      "line": 138
+    },
+    {
+      "name": "sprite_grid",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 142
+    },
+    {
+      "name": "build_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 163
+    },
+    {
+      "name": "validate_raster_file",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 194
+    },
+    {
+      "name": "select_tools",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 253
+    },
+    {
+      "name": "build_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 271
+    },
+    {
+      "name": "load_valid_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 300
+    },
+    {
+      "name": "cmd_validate",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 316
+    },
+    {
+      "name": "cmd_plan",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 324
+    },
+    {
+      "name": "cmd_validate_raster",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 332
+    },
+    {
+      "name": "cmd_atlas_manifest",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 346
+    },
+    {
+      "name": "execute_compiled_production_job",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 370
+    },
+    {
+      "name": "_write_production_inputs",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 425
+    },
+    {
+      "name": "_persist_enriched_production_report",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 441
+    },
+    {
+      "name": "_enrich_engine_handoff",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 454
+    },
+    {
+      "name": "parser",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 535
+    },
+    {
+      "name": "main",
+      "kind": "function",
+      "file": "asset_forge.py",
+      "line": 749
+    },
+    {
+      "name": "_decode_data_uri",
+      "kind": "function",
+      "file": "gltf_binary_metrics.py",
+      "line": 12
+    },
+    {
+      "name": "_safe_local_path",
+      "kind": "function",
+      "file": "gltf_binary_metrics.py",
       "line": 24
     },
     {
-      "name": "test_cross_repo_live_e2e_persists_evidence",
+      "name": "_glb_bin_chunk",
       "kind": "function",
-      "file": "tests/test_production_os_ai_dev_server_live_e2e_workflow.py",
+      "file": "gltf_binary_metrics.py",
+      "line": 36
+    },
+    {
+      "name": "load_buffer_payloads",
+      "kind": "function",
+      "file": "gltf_binary_metrics.py",
+      "line": 58
+    },
+    {
+      "name": "buffer_view_bytes",
+      "kind": "function",
+      "file": "gltf_binary_metrics.py",
+      "line": 90
+    },
+    {
+      "name": "_png_dimensions",
+      "kind": "function",
+      "file": "gltf_binary_metrics.py",
+      "line": 121
+    },
+    {
+      "name": "_jpeg_dimensions",
+      "kind": "function",
+      "file": "gltf_binary_metrics.py",
+      "line": 128
+    },
+    {
+      "name": "_webp_dimensions",
+      "kind": "function",
+      "file": "gltf_binary_metrics.py",
+      "line": 155
+    },
+    {
+      "name": "image_dimensions",
+      "kind": "function",
+      "file": "gltf_binary_metrics.py",
+      "line": 163
+    },
+    {
+      "name": "inspect_images",
+      "kind": "function",
+      "file": "gltf_binary_metrics.py",
+      "line": 175
+    },
+    {
+      "name": "inspect_rig_and_animation",
+      "kind": "function",
+      "file": "gltf_binary_metrics.py",
+      "line": 241
+    },
+    {
+      "name": "_first_ready_backend",
+      "kind": "function",
+      "file": "operational_status.py",
+      "line": 10
+    },
+    {
+      "name": "build_operational_status",
+      "kind": "function",
+      "file": "operational_status.py",
+      "line": 17
+    },
+    {
+      "name": "ProductionExecutionError",
+      "kind": "class",
+      "file": "production_executor.py",
+      "line": 15
+    },
+    {
+      "name": "_safe_asset_id",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 19
+    },
+    {
+      "name": "_trusted_generated_source",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 33
+    },
+    {
+      "name": "_provenance_from_manifest",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 50
+    },
+    {
+      "name": "_routing_from_generation",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 70
+    },
+    {
+      "name": "_stage_provided_source",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 101
+    },
+    {
+      "name": "execute_generated_raster_job",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 127
+    },
+    {
+      "name": "execute_generated_vector_job",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 293
+    },
+    {
+      "name": "execute_generated_3d_job",
+      "kind": "function",
+      "file": "production_executor.py",
+      "line": 398
+    },
+    {
+      "name": "_read_webp_bytes",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 20
+    },
+    {
+      "name": "_webp_chunks",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 27
+    },
+    {
+      "name": "_webp_vp8x_info",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 60
+    },
+    {
+      "name": "_webp_vp8l_info",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 79
+    },
+    {
+      "name": "_webp_vp8_info",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 96
+    },
+    {
+      "name": "inspect_webp_bytes",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 118
+    },
+    {
+      "name": "inspect_webp",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 184
+    },
+    {
+      "name": "_read_png_bytes",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 188
+    },
+    {
+      "name": "_chunks",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 195
+    },
+    {
+      "name": "_validate_ihdr",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 262
+    },
+    {
+      "name": "_validate_palette_transparency",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 286
+    },
+    {
+      "name": "_decompress_idat",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 351
+    },
+    {
+      "name": "inspect_raster",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 380
+    },
+    {
+      "name": "inspect_png",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 391
+    },
+    {
+      "name": "_paeth",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 419
+    },
+    {
+      "name": "_unfilter_scanlines",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 431
+    },
+    {
+      "name": "_scanline_layout",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 472
+    },
+    {
+      "name": "_unpack_packed_samples",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 480
+    },
+    {
+      "name": "_sample16_to_u8",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 500
+    },
+    {
+      "name": "_adam7_extent",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 515
+    },
+    {
+      "name": "_decode_row_to_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 521
+    },
+    {
+      "name": "_decode_adam7",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 632
+    },
+    {
+      "name": "decode_raster_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 687
+    },
+    {
+      "name": "raster_backend_status",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 712
+    },
+    {
+      "name": "decode_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 727
+    },
+    {
+      "name": "_chunk",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 789
+    },
+    {
+      "name": "_filter_row",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 798
+    },
+    {
+      "name": "_filter_score",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 822
+    },
+    {
+      "name": "_png_bytes_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 826
+    },
+    {
+      "name": "encode_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 859
+    },
+    {
+      "name": "encode_webp",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 870
+    },
+    {
+      "name": "recompress_png",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 909
+    },
+    {
+      "name": "_resize_rgba_nearest",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 934
+    },
+    {
+      "name": "fit_png_to_max_bytes",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 959
+    },
+    {
+      "name": "_alpha_bounds",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1079
+    },
+    {
+      "name": "_crop_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1097
+    },
+    {
+      "name": "_blit_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1119
+    },
+    {
+      "name": "_extrude_rgba",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1136
+    },
+    {
+      "name": "_rotate_rgba_clockwise",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1183
+    },
+    {
+      "name": "_prepare_frame",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1197
+    },
+    {
+      "name": "_validate_atlas_dimensions",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1222
+    },
+    {
+      "name": "_write_atlas_png",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1250
+    },
+    {
+      "name": "_next_power_of_two",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1270
+    },
+    {
+      "name": "_rects_intersect",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1276
+    },
+    {
+      "name": "_rect_contains",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1285
+    },
+    {
+      "name": "_split_free_rect",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1294
+    },
+    {
+      "name": "_prune_free_rects",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1343
+    },
+    {
+      "name": "_maxrects_score",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1356
+    },
+    {
+      "name": "_pack_maxrects",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1372
+    },
+    {
+      "name": "_render_compact_layout",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1513
+    },
+    {
+      "name": "_choose_maxrects_layout",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1554
+    },
+    {
+      "name": "pack_compact_atlas",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1668
+    },
+    {
+      "name": "pack_uniform_atlas",
+      "kind": "function",
+      "file": "raster_pack.py",
+      "line": 1812
+    },
+    {
+      "name": "job",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 13
+    },
+    {
+      "name": "ProductionExecutorTests",
+      "kind": "class",
+      "file": "tests/test_production_executor.py",
+      "line": 27
+    },
+    {
+      "name": "test_generated_png_flows_through_processing_validation_and_report",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 28
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
       "line": 32
+    },
+    {
+      "name": "optimizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 37
+    },
+    {
+      "name": "validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 41
+    },
+    {
+      "name": "test_generated_png_fits_max_bytes_before_validation",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 59
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 67
+    },
+    {
+      "name": "optimizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 72
+    },
+    {
+      "name": "fitter",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 76
+    },
+    {
+      "name": "validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 87
+    },
+    {
+      "name": "test_raster_report_exposes_backend_routing",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 110
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 114
+    },
+    {
+      "name": "test_webp_target_encodes_before_validation",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 177
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 181
+    },
+    {
+      "name": "encode",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 186
+    },
+    {
+      "name": "validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 191
+    },
+    {
+      "name": "test_validation_errors_block_artifact_promotion",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 205
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 209
+    },
+    {
+      "name": "optimizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 214
+    },
+    {
+      "name": "test_generated_vector_is_sanitized_normalized_and_validated",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 230
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 237
+    },
+    {
+      "name": "sanitizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 245
+    },
+    {
+      "name": "normalizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 249
+    },
+    {
+      "name": "profile_validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 256
+    },
+    {
+      "name": "test_vector_validation_errors_block_promotion",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 274
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 281
+    },
+    {
+      "name": "copy_step",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 286
+    },
+    {
+      "name": "test_generated_3d_flows_through_profile_quality_and_godot_gates",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 304
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 312
+    },
+    {
+      "name": "profile_validator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 321
+    },
+    {
+      "name": "quality",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 326
+    },
+    {
+      "name": "godot",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 335
+    },
+    {
+      "name": "test_3d_backend_and_model_are_forwarded_to_generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 354
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 362
+    },
+    {
+      "name": "test_godot_3d_emits_runtime_plan_sidecar",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 403
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 411
+    },
+    {
+      "name": "test_generated_character_3d_fails_when_profile_quality_fails",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 450
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 457
+    },
+    {
+      "name": "test_provided_png_source_skips_generator_and_is_staged",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 485
+    },
+    {
+      "name": "optimizer",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 494
+    },
+    {
+      "name": "test_provided_source_symlink_is_rejected",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 515
+    },
+    {
+      "name": "test_generator_source_must_stay_inside_job_output",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 543
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 549
+    },
+    {
+      "name": "test_asset_id_cannot_escape_job_output",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 565
+    },
+    {
+      "name": "test_non_raster_target_fails_closed",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 583
+    },
+    {
+      "name": "test_generated_3d_reports_lod_artifacts_when_enabled",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 596
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 607
+    },
+    {
+      "name": "lod_reporter",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 612
+    },
+    {
+      "name": "test_required_collision_blocks_godot_prop_without_collision_node",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 645
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 654
+    },
+    {
+      "name": "test_required_lod_toolchain_unavailable_blocks_3d_promotion",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 679
+    },
+    {
+      "name": "generator",
+      "kind": "function",
+      "file": "tests/test_production_executor.py",
+      "line": 690
+    },
+    {
+      "name": "RasterBackendTests",
+      "kind": "class",
+      "file": "tests/test_raster_backend.py",
+      "line": 10
+    },
+    {
+      "name": "test_backend_status_shape",
+      "kind": "function",
+      "file": "tests/test_raster_backend.py",
+      "line": 11
+    },
+    {
+      "name": "test_missing_backend_returns_clear_error",
+      "kind": "function",
+      "file": "tests/test_raster_backend.py",
+      "line": 18
+    },
+    {
+      "name": "test_real_webp_lossless_decode_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_backend.py",
+      "line": 39
+    },
+    {
+      "name": "test_pack_atlas_accepts_mixed_png_and_webp",
+      "kind": "function",
+      "file": "tests/test_raster_backend.py",
+      "line": 60
+    },
+    {
+      "name": "test_animated_webp_is_rejected_for_atlas_decode",
+      "kind": "function",
+      "file": "tests/test_raster_backend.py",
+      "line": 85
+    },
+    {
+      "name": "test_webp_encoder_validates_quality_and_method_without_backend",
+      "kind": "function",
+      "file": "tests/test_raster_backend.py",
+      "line": 105
+    },
+    {
+      "name": "test_encode_webp_lossless_roundtrip",
+      "kind": "function",
+      "file": "tests/test_raster_backend.py",
+      "line": 139
+    },
+    {
+      "name": "webp_chunk",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 15
+    },
+    {
+      "name": "webp_file",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 20
+    },
+    {
+      "name": "chunk",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 25
+    },
+    {
+      "name": "adam7_extent",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 45
+    },
+    {
+      "name": "pack_indexed_samples",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 51
+    },
+    {
+      "name": "adam7_raw",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 64
+    },
+    {
+      "name": "write_rgba_png",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 84
+    },
+    {
+      "name": "RasterPackTests",
+      "kind": "class",
+      "file": "tests/test_raster_pack.py",
+      "line": 96
+    },
+    {
+      "name": "test_pack_uniform_atlas_writes_png_and_metadata",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 97
+    },
+    {
+      "name": "test_pack_rejects_mixed_frame_sizes",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 124
+    },
+    {
+      "name": "test_rgb_png_is_promoted_to_opaque_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 135
+    },
+    {
+      "name": "test_recompress_png_preserves_pixels",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 153
+    },
+    {
+      "name": "test_recompress_png_reports_sizes",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 170
+    },
+    {
+      "name": "test_fit_png_to_max_bytes_downscales_until_under_limit",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 186
+    },
+    {
+      "name": "test_grayscale_png_decodes_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 224
+    },
+    {
+      "name": "test_grayscale_alpha_png_decodes_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 239
+    },
+    {
+      "name": "test_indexed_png_with_transparency_decodes_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 253
+    },
+    {
+      "name": "test_rejects_invalid_ihdr_length",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 274
+    },
+    {
+      "name": "test_rejects_zero_dimensions",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 286
+    },
+    {
+      "name": "test_rejects_duplicate_ihdr",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 299
+    },
+    {
+      "name": "test_rejects_non_consecutive_idat",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 313
+    },
+    {
+      "name": "test_rejects_trailing_data_after_iend",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 330
+    },
+    {
+      "name": "test_rejects_indexed_trns_longer_than_palette",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 338
+    },
+    {
+      "name": "test_rejects_trns_for_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 353
+    },
+    {
+      "name": "test_truecolor_trns_is_applied",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 367
+    },
+    {
+      "name": "test_rejects_decompressed_data_larger_than_expected",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 383
+    },
+    {
+      "name": "test_hardened_inspector_reports_palette_and_transparency",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 397
+    },
+    {
+      "name": "test_oversized_file_is_rejected_before_read",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 415
+    },
+    {
+      "name": "test_indexed_1bit_png_decodes_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 423
+    },
+    {
+      "name": "test_indexed_2bit_png_decodes_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 448
+    },
+    {
+      "name": "test_indexed_4bit_png_ignores_padding_nibble",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 479
+    },
+    {
+      "name": "test_indexed_low_bit_depth_transparency_is_applied",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 504
+    },
+    {
+      "name": "test_indexed_low_bit_depth_palette_limit_is_enforced",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 529
+    },
+    {
+      "name": "test_grayscale_1bit_png_decodes_to_rgba",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 548
+    },
+    {
+      "name": "test_grayscale_2bit_png_scales_samples",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 569
+    },
+    {
+      "name": "test_grayscale_4bit_png_ignores_padding_nibble",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 592
+    },
+    {
+      "name": "test_grayscale_low_bit_depth_trns_is_applied_before_scaling",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 614
+    },
+    {
+      "name": "test_grayscale_trns_out_of_range_is_rejected",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 639
+    },
+    {
+      "name": "test_grayscale_16bit_png_decodes_to_rgba8",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 653
+    },
+    {
+      "name": "test_truecolor_16bit_png_decodes_to_rgba8",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 675
+    },
+    {
+      "name": "test_grayscale_alpha_16bit_png_decodes_to_rgba8",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 690
+    },
+    {
+      "name": "test_rgba_16bit_png_decodes_to_rgba8",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 705
+    },
+    {
+      "name": "test_grayscale_16bit_trns_compares_original_sample",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 720
+    },
+    {
+      "name": "test_truecolor_16bit_trns_compares_original_samples",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 737
+    },
+    {
+      "name": "test_truecolor_8bit_trns_out_of_range_is_rejected",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 757
+    },
+    {
+      "name": "test_adam7_rgba8_reconstructs_full_image",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 771
+    },
+    {
+      "name": "pixel",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 777
+    },
+    {
+      "name": "test_adam7_indexed_1bit_reconstructs_checkerboard",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 793
+    },
+    {
+      "name": "test_adam7_rgba16_reconstructs_and_downconverts",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 833
+    },
+    {
+      "name": "pixel16",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 839
+    },
+    {
+      "name": "test_adam7_expected_size_is_bounded_and_exact",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 868
+    },
+    {
+      "name": "test_webp_vp8x_dimensions_alpha_and_animation",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 883
+    },
+    {
+      "name": "test_webp_vp8l_dimensions_and_alpha",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 898
+    },
+    {
+      "name": "test_webp_vp8_lossy_dimensions",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 909
+    },
+    {
+      "name": "test_webp_alpha_chunk_marks_alpha",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 925
+    },
+    {
+      "name": "test_webp_incomplete_vp8x_is_rejected",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 945
+    },
+    {
+      "name": "test_webp_reserved_vp8x_bits_are_rejected",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 951
+    },
+    {
+      "name": "test_webp_vp8x_dimension_mismatch_is_rejected",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 958
+    },
+    {
+      "name": "test_webp_lossy_alpha_flag_requires_alph_chunk",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 965
+    },
+    {
+      "name": "test_webp_bad_riff_size_is_rejected",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 973
+    },
+    {
+      "name": "test_webp_file_inspection_reads_from_path",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 979
+    },
+    {
+      "name": "test_uniform_atlas_trim_records_source_offsets",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 990
+    },
+    {
+      "name": "test_uniform_atlas_extrudes_edge_pixels",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1020
+    },
+    {
+      "name": "test_compact_atlas_packs_variable_size_frames",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1044
+    },
+    {
+      "name": "test_compact_atlas_rejects_frame_wider_than_budget",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1078
+    },
+    {
+      "name": "test_recompress_png_keeps_original_when_candidate_is_larger",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1091
+    },
+    {
+      "name": "test_uniform_atlas_width_budget_is_enforced",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1112
+    },
+    {
+      "name": "test_uniform_atlas_pixel_budget_is_enforced",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1127
+    },
+    {
+      "name": "test_compact_atlas_height_budget_is_enforced",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1139
+    },
+    {
+      "name": "test_atlas_byte_budget_preserves_existing_output",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1155
+    },
+    {
+      "name": "test_compact_atlas_reports_occupancy_metrics",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1174
+    },
+    {
+      "name": "test_compact_atlas_regions_do_not_overlap",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1200
+    },
+    {
+      "name": "test_maxrects_compacts_better_than_simple_shelf_case",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1237
+    },
+    {
+      "name": "test_compact_atlas_reports_wasted_pixels",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1257
+    },
+    {
+      "name": "test_compact_atlas_minimum_occupancy_can_fail_build",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1277
+    },
+    {
+      "name": "test_compact_atlas_rejects_invalid_occupancy_threshold",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1295
+    },
+    {
+      "name": "test_compact_atlas_auto_selects_best_evaluated_heuristic",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1309
+    },
+    {
+      "name": "test_compact_atlas_auto_skips_heuristic_outside_byte_budget",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1344
+    },
+    {
+      "name": "test_compact_atlas_forced_heuristic_is_respected",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1382
+    },
+    {
+      "name": "test_compact_atlas_rejects_unknown_heuristic",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1402
+    },
+    {
+      "name": "test_compact_atlas_rotation_can_fit_frame_that_is_too_wide",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1416
+    },
+    {
+      "name": "test_compact_atlas_rotation_is_disabled_by_default",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1459
+    },
+    {
+      "name": "test_compact_atlas_rotation_metadata_counts_rotated_frames",
+      "kind": "function",
+      "file": "tests/test_raster_pack.py",
+      "line": 1472
     }
   ],
   "selected_tests": [
-    "tests/test_production_os_ai_dev_server_live_e2e_workflow.py"
+    "tests/test_production_executor.py",
+    "tests/test_raster_backend.py",
+    "tests/test_raster_pack.py"
   ]
 }

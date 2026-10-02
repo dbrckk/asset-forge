@@ -4001,6 +4001,14 @@ def validator(path, manifest)
 ⋮----
 report = execute_generated_raster_job(
 ⋮----
+def test_generated_png_fits_max_bytes_before_validation(self)
+⋮----
+constrained = job()
+⋮----
+calls = []
+⋮----
+def fitter(source, output, max_bytes)
+⋮----
 def test_raster_report_exposes_backend_routing(self)
 ⋮----
 def test_webp_target_encodes_before_validation(self)
@@ -4223,6 +4231,21 @@ after = decode_rgba(optimized)
 output_exists = optimized.exists()
 ⋮----
 def test_recompress_png_reports_sizes(self)
+⋮----
+def test_fit_png_to_max_bytes_downscales_until_under_limit(self)
+⋮----
+fitted = root / "fitted.png"
+⋮----
+width = 128
+height = 128
+rng = random.Random(12345)
+pixels = bytes(
+⋮----
+recompressed = root / "recompressed.png"
+⋮----
+max_bytes = max(256, int(recompressed.stat().st_size * 0.9))
+⋮----
+report = fit_png_to_max_bytes(
 ⋮----
 def test_grayscale_png_decodes_to_rgba(self)
 ⋮----
@@ -8145,6 +8168,10 @@ source = _trusted_generated_source(out, generation, label="provided source")
 final = out / f"{asset_id}.{target_format}"
 ⋮----
 processing = png_optimizer(source, final)
+max_bytes = target.get("maxBytes")
+⋮----
+size_fit = png_size_fitter(final, final, max_bytes)
+processing = dict(processing) if isinstance(processing, dict) else {}
 ⋮----
 processing = webp_encoder(source, final, lossless=True)
 ⋮----
@@ -8740,6 +8767,57 @@ source_bytes = input_path.read_bytes()
 candidate = _png_bytes_rgba(width, height, pixels, adaptive=True)
 ⋮----
 kept_optimized = len(candidate) < before
+⋮----
+resized = bytearray(target_width * target_height * 4)
+⋮----
+source_y = min(height - 1, target_y * height // target_height)
+⋮----
+source_x = min(width - 1, target_x * width // target_width)
+source_offset = (source_y * width + source_x) * 4
+target_offset = (target_y * target_width + target_x) * 4
+⋮----
+max_bytes = int(max_bytes)
+min_dimension = int(min_dimension)
+max_iterations = int(max_iterations)
+⋮----
+source = Path(input_path)
+before_bytes = source.stat().st_size
+source_bytes = source.read_bytes()
+⋮----
+recompressed = _png_bytes_rgba(
+⋮----
+best_bytes = recompressed
+⋮----
+best_bytes = source_bytes
+best_width = original_width
+best_height = original_height
+⋮----
+current_width = original_width
+current_height = original_height
+current_pixels = original_pixels
+iterations = []
+⋮----
+ratio = (max_bytes / max(1, len(best_bytes))) ** 0.5
+scale = min(0.95, max(0.5, ratio * 0.97))
+next_width = max(
+next_height = max(
+⋮----
+next_width = max(min_dimension, current_width - 1)
+⋮----
+next_height = max(min_dimension, current_height - 1)
+⋮----
+current_pixels = _resize_rgba_nearest(
+current_width = next_width
+current_height = next_height
+encoded = _png_bytes_rgba(
+⋮----
+best_bytes = encoded
+best_width = current_width
+best_height = current_height
+⋮----
+output = Path(output_path)
+⋮----
+after_bytes = len(best_bytes)
 ⋮----
 def _alpha_bounds(width: int, height: int, pixels: bytes) -> tuple[int, int, int, int] | None
 ⋮----

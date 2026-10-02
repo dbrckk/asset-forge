@@ -116,6 +116,38 @@
       "path": "gltf_quality.py"
     },
     {
+      "dependencies": [
+        "raster_backend.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "gltf_binary_metrics.py",
+        "operational_status.py",
+        "production_executor.py",
+        "tests/test_raster_backend.py",
+        "tests/test_raster_pack.py"
+      ],
+      "in_degree": 6,
+      "out_degree": 1,
+      "path": "raster_pack.py"
+    },
+    {
+      "dependencies": [
+        "art_quality.py",
+        "generator_backends.py",
+        "lod_3d.py",
+        "raster_pack.py",
+        "semantic_art_review.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "tests/test_production_executor.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 5,
+      "path": "production_executor.py"
+    },
+    {
       "dependencies": [],
       "dependents": [
         "asset_forge.py",
@@ -128,36 +160,6 @@
       "in_degree": 6,
       "out_degree": 0,
       "path": "gltf_tools.py"
-    },
-    {
-      "dependencies": [
-        "raster_backend.py"
-      ],
-      "dependents": [
-        "asset_forge.py",
-        "gltf_binary_metrics.py",
-        "operational_status.py",
-        "tests/test_raster_backend.py",
-        "tests/test_raster_pack.py"
-      ],
-      "in_degree": 5,
-      "out_degree": 1,
-      "path": "raster_pack.py"
-    },
-    {
-      "dependencies": [
-        "art_quality.py",
-        "generator_backends.py",
-        "lod_3d.py",
-        "semantic_art_review.py"
-      ],
-      "dependents": [
-        "asset_forge.py",
-        "tests/test_production_executor.py"
-      ],
-      "in_degree": 2,
-      "out_degree": 4,
-      "path": "production_executor.py"
     },
     {
       "dependencies": [
@@ -780,7 +782,7 @@
       "path": "tests/test_kaggle_backend.py"
     }
   ],
-  "edge_count": 127,
+  "edge_count": 128,
   "generated_by": "dbrckk/repo-brain-v7-graph",
   "node_count": 73,
   "schema_version": 1
