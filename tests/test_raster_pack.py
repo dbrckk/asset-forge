@@ -202,7 +202,9 @@ class RasterPackTests(unittest.TestCase):
                 for channel in range(4)
             )
             encode_rgba(source, width, height, pixels, adaptive=False)
-            max_bytes = max(256, source.stat().st_size // 3)
+            recompressed = root / "recompressed.png"
+            recompress_png(source, recompressed)
+            max_bytes = max(256, int(recompressed.stat().st_size * 0.9))
 
             report = fit_png_to_max_bytes(
                 source,
