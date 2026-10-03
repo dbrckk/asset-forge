@@ -96,26 +96,25 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-10-02T18:59:45Z
+Generated: 2026-10-03T18:05:25Z
 
 ### Git
 - Branch: `main`
-- Head: `77710214b0d1`
-- Commit date: 2026-10-02T20:59:34+02:00
-- Commit: test(e2e): requalify raster size enforcement live
+- Head: `f4f3e909d10c`
+- Commit date: 2026-10-03T20:05:11+02:00
+- Commit: fix(e2e): harden canonical Production-OS live evidence (#10)
 - Tracked files: 308
 
 ### Recently changed files
 - `.github/workflows/production-os-ai-dev-server-live-e2e.yml`
+- `tests/test_production_os_ai_dev_server_live_e2e_workflow.py`
 - `production_executor.py`
 - `raster_pack.py`
 - `tests/test_production_executor.py`
 - `tests/test_raster_pack.py`
-- `tests/test_production_os_ai_dev_server_live_e2e_workflow.py`
 - `.github/workflows/deadline-zero-live-pilot.yml`
 - `.github/workflows/live-generation.yml`
 - `.github/workflows/repo-standards.yml`
-- `CHANGELOG.md`
 
 ### Project signals
 - `pyproject.toml`

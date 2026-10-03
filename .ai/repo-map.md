@@ -462,27 +462,34 @@ jobs:
   live-e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    env:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
-      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
-      POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
     steps:
       - name: Checkout current Asset Forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
 
       - name: Checkout current AI Dev Server
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: dbrckk/ai-dev-server
           path: ai-dev-server
+          persist-credentials: false
 
       - name: Checkout Deadline Zero
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: dbrckk/deadline-zero
           path: deadline-zero
+          persist-credentials: false
+
+      - name: Capture exact repository revisions
+        id: revisions
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "asset_forge_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "ai_dev_server_sha=$(git -C ai-dev-server rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "deadline_zero_sha=$(git -C deadline-zero rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
@@ -500,6 +507,12 @@ jobs:
       - name: Select live generation backend
         id: credential
         shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
         run: |
           if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
             echo "backend=cloudflare" >> "$GITHUB_OUTPUT"
@@ -526,6 +539,11 @@ jobs:
       - name: Verify Asset Forge readiness
         env:
           BACKEND: ${{ steps.credential.outputs.backend }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
         run: |
           asset-forge operational-status > build-operational-status.json
           python - <<'PY'
@@ -629,6 +647,11 @@ jobs:
       - name: Generate and validate real asset
         env:
           BACKEND: ${{ steps.credential.outputs.backend }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
         run: |
           asset-forge fulfill             build/live-e2e/production-request.json             --output-dir build/live-e2e/fulfilled             --backend "$BACKEND"
           asset-forge validate-production-report             build/live-e2e/fulfilled/production-report.json
@@ -648,17 +671,24 @@ jobs:
 
       - name: Record cross-repository evidence
         shell: bash
+        env:
+          ASSET_FORGE_SHA: ${{ steps.revisions.outputs.asset_forge_sha }}
+          AI_DEV_SERVER_SHA: ${{ steps.revisions.outputs.ai_dev_server_sha }}
+          DEADLINE_ZERO_SHA: ${{ steps.revisions.outputs.deadline_zero_sha }}
         run: |
           set -euo pipefail
           python - <<'PY'
-          import hashlib, json
+          import hashlib, json, os
           from pathlib import Path
           root=Path("build/live-e2e")
           asset=root/"fulfilled"/"live-production-pipeline-icon.png"
           report=json.loads((root/"fulfilled"/"production-report.json").read_text())
           studio=json.loads((root/"studio-request.json").read_text())
           evidence={
-              "schema":"asset-forge/production-os-ai-dev-server-live-e2e/v1",
+              "schema":"asset-forge/production-os-ai-dev-server-live-e2e/v2",
+              "assetForgeSha":os.environ["ASSET_FORGE_SHA"],
+              "aiDevServerSha":os.environ["AI_DEV_SERVER_SHA"],
+              "deadlineZeroSha":os.environ["DEADLINE_ZERO_SHA"],
               "productionOsCorrelation":studio["production_os"],
               "targetRepo":studio["target_repo"],
               "toolContract":studio["tool_contracts"]["asset_forge"],
@@ -4106,6 +4136,10 @@ def test_cross_repo_live_e2e_requires_real_asset_backend()
 def test_cross_repo_live_e2e_generates_and_compiles_target()
 ⋮----
 def test_cross_repo_live_e2e_persists_evidence()
+⋮----
+def test_cross_repo_live_e2e_scopes_credentials_and_records_exact_revisions()
+⋮----
+pre_generation = WORKFLOW.split("- name: Select live generation backend", 1)[0]
 ````
 
 ## File: tests/test_raster_backend.py
