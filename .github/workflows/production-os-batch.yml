@@ -1,8 +1,10 @@
 name: Production OS asset batch
 
-run-name: Asset Forge batch ${{ inputs.correlation_id }}
+run-name: Asset Forge batch ${{ github.event.client_payload.correlation_id || inputs.correlation_id }}
 
 on:
+  repository_dispatch:
+    types: [production-os-asset-batch]
   workflow_dispatch:
     inputs:
       correlation_id:
@@ -35,7 +37,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: asset-forge-batch-${{ inputs.correlation_id }}
+  group: asset-forge-batch-${{ github.event.client_payload.correlation_id || inputs.correlation_id }}
   cancel-in-progress: false
 
 jobs:
@@ -43,6 +45,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
+      POS_CORRELATION_ID: ${{ github.event.client_payload.correlation_id || inputs.correlation_id }}
+      POS_SPEC_JSON: ${{ github.event.client_payload.spec_json || inputs.spec_json }}
+      POS_BACKEND: ${{ github.event.client_payload.backend || inputs.backend || 'auto' }}
+      POS_MODEL: ${{ github.event.client_payload.model || inputs.model || '' }}
       POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -89,7 +95,7 @@ jobs:
 
       - name: Materialize batch spec
         env:
-          SPEC_JSON: ${{ inputs.spec_json }}
+          SPEC_JSON: ${{ env.POS_SPEC_JSON }}
         run: |
           python - <<'PY'
           import json
@@ -111,10 +117,10 @@ jobs:
             python remote_batch.py
             --spec build/remote-batch/spec.json
             --output-root build/remote-batch/output
-            --backend "${{ inputs.backend }}"
+            --backend "$POS_BACKEND"
           )
-          if [ -n "${{ inputs.model }}" ]; then
-            args+=(--model "${{ inputs.model }}")
+          if [ -n "$POS_MODEL" ]; then
+            args+=(--model "$POS_MODEL")
           fi
           "${args[@]}"
 
@@ -194,7 +200,7 @@ jobs:
       - name: Upload transactional batch bundle
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: asset-forge-batch-${{ inputs.correlation_id }}
+          name: asset-forge-batch-${{ env.POS_CORRELATION_ID }}
           path: build/remote-batch/output
           if-no-files-found: error
           retention-days: 14
