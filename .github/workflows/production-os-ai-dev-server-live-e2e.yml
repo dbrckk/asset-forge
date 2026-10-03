@@ -101,11 +101,6 @@ jobs:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
           POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
-          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
-          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
         run: |
           asset-forge operational-status > build-operational-status.json
           python - <<'PY'
@@ -209,6 +204,11 @@ jobs:
       - name: Generate and validate real asset
         env:
           BACKEND: ${{ steps.credential.outputs.backend }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
         run: |
           asset-forge fulfill             build/live-e2e/production-request.json             --output-dir build/live-e2e/fulfilled             --backend "$BACKEND"
           asset-forge validate-production-report             build/live-e2e/fulfilled/production-report.json
