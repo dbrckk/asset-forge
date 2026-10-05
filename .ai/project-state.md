@@ -3,6 +3,7 @@
 Status: active
 
 ## Working
+- Production OS batch workflow accepts a correlated request committed under `.asset-forge/requests/` as an alternative trigger when the caller has repository Contents write but lacks Actions write.
 - Repository is a central visual-asset production pipeline spanning raster 2D, SVG/vector, and 3D.
 - PNG validation/decoding/atlas/optimization and Godot animation export are implemented for common non-interlaced and Adam7-interlaced workflows.
 - Atlas packing supports optional transparent trim, original source offsets/dimensions, edge extrusion, deterministic MaxRects packing for variable-size PNG/WebP inputs, explicit width/height/pixel/encoded-byte budgets, and opt-in 90-degree clockwise frame rotation.
