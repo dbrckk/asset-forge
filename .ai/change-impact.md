@@ -1,13 +1,13 @@
 # Change impact
 
-Base: d74fd9c537d33f99ac04d1f8113d450dc93a6412
-Head: b2429f1e07694034c3d157115444edbf5cbd5cca
+Base: e930bf1cde68882724aa591aba4339d73a96c965
+Head: 64a4c4697936c3c3a4ed5ba9ec57376ba557d421
 
 ## Changed files
-- M .github/workflows/production-os-batch.yml
+- A .asset-forge/requests/pos-c27aa69faf0d481489c672fa1d1adcde.json
 
 ## Affected areas
-- .github
+- .asset-forge
 
 ## Related test candidates
 - No direct filename-based test match detected.

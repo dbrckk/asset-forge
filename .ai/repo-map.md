@@ -38,6 +38,9 @@ The content is organized as follows:
 
 # Directory Structure
 ````
+.asset-forge/
+  requests/
+    pos-c27aa69faf0d481489c672fa1d1adcde.json
 .github/
   workflows/
     ai-repo-map.yml
@@ -173,6 +176,11 @@ visual_similarity.py
 ````
 
 # Files
+
+## File: .asset-forge/requests/pos-c27aa69faf0d481489c672fa1d1adcde.json
+````json
+{"backend":"auto","model":"","spec":{"items":[{"id":"push-smoke","request":{"delivery":{"engine":null,"outputDir":"build/live-raster-smoke"},"instruction":"Create a simple isolated sci-fi energy cell game sprite with a dark metallic body, one cyan emissive strip, no text, no watermark, and a plain neutral background.","manifest":{"constraints":{"expectedFrames":1,"frameHeight":96,"frameWidth":96},"id":"live-raster-cell","importance":"secondary","license":{"attributionRequired":false,"commercialUse":true,"derivatives":true,"id":"project-owned"},"project":"asset-forge-live-smoke","source":{"mode":"generated"},"target":{"engine":null,"format":"png","maxBytes":4194304},"type":"sprite"},"requestId":"production-os-push-smoke","schema":"asset-forge/production-request/v1"},"target_path":"assets/art/push-smoke.png"}]}}
+````
 
 ## File: .github/workflows/ai-repo-map.yml
 ````yaml
