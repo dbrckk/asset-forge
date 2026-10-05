@@ -1,15 +1,13 @@
 # Change impact
 
-Base: 7628dda9d13c711309b9e1fd681c5e2edb53e411
-Head: f4f3e909d10c57b0f8ebe4505f27a441f3066a7f
+Base: d74fd9c537d33f99ac04d1f8113d450dc93a6412
+Head: b2429f1e07694034c3d157115444edbf5cbd5cca
 
 ## Changed files
-- M .github/workflows/production-os-ai-dev-server-live-e2e.yml
-- M tests/test_production_os_ai_dev_server_live_e2e_workflow.py
+- M .github/workflows/production-os-batch.yml
 
 ## Affected areas
 - .github
-- tests
 
 ## Related test candidates
 - No direct filename-based test match detected.

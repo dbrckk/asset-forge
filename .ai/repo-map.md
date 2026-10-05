@@ -717,9 +717,13 @@ jobs:
 ````yaml
 name: Production OS asset batch
 
-run-name: Asset Forge batch ${{ inputs.correlation_id }}
+run-name: Asset Forge batch ${{ inputs.correlation_id || github.event.head_commit.message }}
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.asset-forge/requests/*.json'
   workflow_dispatch:
     inputs:
       correlation_id:
@@ -752,7 +756,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: asset-forge-batch-${{ inputs.correlation_id }}
+  group: asset-forge-batch-${{ inputs.correlation_id || github.event.head_commit.message }}
   cancel-in-progress: false
 
 jobs:
@@ -805,20 +809,41 @@ jobs:
         run: printf '%s' "$POLLINATIONS_API_KEY" | polli auth login --with-token
 
       - name: Materialize batch spec
+        id: request
         env:
           SPEC_JSON: ${{ inputs.spec_json }}
+          CORRELATION_ID: ${{ inputs.correlation_id || github.event.head_commit.message }}
+          REQUEST_BACKEND: ${{ inputs.backend }}
+          REQUEST_MODEL: ${{ inputs.model }}
         run: |
           python - <<'PY'
           import json
           import os
+          import re
           from pathlib import Path
 
-          payload = json.loads(os.environ["SPEC_JSON"])
+          correlation = os.environ["CORRELATION_ID"]
+          if not re.fullmatch(r"pos-[0-9a-f]{32}", correlation):
+              raise SystemExit("invalid Asset Forge batch correlation id")
+          if os.environ["SPEC_JSON"]:
+              payload = json.loads(os.environ["SPEC_JSON"])
+              backend = os.environ["REQUEST_BACKEND"] or "auto"
+              model = os.environ["REQUEST_MODEL"]
+          else:
+              request_path = Path(".asset-forge/requests") / f"{correlation}.json"
+              envelope = json.loads(request_path.read_text(encoding="utf-8"))
+              payload = envelope["spec"]
+              backend = envelope.get("backend") or "auto"
+              model = envelope.get("model") or ""
+          if backend not in {"auto", "pollinations", "qwen-colab", "cloudflare", "kaggle-qwen", "vtracer", "kaggle-triposr"}:
+              raise SystemExit("invalid Asset Forge backend")
           Path("build/remote-batch").mkdir(parents=True, exist_ok=True)
           Path("build/remote-batch/spec.json").write_text(
               json.dumps(payload, indent=2, sort_keys=True) + "\n",
               encoding="utf-8",
           )
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"backend={backend}\nmodel={model}\n")
           PY
 
       - name: Execute dependency-aware batch
@@ -828,10 +853,10 @@ jobs:
             python remote_batch.py
             --spec build/remote-batch/spec.json
             --output-root build/remote-batch/output
-            --backend "${{ inputs.backend }}"
+            --backend "${{ steps.request.outputs.backend }}"
           )
-          if [ -n "${{ inputs.model }}" ]; then
-            args+=(--model "${{ inputs.model }}")
+          if [ -n "${{ steps.request.outputs.model }}" ]; then
+            args+=(--model "${{ steps.request.outputs.model }}")
           fi
           "${args[@]}"
 
@@ -911,7 +936,7 @@ jobs:
       - name: Upload transactional batch bundle
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: asset-forge-batch-${{ inputs.correlation_id }}
+          name: asset-forge-batch-${{ inputs.correlation_id || github.event.head_commit.message }}
           path: build/remote-batch/output
           if-no-files-found: error
           retention-days: 14

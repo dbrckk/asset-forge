@@ -97,25 +97,23 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-10-03T18:05:25Z
+Generated: 2026-10-05T10:42:30Z
 
 ### Git
 - Branch: `main`
-- Head: `f4f3e909d10c`
-- Commit date: 2026-10-03T20:05:11+02:00
-- Commit: fix(e2e): harden canonical Production-OS live evidence (#10)
+- Head: `b2429f1e0769`
+- Commit date: 2026-10-05T12:41:44+02:00
+- Commit: Allow Production-OS batch requests through repository commits (#12)
 - Tracked files: 308
 
 ### Recently changed files
+- `.github/workflows/production-os-batch.yml`
 - `.github/workflows/production-os-ai-dev-server-live-e2e.yml`
 - `tests/test_production_os_ai_dev_server_live_e2e_workflow.py`
 - `production_executor.py`
 - `raster_pack.py`
 - `tests/test_production_executor.py`
 - `tests/test_raster_pack.py`
-- `.github/workflows/deadline-zero-live-pilot.yml`
-- `.github/workflows/live-generation.yml`
-- `.github/workflows/repo-standards.yml`
 
 ### Project signals
 - `pyproject.toml`
