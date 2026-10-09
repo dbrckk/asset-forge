@@ -97,24 +97,21 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-10-05T10:47:23Z
+Generated: 2026-10-09T11:24:11Z
 
 ### Git
 - Branch: `main`
-- Head: `64a4c4697936`
-- Commit date: 2026-10-05T12:47:13+02:00
-- Commit: pos-c27aa69faf0d481489c672fa1d1adcde
-- Tracked files: 309
+- Head: `5145be4543f9`
+- Commit date: 2026-10-09T13:21:09+02:00
+- Commit: docs(agents): adopt pinned 88-rule development standard
+- Tracked files: 310
 
 ### Recently changed files
+- `AGENTS.md`
 - `.asset-forge/requests/pos-c27aa69faf0d481489c672fa1d1adcde.json`
 - `.github/workflows/production-os-batch.yml`
 - `.github/workflows/production-os-ai-dev-server-live-e2e.yml`
 - `tests/test_production_os_ai_dev_server_live_e2e_workflow.py`
-- `production_executor.py`
-- `raster_pack.py`
-- `tests/test_production_executor.py`
-- `tests/test_raster_pack.py`
 
 ### Project signals
 - `pyproject.toml`
