@@ -107,6 +107,22 @@ def _backend_history_path(*, environ=None) -> Path | None:
     return Path(raw) if raw else None
 
 
+def _declares_commercial_generation(job: dict) -> bool:
+    manifest = job.get("manifest")
+    license_data = manifest.get("license") if isinstance(manifest, dict) else None
+    return isinstance(license_data, dict) and license_data.get("commercialUse") is True
+
+
+def _qwen_21_commercial_rights_blocker(job: dict, model: str | None = None) -> bool:
+    # Model-level use rights are distinct from a manifest's project-owned
+    # claim about the generated image. Without documented authorization, the
+    # Qwen Research License does not permit commercial model use.
+    return (
+        _declares_commercial_generation(job)
+        and (model is None or model == "Qwen/Qwen-Image-2.1")
+    )
+
+
 def _strict_single_sprite_fidelity(job: dict) -> bool:
     if job.get("assetType") not in {"sprite", "pixel-art"}:
         return False
@@ -603,6 +619,13 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str:
     vtracer = status.get("vtracer", {})
     if asset_type in RASTER_GENERATED_TYPES:
         if _strict_single_sprite_fidelity(job):
+            if _qwen_21_commercial_rights_blocker(job):
+                raise GenerationError(
+                    "commercial rights unverified: Qwen-Image-2.1 uses the "
+                    "Qwen Research License, which requires a separate commercial "
+                    "license for commercial model use; automatic Qwen selection "
+                    "is refused for a commercial-use manifest"
+                )
             # Repeated real SDXL outputs passed technical QA while violating
             # the required instruction-fidelity gate. Do not keep spending
             # image-generation calls on this known-inadequate default route.
@@ -736,6 +759,14 @@ def execute_generated_asset(
         raise GenerationError("production job does not require a generator")
     requested_backend = backend
     backend = select_generation_backend(job, backend)
+    if (
+        backend in {"kaggle-qwen", "qwen-colab"}
+        and _qwen_21_commercial_rights_blocker(job, model)
+    ):
+        raise GenerationError(
+            "commercial rights unverified: Qwen-Image-2.1 Research License "
+            "does not authorize commercial model use without separate permission"
+        )
     initial_backend = backend
     fallback_history = []
     asset_type = str(job.get("assetType") or "")
@@ -1125,7 +1156,7 @@ def execute_generated_asset(
                             is True
                         )
                         allow_fallback = requested_backend == "auto" or bool(references)
-                        if kaggle_ready and allow_fallback:
+                        if kaggle_ready and allow_fallback and not _qwen_21_commercial_rights_blocker(job):
                             try:
                                 metadata = kaggle_generate(
                                     prompt,
