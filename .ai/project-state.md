@@ -3,6 +3,7 @@
 Status: active
 
 ## Working
+- 2026-10-10 (PR #13 draft): corrected `generator_backends.build_generation_prompt` for `expectedFrames=1`: no sprite-sheet/grid/animation sequence, explicit single-subject and object-count fidelity. Source commit `05c73e4` passed all three existing CI jobs in run `38084846330`. No unit tests or secret changes; PR remains unmerged.
 - Production OS batch workflow accepts a correlated request committed under `.asset-forge/requests/` as an alternative trigger when the caller has repository Contents write but lacks Actions write.
 - Repository is a central visual-asset production pipeline spanning raster 2D, SVG/vector, and 3D.
 - PNG validation/decoding/atlas/optimization and Godot animation export are implemented for common non-interlaced and Adam7-interlaced workflows.
@@ -71,6 +72,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
+- **Strict raster release blocker (2026-10-10):** a new distinct one-shot real generation and inspection of the image, semantic scores, technical score and consumer import remain necessary. Historical probes `38078694657` and `38079351985` were terminal failures; never rerun either. Do not merge PR #13 until these are demonstrably qualified.
 - Harden and productize the retained 2D scene/editor runtime; retained clipboard state now supports copy/cut/paste/duplicate, versioned payload import/export, hierarchy-safe deletion, offsets, and automatic selection of pasted entities.
 
 ## Validation
