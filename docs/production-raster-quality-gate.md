@@ -77,6 +77,15 @@ closes two indirect paths previously missed by the direct Qwen backend guard:
   *and* fallback. Cloudflare is used only when ready; otherwise the request
   fails closed before any Qwen inference.
 
+A caller-provided `--model` name or alternative model identifier does **not**
+constitute a verified commercial license. Commit
+[`9ebc80b`](https://github.com/dbrckk/asset-forge/commit/9ebc80b59728e3712327822013126a2da0fc0e59)
+closes the explicit Kaggle/Colab commercial Qwen model-name override loophole:
+Qwen backends refuse `commercialUse=true` independent of the string passed
+to `--model`, since the Colab worker may still load its default model.
+An alternative model can be made commercially available only through a
+separately reviewed and verified rights/provenance pathway, not by renaming.
+
 This does **not** grant commercial rights for Qwen or generated outputs.
 Asset provenance, actual model rights, the output license and consuming-game
 permissions must be separately verified before commercial release. These
