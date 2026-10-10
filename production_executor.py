@@ -223,6 +223,26 @@ def execute_generated_raster_job(
         else:
             technical_warnings.append(f"technical art quality unavailable: {type(exc).__name__}")
 
+    # An explicit quality gate must receive actual evidence. A faulty or
+    # omitted evaluator must never turn a required threshold into a pass.
+    constraints = manifest.get("constraints")
+    constraints = constraints if isinstance(constraints, dict) else {}
+    if constraints.get("technicalQualityMin") is not None:
+        required_min = constraints["technicalQualityMin"]
+        score = technical_quality.get("score") if isinstance(technical_quality, dict) else None
+        if (
+            isinstance(required_min, bool)
+            or not isinstance(required_min, (int, float))
+            or not 0.0 <= required_min <= 1.0
+            or isinstance(score, bool)
+            or not isinstance(score, (int, float))
+            or not 0.0 <= score <= 1.0
+            or not isinstance(technical_quality, dict)
+            or technical_quality.get("passed") is not True
+            or score < required_min
+        ):
+            technical_errors.append("required technical art quality was not verified")
+
     semantic_quality = None
     semantic_errors = []
     semantic_warnings = []
