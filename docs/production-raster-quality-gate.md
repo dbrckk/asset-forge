@@ -64,6 +64,25 @@ force: this preview correction grants no rights over the model or its outputs.
 The draft needs exact-head CI and, separately, a licensed real production
 asset and verified consumer import before release.
 
+## Commercial licensing covers indirect Qwen model calls
+
+[Commit `4f7373b`](https://github.com/dbrckk/asset-forge/commit/4f7373b8be308a84bfb54266cc77dd220bd56231)
+closes two indirect paths previously missed by the direct Qwen backend guard:
+
+- A **Cloudflare raster request with references** may be redirected to
+  Kaggle Qwen before inference. For a `manifest.license.commercialUse=true`
+  request, this path now fails early instead of using unlicensed Qwen.
+- A **VTracer SVG request** produces an intermediate raster using Cloudflare
+  or Qwen. For commercial requests, Qwen is excluded from initial selection
+  *and* fallback. Cloudflare is used only when ready; otherwise the request
+  fails closed before any Qwen inference.
+
+This does **not** grant commercial rights for Qwen or generated outputs.
+Asset provenance, actual model rights, the output license and consuming-game
+permissions must be separately verified before commercial release. These
+conditions also apply to intermediate image generation for SVG delivery.
+No existing failed probe is authorized to rerun by this change.
+
 ## Evidence to collect
 
 Record: original instruction and manifest constraints; execution run ID;
