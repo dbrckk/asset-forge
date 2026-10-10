@@ -5,6 +5,7 @@ import os
 import re
 import shutil
 import subprocess
+from tempfile import TemporaryDirectory
 from pathlib import Path
 from typing import Callable
 
@@ -112,13 +113,49 @@ def review_raster_art(
     if not path.is_file() or path.stat().st_size <= 0:
         raise SemanticArtReviewError("semantic art review image is missing or empty")
 
-    uploaded = runner(
-        [executable, "upload", str(path), "--json"],
-        check=False,
-        capture_output=True,
-        text=True,
-        timeout=timeout_seconds,
-    )
+    # For required alpha sprites, give the vision service an accurate
+    # composited preview. The production PNG remains unchanged and technical
+    # validation continues to inspect its original alpha channel.
+    review_path = path
+    temporary_preview = None
+    preview_composited = False
+    if required and constraints.get("requiresAlpha") is True:
+        try:
+            from PIL import Image
+        except ImportError as exc:
+            raise SemanticArtReviewError(
+                "strict alpha review requires Pillow to prepare a visual preview"
+            ) from exc
+        try:
+            with Image.open(path) as original:
+                if original.width * original.height > 16_000_000:
+                    raise SemanticArtReviewError("semantic review preview exceeds pixel budget")
+                rgba = original.convert("RGBA")
+                if rgba.getchannel("A").getextrema() != (255, 255):
+                    temporary_preview = TemporaryDirectory(prefix="asset-forge-visual-review-")
+                    review_path = Path(temporary_preview.name) / "composited-preview.png"
+                    background = Image.new("RGBA", rgba.size, (128, 128, 128, 255))
+                    background.alpha_composite(rgba)
+                    background.convert("RGB").save(review_path, format="PNG")
+                    preview_composited = True
+        except (OSError, ValueError) as exc:
+            if temporary_preview is not None:
+                temporary_preview.cleanup()
+            raise SemanticArtReviewError(
+                "could not prepare transparent sprite review preview"
+            ) from exc
+
+    try:
+        uploaded = runner(
+            [executable, "upload", str(review_path), "--json"],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+        )
+    finally:
+        if temporary_preview is not None:
+            temporary_preview.cleanup()
     if uploaded.returncode != 0:
         if required:
             raise SemanticArtReviewError("semantic art review upload failed")
@@ -160,6 +197,13 @@ def review_raster_art(
         "artifacts, textReadability, styleConsistency, issues. issues must be an array of "
         "short strings. Do not add markdown."
     )
+    if preview_composited:
+        prompt += (
+            " This preview displays the original transparent sprite composited "
+            "against synthetic neutral gray only for visual inspection. Grade "
+            "the foreground subject; alpha and border integrity are verified "
+            "separately on the untouched production file."
+        )
     # The generation brief is untrusted specification data. Ask the visual
     # reviewer to grade fidelity to the actual requested subject, not just polish.
     expected = str(instruction or "").strip()[:1600]
@@ -225,4 +269,5 @@ def review_raster_art(
         "scores": scores,
         "issues": issues,
         "provider": "pollinations-vision",
+        "reviewPreviewComposited": preview_composited,
     }
