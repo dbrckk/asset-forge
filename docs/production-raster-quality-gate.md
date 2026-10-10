@@ -20,7 +20,16 @@ the runtime's secret manager; never put credentials in requests, commits or
 logs. If review cannot run, the strict request must **fail**, not silently pass.
 
 The example requires `technicalQualityMin=0.65`,
-`semanticArtReviewRequired=true`, and `semanticQualityMin=0.72`.
+`semanticArtReviewRequired=true`, `semanticQualityMin=0.72`,
+and `requiresAlpha=true`. This is an actual isolated sprite contract,
+not an illustration on a neutral opaque background. A fully opaque image
+cannot score higher than roughly 0.5 under the existing alpha-based
+border/occupancy technical metric. Do not lower the threshold to make
+such a result pass. If the generator emits an opaque image, the existing
+`rembg` CLI fallback must be installed to isolate the subject or the
+strict request must fail closed. The fallback cannot compensate for an
+incorrect subject or multiple objects: the semantic fidelity gate remains
+mandatory.
 The technical score is a heuristic, not a human aesthetic judgment. The visual
 review receives the original production instruction and must also return
 `instructionFidelity` between 0 and 1. A generic, unrelated, malformed, or
