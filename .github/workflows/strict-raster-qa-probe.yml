@@ -1,0 +1,92 @@
+name: Strict Raster QA One-Shot Probe
+
+on:
+  push:
+    branches: [probe/strict-raster-qa-20261010]
+    paths: ['.github/workflows/strict-raster-qa-probe.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: strict-raster-qa-probe-20261010
+  cancel-in-progress: false
+
+jobs:
+  real-generation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+    steps:
+      - name: Checkout exact proposed code plus probe
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - name: Require configured free generator and visual reviewer
+        shell: bash
+        run: |
+          if [ -z "$POLLINATIONS_API_KEY" ]; then
+            echo '::error::POLLINATIONS_API_KEY is not configured; strict visual review cannot run.'
+            exit 2
+          fi
+          if { [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; } &&
+             { [ -z "$KAGGLE_API_TOKEN" ] || [ -z "$KAGGLE_USERNAME" ]; }; then
+            echo '::error::Cloudflare or Kaggle raster generation is not configured.'
+            exit 2
+          fi
+      - name: Install production generation toolchain
+        shell: bash
+        run: |
+          python -m pip install ".[generation]"
+          python -m pip install -U kaggle
+          npm install --global @pollinations/cli@0.1.15
+      - name: Authenticate visual reviewer
+        shell: bash
+        run: |
+          printf '%s' "$POLLINATIONS_API_KEY" | polli auth login --with-token
+      - name: Generate one real strict raster asset
+        shell: bash
+        run: |
+          asset-forge fulfill examples/production-request-strict-raster.json --backend auto
+      - name: Validate report and artifact
+        shell: bash
+        run: |
+          asset-forge validate-production-report build/strict-raster-qa-smoke/production-report.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path("build/strict-raster-qa-smoke/production-report.json")
+          r = json.loads(path.read_text(encoding="utf-8"))
+          assert r["success"] is True
+          v = r["validation"]
+          t = v["technicalArt"]
+          s = v["semanticArt"]
+          assert isinstance(t, dict) and t["score"] >= 0.65 and not t.get("errors")
+          assert isinstance(s, dict) and s["available"] is True and s["passed"] is True
+          assert s["scores"]["overall"] >= 0.72
+          assert s["scores"]["instructionFidelity"] >= 0.72
+          image = Path(r["artifact"])
+          assert image.is_file() and image.stat().st_size > 0
+          print("Strict raster verified with technical and semantic scores.")
+          PY
+      - name: Preserve real generation evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: strict-raster-qa-real-20261010
+          path: build/strict-raster-qa-smoke/
+          if-no-files-found: warn
+          retention-days: 7
