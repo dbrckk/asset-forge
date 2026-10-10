@@ -3,6 +3,7 @@
 Status: active
 
 ## Working
+- 2026-10-10: real probe #3 `38084991532` failed semantic overall 0.18 and fidelity 0.03 although aggregate technical score 0.659407 passed; actual 512px image is a multiple-element UI pack, alpha border ratio 0.292105 exceeds specified 0.08. Artifact `11682276035` is diagnostic only and probe must not be rerun. Follow-up `bbec118` hardens strict border failure, `f1937c4` adds documented SDXL negative prompt support, `0fa4cf6` moves prohibited collage motifs out of single-sprite positive text. Exact code CI `38085758492` 3/3 green; still no qualified real sprite or consumer import, draft PR #13 unmerged.
 - 2026-10-10 (PR #13 draft): corrected `generator_backends.build_generation_prompt` for `expectedFrames=1`: no sprite-sheet/grid/animation sequence, explicit single-subject and object-count fidelity. Source commit `05c73e4` passed all three existing CI jobs in run `38084846330`. No unit tests or secret changes; PR remains unmerged.
 - Production OS batch workflow accepts a correlated request committed under `.asset-forge/requests/` as an alternative trigger when the caller has repository Contents write but lacks Actions write.
 - Repository is a central visual-asset production pipeline spanning raster 2D, SVG/vector, and 3D.
@@ -72,6 +73,7 @@ Status: active
 - GitHub combined-status API has not exposed check entries for the newest commits, so the complete repository CI suite is not yet independently confirmed here.
 
 ## Current priority
+- **Priority (2026-10-10):** inspect a new *distinct* real generation against strict border, semantic overall and instructionFidelity thresholds; do not rerun probes #1/#2/#3. Then prove actual consuming-project import/build and only merge if complete.
 - **Strict raster release blocker (2026-10-10):** a new distinct one-shot real generation and inspection of the image, semantic scores, technical score and consumer import remain necessary. Historical probes `38078694657` and `38079351985` were terminal failures; never rerun either. Do not merge PR #13 until these are demonstrably qualified.
 - Harden and productize the retained 2D scene/editor runtime; retained clipboard state now supports copy/cut/paste/duplicate, versioned payload import/export, hierarchy-safe deletion, offsets, and automatic selection of pasted entities.
 

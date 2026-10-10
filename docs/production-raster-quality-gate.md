@@ -85,3 +85,49 @@ with this corrected prompt and no successful consumer import. Runs
 not be re-run. A distinct bounded real-generation probe, inspected image,
 technical + semantic scores, reproducible artifact checksum, and successful
 consumer integration are required before promoting this work or merging PR #13.
+
+## 2026-10-10 third one-shot failure
+
+[Run 38084991532](https://github.com/dbrckk/asset-forge/actions/runs/38084991532),
+job `114309536794`, is **completed/failure**, attempt 1. It executed
+the corrected mono-frame prompt from `05c73e4`; its prompt preflight
+passed. It must **never be rerun**. Diagnostic archive
+`strict-raster-monoframe-real-20261010` (artifact ID `11682276035`).
+
+Original `generated-raw.png`: 512×512, SHA-256
+`ba12dc24eedc10bd05d7fdc0f2a8cc6b430288cb4d741d4f34ac71da5b66d516`.
+Normalized 96×96 `live-raster-cell.png`: RGBA with alpha, SHA-256
+`9b3a4ce6fbc177395a9209783de8c6dc6e2199100b9f652553e9afae084de683`.
+The **actual pixels**, inspected from the archive, show a UI-like collection of
+many glowing cells, rows, buttons and panels, not one isolated cylindrical cell.
+Backend: Cloudflare `@cf/stabilityai/stable-diffusion-xl-base-1.0`.
+
+Report: `success=false`, `artifact=null`. Technical `score=0.659407`
+passed the previous aggregate minimum `0.65`, but **borderAlphaRatio=0.292105**
+violated the explicit `maxBorderAlphaRatio=0.08` and was only a warning.
+The required independent semantic review failed: `overall=0.18`,
+`instructionFidelity=0.03` (each needs `>=0.72`). Thus no deliverable or
+consumer import can be claimed, even though the output is a syntactically valid
+transparent PNG.
+
+Follow-up improvements (on PR #13, still draft and unmerged):
+
+- `bbec118`: enforce a **hard failure** when explicit `maxBorderAlphaRatio`
+  is violated together with an explicit technical minimum. Without that strict
+  opt-in combination, retain the historical warning behavior.
+- `f1937c4`: support Cloudflare SDXL's documented `negative_prompt` argument
+  without changing its default request behavior.
+- `0fa4cf6`: single-sprite positive instructions now focus on one coherent,
+  centered subject instead of repeating undesirable collage/grid concepts in
+  the positive text; pass exclusion motifs through `negative_prompt` only
+  for SDXL single-frame sprite/pixel-art generation. The multi-frame path and
+  other models remain unaffected.
+
+[Source CI run 38085758492](https://github.com/dbrckk/asset-forge/actions/runs/38085758492)
+has 3/3 existing CI jobs green on exact source SHA `0fa4cf6107179c17619dfd8e135f661f4c43f7a3`.
+No new unit tests, changes to credentials, or weakening of acceptance thresholds.
+
+**Still unqualified:** these changes need one separately identified fresh real
+generation, exact CI on its tested commit, independent semantic acceptance,
+technical acceptance (including border), inspection of actual pixels and a
+consumer import/build before merging PR #13 or declaring delivery.
