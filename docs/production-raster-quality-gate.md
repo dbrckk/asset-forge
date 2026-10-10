@@ -172,3 +172,40 @@ available Qwen route, one *separate* authorized bounded generation, semantic
 checks, inspection of actual image, SHA and compatible consumer import/build.
 Do not open another SDXL probe with the same specification and do not merge PR
 #13 before real qualification.
+
+## 2026-10-10 — Qwen-Image-2.1 model license checkpoint
+
+Official source: [Qwen-Image-2.1 main license](https://huggingface.co/Qwen/Qwen-Image-2.1/blob/main/LICENSE)
+and [model card](https://huggingface.co/Qwen/Qwen-Image-2.1).
+The published **Qwen Research License Agreement** grants model-use rights for
+research/noncommercial evaluation; commercial model use requires a separate
+commercial license. A manifest's `license.id=project-owned` or
+`commercialUse=true` is **not** evidence of rights to use this model in a
+commercial production pipeline. Rights to the *generated image output* need
+their own review and are **not** automatically resolved by model metadata.
+
+Code [`1f69d7a`](https://github.com/dbrckk/asset-forge/commit/1f69d7a3b24e1b66c38a8e5e868a4957a70bc9b2)
+now fails closed before default Qwen-Image-2.1 inference if a job
+declares `manifest.license.commercialUse=true`. It also forbids a
+commercial request from silently falling back from Cloudflare to Qwen.
+For `auto` strict single-sprite mode, a commercial-use manifest is
+rejected rather than auto-selected into the research-only Qwen default.
+Explicit alternative models may have their own terms and require separate
+verification. No license grant can be inferred from an API credential.
+
+Example [`5e49628`](https://github.com/dbrckk/asset-forge/commit/5e49628b7ed626cc703eae0ba836f7b6ffcc2efc)
+marks `examples/production-request-strict-raster.json` as
+`research-evaluation-only`, `commercialUse=false`, and
+`attributionRequired=true`. This is a **noncommercial diagnostic**, not
+an approval to publish any Qwen-derived artwork into a monetized Roblox
+game or another commercial product.
+
+The independent one-shot Qwen generation [run 38087387660](https://github.com/dbrckk/asset-forge/actions/runs/38087387660)
+was already launched on a distinct earlier probe SHA
+`2ce97b860c98eb1285485b9ecfeac752bc14d3e2` and the *previous*
+sample manifest, before this licensing correction. Do not rerun it.
+Regardless of pixel-quality scores, that earlier run is **not** commercial
+production qualification. Inspect its terminal report and real PNG only
+as diagnostic research evidence. Consumer release remains blocked until
+model and output rights have been independently confirmed and an actual
+consumer integration/build succeeds.
