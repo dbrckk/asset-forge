@@ -405,20 +405,30 @@ def build_generation_prompt(job: dict) -> str:
     fw = constraints.get("frameWidth")
     fh = constraints.get("frameHeight")
     frames = constraints.get("expectedFrames")
+    is_animation = isinstance(frames, int) and not isinstance(frames, bool) and frames > 1
     if isinstance(fw, int) and isinstance(fh, int):
-        details.append(f"Each animation frame must be exactly {fw}x{fh} pixels.")
-    if isinstance(frames, int):
+        if is_animation:
+            details.append(f"Each animation frame must be exactly {fw}x{fh} pixels.")
+        else:
+            details.append(f"Target output image dimensions: {fw}x{fh} pixels.")
+    if is_animation:
         details.append(f"The sprite sheet must contain exactly {frames} frames.")
-    geometry = _sprite_sheet_geometry(job)
-    if geometry is not None:
-        _, _, columns, rows = geometry
+        geometry = _sprite_sheet_geometry(job)
+        if geometry is not None:
+            _, _, columns, rows = geometry
+            details.append(
+                f"Arrange the frames on an exact {columns}-column by {rows}-row regular grid with no gutters."
+            )
+            details.append(
+                "Keep the character or object at a stable scale and anchor point in every frame; "
+                "preserve identity, palette, proportions, lighting direction, and camera angle across "
+                "the full sequence. Every frame must be visually distinct and animation-ready."
+            )
+    elif frames == 1 and asset_type in {"sprite", "pixel-art"}:
         details.append(
-            f"Arrange the frames on an exact {columns}-column by {rows}-row regular grid with no gutters."
-        )
-        details.append(
-            "Keep the character or object at a stable scale and anchor point in every frame; "
-            "preserve identity, palette, proportions, lighting direction, and camera angle across "
-            "the full sequence. Every frame must be visually distinct and animation-ready."
+            "Create one standalone image, not a sprite sheet or animation. Depict only the "
+            "requested subject and object count: no duplicated objects, visual variants, "
+            "contact sheets, tile grids, extra panels, or unrelated decorations."
         )
     prompt = " ".join(details)
     if len(prompt) > 16000:
