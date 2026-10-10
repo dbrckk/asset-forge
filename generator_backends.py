@@ -50,6 +50,14 @@ VECTOR_GENERATED_TYPES = {"vector", "svg", "icon", "ui-vector", "logo"}
 THREE_D_GENERATED_TYPES = {"mesh", "prop", "environment", "character-3d"}
 SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES | THREE_D_GENERATED_TYPES
 DEFAULT_VECTOR_MODEL = "recraft/recraft-v4.1-vector"
+# SDXL accepts a dedicated negative_prompt; keep excluded visual motifs out
+# of the positive description for a single-subject raster asset.
+SDXL_SINGLE_SPRITE_NEGATIVE_PROMPT = (
+    "sprite sheet, contact sheet, asset pack, texture atlas, icon collection, "
+    "grid, tilemap, rows of objects, repeated objects, duplicates, multiple "
+    "variants, UI dashboard, user interface, buttons, labels, text, watermark, "
+    "background scenery, border, framing, cropped subject"
+)
 DEFAULT_REFERENCE_MODEL = "kontext"
 DEFAULT_3D_MODEL = "microsoft/trellis-2"
 MAX_3D_BYTES = 100 * 1024 * 1024
@@ -426,9 +434,9 @@ def build_generation_prompt(job: dict) -> str:
             )
     elif frames == 1 and asset_type in {"sprite", "pixel-art"}:
         details.append(
-            "Create one standalone image, not a sprite sheet or animation. Depict only the "
-            "requested subject and object count: no duplicated objects, visual variants, "
-            "contact sheets, tile grids, extra panels, or unrelated decorations."
+            "Compose exactly one physically coherent, centered subject on the canvas, "
+            "with one continuous silhouette, generous clear space around every edge, "
+            "and one consistent camera view. Depict a single finished object."
         )
     prompt = " ".join(details)
     if len(prompt) > 16000:
@@ -1069,6 +1077,13 @@ def execute_generated_asset(
                             reference_path=(references[0] if references else None),
                             strength=float(constraint_value.get("referenceStrength") or 0.55),
                             guidance=float(constraint_value.get("guidance") or 7.5),
+                            negative_prompt=(
+                                SDXL_SINGLE_SPRITE_NEGATIVE_PROMPT
+                                if asset_type in {"sprite", "pixel-art"}
+                                and constraints.get("expectedFrames") == 1
+                                and (effective_model or DEFAULT_CLOUDFLARE_MODEL) == DEFAULT_CLOUDFLARE_MODEL
+                                else None
+                            ),
                             model=effective_model or DEFAULT_CLOUDFLARE_MODEL,
                             timeout_seconds=timeout,
                         )
@@ -1143,6 +1158,12 @@ def execute_generated_asset(
                                     steps=int(constraint_value.get("generationSteps") or 20),
                                     reference_path=None,
                                     guidance=float(constraint_value.get("guidance") or 7.5),
+                                    negative_prompt=(
+                                        SDXL_SINGLE_SPRITE_NEGATIVE_PROMPT
+                                        if asset_type in {"sprite", "pixel-art"}
+                                        and constraints.get("expectedFrames") == 1
+                                        else None
+                                    ),
                                     model=DEFAULT_CLOUDFLARE_MODEL,
                                     timeout_seconds=timeout,
                                 )
