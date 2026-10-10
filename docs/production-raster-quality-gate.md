@@ -131,3 +131,44 @@ No new unit tests, changes to credentials, or weakening of acceptance thresholds
 generation, exact CI on its tested commit, independent semantic acceptance,
 technical acceptance (including border), inspection of actual pixels and a
 consumer import/build before merging PR #13 or declaring delivery.
+
+## 2026-10-10 fifth strict raster probe — model fidelity still blocked
+
+[Run 38085943888](https://github.com/dbrckk/asset-forge/actions/runs/38085943888)
+completed **failure**, one-shot attempt 1, job `114312341235`, on probe SHA
+`c076e9469ff239bb5034946413a87d710006fecd`. It passed the corrected
+single-frame prompt preflight and executed a real Cloudflare SDXL generation.
+Artifact ZIP `11682352377` (`strict-raster-negative-prompt-fixed-real-20261010`)
+was inspected, including its actual raw image and independent structured review.
+**Never rerun this probe**, or any prior probe #1–#4.
+
+- `generated-raw.png`: 512x512 RGBA, SHA-256
+  `49f4c925e0f5af4e22691f8b2b16d150467d34f7d8c5e0620dbf81780d76870b`.
+- `live-raster-cell.png`: 96x96 RGBA, SHA-256
+  `52292bfd102b1a931f24d2586d94dd83b95564df2e1c521cbbd675fc65cc6cd2`.
+- Technical quality **1.000 >= 0.650**; borderAlphaRatio **0.0 <= 0.08**.
+- Semantic overall **0.74 >= 0.72**, but required
+  `instructionFidelity=0.15 < 0.72` (**FAIL**).
+- The inspected image is a square cyan-framed, multi-component interface-like
+  icon, **not** the requested single dark metallic cylindrical power cell
+  with one cyan emissive strip. Transparency alone does not fix subject fidelity.
+- The final `production-report.json` has `success=false`,
+  `artifact=null`; there is **no** successful consumer import or release.
+
+**Stop-loss:** after repeated real SDXL failures on the same strict
+single-subject contract, code commit
+[`a56f1ba`](https://github.com/dbrckk/asset-forge/commit/a56f1ba921fb1d25b6ac33635a0eb64f9f666dba)
+makes only `auto` routing for `semanticArtReviewRequired=true` and
+`expectedFrames=1` sprite/pixel-art prefer available `kaggle-qwen`.
+If Qwen is not configured/ready, it fails with an actionable message rather
+than spending more SDXL requests. If Qwen fails, do not silently fall back to
+the repeatedly inadequate SDXL route. All ordinary raster requests and
+explicit backend choices retain existing behavior. This is a risk-mitigation
+change, **not proof** that Kaggle/Qwen can now deliver a qualified image.
+
+Next qualification requires exact CI on this routing change, a verified
+available Qwen route, one *separate* authorized bounded generation, semantic
+`overall` and `instructionFidelity` each >=0.72, full technical/alpha
+checks, inspection of actual image, SHA and compatible consumer import/build.
+Do not open another SDXL probe with the same specification and do not merge PR
+#13 before real qualification.
