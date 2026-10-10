@@ -52,3 +52,12 @@ The historical Asset Forge batch run `37298791209` produced an integral PNG
 but had `technical_art.score=0.476302` and `semantic_art=null`. It would not
 satisfy the example's strict gate. This is historical evidence, not proof that
 a new generation has passed.
+
+## 2026-10-10 real-generation evidence
+
+Two bounded one-shot runs were executed; neither qualifies the strict raster example:
+
+- [Run 38078694657](https://github.com/dbrckk/asset-forge/actions/runs/38078694657): generation stopped at technical quality **0.500 < 0.650** after three attempts; initial example conflicted with alpha-based scoring.
+- [Run 38079351985](https://github.com/dbrckk/asset-forge/actions/runs/38079351985): after requiring true alpha and installing the optional `rembg` fallback, the generated 96x96 PNG reached **technical score 1.000**, but the independent semantic reviewer rejected it: **overall 0.22 < 0.72**, **instruction fidelity 0.05 < 0.72**. The visual contains several stacked metallic/cyan elements rather than the requested single cylindrical cell. `production-report.json` records `success=false`, and `artifact=null` despite the PNG being preserved as diagnostic evidence. The archive is `strict-raster-alpha-real-20261010` (artifact ID `11680061505`).
+
+**Engineering conclusion:** alpha removal solves only technical transparency. A score of 1.0 is not a release-grade visual score. The generator's one-frame request should avoid all sprite-sheet/grid/multiple-frame phrasing; generation and semantic fidelity must be improved and independently requalified before a consumer imports the image. Never treat the diagnostic PNG as a released asset, and do not rerun either completed one-shot workflow merely to repeat the same failure.
