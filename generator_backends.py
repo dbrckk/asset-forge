@@ -113,14 +113,13 @@ def _declares_commercial_generation(job: dict) -> bool:
     return isinstance(license_data, dict) and license_data.get("commercialUse") is True
 
 
-def _qwen_21_commercial_rights_blocker(job: dict, model: str | None = None) -> bool:
-    # Model-level use rights are distinct from a manifest's project-owned
-    # claim about the generated image. Without documented authorization, the
-    # Qwen Research License does not permit commercial model use.
-    return (
-        _declares_commercial_generation(job)
-        and (model is None or model == "Qwen/Qwen-Image-2.1")
-    )
+def _qwen_21_commercial_rights_blocker(job: dict) -> bool:
+    # A caller-supplied model string is not proof of commercial authorization.
+    # The Kaggle/Colab Qwen paths can use the default research-licensed model
+    # even if an alternate model was passed to the outer API. Until actual
+    # model provenance and grant verification exists, fail closed for ALL
+    # commercially declared generation through these Qwen backends.
+    return _declares_commercial_generation(job)
 
 
 def _strict_single_sprite_fidelity(job: dict) -> bool:
@@ -761,7 +760,7 @@ def execute_generated_asset(
     backend = select_generation_backend(job, backend)
     if (
         backend in {"kaggle-qwen", "qwen-colab"}
-        and _qwen_21_commercial_rights_blocker(job, model)
+        and _qwen_21_commercial_rights_blocker(job)
     ):
         raise GenerationError(
             "commercial rights unverified: Qwen-Image-2.1 Research License "
