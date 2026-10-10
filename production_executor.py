@@ -254,7 +254,9 @@ def execute_generated_raster_job(
             or constraints.get("semanticArtReviewRequired") is True
         )
     )
-    if semantic_enabled and source_path is None:
+    # Explicitly required visual reviews apply to supplied raster sources too.
+    # Otherwise a source-path bypass could silently skip a declared QA gate.
+    if semantic_enabled and (source_path is None or constraints.get("semanticArtReviewRequired") is True):
         required = constraints.get("semanticArtReviewRequired") is True
         try:
             instruction = job.get("instruction")
@@ -273,9 +275,24 @@ def execute_generated_raster_job(
                 issue = ("semantic art quality review unavailable: "
                          + str(semantic_quality.get("reason") or "unknown"))
                 (semantic_errors if required else semantic_warnings).append(issue)
-            elif required and (semantic_quality.get("available") is not True
-                               or semantic_quality.get("passed") is not True):
-                semantic_errors.append("required semantic art review was not verified")
+            elif required:
+                threshold = constraints.get("semanticQualityMin", 0.65)
+                scores = semantic_quality.get("scores")
+                overall = scores.get("overall") if isinstance(scores, dict) else None
+                fidelity = scores.get("instructionFidelity") if isinstance(scores, dict) else None
+                valid = lambda value: (isinstance(value, (int, float))
+                                       and not isinstance(value, bool)
+                                       and 0.0 <= value <= 1.0)
+                if (
+                    semantic_quality.get("available") is not True
+                    or semantic_quality.get("passed") is not True
+                    or not valid(threshold)
+                    or not valid(overall)
+                    or not valid(fidelity)
+                    or overall < threshold
+                    or fidelity < threshold
+                ):
+                    semantic_errors.append("required semantic art review lacks verified fidelity evidence")
         except (SemanticArtReviewError, OSError, ValueError) as exc:
             if required:
                 semantic_errors.append(f"semantic art quality check failed: {exc}")
