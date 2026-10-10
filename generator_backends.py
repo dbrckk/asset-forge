@@ -822,6 +822,11 @@ def execute_generated_asset(
     # Cloudflare SDXL is currently text-to-image only in our production path.
     # Referenced raster jobs would predictably incur a failed Cloudflare call
     # before falling back to Qwen. Route them straight to Kaggle when ready.
+    if backend == "cloudflare" and references and _qwen_21_commercial_rights_blocker(job):
+        raise GenerationError(
+            "commercial rights unverified: Cloudflare reference generation would "
+            "route through the noncommercial Qwen-Image-2.1 backend"
+        )
     if (
         backend == "cloudflare"
         and references
@@ -981,12 +986,20 @@ def execute_generated_asset(
                 cloudflare_ready = (
                     statuses.get("cloudflare", {}).get("rasterReady") is True
                 )
+                commercial_qwen_blocked = _qwen_21_commercial_rights_blocker(job)
                 kaggle_ready = (
                     statuses.get("kaggleQwen", {}).get("rasterReady") is True
+                    and not commercial_qwen_blocked
                 )
                 raster_source = output_dir / "vector-source.png"
                 raster_metadata = None
-                raster_backend = _select_free_raster_backend(statuses)
+                # VTracer first generates a raster. Commercial vector requests
+                # must never silently select or fall back to Qwen-Image-2.1.
+                raster_backend = (
+                    ("cloudflare" if cloudflare_ready else None)
+                    if commercial_qwen_blocked
+                    else _select_free_raster_backend(statuses)
+                )
                 if raster_backend == "cloudflare":
                     try:
                         raster_metadata = cloudflare_generate(
