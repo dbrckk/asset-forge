@@ -41,6 +41,29 @@ declared request behavior. Do not treat legacy batch success as equivalent to
 premium visual quality. Never promote an output without checking the actual
 image, destination import, and applicable licensing.
 
+## 2026-10-11 transparent visual-review preview (draft PR #13)
+
+[Commit `c71373d`](https://github.com/dbrckk/asset-forge/commit/c71373df7a596f82711a17e6dc24eee1414e5a70) changes only the **vision-review upload** for requests that declare
+`semanticArtReviewRequired=true` and `requiresAlpha=true`. If the
+validated output has actual transparency, the reviewer receives a temporary
+RGB rendering of the existing RGBA pixels composited on uniform neutral gray
+(128/128/128), which is explicitly identified to the reviewer as synthetic.
+The original PNG is **not** overwritten, regenerated, recolored, or copied
+into the consumer. Original-alpha technical and border constraints are still
+validated on the untouched deliverable; overall and instruction-fidelity
+semantic thresholds are unchanged. The preview is deleted after upload,
+and `reviewPreviewComposited` records the decision in the reviewer evidence.
+
+This requires the existing optional Pillow generation dependency. A required
+alpha review without Pillow fails closed. The previous Qwen one-shot failure
+(38087387660) remains a **failure**; compositing is a transport hypothesis,
+not retrospective evidence of semantic acceptance. The original one-shot
+must not be rerun. No new Qwen/Kaggle generation is authorized by this
+change. The Qwen Research License commercial-use prohibition remains in
+force: this preview correction grants no rights over the model or its outputs.
+The draft needs exact-head CI and, separately, a licensed real production
+asset and verified consumer import before release.
+
 ## Evidence to collect
 
 Record: original instruction and manifest constraints; execution run ID;
