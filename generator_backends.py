@@ -107,6 +107,21 @@ def _backend_history_path(*, environ=None) -> Path | None:
     return Path(raw) if raw else None
 
 
+def _strict_single_sprite_fidelity(job: dict) -> bool:
+    if job.get("assetType") not in {"sprite", "pixel-art"}:
+        return False
+    manifest = job.get("manifest")
+    constraints = manifest.get("constraints") if isinstance(manifest, dict) else None
+    if not isinstance(constraints, dict):
+        return False
+    frames = constraints.get("expectedFrames")
+    return (
+        constraints.get("semanticArtReviewRequired") is True
+        and type(frames) is int
+        and frames == 1
+    )
+
+
 def _select_free_raster_backend(status: dict, *, environ=None) -> str | None:
     ready = []
     if status.get("cloudflare", {}).get("rasterReady") is True:
@@ -587,6 +602,17 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str:
     imagen_codex = status.get("imagenCodex", {})
     vtracer = status.get("vtracer", {})
     if asset_type in RASTER_GENERATED_TYPES:
+        if _strict_single_sprite_fidelity(job):
+            # Repeated real SDXL outputs passed technical QA while violating
+            # the required instruction-fidelity gate. Do not keep spending
+            # image-generation calls on this known-inadequate default route.
+            if kaggle.get("rasterReady") is True:
+                return "kaggle-qwen"
+            raise GenerationError(
+                "strict single-sprite semantic fidelity requires an available "
+                "Kaggle Qwen raster backend for automatic routing; "
+                "no qualified strict auto backend is ready"
+            )
         selected = _select_free_raster_backend(status)
         if selected is not None:
             return selected
@@ -1147,7 +1173,11 @@ def execute_generated_asset(
                             .get("rasterReady")
                             is True
                         )
-                        if requested_backend == "auto" and cloudflare_ready:
+                        if (
+                            requested_backend == "auto"
+                            and cloudflare_ready
+                            and not _strict_single_sprite_fidelity(job)
+                        ):
                             try:
                                 metadata = cloudflare_generate(
                                     prompt,
