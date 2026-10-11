@@ -113,6 +113,30 @@ placeholder credential and never invokes a hosted model or transmits an image.
 A passing offline smoke establishes timeout-handling behavior only, not
 the availability or fidelity of the real vision provider.
 
+## 2026-10-11 offline transparent-preview integration smoke
+
+The [`e40c86f`](https://github.com/dbrckk/asset-forge/commit/e40c86ff8eeeffb1b4bdb52a2aeffc960257c88c)
+change adds a **functional smoke step**, not a new unit-test suite, to
+`.github/workflows/validate.yml` under the pre-existing Pillow-enabled
+`webp-backend` job. It constructs a real RGBA PNG with colored but invisible
+pixels at the border and one opaque foreground pixel. The real
+`review_raster_art` function composites and passes an RGB preview to a local
+in-process reviewer substitute; no image is generated or transmitted externally.
+
+Observed CI: [run **38121816485**](https://github.com/dbrckk/asset-forge/actions/runs/38121816485)
+completed **SUCCESS** on exact commit `e40c86f`: **3/3 jobs passed**,
+including `Smoke-check transparent semantic preview and fidelity threshold
+offline`. The step checks the neutral RGB background, preservation of
+foreground pixels, unchanged SHA-256 of the original PNG, removal of the
+temporary preview, and rejection of simulated fidelity 0.35 versus acceptance
+of simulated fidelity 0.94 under the unchanged 0.72 threshold.
+
+**Scope:** proves actual alpha composition, file integrity, temp-file
+cleanup and numerical gate wiring. The visual scores are fixtures and are
+**not** independent aesthetic judgments. It does not prove remote vision
+availability, Qwen commercial permission, or successful consumer import.
+Do not use this offline smoke to release a historical failed sprite.
+
 ## Evidence to collect
 
 Record: original instruction and manifest constraints; execution run ID;
