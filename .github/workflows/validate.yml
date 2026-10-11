@@ -449,6 +449,123 @@ jobs:
               assert mixed["routing_summary"]["circuit_breaker"]["commercial_exemptions"] == 1
           print("Batch paths and commercial circuit-breaker routing verified offline")
           PY
+      - name: Smoke-check commercial Qwen asset-library cache bypass offline
+        run: |
+          python - <<'PY'
+          import base64
+          import copy
+          import json
+          import os
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+          from unittest.mock import patch
+
+          import asset_forge
+          from asset_library import (
+              record_success, request_fingerprint, reusable_content_fingerprint,
+          )
+
+          with TemporaryDirectory() as root_str:
+              root = Path(root_str)
+              request = json.loads(
+                  Path("examples/production-request.json").read_text(encoding="utf-8")
+              )
+              request["requestId"] = "cached-commercial-license-guard"
+              plan = asset_forge.build_plan(request["manifest"], Path("."))
+              job = asset_forge.build_production_job(request, plan)
+              artifact = root / "historical.png"
+              artifact.write_bytes(base64.b64decode(
+                  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/Z90AAAAASUVORK5CYII="
+              ))
+              library = root / "library.json"
+              fp = request_fingerprint(job, backend="auto")
+              reusable_fp = reusable_content_fingerprint(job, backend="auto")
+              qwen_entry = record_success(
+                  library, fingerprint=fp, content_fingerprint=reusable_fp,
+                  job=job,
+                  result={
+                      "success": True,
+                      "artifact": str(artifact),
+                      "generation": {
+                          "backend": "kaggle-qwen",
+                          "model": "Qwen/Qwen-Image-2.1",
+                      },
+                      "validation": {},
+                  },
+              )
+              request_file = root / "request.json"
+              request_file.write_text(json.dumps(request), encoding="utf-8")
+              captured_sources = []
+
+              def guard_before_generation(*args, **kwargs):
+                  captured_sources.append(kwargs["source_path"])
+                  raise RuntimeError("offline-expected-stop")
+
+              with patch.dict(os.environ, {"ASSET_FORGE_LIBRARY": str(library)}), patch(
+                  "asset_forge.execute_compiled_production_job",
+                  side_effect=guard_before_generation,
+              ):
+                  # An old commercially declared Qwen cache record must be
+                  # treated as a MISS, never as a vetted external source.
+                  status = asset_forge.main([
+                      "fulfill", str(request_file),
+                      "--output-dir", str(root / "direct-auto"), "--backend", "auto",
+                  ])
+                  assert status == 2
+                  assert captured_sources == [None], captured_sources
+
+                  # The explicit Qwen backend must be rejected before cache
+                  # lookup AND before the generation executor is reached.
+                  captured_sources.clear()
+                  status = asset_forge.main([
+                      "fulfill", str(request_file),
+                      "--output-dir", str(root / "direct-qwen"), "--backend", "kaggle-qwen",
+                  ])
+                  assert status == 2 and captured_sources == []
+
+                  # Cross-project reuse has a license-independent content key.
+                  # It must not promote the same Qwen artifact to a new
+                  # commercial game, even with reuse explicitly enabled.
+                  another = copy.deepcopy(request)
+                  another["requestId"] = "commercial-second-project"
+                  another["manifest"]["project"] = "independent-commercial-game"
+                  another["manifest"]["constraints"]["allowCrossProjectReuse"] = True
+                  request_file.write_text(json.dumps(another), encoding="utf-8")
+                  captured_sources.clear()
+                  status = asset_forge.main([
+                      "fulfill", str(request_file),
+                      "--output-dir", str(root / "cross-project"), "--backend", "auto",
+                  ])
+                  assert status == 2 and captured_sources == [None]
+
+              # A non-Qwen backend entry is not disqualified by this
+              # narrowly targeted guard (separate provider rights still
+              # require external qualification).
+              request_file.write_text(json.dumps(request), encoding="utf-8")
+              cloudflare_fp = request_fingerprint(job, backend="cloudflare")
+              cloudflare = record_success(
+                  library, fingerprint=cloudflare_fp,
+                  job=job,
+                  result={
+                      "success": True,
+                      "artifact": str(artifact),
+                      "generation": {"backend": "cloudflare", "model": "sdxl"},
+                      "validation": {},
+                  },
+              )
+              captured_sources.clear()
+              with patch.dict(os.environ, {"ASSET_FORGE_LIBRARY": str(library)}), patch(
+                  "asset_forge.execute_compiled_production_job",
+                  side_effect=guard_before_generation,
+              ):
+                  status = asset_forge.main([
+                      "fulfill", str(request_file),
+                      "--output-dir", str(root / "cloudflare"), "--backend", "cloudflare",
+                  ])
+              assert status == 2 and captured_sources == [Path(cloudflare["artifact"])]
+              assert qwen_entry["backend"] == "kaggle-qwen"
+          print("Historical Qwen cache and cross-project reuse blocked for commercial jobs")
+          PY
       - name: Smoke-check commercial Qwen denial without inference
         run: |
           python - <<'PY'
