@@ -191,6 +191,7 @@ jobs:
         run: |
           python - <<'PY'
           import json
+          import os
           import subprocess
           from pathlib import Path
           from tempfile import TemporaryDirectory
@@ -284,6 +285,61 @@ jobs:
               assert len(calls) == 1
               assert result["success"] is True and result["count"] == 1
               assert (root / "valid" / result["items"][0]["artifact"]).is_file()
+
+              # Hosted-batch source files must be real, nonsymlinked files
+              # within the trusted checkout; bad late files must fail before
+              # the first generator runs, not after a paid inference.
+              trusted = root / "checkout"
+              trusted.mkdir()
+              inside = trusted / "owned.png"
+              inside.write_bytes(b"trusted-original-source")
+              outside = root / "private.png"
+              outside.write_bytes(b"do-not-package")
+              symlink = trusted / "alias.png"
+              symlink.symlink_to(outside)
+
+              def provided_item(source_path):
+                  item = make_item("source-item", "source-request", "assets/owned.png")
+                  item["request"]["manifest"] = {
+                      "source": {"mode": "custom"}
+                  }
+                  if source_path is not None:
+                      item["source_path"] = source_path
+                  return item
+
+              rejected_sources = [
+                  provided_item(str(outside)),
+                  provided_item(str(symlink)),
+                  provided_item(str(root / "missing.png")),
+                  provided_item(None),
+                  provided_item({"not": "a-path"}),
+              ]
+              for index, rejected in enumerate(rejected_sources):
+                  destination = root / f"untrusted-source-{index}"
+                  spec.write_text(json.dumps({"items": [first, rejected]}), encoding="utf-8")
+                  with patch.dict(os.environ, {"ASSET_FORGE_BATCH_SOURCE_ROOT": str(trusted)}), patch(
+                      "remote_batch.subprocess.run",
+                      side_effect=AssertionError("untrusted source invoked generation"),
+                  ):
+                      try:
+                          run(spec, destination)
+                      except RemoteBatchError:
+                          pass
+                      else:
+                          raise AssertionError("unsafe source was accepted")
+                  assert not destination.exists()
+
+              spec.write_text(
+                  json.dumps({"items": [provided_item(str(inside))]}),
+                  encoding="utf-8",
+              )
+              calls.clear()
+              with patch.dict(os.environ, {"ASSET_FORGE_BATCH_SOURCE_ROOT": str(trusted)}), patch(
+                  "remote_batch.subprocess.run", side_effect=fake_generator
+              ):
+                  approved = run(spec, root / "trusted-source")
+              assert approved["success"] is True and len(calls) == 1
+              assert calls[0][calls[0].index("--source") + 1] == str(inside.resolve())
 
               # Mixed-license orchestration: a circuit breaker that learned
               # from noncommercial fallbacks must never force subsequent
