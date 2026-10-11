@@ -92,6 +92,27 @@ permissions must be separately verified before commercial release. These
 conditions also apply to intermediate image generation for SVG delivery.
 No existing failed probe is authorized to rerun by this change.
 
+## Provider subprocess timeouts are explicit failures
+
+Commit [`f76c682`](https://github.com/dbrckk/asset-forge/commit/f76c68289ba99abd48fb5829e9ac8b347ec71c0b)
+converts `subprocess.TimeoutExpired` and local executable startup errors
+(`OSError`) from either `polli upload` or `polli gen text` into a structured
+`SemanticArtReviewError` for **required** semantic checks. The production
+executor records this as a validation error: `success=false` and `artifact=null`;
+a stalled service must not silently produce a qualified deliverable.
+
+When semantic review is **optional**, the same faults produce
+`available=false`, `passed=null`, and a provider-unavailable reason
+(`upload_unavailable` or `review_unavailable`). The temporary alpha
+preview, when present, still gets cleaned up on upload timeout or failure.
+Neither code path weakens the technical, semantic, or fidelity thresholds.
+
+The CI workflow includes a local executable subprocess smoke for the upload
+and review timeout paths, in required and optional modes. This uses a local
+placeholder credential and never invokes a hosted model or transmits an image.
+A passing offline smoke establishes timeout-handling behavior only, not
+the availability or fidelity of the real vision provider.
+
 ## Evidence to collect
 
 Record: original instruction and manifest constraints; execution run ID;
