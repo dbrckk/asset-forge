@@ -1,5 +1,28 @@
 # Raster production quality gate (fail closed)
 
+## Portable batch destination uniqueness
+
+Dependency-aware batches now reject duplicate item IDs or request IDs after
+case-folding. They also compare delivery `target_path` values after
+Unicode NFC normalization and case-folding. This is essential when the
+production runner uses a case-sensitive Linux filesystem but a downstream
+consumer may use Windows or a normalization/case-insensitive macOS volume.
+
+These collisions are checked for the **entire batch before any output
+directory is created or a generator is invoked**. The caller must choose
+distinct portable IDs and target paths; the pipeline does not silently
+rename assets or alter downstream request references.
+
+The existing offline functional batch smoke checks four additional
+scenarios: case-only item-ID collision, case-only physical request-ID
+collision, case-only target-path collision, and canonical Unicode-equivalent
+target paths. Each invalid later item must fail before generation or output.
+[Code commit 4ea071e](https://github.com/dbrckk/asset-forge/commit/4ea071e012f9813f174a46ed4cb2ebc054e91274)
+passed [CI 38128075034](https://github.com/dbrckk/asset-forge/actions/runs/38128075034)
+at its exact HEAD (COMPLETED SUCCESS 4/4; batch smoke SUCCESS).
+No remote image generation, paid probe, licensed model qualification or
+actual Production-OS E2E delivery is implied by this check.
+
 ## Remote batch delivery integrity (offline-verified)
 
 The dependency-aware remote batch validates all request IDs, target paths
