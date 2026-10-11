@@ -141,7 +141,7 @@ def run(
         # cross-platform asset consumers, not merely traversal/absolute paths.
         segments = target_path.split("/")
         forbidden_windows_name = any(
-            re.fullmatch(r"(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\\..*)?", segment, re.IGNORECASE)
+            re.fullmatch(r"(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\..*)?", segment, re.IGNORECASE)
             for segment in segments
         )
         if (
