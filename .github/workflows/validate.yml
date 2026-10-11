@@ -233,6 +233,34 @@ jobs:
                           raise AssertionError("invalid batch path accepted")
                   assert not (root / "rejected/batch-result.json").exists()
 
+              # Transactional preflight must reject an invalid *later* item,
+              # including duplicate physical job IDs and consuming paths,
+              # BEFORE it calls even the first asset generator.
+              first = make_item("first", "request-first", "assets/first.png")
+              scenarios = [
+                  [first, make_item("second", "request-first", "assets/second.png")],
+                  [first, make_item("second", "request-second", "assets/first.png")],
+                  [first, make_item("second", "request-second", "../escaped.png")],
+                  [first, make_item("second", "request-second", "assets\\first.png")],
+                  [first, make_item("second", "..", "assets/second.png")],
+                  [first, make_item("second", "request-second", "assets/second.png"),
+                   make_item("third", "request-third", "/absolute/third.png")],
+              ]
+              for index, scenario in enumerate(scenarios):
+                  destination = root / f"preflight-{index}"
+                  spec.write_text(json.dumps({"items": scenario}), encoding="utf-8")
+                  with patch("remote_batch.subprocess.run",
+                             side_effect=AssertionError("preflight invoked generator")):
+                      try:
+                          run(spec, destination)
+                      except RemoteBatchError:
+                          pass
+                      else:
+                          raise AssertionError(f"preflight accepted invalid scenario {index}")
+                  assert not destination.exists(), (
+                      f"preflight created output before rejecting scenario {index}"
+                  )
+
               # A valid production-like batch still completes its local
               # orchestration, copies the payload and verifies its digest.
               spec.write_text(json.dumps({"items": [
