@@ -230,6 +230,54 @@ path handling only; no live provider call, legal commercial model grant,
 consumer import or Production-OS end-to-end delivery was performed.
 Draft PR #13 remains unmerged.
 
+## 2026-10-11 preflight and real local-source to Godot export
+
+The batch orchestrator once validated each item's request ID and consumer target
+path **during** the generation loop. A malformed late item could waste
+inference on earlier items, and two distinct batch IDs could reuse the same
+request ID and overwrite the same `jobs/<requestId>` directory. Commit
+[`3489c21`](https://github.com/dbrckk/asset-forge/commit/3489c21d252d7fef29ac23d11f6785b025e9ebfc)
+now validates the complete dependency-ordered batch **before** creating
+output directories or starting any subprocess, including unique, filename-safe
+request IDs and nonduplicated normalized consumer target paths. Existing
+allowed paths and execution order are preserved. The functional CI smoke
+[`99acc61`](https://github.com/dbrckk/asset-forge/commit/99acc61ec7b7b278e378294a0e45e81bd8f74dc3)
+exercises an invalid second or third asset and duplicate IDs/paths,
+checks **zero generated jobs** and no destination directory, then executes
+the previous valid and mixed-license fixtures.
+[Run **38123072481**](https://github.com/dbrckk/asset-forge/actions/runs/38123072481)
+completed SUCCESS **3/3** with the batch smoke SUCCESS.
+
+The previous checks for semantic and licensing integrity were mostly
+**offline reviewer/generator substitutes**, not a real production-CLI
+asset transformation. A second integration smoke now authors an original
+64 x 32 RGBA sprite sheet locally, declares source mode `custom` with
+`project-owned` metadata, and invokes the **real** Asset Forge CLI:
+`fulfill --source ... --output-dir ...`. The actual CLI validates the
+manifest, stages and optimizes the PNG, writes its production report,
+builds the 2-frame atlas, exports a Godot 4 `SpriteFrames` resource
+(`player.tres`), and validates its report. The smoke checks the original
+transparent pixels, frame count and generated files and computes SHA-256
+from the actual exported PNG.
+
+First version `1f19284` had an **incorrect smoke assertion** for
+`provenance.sourceMode` (the actual report uses `provenance.source.mode`)
+and CI 38123146327 failed at that fixture assertion **after real
+`fulfill` succeeded**. This was corrected in
+[`9241946`](https://github.com/dbrckk/asset-forge/commit/9241946a889d5fe556c0077c267519ef633aa7e7).
+[Run **38123173929**](https://github.com/dbrckk/asset-forge/actions/runs/38123173929)
+completed SUCCESS **3/3**; the real local-source CLI integration step
+itself also passed. The optimized PNG SHA-256 observed in the job log was
+`5e1b1f5a04287365f2dbf082e8156c5433c2dc59db06dc1cd06040dc543a0859`.
+
+**Exact scope of proof:** actual processing of an original locally-authored
+PNG and Godot-format export file creation, not a deployed or loaded Godot
+runtime, not a customer-game import, and not commercial approval for the
+Qwen model. The rendered sprite is a functional engineering fixture, not
+an independently evaluated AAA game asset. These tests do not close the
+real-provider semantic/rights or Production-OS full delivery gates. Draft
+PR #13 remains nonmerged.
+
 ## Evidence to collect
 
 Record: original instruction and manifest constraints; execution run ID;
