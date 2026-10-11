@@ -177,6 +177,59 @@ Existing production workflows are not considered remediated in deployment
 until a separately qualified and authorized release includes the commits.
 A green workflow-validation CI run is not proof of a real visual delivery.
 
+## 2026-10-11 deterministic dispatch and safe batch routing
+
+The single-asset GitHub Actions dispatch previously accepted a request's
+`delivery.outputDir` but searched for reports only under `build/asset-forge`
+using `find`. This caused report discovery mismatches and allowed
+caller-controlled output directories in an ephemeral worker. Commit
+[`23e0bc9`](https://github.com/dbrckk/asset-forge/commit/23e0bc9c741957beb8ad02cb2874f75fb6ce6cca)
+now confines the dispatch output to
+`build/asset-forge/production`, preserving any requested engine, and validates
+exactly `build/asset-forge/production/production-report.json` rather than
+selecting the first report found. Caller output paths are intentionally
+overridden **only in this hosted dispatch workflow**; local CLI callers
+retain their original `--output-dir` contract. Its real Python request
+materializer was exercised offline against absolute, traversal and custom
+paths and malformed `delivery` values in
+[`0db027a`](https://github.com/dbrckk/asset-forge/commit/0db027a6bf3932e31ddc656e6c70b86f4fdae5a3).
+[CI run 38122388766](https://github.com/dbrckk/asset-forge/actions/runs/38122388766)
+completed SUCCESS 3/3.
+
+`remote_batch.py` originally allowed dot-only identifiers and stripped the
+leading slash from target paths. Commits
+[`6cce793`](https://github.com/dbrckk/asset-forge/commit/6cce7933611ebc4be76d00de8371e4ab4cae3742)
+and
+[`4d51613`](https://github.com/dbrckk/asset-forge/commit/4d51613368dd445ecf38faea69922697ca9e5a59)
+require safe production-style IDs and reject absolute, drive-qualified,
+UNC, traversal and control-character target paths **before generation**.
+The offline batch smoke verifies these rejections and one valid, locally
+simulated bundle with artifact checksum. [CI run 38122502078](https://github.com/dbrckk/asset-forge/actions/runs/38122502078)
+completed SUCCESS 3/3.
+
+Separately, the Cloudflare-to-Qwen batch circuit breaker previously could
+force the research-licensed Qwen backend for a subsequent commercial item.
+The generator would refuse this route, failing the entire batch even when
+the normal commercially filtered `auto` route remained available. Commit
+[`41aa20f`](https://github.com/dbrckk/asset-forge/commit/41aa20f033209d0426d2032cc2ba85cb585ab616)
+now exempts `commercialUse=true` items from the breaker override while
+retaining the normal fail-closed Qwen model-rights check. The bundle
+records `commercial_exemptions` for visibility. The existing research-use
+breaker scenario was aligned with its intended noncommercial license
+(maintaining the user instruction not to create new unit tests).
+An offline mixed-license smoke exercises two research assets, one commercial
+asset and a further research asset, ensuring backend selections
+`auto, auto, auto, kaggle-qwen` without a real model call.
+
+**Exact final source/CI evidence:**
+[Actions 38122589855](https://github.com/dbrckk/asset-forge/actions/runs/38122589855),
+commit `43ee5798b2a139b1f735aff45ee3f3fcf314450f`,
+completed **SUCCESS 3/3 jobs**, including the offline batch-path
+and mixed-license-routing smoke. These proofs establish local routing and
+path handling only; no live provider call, legal commercial model grant,
+consumer import or Production-OS end-to-end delivery was performed.
+Draft PR #13 remains unmerged.
+
 ## Evidence to collect
 
 Record: original instruction and manifest constraints; execution run ID;
