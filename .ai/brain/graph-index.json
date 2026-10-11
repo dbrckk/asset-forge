@@ -19,6 +19,7 @@
     "godot-3d-delivery.py",
     "godot-export.py",
     "godot-handoff.py",
+    "integration",
     "kaggle-3d-backend.py",
     "kaggle-backend.py",
     "lod-3d.py",
@@ -174,6 +175,20 @@
       "in_degree": 4,
       "out_degree": 1,
       "path": "tests/test_cloudflare_backend.py"
+    },
+    {
+      "dependencies": [
+        "vector_backend.py"
+      ],
+      "dependents": [
+        "asset_forge.py",
+        "godot_handoff.py",
+        "integration/godot4_import_smoke.py",
+        "vector_backend.py"
+      ],
+      "in_degree": 4,
+      "out_degree": 1,
+      "path": "tests/test_vector_backend.py"
     },
     {
       "dependencies": [
@@ -347,19 +362,6 @@
       "path": "kaggle_3d_backend.py"
     },
     {
-      "dependencies": [
-        "vector_backend.py"
-      ],
-      "dependents": [
-        "asset_forge.py",
-        "godot_handoff.py",
-        "vector_backend.py"
-      ],
-      "in_degree": 3,
-      "out_degree": 1,
-      "path": "tests/test_vector_backend.py"
-    },
-    {
       "dependencies": [],
       "dependents": [
         "generator_backends.py",
@@ -504,6 +506,16 @@
     {
       "dependencies": [],
       "dependents": [
+        "integration/godot4_import_smoke.py",
+        "tests/test_remote_batch.py"
+      ],
+      "in_degree": 2,
+      "out_degree": 0,
+      "path": "remote_batch.py"
+    },
+    {
+      "dependencies": [],
+      "dependents": [
         "godot_3d_delivery.py",
         "lod_3d.py"
       ],
@@ -550,6 +562,16 @@
       "in_degree": 0,
       "out_degree": 2,
       "path": "benchmarks/runtime_atlas_web.bench.mjs"
+    },
+    {
+      "dependencies": [
+        "remote_batch.py",
+        "tests/test_vector_backend.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 2,
+      "path": "integration/godot4_import_smoke.py"
     },
     {
       "dependencies": [
@@ -600,15 +622,6 @@
       "in_degree": 0,
       "out_degree": 2,
       "path": "tests/test_runtime_atlas.py"
-    },
-    {
-      "dependencies": [],
-      "dependents": [
-        "tests/test_remote_batch.py"
-      ],
-      "in_degree": 1,
-      "out_degree": 0,
-      "path": "remote_batch.py"
     },
     {
       "dependencies": [
@@ -771,19 +784,10 @@
       "in_degree": 0,
       "out_degree": 1,
       "path": "tests/test_kaggle_3d_backend.py"
-    },
-    {
-      "dependencies": [
-        "kaggle_backend.py"
-      ],
-      "dependents": [],
-      "in_degree": 0,
-      "out_degree": 1,
-      "path": "tests/test_kaggle_backend.py"
     }
   ],
-  "edge_count": 128,
+  "edge_count": 130,
   "generated_by": "dbrckk/repo-brain-v7-graph",
-  "node_count": 73,
+  "node_count": 74,
   "schema_version": 1
 }

@@ -1,18 +1,18 @@
 {
   "budget": {
-    "confidence": "medium",
+    "confidence": "high",
     "expand_to": 12,
-    "max_files": 6,
+    "max_files": 3,
     "requested_max_files": 12,
     "score_margin": 0,
-    "tier": "bounded",
-    "top_score": 29
+    "tier": "narrow",
+    "top_score": 38
   },
   "cache": {
-    "fingerprint": "c755e9fb364a254d1f2ee75451c86fc38932e53922d48ad9c09f19db4718ffc2",
+    "fingerprint": "19f988f8d2efb8eb4cd72d4e157050622fbe173700592ff047d0a0957e562a51",
     "hit": false
   },
-  "candidate_count": 22,
+  "candidate_count": 35,
   "fallback": "If bounded context is insufficient, expand only to budget.expand_to, then use architecture/segmented maps and targeted source search.",
   "files": [
     {
@@ -21,18 +21,16 @@
         "engine",
         "game"
       ],
-      "path": "godot_handoff.py",
+      "path": "integration/godot4_import_smoke.py",
       "reasons": [
+        "impact",
+        "recently-changed",
         "search-index"
       ],
-      "score": 29,
+      "score": 38,
       "symbols": [
-        "build_import_recommendations",
-        "detect_godot",
-        "godot_import_command",
-        "load_godot_profile",
-        "prepare_godot_handoff",
-        "validate_godot_handoff"
+        "main",
+        "run"
       ]
     },
     {
@@ -43,14 +41,17 @@
       ],
       "path": "tests/test_remote_batch.py",
       "reasons": [
+        "impact",
+        "recently-changed",
         "search-index"
       ],
-      "score": 29,
+      "score": 38,
       "symbols": [
         "RemoteBatchTests",
         "Result",
         "fake_run",
         "request",
+        "research_request",
         "test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures",
         "test_cached_assets_count_as_quality_checked_from_technical_validation",
         "test_dependency_order_and_reference_are_preserved",
@@ -62,52 +63,15 @@
       "matched_terms": [
         "engine"
       ],
-      "path": "engine_profile_validation.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 27,
-      "symbols": [
-        "_validate_object_keys",
-        "validate_all_godot_profiles",
-        "validate_godot_profile_data",
-        "validate_godot_profile_file"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine"
-      ],
-      "path": "tests/test_engine_profile_validation.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 27,
-      "symbols": [
-        "EngineProfileValidationTests",
-        "test_invalid_fps_fails",
-        "test_invalid_json_file_fails",
-        "test_missing_required_field_fails",
-        "test_profile_name_mismatch_fails",
-        "test_repository_profiles_all_validate",
-        "test_unknown_field_fails",
-        "test_valid_profile_passes",
-        "test_wrong_type_fails",
-        "valid_profile"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine"
-      ],
       "path": "asset_forge.py",
       "reasons": [
+        "impact",
+        "recently-changed",
         "search-index"
       ],
-      "score": 21,
+      "score": 30,
       "symbols": [
+        "_cache_entry_has_restricted_qwen_origin",
         "_enrich_engine_handoff",
         "_persist_enriched_production_report",
         "_write_production_inputs",
@@ -127,27 +91,6 @@
         "sprite_grid",
         "validate_manifest",
         "validate_raster_file"
-      ]
-    },
-    {
-      "learning_score": 0,
-      "matched_terms": [
-        "engine"
-      ],
-      "path": "tests/test_fulfill.py",
-      "reasons": [
-        "search-index"
-      ],
-      "score": 21,
-      "symbols": [
-        "FulfillCommandTests",
-        "test_compiled_job_forwards_provided_source",
-        "test_compiled_job_routes_raster_to_generated_raster_executor",
-        "test_godot_3d_gets_handoff_and_import_validation",
-        "test_godot_sprite_sheet_gets_engine_handoff",
-        "test_parser_accepts_end_to_end_fulfill_command",
-        "test_parser_accepts_provided_source",
-        "test_production_inputs_are_persisted_for_handoff_and_audit"
       ]
     }
   ],

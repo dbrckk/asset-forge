@@ -246,6 +246,15 @@
       "in_degree": 3,
       "out_degree": 2
     },
+    "integration/godot4_import_smoke.py": {
+      "dependencies": [
+        "remote_batch.py",
+        "tests/test_vector_backend.py"
+      ],
+      "dependents": [],
+      "in_degree": 0,
+      "out_degree": 2
+    },
     "kaggle_3d_backend.py": {
       "dependencies": [
         "kaggle_backend.py"
@@ -352,9 +361,10 @@
     "remote_batch.py": {
       "dependencies": [],
       "dependents": [
+        "integration/godot4_import_smoke.py",
         "tests/test_remote_batch.py"
       ],
-      "in_degree": 1,
+      "in_degree": 2,
       "out_degree": 0
     },
     "runtime_3d_plan.py": {
@@ -691,9 +701,10 @@
       "dependents": [
         "asset_forge.py",
         "godot_handoff.py",
+        "integration/godot4_import_smoke.py",
         "vector_backend.py"
       ],
-      "in_degree": 3,
+      "in_degree": 4,
       "out_degree": 1
     },
     "tests/test_visual_similarity.py": {

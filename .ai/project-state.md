@@ -118,21 +118,20 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-10-09T11:24:11Z
+Generated: 2026-10-11T17:29:39Z
 
 ### Git
 - Branch: `main`
-- Head: `5145be4543f9`
-- Commit date: 2026-10-09T13:21:09+02:00
-- Commit: docs(agents): adopt pinned 88-rule development standard
-- Tracked files: 310
+- Head: `17e6c395faba`
+- Commit date: 2026-10-11T19:25:29+02:00
+- Commit: Merge PR #13: strict optional semantic art quality gate
+- Tracked files: 313
 
 ### Recently changed files
-- `AGENTS.md`
-- `.asset-forge/requests/pos-c27aa69faf0d481489c672fa1d1adcde.json`
-- `.github/workflows/production-os-batch.yml`
-- `.github/workflows/production-os-ai-dev-server-live-e2e.yml`
-- `tests/test_production_os_ai_dev_server_live_e2e_workflow.py`
+- `docs/production-raster-quality-gate.md`
+- `integration/godot4_import_smoke.py`
+- `asset_forge.py`
+- `remote_batch.py`
 
 ### Project signals
 - `pyproject.toml`

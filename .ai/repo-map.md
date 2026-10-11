@@ -64,8 +64,11 @@ examples/
   godot-animations.json
   production-request-live-raster.json
   production-request-live-vector.json
+  production-request-strict-raster.json
   production-request.json
   runtime-atlas.json
+integration/
+  godot4_import_smoke.py
 pipelines/
   __init__.py
   model-3d.json
@@ -781,6 +784,7 @@ jobs:
       ASSET_FORGE_GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_REPOSITORY: ${{ github.repository }}
       ASSET_FORGE_BACKEND_HISTORY: .asset-forge/backend-history.json
+      ASSET_FORGE_BATCH_SOURCE_ROOT: ${{ github.workspace }}
     steps:
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -843,8 +847,19 @@ jobs:
               payload = envelope["spec"]
               backend = envelope.get("backend") or "auto"
               model = envelope.get("model") or ""
-          if backend not in {"auto", "pollinations", "qwen-colab", "cloudflare", "kaggle-qwen", "vtracer", "kaggle-triposr"}:
+          if not isinstance(backend, str) or backend not in {
+              "auto", "pollinations", "qwen-colab", "cloudflare",
+              "kaggle-qwen", "vtracer", "kaggle-triposr",
+          }:
               raise SystemExit("invalid Asset Forge backend")
+          # The model is untrusted request data. Reject control characters,
+          # shell syntax, multiline Actions outputs and overly long names.
+          # Ordinary Hugging Face repo/model names and revision separators
+          # remain supported without allowing shell interpolation.
+          if not isinstance(model, str) or (
+              model and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/+@-]{0,191}", model)
+          ):
+              raise SystemExit("invalid Asset Forge model identifier")
           Path("build/remote-batch").mkdir(parents=True, exist_ok=True)
           Path("build/remote-batch/spec.json").write_text(
               json.dumps(payload, indent=2, sort_keys=True) + "\n",
@@ -856,15 +871,19 @@ jobs:
 
       - name: Execute dependency-aware batch
         shell: bash
+        env:
+          REQUEST_BACKEND: ${{ steps.request.outputs.backend }}
+          REQUEST_MODEL: ${{ steps.request.outputs.model }}
         run: |
+          set -euo pipefail
           args=(
             python remote_batch.py
             --spec build/remote-batch/spec.json
             --output-root build/remote-batch/output
-            --backend "${{ steps.request.outputs.backend }}"
+            --backend "$REQUEST_BACKEND"
           )
-          if [ -n "${{ steps.request.outputs.model }}" ]; then
-            args+=(--model "${{ steps.request.outputs.model }}")
+          if [ -n "$REQUEST_MODEL" ]; then
+            args+=(--model "$REQUEST_MODEL")
           fi
           "${args[@]}"
 
@@ -1038,14 +1057,37 @@ jobs:
       - name: Materialize request
         env:
           REQUEST_JSON: ${{ inputs.request_json }}
+          REQUEST_BACKEND: ${{ inputs.backend }}
+          REQUEST_MODEL: ${{ inputs.model }}
         run: |
           python - <<'PY'
           import json
           import os
+          import re
           from pathlib import Path
 
+          allowed_backends = {
+              "auto", "pollinations", "qwen-colab", "cloudflare",
+              "kaggle-qwen", "vtracer", "kaggle-triposr",
+          }
+          backend = os.environ["REQUEST_BACKEND"] or "auto"
+          model = os.environ["REQUEST_MODEL"]
+          if backend not in allowed_backends:
+              raise SystemExit("invalid Asset Forge backend")
+          if model and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/+@-]{0,191}", model):
+              raise SystemExit("invalid Asset Forge model identifier")
           raw = os.environ["REQUEST_JSON"]
           request = json.loads(raw)
+          if not isinstance(request, dict):
+              raise SystemExit("invalid Asset Forge request payload")
+          delivery = request.get("delivery")
+          if delivery is not None and not isinstance(delivery, dict):
+              raise SystemExit("invalid Asset Forge delivery")
+          # The Actions runner owns the output artifact directory. Never
+          # resolve caller-supplied paths or publish from outside this root.
+          delivery = dict(delivery or {})
+          delivery["outputDir"] = "build/asset-forge/production"
+          request["delivery"] = delivery
           Path("build").mkdir(exist_ok=True)
           Path("build/production-request.json").write_text(
               json.dumps(request, indent=2, sort_keys=True) + "\n",
@@ -1058,10 +1100,14 @@ jobs:
 
       - name: Fulfill production request
         shell: bash
+        env:
+          REQUEST_BACKEND: ${{ inputs.backend }}
+          REQUEST_MODEL: ${{ inputs.model }}
         run: |
-          args=(asset-forge fulfill build/production-request.json --backend "${{ inputs.backend }}")
-          if [ -n "${{ inputs.model }}" ]; then
-            args+=(--model "${{ inputs.model }}")
+          set -euo pipefail
+          args=(asset-forge fulfill build/production-request.json --backend "${REQUEST_BACKEND:-auto}")
+          if [ -n "$REQUEST_MODEL" ]; then
+            args+=(--model "$REQUEST_MODEL")
           fi
           "${args[@]}"
 
@@ -1069,14 +1115,15 @@ jobs:
         id: report
         shell: bash
         run: |
-          report="$(find build/asset-forge -name production-report.json -type f -print -quit)"
-          if [ -z "$report" ]; then
-            echo "::error::No production-report.json was produced"
+          set -euo pipefail
+          report="build/asset-forge/production/production-report.json"
+          if [ ! -f "$report" ]; then
+            echo "::error::No production-report.json was produced at the expected runner output path"
             exit 1
           fi
           asset-forge validate-production-report "$report"
           echo "path=$report" >> "$GITHUB_OUTPUT"
-          echo "dir=$(dirname "$report")" >> "$GITHUB_OUTPUT"
+          echo "dir=build/asset-forge/production" >> "$GITHUB_OUTPUT"
 
       - name: Publish job summary
         shell: bash
@@ -1240,6 +1287,640 @@ jobs:
         run: python asset_forge.py plan examples/asset-manifest.json
       - name: Compile Production OS asset request
         run: python asset_forge.py production-job examples/production-request.json --output build/production-job.json
+      - name: Smoke-check batch model request injection offline
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          import sys
+          import textwrap
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+
+          # Execute the actual embedded request materializer, not a duplicate
+          # validator. No real generation, dispatch, network or secrets.
+          workflow = Path(".github/workflows/production-os-batch.yml").read_text()
+          start = workflow.index("      - name: Materialize batch spec\n")
+          end = workflow.index("      - name: Execute dependency-aware batch\n", start)
+          materialize = workflow[start:end]
+          prefix = "          python - <<'PY'\n"
+          code = textwrap.dedent(materialize.split(prefix, 1)[1].rsplit("          PY\n", 1)[0])
+          execute = workflow[end:]
+          expression = "$" + "{{ steps.request.outputs.model }}"
+          assert f"REQUEST_MODEL: {expression}" in execute
+          assert 'args+=(--model "$REQUEST_MODEL")' in execute
+          assert f'--model "{expression}"' not in execute
+
+          correlation = "pos-" + "a" * 32
+          cases = [
+              ("org/safe-model-v1", True),
+              ("", True),
+              ("org/bad-model\ninjected=true", False),
+              ('org/"; echo unexpected; #', False),
+              ("$(printf unexpected)", False),
+              ("org/" + "x" * 256, False),
+              ({"invalid": "object-not-model"}, False),
+          ]
+          for model, valid in cases:
+              with TemporaryDirectory() as root:
+                  folder = Path(root) / ".asset-forge" / "requests"
+                  folder.mkdir(parents=True)
+                  payload = {"spec": {"items": []}, "backend": "auto", "model": model}
+                  (folder / f"{correlation}.json").write_text(json.dumps(payload))
+                  output = Path(root) / "actions-output"
+                  output.write_text("", encoding="utf-8")
+                  env = dict(os.environ)
+                  env.update({
+                      "SPEC_JSON": "",
+                      "CORRELATION_ID": correlation,
+                      "REQUEST_BACKEND": "",
+                      "REQUEST_MODEL": "",
+                      "GITHUB_OUTPUT": str(output),
+                  })
+                  result = subprocess.run(
+                      [sys.executable, "-c", code], cwd=root, env=env,
+                      capture_output=True, text=True, timeout=10,
+                  )
+                  assert (result.returncode == 0) is valid, "request validation mismatch"
+                  if valid:
+                      content = output.read_text(encoding="utf-8")
+                      assert content == f"backend=auto\nmodel={model}\n"
+                      assert (Path(root) / "build/remote-batch/spec.json").is_file()
+                  else:
+                      assert output.read_text(encoding="utf-8") == ""
+                      assert not (Path(root) / "build/remote-batch/spec.json").exists()
+          # The single-asset dispatch must enforce equivalent rules.
+          dispatch = Path(".github/workflows/production-os-dispatch.yml").read_text()
+          dstart = dispatch.index("      - name: Materialize request\n")
+          dend = dispatch.index("      - name: Inspect readiness\n", dstart)
+          dblock = dispatch[dstart:dend]
+          dispatch_code = textwrap.dedent(
+              dblock.split(prefix, 1)[1].rsplit("          PY\n", 1)[0]
+          )
+          dispatch_execute = dispatch[dispatch.index("      - name: Fulfill production request\n"):]
+          dispatch_expr = "$" + "{{ inputs.model }}"
+          assert f"REQUEST_MODEL: {dispatch_expr}" in dispatch_execute
+          assert 'args+=(--model "$REQUEST_MODEL")' in dispatch_execute
+          assert f'--model "{dispatch_expr}"' not in dispatch_execute
+
+          for model, valid in cases:
+              if not isinstance(model, str):
+                  continue  # workflow_dispatch only exposes string inputs
+              with TemporaryDirectory() as root:
+                  env = dict(os.environ)
+                  env.update({
+                      "REQUEST_JSON": '{"schema":"asset-forge/production-request/v1"}',
+                      "REQUEST_BACKEND": "auto",
+                      "REQUEST_MODEL": model,
+                  })
+                  result = subprocess.run(
+                      [sys.executable, "-c", dispatch_code], cwd=root, env=env,
+                      capture_output=True, text=True, timeout=10,
+                  )
+                  assert (result.returncode == 0) is valid, "dispatch validation mismatch"
+                  staged = Path(root) / "build/production-request.json"
+                  assert staged.is_file() is valid
+                  if valid:
+                      result_request = json.loads(staged.read_text(encoding="utf-8"))
+                      assert result_request["delivery"]["outputDir"] == "build/asset-forge/production"
+
+          # Caller outputDir may be traversal or absolute: the real dispatch
+          # materializer must keep all generated outputs in its fixed sandbox.
+          report_step = dispatch[dispatch.index("      - name: Locate and validate production report\n"):]
+          assert 'report="build/asset-forge/production/production-report.json"' in report_step
+          assert 'find build/asset-forge' not in report_step
+          for configured in ("../../outside", "/tmp/foreign-output", "build/custom"):
+              with TemporaryDirectory() as root:
+                  request = {
+                      "schema": "asset-forge/production-request/v1",
+                      "delivery": {"engine": "godot4", "outputDir": configured},
+                  }
+                  env = dict(os.environ)
+                  env.update({
+                      "REQUEST_JSON": json.dumps(request),
+                      "REQUEST_BACKEND": "auto",
+                      "REQUEST_MODEL": "",
+                  })
+                  result = subprocess.run(
+                      [sys.executable, "-c", dispatch_code], cwd=root, env=env,
+                      capture_output=True, text=True, timeout=10,
+                  )
+                  assert result.returncode == 0, "dispatch failed to confine output"
+                  staged = json.loads((Path(root) / "build/production-request.json").read_text(encoding="utf-8"))
+                  assert staged["delivery"] == {
+                      "engine": "godot4", "outputDir": "build/asset-forge/production"
+                  }
+                  assert not (Path(root) / "build/custom").exists()
+          with TemporaryDirectory() as root:
+              env = dict(os.environ)
+              env.update({
+                  "REQUEST_JSON": json.dumps({
+                      "schema": "asset-forge/production-request/v1",
+                      "delivery": "../../not-an-object",
+                  }),
+                  "REQUEST_BACKEND": "auto",
+                  "REQUEST_MODEL": "",
+              })
+              result = subprocess.run(
+                  [sys.executable, "-c", dispatch_code], cwd=root, env=env,
+                  capture_output=True, text=True, timeout=10,
+              )
+              assert result.returncode != 0
+              assert not (Path(root) / "build/production-request.json").exists()
+          print("Dispatch request fixed output directory and validation verified offline")
+          print("Dispatch request model validation rejected offline")
+          print("Batch request model/output/shell injection rejected offline")
+          PY
+      - name: Smoke-check batch path containment without generation
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+          from unittest.mock import patch
+
+          from remote_batch import RemoteBatchError, run
+
+          def make_item(item_id, request_id, target_path):
+              return {
+                  "id": item_id,
+                  "request": {"requestId": request_id},
+                  "target_path": target_path,
+              }
+
+          bad_items = [
+              make_item(".", "normal", "assets/hero.png"),
+              make_item("..", "normal", "assets/hero.png"),
+              make_item(".hidden", "normal", "assets/hero.png"),
+              make_item("good-id", "..", "assets/hero.png"),
+              make_item("good-id", "a" * 129, "assets/hero.png"),
+              make_item("good-id", "good-id", "../hero.png"),
+              make_item("good-id", "good-id", "/absolute/hero.png"),
+              make_item("good-id", "good-id", "C:\\foreign\\hero.png"),
+              make_item("good-id", "good-id", "\\\\host\\share\\hero.png"),
+              make_item("good-id", "good-id", "assets/hero\nfake.png"),
+              make_item("good-id", "good-id", "assets/CON.png"),
+              make_item("good-id", "good-id", "assets/Com1.txt"),
+              make_item("good-id", "good-id", "assets/hello?.png"),
+              make_item("good-id", "good-id", "assets/image.png:stream"),
+              make_item("good-id", "good-id", "assets/dir./sprite.png"),
+              make_item("good-id", "good-id", "assets/subdir /sprite.png"),
+          ]
+
+          with TemporaryDirectory() as temp:
+              root = Path(temp)
+              spec = root / "spec.json"
+              for item in bad_items:
+                  spec.write_text(json.dumps({"items": [item]}), encoding="utf-8")
+                  with patch("remote_batch.subprocess.run",
+                             side_effect=AssertionError("invalid batch invoked generator")):
+                      try:
+                          run(spec, root / "rejected")
+                      except RemoteBatchError:
+                          pass
+                      else:
+                          raise AssertionError("invalid batch path accepted")
+                  assert not (root / "rejected/batch-result.json").exists()
+
+              # Transactional preflight must reject an invalid *later* item,
+              # including duplicate physical job IDs and consuming paths,
+              # BEFORE it calls even the first asset generator.
+              first = make_item("first", "request-first", "assets/first.png")
+              scenarios = [
+                  [first, make_item("second", "request-first", "assets/second.png")],
+                  [first, make_item("second", "request-second", "assets/first.png")],
+                  [first, make_item("second", "request-second", {"path": "not-string"})],
+                  [first, make_item("second", 123, "assets/second.png")],
+                  [first, make_item("second", "request-second", "../escaped.png")],
+                  [first, make_item("second", "request-second", "assets\\first.png")],
+                  [first, make_item("second", "..", "assets/second.png")],
+                  [first, make_item("second", "request-second", "assets/second.png"),
+                   make_item("third", "request-third", "/absolute/third.png")],
+                  [make_item("Hero", "hero-upper", "assets/a.png"),
+                   make_item("hero", "hero-lower", "assets/b.png")],
+                  [make_item("first", "Job-ONE", "assets/a.png"),
+                   make_item("second", "job-one", "assets/b.png")],
+                  [make_item("first", "job-one", "Assets/Panel.png"),
+                   make_item("second", "job-two", "assets/panel.png")],
+                  [make_item("first", "job-one", "assets/caf\u00e9.png"),
+                   make_item("second", "job-two", "assets/cafe\u0301.png")],
+              ]
+              for index, scenario in enumerate(scenarios):
+                  destination = root / f"preflight-{index}"
+                  spec.write_text(json.dumps({"items": scenario}), encoding="utf-8")
+                  with patch("remote_batch.subprocess.run",
+                             side_effect=AssertionError("preflight invoked generator")):
+                      try:
+                          run(spec, destination)
+                      except RemoteBatchError:
+                          pass
+                      else:
+                          raise AssertionError(f"preflight accepted invalid scenario {index}")
+                  assert not destination.exists(), (
+                      f"preflight created output before rejecting scenario {index}"
+                  )
+
+              # A valid production-like batch still completes its local
+              # orchestration, copies the payload and verifies its digest.
+              spec.write_text(json.dumps({"items": [
+                  make_item("hero-1", "hero-request-1", "assets/art/hero-1.png")
+              ]}), encoding="utf-8")
+              calls = []
+              def fake_generator(command, **_kwargs):
+                  calls.append(list(command))
+                  out = Path(command[command.index("--output-dir") + 1])
+                  out.mkdir(parents=True, exist_ok=True)
+                  artifact = out / "hero.png"
+                  artifact.write_bytes(b"offline-smoke-artifact")
+                  (out / "production-report.json").write_text(
+                      json.dumps({"success": True, "artifact": str(artifact)}),
+                      encoding="utf-8",
+                  )
+                  return subprocess.CompletedProcess(command, 0, "", "")
+
+              with patch("remote_batch.subprocess.run", side_effect=fake_generator):
+                  result = run(spec, root / "valid")
+              assert len(calls) == 1
+              assert result["success"] is True and result["count"] == 1
+              assert (root / "valid" / result["items"][0]["artifact"]).is_file()
+
+
+              # Empty reports must not turn zero-byte files into successful
+              # deliverables; no remote inference is involved.
+              def empty_generator(command, **_kwargs):
+                  out = Path(command[command.index("--output-dir") + 1])
+                  out.mkdir(parents=True, exist_ok=True)
+                  artifact = out / "source.png"
+                  artifact.write_bytes(b"")
+                  (out / "production-report.json").write_text(
+                      json.dumps({"success": True, "artifact": str(artifact)}),
+                      encoding="utf-8",
+                  )
+                  return subprocess.CompletedProcess(command, 0, "", "")
+
+              spec.write_text(json.dumps({"items": [
+                  make_item("empty", "request-empty", "assets/empty.png")
+              ]}), encoding="utf-8")
+              with patch("remote_batch.subprocess.run", side_effect=empty_generator):
+                  try:
+                      run(spec, root / "empty-artifact")
+                  except RemoteBatchError as exc:
+                      assert "empty primary artifact" in str(exc)
+                  else:
+                      raise AssertionError("zero-byte primary artifact accepted")
+              assert not (root / "empty-artifact/batch-result.json").exists()
+
+              # A first item's additional artifact can have the same bundle
+              # name as a later item's main artifact. Reject without replacing
+              # the earlier file or publishing a successful batch report.
+              def colliding_generator(command, **_kwargs):
+                  out = Path(command[command.index("--output-dir") + 1])
+                  out.mkdir(parents=True, exist_ok=True)
+                  primary = out / "source.png"
+                  primary.write_bytes(b"first-primary" if out.name == "first-r" else b"second-primary")
+                  report = {"success": True, "artifact": str(primary)}
+                  if out.name == "first-r":
+                      extra = out / "source.extra.png"
+                      extra.write_bytes(b"protected-extra")
+                      report["additionalArtifacts"] = [str(extra)]
+                  (out / "production-report.json").write_text(
+                      json.dumps(report), encoding="utf-8",
+                  )
+                  return subprocess.CompletedProcess(command, 0, "", "")
+
+              spec.write_text(json.dumps({"items": [
+                  make_item("hero", "first-r", "assets/hero.png"),
+                  make_item("hero.extra", "second-r", "assets/other.png"),
+              ]}), encoding="utf-8")
+              with patch("remote_batch.subprocess.run", side_effect=colliding_generator):
+                  try:
+                      run(spec, root / "bundle-collision")
+                  except RemoteBatchError as exc:
+                      assert "duplicate bundle artifact destination" in str(exc)
+                  else:
+                      raise AssertionError("bundle collision overwrote an earlier artifact")
+              assert (root / "bundle-collision/bundle/hero.extra.png").read_bytes() == b"protected-extra"
+              assert not (root / "bundle-collision/batch-result.json").exists()
+
+              # Hosted-batch source files must be real, nonsymlinked files
+              # within the trusted checkout; bad late files must fail before
+              # the first generator runs, not after a paid inference.
+              trusted = root / "checkout"
+              trusted.mkdir()
+              inside = trusted / "owned.png"
+              inside.write_bytes(b"trusted-original-source")
+              outside = root / "private.png"
+              outside.write_bytes(b"do-not-package")
+              symlink = trusted / "alias.png"
+              symlink.symlink_to(outside)
+
+              def provided_item(source_path):
+                  item = make_item("source-item", "source-request", "assets/owned.png")
+                  item["request"]["manifest"] = {
+                      "source": {"mode": "custom"}
+                  }
+                  if source_path is not None:
+                      item["source_path"] = source_path
+                  return item
+
+              rejected_sources = [
+                  provided_item(str(outside)),
+                  provided_item(str(symlink)),
+                  provided_item(str(root / "missing.png")),
+                  provided_item(None),
+                  provided_item({"not": "a-path"}),
+              ]
+              for index, rejected in enumerate(rejected_sources):
+                  destination = root / f"untrusted-source-{index}"
+                  spec.write_text(json.dumps({"items": [first, rejected]}), encoding="utf-8")
+                  with patch.dict(os.environ, {"ASSET_FORGE_BATCH_SOURCE_ROOT": str(trusted)}), patch(
+                      "remote_batch.subprocess.run",
+                      side_effect=AssertionError("untrusted source invoked generation"),
+                  ):
+                      try:
+                          run(spec, destination)
+                      except RemoteBatchError:
+                          pass
+                      else:
+                          raise AssertionError("unsafe source was accepted")
+                  assert not destination.exists()
+
+              spec.write_text(
+                  json.dumps({"items": [provided_item(str(inside))]}),
+                  encoding="utf-8",
+              )
+              calls.clear()
+              with patch.dict(os.environ, {"ASSET_FORGE_BATCH_SOURCE_ROOT": str(trusted)}), patch(
+                  "remote_batch.subprocess.run", side_effect=fake_generator
+              ):
+                  approved = run(spec, root / "trusted-source")
+              assert approved["success"] is True and len(calls) == 1
+              assert calls[0][calls[0].index("--source") + 1] == str(inside.resolve())
+
+              # Mixed-license orchestration: a circuit breaker that learned
+              # from noncommercial fallbacks must never force subsequent
+              # commercial work onto a research-only Qwen backend.
+              mixed_items = []
+              for idx, commercial in enumerate((False, False, True, False), 1):
+                  item = make_item(
+                      f"asset-{idx}", f"request-{idx}",
+                      f"assets/art/asset-{idx}.png",
+                  )
+                  item["request"]["manifest"] = {
+                      "license": {"commercialUse": commercial}
+                  }
+                  mixed_items.append(item)
+              spec.write_text(json.dumps({"items": mixed_items}), encoding="utf-8")
+              observed_backends = []
+
+              def simulate_generator(command, **_kwargs):
+                  selected = command[command.index("--backend") + 1]
+                  observed_backends.append(selected)
+                  assert selected != "kaggle-qwen" or len(observed_backends) == 4
+                  out = Path(command[command.index("--output-dir") + 1])
+                  out.mkdir(parents=True, exist_ok=True)
+                  artifact = out / "asset.png"
+                  artifact.write_bytes(b"offline-raster-fixture")
+                  fallback = (
+                      len(observed_backends) <= 2 and selected == "auto"
+                  )
+                  (out / "production-report.json").write_text(
+                      json.dumps({
+                          "success": True,
+                          "artifact": str(artifact),
+                          "routing": {
+                              "fallbackCount": 1 if fallback else 0,
+                              "fallbacks": [{
+                                  "from": "cloudflare",
+                                  "to": "kaggle-qwen",
+                                  "reason": "cloudflare-generation-error",
+                              }] if fallback else [],
+                          },
+                      }), encoding="utf-8",
+                  )
+                  return subprocess.CompletedProcess(command, 0, "", "")
+
+              with patch("remote_batch.subprocess.run", side_effect=simulate_generator):
+                  mixed = run(spec, root / "mixed", backend="auto")
+              assert observed_backends == ["auto", "auto", "auto", "kaggle-qwen"]
+              assert mixed["routing_summary"]["circuit_breaker"]["open"] is True
+              assert mixed["routing_summary"]["circuit_breaker"]["commercial_exemptions"] == 1
+          print("Batch paths and commercial circuit-breaker routing verified offline")
+          PY
+      - name: Smoke-check commercial Qwen asset-library cache bypass offline
+        run: |
+          python - <<'PY'
+          import base64
+          import copy
+          import json
+          import os
+          import sys
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+          from unittest.mock import patch
+
+          import asset_forge
+          from asset_library import (
+              record_success, request_fingerprint, reusable_content_fingerprint,
+          )
+
+          # The project's main() reads sys.argv rather than accepting argv.
+          def run_cli(arguments):
+              with patch.object(sys, "argv", ["asset-forge"] + arguments):
+                  return asset_forge.main()
+
+          with TemporaryDirectory() as root_str:
+              root = Path(root_str)
+              request = json.loads(
+                  Path("examples/production-request.json").read_text(encoding="utf-8")
+              )
+              request["requestId"] = "cached-commercial-license-guard"
+              plan = asset_forge.build_plan(request["manifest"], Path("."))
+              job = asset_forge.build_production_job(request, plan)
+              artifact = root / "historical.png"
+              artifact.write_bytes(base64.b64decode(
+                  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/Z90AAAAASUVORK5CYII="
+              ))
+              library = root / "library.json"
+              fp = request_fingerprint(job, backend="auto")
+              reusable_fp = reusable_content_fingerprint(job, backend="auto")
+              qwen_entry = record_success(
+                  library, fingerprint=fp, content_fingerprint=reusable_fp,
+                  job=job,
+                  result={
+                      "success": True,
+                      "artifact": str(artifact),
+                      "generation": {
+                          "backend": "kaggle-qwen",
+                          "model": "Qwen/Qwen-Image-2.1",
+                      },
+                      "validation": {},
+                  },
+              )
+              request_file = root / "request.json"
+              request_file.write_text(json.dumps(request), encoding="utf-8")
+              captured_sources = []
+
+              def guard_before_generation(*args, **kwargs):
+                  captured_sources.append(kwargs["source_path"])
+                  raise RuntimeError("offline-expected-stop")
+
+              with patch.dict(os.environ, {"ASSET_FORGE_LIBRARY": str(library)}), patch(
+                  "asset_forge.execute_compiled_production_job",
+                  side_effect=guard_before_generation,
+              ):
+                  # An old commercially declared Qwen cache record must be
+                  # treated as a MISS, never as a vetted external source.
+                  status = run_cli([
+                      "fulfill", str(request_file),
+                      "--output-dir", str(root / "direct-auto"), "--backend", "auto",
+                  ])
+                  assert status == 2
+                  assert captured_sources == [None], captured_sources
+
+                  # The explicit Qwen backend must be rejected before cache
+                  # lookup AND before the generation executor is reached.
+                  captured_sources.clear()
+                  status = run_cli([
+                      "fulfill", str(request_file),
+                      "--output-dir", str(root / "direct-qwen"), "--backend", "kaggle-qwen",
+                  ])
+                  assert status == 2 and captured_sources == []
+
+                  # Cross-project reuse has a license-independent content key.
+                  # It must not promote the same Qwen artifact to a new
+                  # commercial game, even with reuse explicitly enabled.
+                  another = copy.deepcopy(request)
+                  another["requestId"] = "commercial-second-project"
+                  another["manifest"]["project"] = "independent-commercial-game"
+                  another["manifest"]["constraints"]["allowCrossProjectReuse"] = True
+                  request_file.write_text(json.dumps(another), encoding="utf-8")
+                  captured_sources.clear()
+                  status = run_cli([
+                      "fulfill", str(request_file),
+                      "--output-dir", str(root / "cross-project"), "--backend", "auto",
+                  ])
+                  assert status == 2 and captured_sources == [None]
+
+              # A non-Qwen backend entry is not disqualified by this
+              # narrowly targeted guard (separate provider rights still
+              # require external qualification).
+              request_file.write_text(json.dumps(request), encoding="utf-8")
+              cloudflare_fp = request_fingerprint(job, backend="cloudflare")
+              cloudflare = record_success(
+                  library, fingerprint=cloudflare_fp,
+                  job=job,
+                  result={
+                      "success": True,
+                      "artifact": str(artifact),
+                      "generation": {"backend": "cloudflare", "model": "sdxl"},
+                      "validation": {},
+                  },
+              )
+              captured_sources.clear()
+              with patch.dict(os.environ, {"ASSET_FORGE_LIBRARY": str(library)}), patch(
+                  "asset_forge.execute_compiled_production_job",
+                  side_effect=guard_before_generation,
+              ):
+                  status = run_cli([
+                      "fulfill", str(request_file),
+                      "--output-dir", str(root / "cloudflare"), "--backend", "cloudflare",
+                  ])
+              assert status == 2 and captured_sources == [Path(cloudflare["artifact"])]
+              assert qwen_entry["backend"] == "kaggle-qwen"
+          print("Historical Qwen cache and cross-project reuse blocked for commercial jobs")
+          PY
+      - name: Smoke-check commercial Qwen denial without inference
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+
+          from generator_backends import GenerationError, execute_generated_asset
+
+          job = json.loads(Path("build/production-job.json").read_text(encoding="utf-8"))
+          job["requiresGenerator"] = True
+          job["assetType"] = "sprite"
+          job["manifest"]["license"]["commercialUse"] = True
+
+          with TemporaryDirectory() as temp:
+              for backend in ("kaggle-qwen", "qwen-colab"):
+                  for model in (None, "example/alternative-model-unverified"):
+                      try:
+                          execute_generated_asset(
+                              job, Path(temp), backend=backend, model=model
+                          )
+                      except GenerationError as exc:
+                          if "commercial rights unverified" not in str(exc):
+                              raise
+                      else:
+                          raise RuntimeError(
+                              f"commercial Qwen generation not blocked: {backend}/{model}"
+                          )
+          print("Verified both Qwen backends fail before inference for commercial jobs")
+          PY
+      - name: Smoke-check semantic subprocess timeouts without remote inference
+        run: |
+          python - <<'PY'
+          import base64
+          import os
+          import stat
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+
+          from semantic_art_review import SemanticArtReviewError, review_raster_art
+
+          # Real local executables exercise subprocess.run's timeout path.
+          # No production inference, network, or secret is used.
+          with TemporaryDirectory() as temporary:
+              root = Path(temporary)
+              cli = root / "polli"
+              image = root / "source.png"
+              image.write_bytes(base64.b64decode(
+                  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/Z90AAAAASUVORK5CYII="
+              ))
+              os.environ["PATH"] = str(root) + os.pathsep + os.environ["PATH"]
+              placeholder_credentials = {"POLLINATIONS_API_KEY": "offline-smoke-placeholder"}
+              for stage in ("upload", "review"):
+                  if stage == "upload":
+                      script = "#!/usr/bin/env python3\nimport time\ntime.sleep(2)\n"
+                  else:
+                      script = (
+                          "#!/usr/bin/env python3\n"
+                          "import sys, time\n"
+                          "if sys.argv[1] == 'upload':\n"
+                          "    print('{\"url\":\"https://example.invalid/smoke\"}')\n"
+                          "else:\n"
+                          "    time.sleep(2)\n"
+                      )
+                  cli.write_text(script, encoding="utf-8")
+                  cli.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+                  for required in (True, False):
+                      manifest = {"type": "sprite", "constraints": {
+                          "semanticArtReview": True,
+                          "semanticArtReviewRequired": required,
+                          "semanticQualityMin": 0.72,
+                      }}
+                      try:
+                          result = review_raster_art(
+                              image, manifest,
+                              environ=placeholder_credentials,
+                              timeout_seconds=0.35,
+                              instruction="Exactly one game sprite",
+                          )
+                      except SemanticArtReviewError as exc:
+                          if not required or "timed out" not in str(exc):
+                              raise
+                      else:
+                          expected = "upload_unavailable" if stage == "upload" else "review_unavailable"
+                          if required or result.get("available") is not False or result.get("reason") != expected:
+                              raise RuntimeError(f"semantic timeout accepted unexpectedly: {stage}/{required}")
+              print("Verified local upload/model timeout fail-closed and optional fallback")
+          PY
       - name: Inspect generator backends
         run: python asset_forge.py generator-backend-status
       - name: Inspect operational readiness
@@ -1280,6 +1961,170 @@ jobs:
         run: python asset_forge.py raster-backend-status
       - name: WebP backend tests
         run: python -m unittest discover -s tests -p "test_raster_backend.py" -v
+      - name: Exercise real owned PNG to Godot SpriteFrames CLI handoff offline
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import subprocess
+          import sys
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+
+          from PIL import Image, ImageDraw
+
+          # A locally authored alpha sprite is an original fixture, not a
+          # purported AI asset or a commercially licensed third-party model.
+          # The real Asset Forge CLI produces/validates its deliverable.
+          with TemporaryDirectory(prefix="asset-forge-real-handoff-") as td:
+              root = Path(td)
+              source = root / "original-owned-sprite.png"
+              sheet = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+              draw = ImageDraw.Draw(sheet)
+              draw.ellipse((7, 5, 24, 25), fill=(30, 180, 220, 255))
+              draw.rectangle((39, 6, 57, 25), fill=(240, 100, 35, 255))
+              sheet.save(source, format="PNG")
+              request = json.loads(
+                  Path("examples/production-request.json").read_text(encoding="utf-8")
+              )
+              request["requestId"] = "owned-sprite-offline-handoff"
+              request["instruction"] = "Validate and export the two original sprite frames"
+              request["manifest"]["source"] = {"mode": "custom", "author": "offline-ci"}
+              request["manifest"]["license"] = {
+                  "id": "project-owned",
+                  "commercialUse": True,
+                  "derivatives": True,
+                  "attributionRequired": False,
+              }
+              request["manifest"]["constraints"].update({
+                  "frameWidth": 32,
+                  "frameHeight": 32,
+                  "expectedFrames": 2,
+                  "pixelArt": True,
+                  "interpolation": "nearest",
+                  "requiresAlpha": True,
+              })
+              req = root / "request.json"
+              req.write_text(json.dumps(request), encoding="utf-8")
+              out = root / "produced"
+              proc = subprocess.run(
+                  [sys.executable, "asset_forge.py", "fulfill", str(req),
+                   "--source", str(source), "--output-dir", str(out)],
+                  capture_output=True, text=True, timeout=45,
+              )
+              if proc.returncode != 0:
+                  raise RuntimeError(
+                      "Real offline Asset Forge fulfill failed: "
+                      + (proc.stderr or proc.stdout)[-1100:]
+                  )
+              report = json.loads((out / "production-report.json").read_text())
+              assert report["success"] is True
+              assert report["generation"]["backend"] == "provided"
+              assert report["provenance"]["source"]["mode"] == "custom"
+              artifact = Path(report["artifact"])
+              assert artifact.is_file() and artifact.parent.resolve() == out.resolve()
+              with Image.open(artifact) as exported:
+                  assert exported.size == (64, 32)
+                  assert exported.mode in ("RGBA", "P")
+                  assert exported.getpixel((0, 0)) == (0, 0, 0, 0)
+              atlas = json.loads((out / "atlas-metadata.json").read_text())
+              assert atlas["frameCount"] == 2
+              assert len(atlas["frames"]) == 2
+              tres = out / "player.tres"
+              assert tres.is_file()
+              assert "SpriteFrames" in tres.read_text(encoding="utf-8")
+              handoff = report["engineHandoff"]
+              assert handoff["engine"] == "godot4"
+              assert handoff["type"] == "spriteframes"
+              assert handoff["ready"] is True
+              valid = subprocess.run(
+                  [sys.executable, "asset_forge.py", "validate-production-report",
+                   str(out / "production-report.json")],
+                  capture_output=True, text=True, timeout=15,
+              )
+              assert valid.returncode == 0, valid.stderr
+              print(
+                  "Real local source -> optimized PNG -> validated report"
+                  " -> Godot .tres handoff; SHA256="
+                  + hashlib.sha256(artifact.read_bytes()).hexdigest()
+              )
+          PY
+      - name: Smoke-check transparent semantic preview and fidelity threshold offline
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import subprocess
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+          from unittest.mock import patch
+
+          from PIL import Image
+          from semantic_art_review import review_raster_art
+
+          # Exercise actual RGBA -> RGB preview transformation and cleanup
+          # without calling any remote service or generating a model asset.
+          with TemporaryDirectory() as temporary:
+              original = Path(temporary) / "production.png"
+              source = Image.new("RGBA", (16, 16), (23, 61, 98, 0))
+              source.putpixel((8, 8), (240, 30, 10, 255))
+              source.save(original, format="PNG")
+              source_hash = hashlib.sha256(original.read_bytes()).hexdigest()
+              seen_preview_paths = []
+              fidelity = [0.35]
+
+              def offline_runner(command, **_kwargs):
+                  if command[1] == "upload":
+                      preview_path = Path(command[2])
+                      assert preview_path != original
+                      assert preview_path.is_file()
+                      with Image.open(preview_path) as preview:
+                          assert preview.mode == "RGB"
+                          assert preview.size == (16, 16)
+                          assert preview.getpixel((0, 0)) == (128, 128, 128)
+                          assert preview.getpixel((8, 8)) == (240, 30, 10)
+                      seen_preview_paths.append(preview_path)
+                      return subprocess.CompletedProcess(
+                          command, 0, '{"url":"https://example.invalid/offline"}', ""
+                      )
+                  assert command[1:3] == ["gen", "text"]
+                  assert "synthetic neutral gray" in command[3]
+                  assert "instructionFidelity" in command[3]
+                  return subprocess.CompletedProcess(
+                      command, 0, json.dumps({
+                          "overall": 0.92,
+                          "anatomy": 0.93,
+                          "artifacts": 0.91,
+                          "textReadability": 0.92,
+                          "styleConsistency": 0.90,
+                          "instructionFidelity": fidelity[0],
+                          "issues": [],
+                      }), ""
+                  )
+
+              manifest = {
+                  "type": "sprite", "importance": "secondary",
+                  "constraints": {
+                      "semanticArtReviewRequired": True,
+                      "requiresAlpha": True,
+                      "semanticQualityMin": 0.72,
+                  },
+              }
+              with patch("semantic_art_review.shutil.which", return_value="offline-polli"):
+                  for score, expected_pass in ((0.35, False), (0.94, True)):
+                      fidelity[0] = score
+                      review = review_raster_art(
+                          original, manifest, runner=offline_runner,
+                          environ={"POLLINATIONS_API_KEY": "offline-only-placeholder"},
+                          instruction="Exactly one isolated energy cell, no other objects",
+                      )
+                      assert review["passed"] is expected_pass
+                      assert review["reviewPreviewComposited"] is True
+                      assert review["scores"]["instructionFidelity"] == score
+                      assert hashlib.sha256(original.read_bytes()).hexdigest() == source_hash
+                      assert seen_preview_paths and not seen_preview_paths[-1].exists()
+          print("RGBA source unchanged; gray preview/cleanup and fidelity gate verified offline")
+          PY
 
 
   vector-backend:
@@ -1315,6 +2160,75 @@ jobs:
               assert output.is_file() and output.stat().st_size > 0
               assert "<svg" in output.read_text(encoding="utf-8").lower()
           PY
+
+
+  godot4-import:
+    name: Real Godot 4 SpriteFrames import
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+
+      - name: Install Pillow for original local PNG
+        run: python -m pip install "Pillow>=12.2,<13"
+
+      - name: Restore fixed-version Godot editor archive
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .ci-tools/Godot_v4.4.1-stable_linux.x86_64.zip
+          key: asset-forge-godot-editor-4.4.1-linux-x64-v1
+
+      - name: Obtain and verify official Godot 4.4.1 editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .ci-tools
+          release="https://github.com/godotengine/godot/releases/download/4.4.1-stable"
+          filename="Godot_v4.4.1-stable_linux.x86_64.zip"
+          curl --fail --location --silent --show-error --retry 3 \
+            --max-time 45 "$release/SHA512-SUMS.txt" \
+            --output .ci-tools/SHA512-SUMS.txt
+          if [ ! -s ".ci-tools/$filename" ]; then
+            curl --fail --location --silent --show-error --retry 3 \
+              --max-time 180 "$release/$filename" \
+              --output ".ci-tools/$filename"
+          fi
+          python - <<'PY'
+          import hashlib
+          import re
+          from pathlib import Path
+
+          base = Path(".ci-tools")
+          filename = "Godot_v4.4.1-stable_linux.x86_64.zip"
+          entries = []
+          for line in (base / "SHA512-SUMS.txt").read_text(encoding="utf-8").splitlines():
+              parts = line.split(maxsplit=1)
+              if len(parts) == 2 and parts[1].lstrip("*").removeprefix("./") == filename:
+                  entries.append(parts[0].lower())
+          if len(entries) != 1 or not re.fullmatch(r"[0-9a-f]{128}", entries[0]):
+              raise SystemExit("Official Godot SHA512 manifest entry missing or ambiguous")
+          archive = base / filename
+          digest = hashlib.sha512(archive.read_bytes()).hexdigest()
+          if digest != entries[0]:
+              raise SystemExit("Godot binary SHA512 differs from official release manifest")
+          print("Verified official Godot 4.4.1 ZIP against SHA512-SUMS.txt")
+          PY
+          unzip -oq ".ci-tools/$filename" -d .ci-tools/
+          chmod +x .ci-tools/Godot_v4.4.1-stable_linux.x86_64
+          .ci-tools/Godot_v4.4.1-stable_linux.x86_64 --version
+
+      - name: Exercise actual Godot 4 editor import and runtime SpriteFrames load
+        env:
+          GODOT_BIN: .ci-tools/Godot_v4.4.1-stable_linux.x86_64
+        run: python integration/godot4_import_smoke.py
 ````
 
 ## File: .github/dependabot.yml
@@ -1778,6 +2692,50 @@ updates:
 }
 ````
 
+## File: examples/production-request-strict-raster.json
+````json
+{
+  "schema": "asset-forge/production-request/v1",
+  "requestId": "strict-raster-qa-smoke",
+  "instruction": "Create exactly ONE isolated science-fiction energy cell game sprite, centered and fully visible. One dark metallic cylindrical power cell, with exactly one cyan emissive strip, crisp silhouette and transparent empty space around it. No other cells, no repeated objects, no strips of tile patterns, no text, no watermark, no frame, no floor and NO opaque or painted background.",
+  "manifest": {
+    "id": "live-raster-cell",
+    "project": "asset-forge-live-smoke",
+    "type": "sprite",
+    "importance": "secondary",
+    "source": {
+      "mode": "generated"
+    },
+    "license": {
+      "id": "research-evaluation-only",
+      "commercialUse": false,
+      "derivatives": true,
+      "attributionRequired": true
+    },
+    "target": {
+      "engine": null,
+      "format": "png",
+      "maxBytes": 4194304
+    },
+    "constraints": {
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "expectedFrames": 1,
+      "technicalQualityMin": 0.65,
+      "semanticArtReview": true,
+      "semanticArtReviewRequired": true,
+      "semanticQualityMin": 0.72,
+      "maxBorderAlphaRatio": 0.08,
+      "requiresAlpha": true
+    }
+  },
+  "delivery": {
+    "engine": null,
+    "outputDir": "build/strict-raster-qa-smoke"
+  }
+}
+````
+
 ## File: examples/production-request.json
 ````json
 {
@@ -1890,6 +2848,74 @@ updates:
     }
   ]
 }
+````
+
+## File: integration/godot4_import_smoke.py
+````python
+#!/usr/bin/env python3
+"""Functional CI smoke: own PNG -> real Asset Forge CLI -> real Godot 4 loader.
+
+No AI generation, credentials, paid inference, or external asset provenance.
+Godot must be installed separately and GODOT_BIN must point to that executable.
+This is an integration check, not a new unit-test suite.
+"""
+⋮----
+ROOT = Path(__file__).resolve().parent.parent
+⋮----
+def run(command: list[str], *, cwd: Path, timeout: int) -> str
+⋮----
+completed = subprocess.run(
+combined = completed.stdout + "\n" + completed.stderr
+⋮----
+GODOT_VALIDATOR = """extends SceneTree
+⋮----
+def main() -> int
+⋮----
+binary_value = os.environ.get("GODOT_BIN", "").strip()
+⋮----
+godot = Path(binary_value).resolve(strict=True)
+⋮----
+work = Path(td)
+original = work / "original-source.png"
+image = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+brush = ImageDraw.Draw(image)
+⋮----
+request = json.loads(
+⋮----
+input_path = work / "production-request.json"
+⋮----
+output = work / "asset-forge-output"
+⋮----
+report_path = output / "production-report.json"
+report = json.loads(report_path.read_text(encoding="utf-8"))
+⋮----
+asset = Path(report["artifact"]).resolve(strict=True)
+⋮----
+atlas = json.loads((output / "atlas-metadata.json").read_text(encoding="utf-8"))
+⋮----
+tres = output / "player.tres"
+⋮----
+# Exercise the real batch coordinator with another fresh CLI fulfill,
+# not a fake generator or an unexecuted sample. No GPU/network needed.
+⋮----
+wrapper = work / "asset-forge-cli"
+⋮----
+batch_spec = work / "batch-spec.json"
+⋮----
+batch_dir = work / "real-batch"
+batch = run_remote_batch(batch_spec, batch_dir, executable=str(wrapper))
+⋮----
+row = batch["items"][0]
+companions = {value["role"]: value for value in row["additional_artifacts"]}
+⋮----
+file = batch_dir / entry["artifact"]
+⋮----
+project = work / "godot4-project"
+⋮----
+# The editor performs the actual Texture2D import before the game
+# runtime attempts to load the generated SpriteFrames resource.
+⋮----
+result = run(
 ````
 
 ## File: pipelines/__init__.py
@@ -4737,6 +5763,12 @@ quality = result["quality_summary"]
 ⋮----
 def test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures(self)
 ⋮----
+# This legacy breaker scenario tests research-use fallback. Commercial
+# assets must never be routed to the Qwen backend by the breaker.
+def research_request(request_id, asset_id)
+⋮----
+payload = request(request_id, asset_id)
+⋮----
 backends = []
 ⋮----
 selected_backend = cmd[cmd.index("--backend") + 1]
@@ -5904,10 +6936,13 @@ errors = []
 warnings = []
 ⋮----
 max_border = constraints.get("maxBorderAlphaRatio", 0.08)
+strict_border = (
 ⋮----
 max_border = float(max_border)
 ⋮----
 max_border = 0.08
+⋮----
+message = (
 ⋮----
 min_unique = constraints.get("minUniqueFrameRatio")
 ⋮----
@@ -6037,6 +7072,18 @@ rendered = json.dumps(atlas, indent=2, sort_keys=True) + "\n"
 ⋮----
 asset_type = str(job.get("assetType") or "")
 ⋮----
+def _cache_entry_has_restricted_qwen_origin(entry: dict) -> bool
+⋮----
+"""Cache integrity is not a model-rights grant.
+
+    Qwen may appear as the recorded backend or inside the recorded model
+    name (including historical entries). Missing model provenance is not
+    acceptable evidence for commercial reuse either.
+    """
+⋮----
+backend = str(entry.get("backend") or "").strip().lower()
+model = str(entry.get("model") or "").strip().lower()
+⋮----
 def _write_production_inputs(output_dir: Path, job: dict) -> None
 ⋮----
 payloads = {
@@ -6070,6 +7117,11 @@ atlas = build_atlas_manifest(Path(artifact), manifest)
 atlas_path = output_dir / "atlas-metadata.json"
 ⋮----
 spriteframes = output_dir / f"{job.get('assetId') or manifest.get('id')}.tres"
+⋮----
+# Godot resources are part of the delivery, not merely temporary
+# build outputs. Remote batch collectors use additionalArtifacts to
+# bundle these files with their own SHA256 digests.
+extras = result.get("additionalArtifacts")
 ⋮----
 def parser() -> argparse.ArgumentParser
 ⋮----
@@ -6173,16 +7225,25 @@ result = execute_compiled_production_job(
 result = _enrich_engine_handoff(job, result, output_dir)
 contract_errors = validate_production_report(result)
 ⋮----
+rights = job.get("manifest", {}).get("license", {})
+commercial = isinstance(rights, dict) and rights.get("commercialUse") is True
+⋮----
 configured = job.get("delivery", {}).get("outputDir")
 ⋮----
 library_enabled = (
 library_path = default_library_path() if library_enabled else None
 fingerprint = (
 library_hit = (
+⋮----
+# Re-evaluate through an actually permitted backend instead of
+# letting a historical research-only artifact bypass the guard.
+library_hit = None
 constraints = (
 allow_cross_project_reuse = (
 content_fingerprint = (
 reusable_hit = (
+⋮----
+reusable_hit = None
 selected_library_hit = library_hit or reusable_hit
 effective_source = (
 ⋮----
@@ -6740,6 +7801,9 @@ VECTOR_GENERATED_TYPES = {"vector", "svg", "icon", "ui-vector", "logo"}
 THREE_D_GENERATED_TYPES = {"mesh", "prop", "environment", "character-3d"}
 SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES | THREE_D_GENERATED_TYPES
 DEFAULT_VECTOR_MODEL = "recraft/recraft-v4.1-vector"
+# SDXL accepts a dedicated negative_prompt; keep excluded visual motifs out
+# of the positive description for a single-subject raster asset.
+SDXL_SINGLE_SPRITE_NEGATIVE_PROMPT = (
 DEFAULT_REFERENCE_MODEL = "kontext"
 DEFAULT_3D_MODEL = "microsoft/trellis-2"
 MAX_3D_BYTES = 100 * 1024 * 1024
@@ -6761,7 +7825,26 @@ def _backend_history_path(*, environ=None) -> Path | None
 env = os.environ if environ is None else environ
 raw = str(env.get("ASSET_FORGE_BACKEND_HISTORY") or "").strip()
 ⋮----
-def _select_free_raster_backend(status: dict, *, environ=None) -> str | None
+def _declares_commercial_generation(job: dict) -> bool
+⋮----
+manifest = job.get("manifest")
+license_data = manifest.get("license") if isinstance(manifest, dict) else None
+⋮----
+def _qwen_21_commercial_rights_blocker(job: dict) -> bool
+⋮----
+# A caller-supplied model string is not proof of commercial authorization.
+# The Kaggle/Colab Qwen paths can use the default research-licensed model
+# even if an alternate model was passed to the outer API. Until actual
+# model provenance and grant verification exists, fail closed for ALL
+# commercially declared generation through these Qwen backends.
+⋮----
+def _strict_single_sprite_fidelity(job: dict) -> bool
+⋮----
+constraints = manifest.get("constraints") if isinstance(manifest, dict) else None
+⋮----
+frames = constraints.get("expectedFrames")
+⋮----
+def _select_free_raster_backend(status: dict, *, environ=None, allow_qwen: bool = True) -> str | None
 ⋮----
 ready = []
 ⋮----
@@ -6785,8 +7868,6 @@ def _sprite_sheet_geometry(job: dict) -> tuple[int, int, int, int] | None
 ⋮----
 asset_type = str(job.get("assetType") or "")
 ⋮----
-manifest = job.get("manifest")
-⋮----
 constraints = manifest.get("constraints")
 ⋮----
 frame_width = constraints.get("frameWidth")
@@ -6807,8 +7888,6 @@ desired_scale = max(1.0, 512.0 / shortest)
 scale = min(desired_scale, 2048.0 / max(1, longest))
 request_width = min(2048, max(64, int(round(width * scale))))
 request_height = min(2048, max(64, int(round(height * scale))))
-⋮----
-constraints = manifest.get("constraints") if isinstance(manifest, dict) else None
 ⋮----
 alpha = image.convert("RGBA").getchannel("A")
 ⋮----
@@ -6839,7 +7918,8 @@ details = [
 ⋮----
 fw = constraints.get("frameWidth")
 fh = constraints.get("frameHeight")
-frames = constraints.get("expectedFrames")
+⋮----
+is_animation = isinstance(frames, int) and not isinstance(frames, bool) and frames > 1
 ⋮----
 prompt = " ".join(details)
 ⋮----
@@ -6884,7 +7964,11 @@ kaggle = status.get("kaggleQwen", {})
 imagen_codex = status.get("imagenCodex", {})
 vtracer = status.get("vtracer", {})
 ⋮----
-selected = _select_free_raster_backend(status)
+# Repeated real SDXL outputs passed technical QA while violating
+# the required instruction-fidelity gate. Do not keep spending
+# image-generation calls on this known-inadequate default route.
+⋮----
+selected = _select_free_raster_backend(
 ⋮----
 def _imagen_output_path(output_dir: Path, stdout: str) -> tuple[Path, dict | None]
 ⋮----
@@ -6909,6 +7993,7 @@ matches = sorted(Path(output_dir).glob("generated-source*.png"))
 ⋮----
 requested_backend = backend
 backend = select_generation_backend(job, backend)
+⋮----
 initial_backend = backend
 fallback_history = []
 ⋮----
@@ -6983,10 +8068,13 @@ prompt = build_generation_prompt(attempt_job)
 dimensions = (1024, 1024)
 statuses = generator_backend_status()
 cloudflare_ready = (
+commercial_qwen_blocked = _qwen_21_commercial_rights_blocker(job)
 kaggle_ready = (
 raster_source = output_dir / "vector-source.png"
 raster_metadata = None
-raster_backend = _select_free_raster_backend(statuses)
+# VTracer first generates a raster. Commercial vector requests
+# must never silently select or fall back to Qwen-Image-2.1.
+raster_backend = (
 ⋮----
 raster_metadata = cloudflare_generate(
 ⋮----
@@ -8264,15 +9352,37 @@ technical_warnings = list(technical_quality.get("warnings") or [])
 constraints = manifest.get("constraints")
 strict = (
 ⋮----
+# An explicit quality gate must receive actual evidence. A faulty or
+# omitted evaluator must never turn a required threshold into a pass.
+⋮----
+constraints = constraints if isinstance(constraints, dict) else {}
+⋮----
+required_min = constraints["technicalQualityMin"]
+score = technical_quality.get("score") if isinstance(technical_quality, dict) else None
+⋮----
 semantic_quality = None
 semantic_errors = []
 semantic_warnings = []
 ⋮----
 semantic_enabled = (
+# Explicitly required visual reviews apply to supplied raster sources too.
+# Otherwise a source-path bypass could silently skip a declared QA gate.
+⋮----
+required = constraints.get("semanticArtReviewRequired") is True
+⋮----
+instruction = job.get("instruction")
+⋮----
+semantic_quality = semantic_reviewer(final, manifest, instruction=instruction)
 ⋮----
 semantic_quality = semantic_reviewer(final, manifest)
 ⋮----
-required = (
+issue = ("semantic art quality review unavailable: "
+⋮----
+threshold = constraints.get("semanticQualityMin", 0.65)
+scores = semantic_quality.get("scores")
+overall = scores.get("overall") if isinstance(scores, dict) else None
+fidelity = scores.get("instructionFidelity") if isinstance(scores, dict) else None
+valid = lambda value: (isinstance(value, (int, float))
 ⋮----
 combined_errors = list(errors) + technical_errors + semantic_errors
 ⋮----
@@ -8305,7 +9415,6 @@ quality_warnings = []
 quality_errors = list(evaluation.get("errors") or [])
 quality_warnings = list(evaluation.get("warnings") or [])
 ⋮----
-constraints = constraints if isinstance(constraints, dict) else {}
 generate_lods = constraints.get("generateLods") is True
 require_lods = constraints.get("requireLods") is True
 lods = None
@@ -11143,7 +12252,10 @@ def _cloudflare_runtime_fallback_count(routing: dict) -> int
 ⋮----
 def _safe_id(value: str) -> str
 ⋮----
-value = str(value or "").strip()
+value = value.strip()
+# Match the production request identifier contract. In particular, "."
+# and ".." are directories, not safe identifiers, even though their
+# individual characters are on the filename-safe list.
 ⋮----
 def _ordered_items(items: list[dict]) -> list[dict]
 ⋮----
@@ -11173,28 +12285,84 @@ current = ready.pop(0)
 payload = json.loads(Path(spec_path).read_text(encoding="utf-8"))
 items = payload.get("items", payload) if isinstance(payload, dict) else payload
 ⋮----
+# Validate the ENTIRE ordered batch before creating directories or
+# invoking any generator. Otherwise a malformed late item can waste
+# inference on earlier items and duplicate request IDs share one job root.
+ordered = _ordered_items(items)
+item_ids: set[str] = set()
+request_ids: set[str] = set()
+target_paths: set[str] = set()
+source_root_raw = str(os.environ.get("ASSET_FORGE_BATCH_SOURCE_ROOT") or "").strip()
+source_root = Path(source_root_raw).resolve(strict=True) if source_root_raw else None
+⋮----
+item_id = item["_id"]
+item_key = item_id.casefold()
+⋮----
+request_id = _safe_id(item["request"].get("requestId") or item_id)
+raw_target = item.get("target_path")
+⋮----
+target_path = raw_target.strip().replace("\\", "/")
+# Prevent Windows device aliases and invalid segments from reaching
+# cross-platform asset consumers, not merely traversal/absolute paths.
+segments = target_path.split("/")
+forbidden_windows_name = any(
+⋮----
+# Fail before generation when future consumers use case-insensitive
+# or Unicode-normalizing filesystems (e.g. Windows and macOS).
+request_key = request_id.casefold()
+target_key = unicodedata.normalize("NFC", target_path).casefold()
+⋮----
+# Hosted workflow source files must originate inside the checked-out
+# workspace, never from arbitrary runner directories or secrets.
+# Local callers retain their explicitly permitted file paths when
+# ASSET_FORGE_BATCH_SOURCE_ROOT is not configured.
+raw_source = item.get("source_path")
+⋮----
+source_path = str(raw_source or "").strip()
+manifest = item["request"].get("manifest")
+source = manifest.get("source") if isinstance(manifest, dict) else None
+source_mode = source.get("mode") if isinstance(source, dict) else None
+⋮----
+candidate = Path(source_path)
+⋮----
+resolved = candidate.resolve(strict=True)
+⋮----
+source_path = str(resolved)
+⋮----
 output_root = Path(output_root)
 ⋮----
 bundle_root = output_root / "bundle"
 ⋮----
 artifacts: dict[str, Path] = {}
+# Prevent additional artifacts from replacing another item's deliverable.
+# Casefold is intentional: bundles may be consumed on case-insensitive hosts.
+bundle_destinations: set[str] = set()
 results = []
 auto_backend_override: str | None = None
 cloudflare_runtime_failures = 0
+commercial_override_exemptions = 0
 ⋮----
-item_id = item["_id"]
 request = item["request"]
-request_id = _safe_id(request.get("requestId") or item_id)
-target_path = str(item.get("target_path") or "").strip().replace("\\", "/").lstrip("/")
+request_id = item["_request_id"]
+target_path = item["_target_path"]
 ⋮----
 item_root = output_root / "jobs" / request_id
 ⋮----
 request_path = item_root / "request.json"
 ⋮----
+manifest = request.get("manifest")
+license_data = manifest.get("license") if isinstance(manifest, dict) else None
+commercial_use = (
+# A circuit breaker is a reliability hint, not a commercial model
+# authorization. Commercial assets must stay on the normal auto
+# selector, which excludes research-licensed Qwen.
+⋮----
+item_backend = "auto"
+⋮----
 item_backend = auto_backend_override or backend
 cmd = [
 ⋮----
-source_path = str(item.get("source_path") or "").strip()
+source_path = item["_source_path"]
 ⋮----
 parent = artifacts.get(dependency)
 ⋮----
@@ -11217,10 +12385,16 @@ artifact = local_candidate if local_candidate.is_file() else artifact
 artifact = artifact.resolve()
 ⋮----
 bundled = bundle_root / f"{item_id}{artifact.suffix.lower()}"
+bundle_key = bundled.name.casefold()
 ⋮----
 digest = hashlib.sha256(bundled.read_bytes()).hexdigest()
 ⋮----
 additional_rows = []
+handoff = report.get("engineHandoff")
+handoff_roles: dict[Path, str] = {}
+⋮----
+value = handoff.get(field)
+⋮----
 raw_additional = report.get("additionalArtifacts")
 ⋮----
 raw_additional = []
@@ -11231,11 +12405,17 @@ extra = item_root / extra
 extra = extra.resolve()
 ⋮----
 extra_name = extra.name
+role = handoff_roles.get(extra)
+⋮----
+bundle_name = f"{item_id}.tres"
+⋮----
+bundle_name = f"{item_id}.atlas-metadata.json"
 ⋮----
 bundle_name = f"{item_id}{extra_name[len(artifact.stem):]}"
 ⋮----
 bundle_name = f"{item_id}.extra{extra_index}{extra.suffix.lower()}"
 bundled_extra = bundle_root / bundle_name
+extra_key = bundled_extra.name.casefold()
 ⋮----
 generation = report.get("generation") if isinstance(report.get("generation"), dict) else {}
 validation = report.get("validation") if isinstance(report.get("validation"), dict) else {}
@@ -11538,6 +12718,21 @@ authenticated = _credential_available(environ=environ, home=home)
 ⋮----
 path = Path(path)
 ⋮----
+# For required alpha sprites, give the vision service an accurate
+# composited preview. The production PNG remains unchanged and technical
+# validation continues to inspect its original alpha channel.
+review_path = path
+temporary_preview = None
+preview_composited = False
+⋮----
+rgba = original.convert("RGBA")
+⋮----
+temporary_preview = TemporaryDirectory(prefix="asset-forge-visual-review-")
+review_path = Path(temporary_preview.name) / "composited-preview.png"
+background = Image.new("RGBA", rgba.size, (128, 128, 128, 255))
+⋮----
+preview_composited = True
+⋮----
 uploaded = runner(
 ⋮----
 upload_payload = _json_from_text(str(uploaded.stdout or "")) or {}
@@ -11546,16 +12741,23 @@ image_url = str(
 asset_type = str(manifest.get("type") or "visual asset")
 importance = str(manifest.get("importance") or "primary")
 prompt = (
+⋮----
+# The generation brief is untrusted specification data. Ask the visual
+# reviewer to grade fidelity to the actual requested subject, not just polish.
+expected = str(instruction or "").strip()[:1600]
+⋮----
 reviewed = runner(
 ⋮----
 value = _extract_review(str(reviewed.stdout or ""))
 ⋮----
 scores = {
+fidelity = _number(value.get("instructionFidelity"), "instructionFidelity") if expected else None
+⋮----
 issues = value.get("issues")
 ⋮----
 issues = []
 issues = [str(item)[:240] for item in issues[:12]]
-passed = scores["overall"] >= threshold
+passed = scores["overall"] >= threshold and (fidelity is None or fidelity >= threshold)
 ````
 
 ## File: starlist_bridge.py
