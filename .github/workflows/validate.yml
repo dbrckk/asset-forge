@@ -256,7 +256,56 @@ jobs:
               assert len(calls) == 1
               assert result["success"] is True and result["count"] == 1
               assert (root / "valid" / result["items"][0]["artifact"]).is_file()
-          print("Batch identifiers and target paths are confined; valid batch remains usable")
+
+              # Mixed-license orchestration: a circuit breaker that learned
+              # from noncommercial fallbacks must never force subsequent
+              # commercial work onto a research-only Qwen backend.
+              mixed_items = []
+              for idx, commercial in enumerate((False, False, True, False), 1):
+                  item = make_item(
+                      f"asset-{idx}", f"request-{idx}",
+                      f"assets/art/asset-{idx}.png",
+                  )
+                  item["request"]["manifest"] = {
+                      "license": {"commercialUse": commercial}
+                  }
+                  mixed_items.append(item)
+              spec.write_text(json.dumps({"items": mixed_items}), encoding="utf-8")
+              observed_backends = []
+
+              def simulate_generator(command, **_kwargs):
+                  selected = command[command.index("--backend") + 1]
+                  observed_backends.append(selected)
+                  assert selected != "kaggle-qwen" or len(observed_backends) == 4
+                  out = Path(command[command.index("--output-dir") + 1])
+                  out.mkdir(parents=True, exist_ok=True)
+                  artifact = out / "asset.png"
+                  artifact.write_bytes(b"offline-raster-fixture")
+                  fallback = (
+                      len(observed_backends) <= 2 and selected == "auto"
+                  )
+                  (out / "production-report.json").write_text(
+                      json.dumps({
+                          "success": True,
+                          "artifact": str(artifact),
+                          "routing": {
+                              "fallbackCount": 1 if fallback else 0,
+                              "fallbacks": [{
+                                  "from": "cloudflare",
+                                  "to": "kaggle-qwen",
+                                  "reason": "cloudflare-generation-error",
+                              }] if fallback else [],
+                          },
+                      }), encoding="utf-8",
+                  )
+                  return subprocess.CompletedProcess(command, 0, "", "")
+
+              with patch("remote_batch.subprocess.run", side_effect=simulate_generator):
+                  mixed = run(spec, root / "mixed", backend="auto")
+              assert observed_backends == ["auto", "auto", "auto", "kaggle-qwen"]
+              assert mixed["routing_summary"]["circuit_breaker"]["open"] is True
+              assert mixed["routing_summary"]["circuit_breaker"]["commercial_exemptions"] == 1
+          print("Batch paths and commercial circuit-breaker routing verified offline")
           PY
       - name: Smoke-check commercial Qwen denial without inference
         run: |
