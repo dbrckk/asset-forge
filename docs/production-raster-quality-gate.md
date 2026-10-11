@@ -1,5 +1,29 @@
 # Raster production quality gate (fail closed)
 
+## Remote batch delivery integrity (offline-verified)
+
+The dependency-aware remote batch validates all request IDs, target paths
+and hosted source paths before starting a generator. Once artifacts exist,
+it additionally rejects a zero-byte main deliverable and refuses to copy
+an additional artifact or later main artifact onto a bundle filename used
+by an earlier item. The collision check is case-insensitive for consumers
+on Windows and other case-insensitive filesystems.
+
+The existing GitHub Actions functional smoke deliberately supplies an empty
+primary file, then a collision between the first item's additional file and
+the next item's primary file. Both are rejected. For the collision, the smoke
+also verifies that the previously bundled bytes remain unchanged and that
+`batch-result.json` is not published as a successful result.
+
+Evidence: [commit 30c9c84](https://github.com/dbrckk/asset-forge/commit/30c9c84da6131751b9e35394c149da2a3d1efd29)
+and [CI 38123692654](https://github.com/dbrckk/asset-forge/actions/runs/38123692654)
+(COMPLETED SUCCESS, 3/3 jobs; batch functional smoke SUCCESS).
+This is a local orchestration integrity check only. A failure may leave
+partial working files behind; it does not prove transactional rollback,
+commercially licensed model output, independent semantic fidelity or
+successful import/build in a consuming game. Do not publish or merge the
+draft PR on this evidence alone.
+
 This runbook covers **generated** sprites and other raster assets. A valid PNG
 and a successful SHA-256 check demonstrate integrity, not that the image depicts
 the requested subject.
