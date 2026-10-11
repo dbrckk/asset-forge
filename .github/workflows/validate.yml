@@ -522,7 +522,7 @@ jobs:
               report = json.loads((out / "production-report.json").read_text())
               assert report["success"] is True
               assert report["generation"]["backend"] == "provided"
-              assert report["provenance"]["sourceMode"] == "custom"
+              assert report["provenance"]["source"]["mode"] == "custom"
               artifact = Path(report["artifact"])
               assert artifact.is_file() and artifact.parent.resolve() == out.resolve()
               with Image.open(artifact) as exported:
