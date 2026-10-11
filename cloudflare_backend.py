@@ -88,6 +88,7 @@ def generate(
     reference_path: Path | None = None,
     strength: float = 0.55,
     guidance: float = 7.5,
+    negative_prompt: str | None = None,
     model: str = DEFAULT_MODEL,
     timeout_seconds: float = 180.0,
     environ=None,
@@ -114,6 +115,8 @@ def generate(
         "guidance": float(guidance),
         "seed": int(seed),
     }
+    if negative_prompt:
+        payload["negative_prompt"] = str(negative_prompt)
     if reference_path is not None:
         reference = Path(reference_path)
         if not reference.is_file() or reference.stat().st_size <= 0:

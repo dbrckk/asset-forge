@@ -42,6 +42,36 @@ jobs:
         run: python asset_forge.py plan examples/asset-manifest.json
       - name: Compile Production OS asset request
         run: python asset_forge.py production-job examples/production-request.json --output build/production-job.json
+      - name: Smoke-check commercial Qwen denial without inference
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+
+          from generator_backends import GenerationError, execute_generated_asset
+
+          job = json.loads(Path("build/production-job.json").read_text(encoding="utf-8"))
+          job["requiresGenerator"] = True
+          job["assetType"] = "sprite"
+          job["manifest"]["license"]["commercialUse"] = True
+
+          with TemporaryDirectory() as temp:
+              for backend in ("kaggle-qwen", "qwen-colab"):
+                  for model in (None, "example/alternative-model-unverified"):
+                      try:
+                          execute_generated_asset(
+                              job, Path(temp), backend=backend, model=model
+                          )
+                      except GenerationError as exc:
+                          if "commercial rights unverified" not in str(exc):
+                              raise
+                      else:
+                          raise RuntimeError(
+                              f"commercial Qwen generation not blocked: {backend}/{model}"
+                          )
+          print("Verified both Qwen backends fail before inference for commercial jobs")
+          PY
       - name: Inspect generator backends
         run: python asset_forge.py generator-backend-status
       - name: Inspect operational readiness

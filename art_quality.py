@@ -187,14 +187,26 @@ def evaluate_raster_art(path: Path, manifest: dict) -> dict:
     if constraints.get("requiresAlpha") is True and min(alpha or [255]) >= 255:
         errors.append("transparent background required but raster is fully opaque")
     max_border = constraints.get("maxBorderAlphaRatio", 0.08)
+    strict_border = (
+        "maxBorderAlphaRatio" in constraints
+        and constraints.get("technicalQualityMin") is not None
+    )
     try:
+        if isinstance(max_border, bool):
+            raise ValueError("boolean is not a valid border ratio")
         max_border = float(max_border)
-    except (TypeError, ValueError):
+        if not math.isfinite(max_border) or not 0.0 <= max_border <= 1.0:
+            raise ValueError("border ratio outside 0..1")
+    except (TypeError, ValueError) as exc:
+        if strict_border:
+            raise ArtQualityError("maxBorderAlphaRatio must be between 0 and 1") from exc
         max_border = 0.08
     if border_alpha_ratio > max_border:
-        warnings.append(
-            f"visible art touches image border too often ({border_alpha_ratio:.3f} > {max_border:.3f})"
+        message = (
+            f"visible art touches image border too often "
+            f"({border_alpha_ratio:.3f} > {max_border:.3f})"
         )
+        (errors if strict_border else warnings).append(message)
     if isinstance(expected_frames, int) and expected_frames > 1:
         min_unique = constraints.get("minUniqueFrameRatio")
         if min_unique is not None:
