@@ -170,6 +170,82 @@ jobs:
         run: python asset_forge.py raster-backend-status
       - name: WebP backend tests
         run: python -m unittest discover -s tests -p "test_raster_backend.py" -v
+      - name: Smoke-check transparent semantic preview and fidelity threshold offline
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import subprocess
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+          from unittest.mock import patch
+
+          from PIL import Image
+          from semantic_art_review import review_raster_art
+
+          # Exercise actual RGBA -> RGB preview transformation and cleanup
+          # without calling any remote service or generating a model asset.
+          with TemporaryDirectory() as temporary:
+              original = Path(temporary) / "production.png"
+              source = Image.new("RGBA", (16, 16), (23, 61, 98, 0))
+              source.putpixel((8, 8), (240, 30, 10, 255))
+              source.save(original, format="PNG")
+              source_hash = hashlib.sha256(original.read_bytes()).hexdigest()
+              seen_preview_paths = []
+              fidelity = [0.35]
+
+              def offline_runner(command, **_kwargs):
+                  if command[1] == "upload":
+                      preview_path = Path(command[2])
+                      assert preview_path != original
+                      assert preview_path.is_file()
+                      with Image.open(preview_path) as preview:
+                          assert preview.mode == "RGB"
+                          assert preview.size == (16, 16)
+                          assert preview.getpixel((0, 0)) == (128, 128, 128)
+                          assert preview.getpixel((8, 8)) == (240, 30, 10)
+                      seen_preview_paths.append(preview_path)
+                      return subprocess.CompletedProcess(
+                          command, 0, '{"url":"https://example.invalid/offline"}', ""
+                      )
+                  assert command[1:3] == ["gen", "text"]
+                  assert "synthetic neutral gray" in command[3]
+                  assert "instructionFidelity" in command[3]
+                  return subprocess.CompletedProcess(
+                      command, 0, json.dumps({
+                          "overall": 0.92,
+                          "anatomy": 0.93,
+                          "artifacts": 0.91,
+                          "textReadability": 0.92,
+                          "styleConsistency": 0.90,
+                          "instructionFidelity": fidelity[0],
+                          "issues": [],
+                      }), ""
+                  )
+
+              manifest = {
+                  "type": "sprite", "importance": "secondary",
+                  "constraints": {
+                      "semanticArtReviewRequired": True,
+                      "requiresAlpha": True,
+                      "semanticQualityMin": 0.72,
+                  },
+              }
+              with patch("semantic_art_review.shutil.which", return_value="offline-polli"):
+                  for score, expected_pass in ((0.35, False), (0.94, True)):
+                      fidelity[0] = score
+                      review = review_raster_art(
+                          original, manifest, runner=offline_runner,
+                          environ={"POLLINATIONS_API_KEY": "offline-only-placeholder"},
+                          instruction="Exactly one isolated energy cell, no other objects",
+                      )
+                      assert review["passed"] is expected_pass
+                      assert review["reviewPreviewComposited"] is True
+                      assert review["scores"]["instructionFidelity"] == score
+                      assert hashlib.sha256(original.read_bytes()).hexdigest() == source_hash
+                      assert seen_preview_paths and not seen_preview_paths[-1].exists()
+          print("RGBA source unchanged; gray preview/cleanup and fidelity gate verified offline")
+          PY
 
 
   vector-backend:
