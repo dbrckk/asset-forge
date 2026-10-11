@@ -286,6 +286,64 @@ jobs:
               assert result["success"] is True and result["count"] == 1
               assert (root / "valid" / result["items"][0]["artifact"]).is_file()
 
+
+              # Empty reports must not turn zero-byte files into successful
+              # deliverables; no remote inference is involved.
+              def empty_generator(command, **_kwargs):
+                  out = Path(command[command.index("--output-dir") + 1])
+                  out.mkdir(parents=True, exist_ok=True)
+                  artifact = out / "source.png"
+                  artifact.write_bytes(b"")
+                  (out / "production-report.json").write_text(
+                      json.dumps({"success": True, "artifact": str(artifact)}),
+                      encoding="utf-8",
+                  )
+                  return subprocess.CompletedProcess(command, 0, "", "")
+
+              spec.write_text(json.dumps({"items": [
+                  make_item("empty", "request-empty", "assets/empty.png")
+              ]}), encoding="utf-8")
+              with patch("remote_batch.subprocess.run", side_effect=empty_generator):
+                  try:
+                      run(spec, root / "empty-artifact")
+                  except RemoteBatchError as exc:
+                      assert "empty primary artifact" in str(exc)
+                  else:
+                      raise AssertionError("zero-byte primary artifact accepted")
+              assert not (root / "empty-artifact/batch-result.json").exists()
+
+              # A first item's additional artifact can have the same bundle
+              # name as a later item's main artifact. Reject without replacing
+              # the earlier file or publishing a successful batch report.
+              def colliding_generator(command, **_kwargs):
+                  out = Path(command[command.index("--output-dir") + 1])
+                  out.mkdir(parents=True, exist_ok=True)
+                  primary = out / "source.png"
+                  primary.write_bytes(b"first-primary" if out.name == "first-r" else b"second-primary")
+                  report = {"success": True, "artifact": str(primary)}
+                  if out.name == "first-r":
+                      extra = out / "source.extra.png"
+                      extra.write_bytes(b"protected-extra")
+                      report["additionalArtifacts"] = [str(extra)]
+                  (out / "production-report.json").write_text(
+                      json.dumps(report), encoding="utf-8",
+                  )
+                  return subprocess.CompletedProcess(command, 0, "", "")
+
+              spec.write_text(json.dumps({"items": [
+                  make_item("hero", "first-r", "assets/hero.png"),
+                  make_item("hero.extra", "second-r", "assets/other.png"),
+              ]}), encoding="utf-8")
+              with patch("remote_batch.subprocess.run", side_effect=colliding_generator):
+                  try:
+                      run(spec, root / "bundle-collision")
+                  except RemoteBatchError as exc:
+                      assert "duplicate bundle artifact destination" in str(exc)
+                  else:
+                      raise AssertionError("bundle collision overwrote an earlier artifact")
+              assert (root / "bundle-collision/bundle/hero.extra.png").read_bytes() == b"protected-extra"
+              assert not (root / "bundle-collision/batch-result.json").exists()
+
               # Hosted-batch source files must be real, nonsymlinked files
               # within the trusted checkout; bad late files must fail before
               # the first generator runs, not after a paid inference.

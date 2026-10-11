@@ -178,6 +178,9 @@ def run(
     bundle_root.mkdir(parents=True, exist_ok=True)
 
     artifacts: dict[str, Path] = {}
+    # Prevent additional artifacts from replacing another item's deliverable.
+    # Casefold is intentional: bundles may be consumed on case-insensitive hosts.
+    bundle_destinations: set[str] = set()
     results = []
     auto_backend_override: str | None = None
     cloudflare_runtime_failures = 0
@@ -260,9 +263,15 @@ def run(
         artifact = artifact.resolve()
         if not artifact.is_relative_to(item_root.resolve()):
             raise RemoteBatchError(f"artifact escapes item output for {item_id}")
+        if artifact.stat().st_size <= 0:
+            raise RemoteBatchError(f"empty primary artifact for {item_id}")
 
         bundled = bundle_root / f"{item_id}{artifact.suffix.lower()}"
+        bundle_key = bundled.name.casefold()
+        if bundle_key in bundle_destinations:
+            raise RemoteBatchError(f"duplicate bundle artifact destination for {item_id}")
         shutil.copyfile(artifact, bundled)
+        bundle_destinations.add(bundle_key)
         digest = hashlib.sha256(bundled.read_bytes()).hexdigest()
         artifacts[item_id] = bundled
 
@@ -291,7 +300,13 @@ def run(
             else:
                 bundle_name = f"{item_id}.extra{extra_index}{extra.suffix.lower()}"
             bundled_extra = bundle_root / bundle_name
+            extra_key = bundled_extra.name.casefold()
+            if extra_key in bundle_destinations:
+                raise RemoteBatchError(
+                    f"duplicate bundle artifact destination for {item_id}"
+                )
             shutil.copyfile(extra, bundled_extra)
+            bundle_destinations.add(extra_key)
             additional_rows.append({
                 "artifact": str(bundled_extra.relative_to(output_root)),
                 "sha256": hashlib.sha256(bundled_extra.read_bytes()).hexdigest(),
