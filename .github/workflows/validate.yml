@@ -42,6 +42,70 @@ jobs:
         run: python asset_forge.py plan examples/asset-manifest.json
       - name: Compile Production OS asset request
         run: python asset_forge.py production-job examples/production-request.json --output build/production-job.json
+      - name: Smoke-check batch model request injection offline
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          import sys
+          import textwrap
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+
+          # Execute the actual embedded request materializer, not a duplicate
+          # validator. No real generation, dispatch, network or secrets.
+          workflow = Path(".github/workflows/production-os-batch.yml").read_text()
+          start = workflow.index("      - name: Materialize batch spec\n")
+          end = workflow.index("      - name: Execute dependency-aware batch\n", start)
+          materialize = workflow[start:end]
+          prefix = "          python - <<'PY'\n"
+          code = textwrap.dedent(materialize.split(prefix, 1)[1].rsplit("          PY\n", 1)[0])
+          execute = workflow[end:]
+          assert "REQUEST_MODEL: ${{ steps.request.outputs.model }}" in execute
+          assert 'args+=(--model "$REQUEST_MODEL")' in execute
+          assert '--model "${{ steps.request.outputs.model }}"' not in execute
+
+          correlation = "pos-" + "a" * 32
+          cases = [
+              ("org/safe-model-v1", True),
+              ("", True),
+              ("org/bad-model\ninjected=true", False),
+              ('org/"; echo unexpected; #', False),
+              ("$(printf unexpected)", False),
+              ("org/" + "x" * 256, False),
+              ({"invalid": "object-not-model"}, False),
+          ]
+          for model, valid in cases:
+              with TemporaryDirectory() as root:
+                  folder = Path(root) / ".asset-forge" / "requests"
+                  folder.mkdir(parents=True)
+                  payload = {"spec": {"items": []}, "backend": "auto", "model": model}
+                  (folder / f"{correlation}.json").write_text(json.dumps(payload))
+                  output = Path(root) / "actions-output"
+                  output.write_text("", encoding="utf-8")
+                  env = dict(os.environ)
+                  env.update({
+                      "SPEC_JSON": "",
+                      "CORRELATION_ID": correlation,
+                      "REQUEST_BACKEND": "",
+                      "REQUEST_MODEL": "",
+                      "GITHUB_OUTPUT": str(output),
+                  })
+                  result = subprocess.run(
+                      [sys.executable, "-c", code], cwd=root, env=env,
+                      capture_output=True, text=True, timeout=10,
+                  )
+                  assert (result.returncode == 0) is valid, "request validation mismatch"
+                  if valid:
+                      content = output.read_text(encoding="utf-8")
+                      assert content == f"backend=auto\nmodel={model}\n"
+                      assert (Path(root) / "build/remote-batch/spec.json").is_file()
+                  else:
+                      assert output.read_text(encoding="utf-8") == ""
+                      assert not (Path(root) / "build/remote-batch/spec.json").exists()
+          print("Batch request model/output/shell injection rejected offline")
+          PY
       - name: Smoke-check commercial Qwen denial without inference
         run: |
           python - <<'PY'
