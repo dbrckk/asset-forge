@@ -42,7 +42,9 @@ def _cloudflare_runtime_fallback_count(routing: dict) -> int:
 
 
 def _safe_id(value: str) -> str:
-    value = str(value or "").strip()
+    if not isinstance(value, str):
+        raise RemoteBatchError("batch item id and requestId must be strings")
+    value = value.strip()
     # Match the production request identifier contract. In particular, "."
     # and ".." are directories, not safe identifiers, even though their
     # individual characters are on the filename-safe list.
@@ -131,13 +133,25 @@ def run(
         if item_key in item_ids:
             raise RemoteBatchError(f"duplicate case-insensitive batch item id: {item_id}")
         request_id = _safe_id(item["request"].get("requestId") or item_id)
-        target_path = str(item.get("target_path") or "").strip().replace("\\", "/")
+        raw_target = item.get("target_path")
+        if not isinstance(raw_target, str):
+            raise RemoteBatchError(f"target_path must be a string for {item_id}")
+        target_path = raw_target.strip().replace("\\", "/")
+        # Prevent Windows device aliases and invalid segments from reaching
+        # cross-platform asset consumers, not merely traversal/absolute paths.
+        segments = target_path.split("/")
+        forbidden_windows_name = any(
+            re.fullmatch(r"(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\\..*)?", segment, re.IGNORECASE)
+            for segment in segments
+        )
         if (
             not target_path
             or target_path.startswith("/")
             or re.match(r"^[A-Za-z]:", target_path)
             or any(ord(ch) < 32 for ch in target_path)
-            or any(part in {"", ".", ".."} for part in target_path.split("/"))
+            or re.search(r'[<>:"|?*]', target_path)
+            or forbidden_windows_name
+            or any(part in {"", ".", ".."} or part.endswith((" ", ".")) for part in segments)
         ):
             raise RemoteBatchError(f"unsafe target_path for {item_id}")
         # Fail before generation when future consumers use case-insensitive

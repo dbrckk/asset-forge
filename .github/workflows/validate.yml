@@ -217,6 +217,12 @@ jobs:
               make_item("good-id", "good-id", "C:\\foreign\\hero.png"),
               make_item("good-id", "good-id", "\\\\host\\share\\hero.png"),
               make_item("good-id", "good-id", "assets/hero\nfake.png"),
+              make_item("good-id", "good-id", "assets/CON.png"),
+              make_item("good-id", "good-id", "assets/Com1.txt"),
+              make_item("good-id", "good-id", "assets/hello?.png"),
+              make_item("good-id", "good-id", "assets/image.png:stream"),
+              make_item("good-id", "good-id", "assets/dir./sprite.png"),
+              make_item("good-id", "good-id", "assets/subdir /sprite.png"),
           ]
 
           with TemporaryDirectory() as temp:
@@ -241,6 +247,8 @@ jobs:
               scenarios = [
                   [first, make_item("second", "request-first", "assets/second.png")],
                   [first, make_item("second", "request-second", "assets/first.png")],
+                  [first, make_item("second", "request-second", {"path": "not-string"})],
+                  [first, make_item("second", 123, "assets/second.png")],
                   [first, make_item("second", "request-second", "../escaped.png")],
                   [first, make_item("second", "request-second", "assets\\first.png")],
                   [first, make_item("second", "..", "assets/second.png")],
