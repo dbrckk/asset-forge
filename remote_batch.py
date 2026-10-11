@@ -123,6 +123,7 @@ def run(
     results = []
     auto_backend_override: str | None = None
     cloudflare_runtime_failures = 0
+    commercial_override_exemptions = 0
     for item in _ordered_items(items):
         item_id = item["_id"]
         request = item["request"]
@@ -144,7 +145,20 @@ def run(
             json.dumps(request, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
-        item_backend = auto_backend_override or backend
+        manifest = request.get("manifest")
+        license_data = manifest.get("license") if isinstance(manifest, dict) else None
+        commercial_use = (
+            isinstance(license_data, dict)
+            and license_data.get("commercialUse") is True
+        )
+        # A circuit breaker is a reliability hint, not a commercial model
+        # authorization. Commercial assets must stay on the normal auto
+        # selector, which excludes research-licensed Qwen.
+        if auto_backend_override is not None and backend == "auto" and commercial_use:
+            item_backend = "auto"
+            commercial_override_exemptions += 1
+        else:
+            item_backend = auto_backend_override or backend
         cmd = [
             executable,
             "fulfill",
@@ -340,6 +354,7 @@ def run(
                 "cloudflare_runtime_failures": cloudflare_runtime_failures,
                 "override": auto_backend_override,
                 "open": auto_backend_override is not None,
+                "commercial_exemptions": commercial_override_exemptions,
             },
         },
         "quality_summary": {
