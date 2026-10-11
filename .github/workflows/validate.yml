@@ -105,6 +105,38 @@ jobs:
                   else:
                       assert output.read_text(encoding="utf-8") == ""
                       assert not (Path(root) / "build/remote-batch/spec.json").exists()
+          # The single-asset dispatch must enforce equivalent rules.
+          dispatch = Path(".github/workflows/production-os-dispatch.yml").read_text()
+          dstart = dispatch.index("      - name: Materialize request\n")
+          dend = dispatch.index("      - name: Inspect readiness\n", dstart)
+          dblock = dispatch[dstart:dend]
+          dispatch_code = textwrap.dedent(
+              dblock.split(prefix, 1)[1].rsplit("          PY\n", 1)[0]
+          )
+          dispatch_execute = dispatch[dispatch.index("      - name: Fulfill production request\n"):]
+          dispatch_expr = "$" + "{{ inputs.model }}"
+          assert f"REQUEST_MODEL: {dispatch_expr}" in dispatch_execute
+          assert 'args+=(--model "$REQUEST_MODEL")' in dispatch_execute
+          assert f'--model "{dispatch_expr}"' not in dispatch_execute
+
+          for model, valid in cases:
+              if not isinstance(model, str):
+                  continue  # workflow_dispatch only exposes string inputs
+              with TemporaryDirectory() as root:
+                  env = dict(os.environ)
+                  env.update({
+                      "REQUEST_JSON": '{"schema":"asset-forge/production-request/v1"}',
+                      "REQUEST_BACKEND": "auto",
+                      "REQUEST_MODEL": model,
+                  })
+                  result = subprocess.run(
+                      [sys.executable, "-c", dispatch_code], cwd=root, env=env,
+                      capture_output=True, text=True, timeout=10,
+                  )
+                  assert (result.returncode == 0) is valid, "dispatch validation mismatch"
+                  staged = Path(root) / "build/production-request.json"
+                  assert staged.is_file() is valid
+          print("Dispatch request model validation rejected offline")
           print("Batch request model/output/shell injection rejected offline")
           PY
       - name: Smoke-check commercial Qwen denial without inference
