@@ -463,6 +463,94 @@ jobs:
         run: python asset_forge.py raster-backend-status
       - name: WebP backend tests
         run: python -m unittest discover -s tests -p "test_raster_backend.py" -v
+      - name: Exercise real owned PNG to Godot SpriteFrames CLI handoff offline
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import subprocess
+          import sys
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+
+          from PIL import Image, ImageDraw
+
+          # A locally authored alpha sprite is an original fixture, not a
+          # purported AI asset or a commercially licensed third-party model.
+          # The real Asset Forge CLI produces/validates its deliverable.
+          with TemporaryDirectory(prefix="asset-forge-real-handoff-") as td:
+              root = Path(td)
+              source = root / "original-owned-sprite.png"
+              sheet = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+              draw = ImageDraw.Draw(sheet)
+              draw.ellipse((7, 5, 24, 25), fill=(30, 180, 220, 255))
+              draw.rectangle((39, 6, 57, 25), fill=(240, 100, 35, 255))
+              sheet.save(source, format="PNG")
+              request = json.loads(
+                  Path("examples/production-request.json").read_text(encoding="utf-8")
+              )
+              request["requestId"] = "owned-sprite-offline-handoff"
+              request["instruction"] = "Validate and export the two original sprite frames"
+              request["manifest"]["source"] = {"mode": "custom", "author": "offline-ci"}
+              request["manifest"]["license"] = {
+                  "id": "project-owned",
+                  "commercialUse": True,
+                  "derivatives": True,
+                  "attributionRequired": False,
+              }
+              request["manifest"]["constraints"].update({
+                  "frameWidth": 32,
+                  "frameHeight": 32,
+                  "expectedFrames": 2,
+                  "pixelArt": True,
+                  "interpolation": "nearest",
+                  "requiresAlpha": True,
+              })
+              req = root / "request.json"
+              req.write_text(json.dumps(request), encoding="utf-8")
+              out = root / "produced"
+              proc = subprocess.run(
+                  [sys.executable, "asset_forge.py", "fulfill", str(req),
+                   "--source", str(source), "--output-dir", str(out)],
+                  capture_output=True, text=True, timeout=45,
+              )
+              if proc.returncode != 0:
+                  raise RuntimeError(
+                      "Real offline Asset Forge fulfill failed: "
+                      + (proc.stderr or proc.stdout)[-1100:]
+                  )
+              report = json.loads((out / "production-report.json").read_text())
+              assert report["success"] is True
+              assert report["generation"]["backend"] == "provided"
+              assert report["provenance"]["sourceMode"] == "custom"
+              artifact = Path(report["artifact"])
+              assert artifact.is_file() and artifact.parent.resolve() == out.resolve()
+              with Image.open(artifact) as exported:
+                  assert exported.size == (64, 32)
+                  assert exported.mode in ("RGBA", "P")
+                  assert exported.getpixel((0, 0)) == (0, 0, 0, 0)
+              atlas = json.loads((out / "atlas-metadata.json").read_text())
+              assert atlas["frameCount"] == 2
+              assert len(atlas["frames"]) == 2
+              tres = out / "player.tres"
+              assert tres.is_file()
+              assert "SpriteFrames" in tres.read_text(encoding="utf-8")
+              handoff = report["engineHandoff"]
+              assert handoff["engine"] == "godot4"
+              assert handoff["type"] == "spriteframes"
+              assert handoff["ready"] is True
+              valid = subprocess.run(
+                  [sys.executable, "asset_forge.py", "validate-production-report",
+                   str(out / "production-report.json")],
+                  capture_output=True, text=True, timeout=15,
+              )
+              assert valid.returncode == 0, valid.stderr
+              print(
+                  "Real local source -> optimized PNG -> validated report"
+                  " -> Godot .tres handoff; SHA256="
+                  + hashlib.sha256(artifact.read_bytes()).hexdigest()
+              )
+          PY
       - name: Smoke-check transparent semantic preview and fidelity threshold offline
         run: |
           python - <<'PY'
