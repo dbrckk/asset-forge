@@ -72,6 +72,64 @@ jobs:
                           )
           print("Verified both Qwen backends fail before inference for commercial jobs")
           PY
+      - name: Smoke-check semantic subprocess timeouts without remote inference
+        run: |
+          python - <<'PY'
+          import base64
+          import os
+          import stat
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+
+          from semantic_art_review import SemanticArtReviewError, review_raster_art
+
+          # Real short-lived local executables exercise subprocess.run's
+          # timeout path. No mocked model output, network or credentials.
+          with TemporaryDirectory() as temporary:
+              root = Path(temporary)
+              cli = root / "polli"
+              image = root / "source.png"
+              image.write_bytes(base64.b64decode(
+                  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/Z90AAAAASUVORK5CYII="
+              ))
+              os.environ["PATH"] = str(root) + os.pathsep + os.environ["PATH"]
+              credential_presence = {"POLLINATIONS_API_KEY": "local-smoke-only"}
+              for stage in ("upload", "review"):
+                  if stage == "upload":
+                      script = "#!/bin/sh\\nexec sleep 2\\n"
+                  else:
+                      script = (
+                          "#!/bin/sh\\n"
+                          "if [ \\"$1\\" = \\"upload\\" ]; then\\n"
+                          "  printf '%s\\n' '{\\"url\\":\\"https://example.invalid/smoke\\"}'\\n"
+                          "else\\n"
+                          "  exec sleep 2\\n"
+                          "fi\\n"
+                      )
+                  cli.write_text(script, encoding="utf-8")
+                  cli.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+                  for required in (True, False):
+                      manifest = {"type": "sprite", "constraints": {
+                          "semanticArtReview": True,
+                          "semanticArtReviewRequired": required,
+                          "semanticQualityMin": 0.72,
+                      }}
+                      try:
+                          result = review_raster_art(
+                              image, manifest,
+                              environ=credential_presence,
+                              timeout_seconds=0.05,
+                              instruction="Exactly one game sprite",
+                          )
+                      except SemanticArtReviewError as exc:
+                          if not required or "timed out" not in str(exc):
+                              raise
+                      else:
+                          expected = "upload_unavailable" if stage == "upload" else "review_unavailable"
+                          if required or result.get("available") is not False or result.get("reason") != expected:
+                              raise RuntimeError(f"semantic timeout accepted unexpectedly: {stage}/{required}")
+              print("Verified upload/model timeout fail-closed and optional fallback")
+          PY
       - name: Inspect generator backends
         run: python asset_forge.py generator-backend-status
       - name: Inspect operational readiness
