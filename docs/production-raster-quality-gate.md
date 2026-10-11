@@ -1,5 +1,29 @@
 # Raster production quality gate (fail closed)
 
+## Godot 4 SpriteFrames delivery companions
+
+Godot sprite-sheet production emits a primary PNG/WebP and **two** adjacent
+resources: `<asset-id>.tres` (Godot SpriteFrames) and `atlas-metadata.json`.
+Previously these were generated locally but absent from the production report's
+`additionalArtifacts` list, so a remote batch could upload only the texture.
+Asset Forge now includes both as declared deliverables and assigns stable
+`godot-spriteframes` / `godot-atlas-metadata` roles and SHA256 in each batch
+receipt. Incomplete or conflicting companion entries must fail rather than
+silently claiming a complete handoff.
+
+The existing actual Godot 4 integration smoke now also invokes a second **real**
+`asset_forge.py fulfill --source` through `remote_batch.run` on an original,
+locally-authored 64×32 RGBA fixture. It verifies main/companion hashes and
+bundled resource filenames; the original single-resource fixture is also loaded
+by an actual headless Godot 4.4.1 editor/runtime. No AI generator, GPU or
+network inference is used. Code heads: [12decdc](https://github.com/dbrckk/asset-forge/commit/12decdc94dde2fb666057b83d0d5a9e51c37b0dc),
+[474fae9](https://github.com/dbrckk/asset-forge/commit/474fae9ae978c8dad503e3b35b8db62feec08426);
+[exact-head CI 38133508643](https://github.com/dbrckk/asset-forge/actions/runs/38133508643)
+COMPLETED SUCCESS 4/4, including actual Godot engine import and bundled file
+verification. **Not yet proved:** Godot engine load of relocated Production-OS
+files inside a real consuming game; commercial provenance and independent
+semantic image fidelity. Branch is still draft and unmerged.
+
 ## Portable batch path safety: Windows names and typed inputs
 
 `remote_batch.py` preflights all batch items **before generating anything**.
