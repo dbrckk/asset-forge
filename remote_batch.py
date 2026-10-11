@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -40,8 +41,11 @@ def _cloudflare_runtime_fallback_count(routing: dict) -> int:
 
 def _safe_id(value: str) -> str:
     value = str(value or "").strip()
-    if not value or any(ch not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._" for ch in value):
-        raise RemoteBatchError("batch item id must be filename-safe")
+    # Match the production request identifier contract. In particular, "."
+    # and ".." are directories, not safe identifiers, even though their
+    # individual characters are on the filename-safe list.
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", value):
+        raise RemoteBatchError("batch item id must be a safe production identifier")
     return value
 
 
@@ -123,8 +127,14 @@ def run(
         item_id = item["_id"]
         request = item["request"]
         request_id = _safe_id(request.get("requestId") or item_id)
-        target_path = str(item.get("target_path") or "").strip().replace("\\", "/").lstrip("/")
-        if not target_path or any(part in {"", ".", ".."} for part in target_path.split("/")):
+        target_path = str(item.get("target_path") or "").strip().replace("\\", "/")
+        if (
+            not target_path
+            or target_path.startswith("/")
+            or re.match(r"^[A-Za-z]:", target_path)
+            or any(ch in target_path for ch in ("\\0", "\\r", "\\n"))
+            or any(part in {"", ".", ".."} for part in target_path.split("/"))
+        ):
             raise RemoteBatchError(f"unsafe target_path for {item_id}")
 
         item_root = output_root / "jobs" / request_id
