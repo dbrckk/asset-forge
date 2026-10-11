@@ -189,23 +189,30 @@ class RemoteBatchTests(unittest.TestCase):
             self.assertEqual(quality["minimum_technical_score"], 0.91)
 
     def test_auto_batch_opens_circuit_breaker_after_repeated_cloudflare_failures(self):
+        # This legacy breaker scenario tests research-use fallback. Commercial
+        # assets must never be routed to the Qwen backend by the breaker.
+        def research_request(request_id, asset_id):
+            payload = request(request_id, asset_id)
+            payload["manifest"]["license"]["commercialUse"] = False
+            return payload
+
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             spec = root / "spec.json"
             spec.write_text(json.dumps({"items": [
                 {
                     "id": "asset-1",
-                    "request": request("request-1", "asset-1"),
+                    "request": research_request("request-1", "asset-1"),
                     "target_path": "assets/art/asset-1.png",
                 },
                 {
                     "id": "asset-2",
-                    "request": request("request-2", "asset-2"),
+                    "request": research_request("request-2", "asset-2"),
                     "target_path": "assets/art/asset-2.png",
                 },
                 {
                     "id": "asset-3",
-                    "request": request("request-3", "asset-3"),
+                    "request": research_request("request-3", "asset-3"),
                     "target_path": "assets/art/asset-3.png",
                 },
             ]}))
