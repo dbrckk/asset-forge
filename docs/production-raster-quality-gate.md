@@ -1,5 +1,29 @@
 # Raster production quality gate (fail closed)
 
+## Portable batch path safety: Windows names and typed inputs
+
+`remote_batch.py` preflights all batch items **before generating anything**.
+`target_path` must be a string and must not use Windows-special
+characters (`< > : " | ? *`), trailing-dot/space path segments, or
+reserved DOS device names such as `CON`, `NUL`, `COM1`, `LPT1`
+including extensions (for example `CON.png`). Explicit batch IDs
+and request IDs must be strings; an integer does not silently become
+a pathname. The previously added traversal, absolute path, normalized
+Unicode and case-insensitive collision checks remain in effect.
+
+The existing batch functional smoke checks malformed later items before
+any mocked generation or output directory, including a non-string target,
+numeric request ID, alternate-data-stream syntax and reserved Windows
+filenames. It also verifies that valid batch orchestration still works.
+
+Evidence: [code hardening 3f5d282](https://github.com/dbrckk/asset-forge/commit/3f5d282efc131ba0c7e8c9c0ffcbb258b44c6f4e)
+and [regex correction a30cb14](https://github.com/dbrckk/asset-forge/commit/a30cb141f98bb677eafbe14f0badf7fbac7bd2e6).
+[Exact-head CI 38131847297](https://github.com/dbrckk/asset-forge/actions/runs/38131847297):
+COMPLETED SUCCESS, 4/4 jobs and batch path smoke SUCCESS.
+This provides offline path and handoff integrity evidence, not
+commercial provenance, live semantic quality, a licensed generated asset,
+or cross-repository Production-OS delivery.
+
 ## Portable batch destination uniqueness
 
 Dependency-aware batches now reject duplicate item IDs or request IDs after
