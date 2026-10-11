@@ -83,8 +83,8 @@ jobs:
 
           from semantic_art_review import SemanticArtReviewError, review_raster_art
 
-          # Real short-lived local executables exercise subprocess.run's
-          # timeout path. No mocked model output, network or credentials.
+          # Real local executables exercise subprocess.run's timeout path.
+          # No production inference, network, or secret is used.
           with TemporaryDirectory() as temporary:
               root = Path(temporary)
               cli = root / "polli"
@@ -93,18 +93,18 @@ jobs:
                   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/Z90AAAAASUVORK5CYII="
               ))
               os.environ["PATH"] = str(root) + os.pathsep + os.environ["PATH"]
-              credential_presence = {"POLLINATIONS_API_KEY": "local-smoke-only"}
+              placeholder_credentials = {"POLLINATIONS_API_KEY": "offline-smoke-placeholder"}
               for stage in ("upload", "review"):
                   if stage == "upload":
-                      script = "#!/bin/sh\\nexec sleep 2\\n"
+                      script = "#!/usr/bin/env python3\nimport time\ntime.sleep(2)\n"
                   else:
                       script = (
-                          "#!/bin/sh\\n"
-                          "if [ \\"$1\\" = \\"upload\\" ]; then\\n"
-                          "  printf '%s\\n' '{\\"url\\":\\"https://example.invalid/smoke\\"}'\\n"
-                          "else\\n"
-                          "  exec sleep 2\\n"
-                          "fi\\n"
+                          "#!/usr/bin/env python3\n"
+                          "import sys, time\n"
+                          "if sys.argv[1] == 'upload':\n"
+                          "    print('{\"url\":\"https://example.invalid/smoke\"}')\n"
+                          "else:\n"
+                          "    time.sleep(2)\n"
                       )
                   cli.write_text(script, encoding="utf-8")
                   cli.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
@@ -117,7 +117,7 @@ jobs:
                       try:
                           result = review_raster_art(
                               image, manifest,
-                              environ=credential_presence,
+                              environ=placeholder_credentials,
                               timeout_seconds=0.05,
                               instruction="Exactly one game sprite",
                           )
@@ -128,7 +128,7 @@ jobs:
                           expected = "upload_unavailable" if stage == "upload" else "review_unavailable"
                           if required or result.get("available") is not False or result.get("reason") != expected:
                               raise RuntimeError(f"semantic timeout accepted unexpectedly: {stage}/{required}")
-              print("Verified upload/model timeout fail-closed and optional fallback")
+              print("Verified local upload/model timeout fail-closed and optional fallback")
           PY
       - name: Inspect generator backends
         run: python asset_forge.py generator-backend-status
