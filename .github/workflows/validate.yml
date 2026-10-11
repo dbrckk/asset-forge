@@ -246,6 +246,14 @@ jobs:
                   [first, make_item("second", "..", "assets/second.png")],
                   [first, make_item("second", "request-second", "assets/second.png"),
                    make_item("third", "request-third", "/absolute/third.png")],
+                  [make_item("Hero", "hero-upper", "assets/a.png"),
+                   make_item("hero", "hero-lower", "assets/b.png")],
+                  [make_item("first", "Job-ONE", "assets/a.png"),
+                   make_item("second", "job-one", "assets/b.png")],
+                  [make_item("first", "job-one", "Assets/Panel.png"),
+                   make_item("second", "job-two", "assets/panel.png")],
+                  [make_item("first", "job-one", "assets/caf\u00e9.png"),
+                   make_item("second", "job-two", "assets/cafe\u0301.png")],
               ]
               for index, scenario in enumerate(scenarios):
                   destination = root / f"preflight-{index}"

@@ -7,6 +7,7 @@ import os
 import re
 import shutil
 import subprocess
+import unicodedata
 from pathlib import Path
 
 
@@ -119,12 +120,16 @@ def run(
     # invoking any generator. Otherwise a malformed late item can waste
     # inference on earlier items and duplicate request IDs share one job root.
     ordered = _ordered_items(items)
+    item_ids: set[str] = set()
     request_ids: set[str] = set()
     target_paths: set[str] = set()
     source_root_raw = str(os.environ.get("ASSET_FORGE_BATCH_SOURCE_ROOT") or "").strip()
     source_root = Path(source_root_raw).resolve(strict=True) if source_root_raw else None
     for item in ordered:
         item_id = item["_id"]
+        item_key = item_id.casefold()
+        if item_key in item_ids:
+            raise RemoteBatchError(f"duplicate case-insensitive batch item id: {item_id}")
         request_id = _safe_id(item["request"].get("requestId") or item_id)
         target_path = str(item.get("target_path") or "").strip().replace("\\", "/")
         if (
@@ -135,9 +140,13 @@ def run(
             or any(part in {"", ".", ".."} for part in target_path.split("/"))
         ):
             raise RemoteBatchError(f"unsafe target_path for {item_id}")
-        if request_id in request_ids:
+        # Fail before generation when future consumers use case-insensitive
+        # or Unicode-normalizing filesystems (e.g. Windows and macOS).
+        request_key = request_id.casefold()
+        target_key = unicodedata.normalize("NFC", target_path).casefold()
+        if request_key in request_ids:
             raise RemoteBatchError(f"duplicate batch requestId: {request_id}")
-        if target_path in target_paths:
+        if target_key in target_paths:
             raise RemoteBatchError(f"duplicate batch target_path: {target_path}")
         # Hosted workflow source files must originate inside the checked-out
         # workspace, never from arbitrary runner directories or secrets.
@@ -166,8 +175,9 @@ def run(
                 if not resolved.is_relative_to(source_root):
                     raise RemoteBatchError(f"source_path outside trusted workspace for {item_id}")
                 source_path = str(resolved)
-        request_ids.add(request_id)
-        target_paths.add(target_path)
+        item_ids.add(item_key)
+        request_ids.add(request_key)
+        target_paths.add(target_key)
         item["_request_id"] = request_id
         item["_target_path"] = target_path
         item["_source_path"] = source_path
