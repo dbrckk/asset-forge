@@ -132,7 +132,7 @@ def run(
             not target_path
             or target_path.startswith("/")
             or re.match(r"^[A-Za-z]:", target_path)
-            or any(ch in target_path for ch in ("\\0", "\\r", "\\n"))
+            or any(ord(ch) < 32 for ch in target_path)
             or any(part in {"", ".", ".."} for part in target_path.split("/"))
         ):
             raise RemoteBatchError(f"unsafe target_path for {item_id}")
