@@ -187,6 +187,77 @@ jobs:
           print("Dispatch request model validation rejected offline")
           print("Batch request model/output/shell injection rejected offline")
           PY
+      - name: Smoke-check batch path containment without generation
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+          from unittest.mock import patch
+
+          from remote_batch import RemoteBatchError, run
+
+          def make_item(item_id, request_id, target_path):
+              return {
+                  "id": item_id,
+                  "request": {"requestId": request_id},
+                  "target_path": target_path,
+              }
+
+          bad_items = [
+              make_item(".", "normal", "assets/hero.png"),
+              make_item("..", "normal", "assets/hero.png"),
+              make_item(".hidden", "normal", "assets/hero.png"),
+              make_item("good-id", "..", "assets/hero.png"),
+              make_item("good-id", "a" * 129, "assets/hero.png"),
+              make_item("good-id", "good-id", "../hero.png"),
+              make_item("good-id", "good-id", "/absolute/hero.png"),
+              make_item("good-id", "good-id", "C:\\foreign\\hero.png"),
+              make_item("good-id", "good-id", "\\\\host\\share\\hero.png"),
+              make_item("good-id", "good-id", "assets/hero\nfake.png"),
+          ]
+
+          with TemporaryDirectory() as temp:
+              root = Path(temp)
+              spec = root / "spec.json"
+              for item in bad_items:
+                  spec.write_text(json.dumps({"items": [item]}), encoding="utf-8")
+                  with patch("remote_batch.subprocess.run",
+                             side_effect=AssertionError("invalid batch invoked generator")):
+                      try:
+                          run(spec, root / "rejected")
+                      except RemoteBatchError:
+                          pass
+                      else:
+                          raise AssertionError("invalid batch path accepted")
+                  assert not (root / "rejected/batch-result.json").exists()
+
+              # A valid production-like batch still completes its local
+              # orchestration, copies the payload and verifies its digest.
+              spec.write_text(json.dumps({"items": [
+                  make_item("hero-1", "hero-request-1", "assets/art/hero-1.png")
+              ]}), encoding="utf-8")
+              calls = []
+              def fake_generator(command, **_kwargs):
+                  calls.append(list(command))
+                  out = Path(command[command.index("--output-dir") + 1])
+                  out.mkdir(parents=True, exist_ok=True)
+                  artifact = out / "hero.png"
+                  artifact.write_bytes(b"offline-smoke-artifact")
+                  (out / "production-report.json").write_text(
+                      json.dumps({"success": True, "artifact": str(artifact)}),
+                      encoding="utf-8",
+                  )
+                  return subprocess.CompletedProcess(command, 0, "", "")
+
+              with patch("remote_batch.subprocess.run", side_effect=fake_generator):
+                  result = run(spec, root / "valid")
+              assert len(calls) == 1
+              assert result["success"] is True and result["count"] == 1
+              assert (root / "valid" / result["items"][0]["artifact"]).is_file()
+          print("Batch identifiers and target paths are confined; valid batch remains usable")
+          PY
       - name: Smoke-check commercial Qwen denial without inference
         run: |
           python - <<'PY'
