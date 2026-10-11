@@ -278,6 +278,41 @@ an independently evaluated AAA game asset. These tests do not close the
 real-provider semantic/rights or Production-OS full delivery gates. Draft
 PR #13 remains nonmerged.
 
+## 2026-10-11 hosted source-path trust boundary
+
+The dependency-aware `remote_batch.py` accepted an arbitrary
+`source_path` string and passed it to `asset-forge fulfill --source`.
+The Asset Forge executor already rejects direct symlinks and enforces
+file type and size, but the batch could discover an untrusted or missing
+source only after spending generation time on earlier items.
+
+Commits
+[`9850fd4`](https://github.com/dbrckk/asset-forge/commit/9850fd4d6a056b920c6a7b59e52948219710a7a3)
+and
+[`6436f96`](https://github.com/dbrckk/asset-forge/commit/6436f9637bbe221af36622537e02c911e4ede766)
+extend the whole-batch preflight: all explicit source paths must be
+strings pointing to existing nonsymlinked files, and
+`custom`/`external` items must actually supply a source. An optional,
+explicit `ASSET_FORGE_BATCH_SOURCE_ROOT` environment variable also confines
+those files to its resolved directory, including checking for parent
+directory symlinks. The hosted batch workflow now sets it to the
+GitHub-managed checkout directory (`github.workspace`) via
+[`4450ae3`](https://github.com/dbrckk/asset-forge/commit/4450ae3e3304540743d0e933d05d9018a2683b13).
+Local CLI usage retains its normal ability to read a separately approved
+file outside the repository if no root limit was set.
+
+The offline smoke
+[`3d308fc`](https://github.com/dbrckk/asset-forge/commit/3d308fcb700ae9cc47db635e5bdafac2d7b3bfd2)
+checks outside-checkout files, symlinks, missing files, absent source for
+custom mode and nonscalar values in a *later* batch item. Rejected cases
+must make **zero generator calls** and create no output directory. A real
+local trusted source path, passed to a local simulated generator,
+still succeeds and is supplied as an absolute resolved path.
+
+This validates source trust-boundary enforcement, **not** a remotely
+generated asset or any claimed model/output commercial license.
+It must not be cited as an Asset Forge → Production-OS → consumer release.
+
 ## Evidence to collect
 
 Record: original instruction and manifest constraints; execution run ID;
