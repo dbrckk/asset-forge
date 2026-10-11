@@ -137,11 +137,11 @@ def _strict_single_sprite_fidelity(job: dict) -> bool:
     )
 
 
-def _select_free_raster_backend(status: dict, *, environ=None) -> str | None:
+def _select_free_raster_backend(status: dict, *, environ=None, allow_qwen: bool = True) -> str | None:
     ready = []
     if status.get("cloudflare", {}).get("rasterReady") is True:
         ready.append("cloudflare")
-    if status.get("kaggleQwen", {}).get("rasterReady") is True:
+    if allow_qwen and status.get("kaggleQwen", {}).get("rasterReady") is True:
         ready.append("kaggle-qwen")
     return choose_backend(
         ready,
@@ -635,7 +635,10 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str:
                 "Kaggle Qwen raster backend for automatic routing; "
                 "no qualified strict auto backend is ready"
             )
-        selected = _select_free_raster_backend(status)
+        selected = _select_free_raster_backend(
+            status,
+            allow_qwen=not _qwen_21_commercial_rights_blocker(job),
+        )
         if selected is not None:
             return selected
         raise GenerationError("no authenticated free raster generation backend is ready")
