@@ -114,6 +114,33 @@ def run(
     if not isinstance(items, list) or not items:
         raise RemoteBatchError("batch spec must contain a non-empty items list")
 
+    # Validate the ENTIRE ordered batch before creating directories or
+    # invoking any generator. Otherwise a malformed late item can waste
+    # inference on earlier items and duplicate request IDs share one job root.
+    ordered = _ordered_items(items)
+    request_ids: set[str] = set()
+    target_paths: set[str] = set()
+    for item in ordered:
+        item_id = item["_id"]
+        request_id = _safe_id(item["request"].get("requestId") or item_id)
+        target_path = str(item.get("target_path") or "").strip().replace("\\", "/")
+        if (
+            not target_path
+            or target_path.startswith("/")
+            or re.match(r"^[A-Za-z]:", target_path)
+            or any(ord(ch) < 32 for ch in target_path)
+            or any(part in {"", ".", ".."} for part in target_path.split("/"))
+        ):
+            raise RemoteBatchError(f"unsafe target_path for {item_id}")
+        if request_id in request_ids:
+            raise RemoteBatchError(f"duplicate batch requestId: {request_id}")
+        if target_path in target_paths:
+            raise RemoteBatchError(f"duplicate batch target_path: {target_path}")
+        request_ids.add(request_id)
+        target_paths.add(target_path)
+        item["_request_id"] = request_id
+        item["_target_path"] = target_path
+
     output_root = Path(output_root)
     output_root.mkdir(parents=True, exist_ok=True)
     bundle_root = output_root / "bundle"
@@ -124,19 +151,11 @@ def run(
     auto_backend_override: str | None = None
     cloudflare_runtime_failures = 0
     commercial_override_exemptions = 0
-    for item in _ordered_items(items):
+    for item in ordered:
         item_id = item["_id"]
         request = item["request"]
-        request_id = _safe_id(request.get("requestId") or item_id)
-        target_path = str(item.get("target_path") or "").strip().replace("\\", "/")
-        if (
-            not target_path
-            or target_path.startswith("/")
-            or re.match(r"^[A-Za-z]:", target_path)
-            or any(ord(ch) < 32 for ch in target_path)
-            or any(part in {"", ".", ".."} for part in target_path.split("/"))
-        ):
-            raise RemoteBatchError(f"unsafe target_path for {item_id}")
+        request_id = item["_request_id"]
+        target_path = item["_target_path"]
 
         item_root = output_root / "jobs" / request_id
         item_root.mkdir(parents=True, exist_ok=True)
