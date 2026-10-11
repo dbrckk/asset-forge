@@ -296,6 +296,60 @@ jobs:
           echo "::error::Manual live visual pilot requires Cloudflare or Kaggle credentials."
           exit 2
 
+      # The commercial brief has two reference-dependent follow-up assets.
+      # Cloudflare references route through Qwen-Image-2.1 and Kaggle Qwen
+      # also lacks verified commercial rights. Refuse BEFORE generating the
+      # standalone anchor to avoid wasted API/GPU usage and partial claims.
+      - name: Preflight commercial model rights before generating assets
+        if: steps.credential.outputs.ready == 'true'
+        env:
+          SELECTED_RASTER_BACKEND: ${{ steps.credential.outputs.backend }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          spec = json.loads(
+              Path("examples/deadline-zero-live-pilot-batch.json").read_text(encoding="utf-8")
+          )
+          items = spec.get("items")
+          if not isinstance(items, list) or not items:
+              raise SystemExit("Deadline Zero pilot spec has no items")
+          backend = os.environ["SELECTED_RASTER_BACKEND"].strip()
+          commercial = [
+              item for item in items
+              if isinstance(item, dict)
+              and isinstance(item.get("request"), dict)
+              and isinstance(item["request"].get("manifest"), dict)
+              and item["request"]["manifest"].get("license", {}).get("commercialUse") is True
+          ]
+          has_references = any(item.get("depends_on") for item in commercial)
+          blocked = bool(commercial) and (
+              backend == "kaggle-qwen"
+              or (backend == "cloudflare" and has_references)
+          )
+          if blocked:
+              folder = Path("build/deadline-zero-live-pilot")
+              folder.mkdir(parents=True, exist_ok=True)
+              status = {
+                  "schema_version": "asset-forge/live-pilot/v1",
+                  "success": False,
+                  "status": "commercial_model_license_unverified",
+                  "backend": backend,
+                  "affected_items": [str(item.get("id") or "") for item in commercial],
+                  "generation_attempted": False,
+              }
+              (folder / "pilot-status.json").write_text(
+                  json.dumps(status, sort_keys=True, indent=2) + "\n",
+                  encoding="utf-8",
+              )
+              print("::error::Commercial model rights are not verified for reference-dependent Qwen generation; pilot aborted before asset production.")
+              raise SystemExit(2)
+          print("PASS: model-rights preflight allows selected pilot backend")
+          PY
+
       - name: Produce Rex visual pilot
         if: steps.credential.outputs.ready == 'true'
         run: |
@@ -1287,6 +1341,49 @@ jobs:
         run: python asset_forge.py plan examples/asset-manifest.json
       - name: Compile Production OS asset request
         run: python asset_forge.py production-job examples/production-request.json --output build/production-job.json
+      - name: Smoke-check commercial pilot preflight offline
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          import sys
+          import textwrap
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+
+          workflow = Path(".github/workflows/deadline-zero-live-pilot.yml").read_text()
+          section = workflow.split(
+              "      - name: Preflight commercial model rights before generating assets\n", 1
+          )[1].split("      - name: Produce Rex visual pilot\n", 1)[0]
+          embedded = section.split("          python - <<'PY'\n", 1)[1].rsplit(
+              "          PY\n", 1
+          )[0]
+          code = textwrap.dedent(embedded)
+          original = Path("examples/deadline-zero-live-pilot-batch.json")
+          for backend in ("cloudflare", "kaggle-qwen"):
+              with TemporaryDirectory() as temporary:
+                  root = Path(temporary)
+                  example = root / "examples"
+                  example.mkdir()
+                  (example / original.name).write_bytes(original.read_bytes())
+                  env = dict(os.environ, SELECTED_RASTER_BACKEND=backend)
+                  result = subprocess.run(
+                      [sys.executable, "-c", code], cwd=root, env=env,
+                      capture_output=True, text=True, timeout=8,
+                  )
+                  assert result.returncode == 2, (backend, result.stderr)
+                  report = json.loads(
+                      (root / "build/deadline-zero-live-pilot/pilot-status.json").read_text()
+                  )
+                  assert report["status"] == "commercial_model_license_unverified"
+                  assert report["success"] is False
+                  assert report["generation_attempted"] is False
+                  assert report["backend"] == backend
+                  assert len(report["affected_items"]) == 3
+                  assert not (root / "build/deadline-zero-live-pilot/batch-result.json").exists()
+          print("Commercial pilot preflight rejected unsafe generation without inference")
+          PY
       - name: Smoke-check batch model request injection offline
         run: |
           python - <<'PY'

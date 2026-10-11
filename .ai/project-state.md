@@ -118,16 +118,18 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-10-11T17:29:39Z
+Generated: 2026-10-11T17:39:31Z
 
 ### Git
 - Branch: `main`
-- Head: `17e6c395faba`
-- Commit date: 2026-10-11T19:25:29+02:00
-- Commit: Merge PR #13: strict optional semantic art quality gate
-- Tracked files: 313
+- Head: `be6c1cb3ac63`
+- Commit date: 2026-10-11T19:38:22+02:00
+- Commit: fix(pilot): stop noncommercial generation before billed reference work
+- Tracked files: 325
 
 ### Recently changed files
+- `.github/workflows/deadline-zero-live-pilot.yml`
+- `.github/workflows/validate.yml`
 - `docs/production-raster-quality-gate.md`
 - `integration/godot4_import_smoke.py`
 - `asset_forge.py`
