@@ -137,6 +137,46 @@ cleanup and numerical gate wiring. The visual scores are fixtures and are
 availability, Qwen commercial permission, or successful consumer import.
 Do not use this offline smoke to release a historical failed sprite.
 
+## 2026-10-11 Production-OS workflow input integrity
+
+Two GitHub Actions entry points previously placed a caller-supplied model name
+directly inside quoted **Bash source**: `.github/workflows/production-os-batch.yml`
+and `.github/workflows/production-os-dispatch.yml`. A shell-quoting escape
+in untrusted JSON/dispatch input could change the executed command. The batch
+materializer also echoed model names to `GITHUB_OUTPUT` without filtering
+newlines, risking additional step-output entries.
+
+Fixes [`62bdb64`](https://github.com/dbrckk/asset-forge/commit/62bdb64a511bf5f0b6c42a95c15f21c0efe4f348)
+(batch) and [`941679f`](https://github.com/dbrckk/asset-forge/commit/941679f425d4d53e59c78cef06fa16ba6cade75c)
+(single request):
+
+- Validate model identifiers as a bounded, single-line allowlisted string
+  (letters, digits, slash, period, underscore, colon, plus, at-sign, hyphen).
+  Batch input also requires an actual JSON string, not an object.
+- Enforce the existing fixed backend allowlist.
+- Hand validated `backend` and `model` to Bash through step environment
+  variables with quoted shell array arguments, **never** by interpolating
+  GitHub expressions directly into a `run:` program.
+- Continue rejecting malformed requests **before** asset generation.
+
+The existing CI workflow now executes the actual embedded Python request
+materializers offline with safe model IDs, multiline strings, shell syntax,
+oversized names and non-string batch input. It checks that invalid inputs
+cannot produce a materialized request or tamper with `GITHUB_OUTPUT`, and
+that dispatch Bash uses environment variables.
+
+**Observed evidence:** [Actions run 38122046657](https://github.com/dbrckk/asset-forge/actions/runs/38122046657)
+completed **SUCCESS, 3/3 jobs**, with the
+`Smoke-check batch model request injection offline` step **SUCCESS** at
+commit `db922d02a9fbeeef33d931d5920615a9b3f9c0a0`.
+The smoke launches only local Python subprocesses: no production dispatch,
+model generation, network inference or secret-value access.
+
+This hardening is currently **only on draft PR #13**, not on `main`.
+Existing production workflows are not considered remediated in deployment
+until a separately qualified and authorized release includes the commits.
+A green workflow-validation CI run is not proof of a real visual delivery.
+
 ## Evidence to collect
 
 Record: original instruction and manifest constraints; execution run ID;
