@@ -546,6 +546,13 @@ def _enrich_engine_handoff(job: dict, result: dict, output_dir: Path) -> dict:
             "spriteFrames": str(spriteframes),
             "atlasResourcePath": "res://" + Path(artifact).name,
         }
+        # Godot resources are part of the delivery, not merely temporary
+        # build outputs. Remote batch collectors use additionalArtifacts to
+        # bundle these files with their own SHA256 digests.
+        extras = result.get("additionalArtifacts")
+        result["additionalArtifacts"] = (
+            list(extras) if isinstance(extras, list) else []
+        ) + [str(atlas_path), str(spriteframes)]
         _persist_enriched_production_report(result)
     return result
 

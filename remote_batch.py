@@ -300,6 +300,22 @@ def run(
         artifacts[item_id] = bundled
 
         additional_rows = []
+        handoff = report.get("engineHandoff")
+        handoff_roles: dict[Path, str] = {}
+        if (
+            isinstance(handoff, dict)
+            and handoff.get("engine") == "godot4"
+            and handoff.get("type") == "spriteframes"
+            and handoff.get("ready") is True
+        ):
+            for field, role in (
+                ("atlasMetadata", "godot-atlas-metadata"),
+                ("spriteFrames", "godot-spriteframes"),
+            ):
+                value = handoff.get(field)
+                if not isinstance(value, str) or not value.strip():
+                    raise RemoteBatchError(f"missing Godot handoff {field} for {item_id}")
+                handoff_roles[Path(value).resolve()] = role
         raw_additional = report.get("additionalArtifacts")
         if raw_additional is None:
             raw_additional = []
@@ -319,7 +335,12 @@ def run(
                     f"additional artifact missing for {item_id}"
                 )
             extra_name = extra.name
-            if extra_name.startswith(artifact.stem + "."):
+            role = handoff_roles.get(extra)
+            if role == "godot-spriteframes":
+                bundle_name = f"{item_id}.tres"
+            elif role == "godot-atlas-metadata":
+                bundle_name = f"{item_id}.atlas-metadata.json"
+            elif extra_name.startswith(artifact.stem + "."):
                 bundle_name = f"{item_id}{extra_name[len(artifact.stem):]}"
             else:
                 bundle_name = f"{item_id}.extra{extra_index}{extra.suffix.lower()}"
@@ -335,7 +356,12 @@ def run(
                 "artifact": str(bundled_extra.relative_to(output_root)),
                 "sha256": hashlib.sha256(bundled_extra.read_bytes()).hexdigest(),
                 "source_name": extra_name,
+                **({"role": role} if role else {}),
             })
+        if handoff_roles and {
+            row.get("role") for row in additional_rows
+        }.issuperset(set(handoff_roles.values())) is False:
+            raise RemoteBatchError(f"incomplete Godot handoff bundle for {item_id}")
 
         generation = report.get("generation") if isinstance(report.get("generation"), dict) else {}
         validation = report.get("validation") if isinstance(report.get("validation"), dict) else {}

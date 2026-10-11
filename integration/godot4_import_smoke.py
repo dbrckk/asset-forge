@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -167,6 +168,41 @@ def main() -> int:
         assert atlas["frameCount"] == 2
         tres = output / "player.tres"
         assert tres.is_file()
+        assert {Path(name).name for name in report["additionalArtifacts"]} == {
+            "atlas-metadata.json", "player.tres"
+        }
+
+        # Exercise the real batch coordinator with another fresh CLI fulfill,
+        # not a fake generator or an unexecuted sample. No GPU/network needed.
+        from remote_batch import run as run_remote_batch
+        wrapper = work / "asset-forge-cli"
+        wrapper.write_text(
+            "#!/bin/sh\\nexec " + shlex.quote(sys.executable) + " "
+            + shlex.quote(str(ROOT / "asset_forge.py")) + ' "$@"\\n',
+            encoding="utf-8",
+        )
+        wrapper.chmod(0o700)
+        batch_spec = work / "batch-spec.json"
+        batch_spec.write_text(json.dumps({"items": [{
+            "id": "bundled-player",
+            "request": request,
+            "source_path": str(original),
+            "target_path": "assets/art/bundled-player.png",
+        }]}), encoding="utf-8")
+        batch_dir = work / "real-batch"
+        batch = run_remote_batch(batch_spec, batch_dir, executable=str(wrapper))
+        assert batch["success"] is True and batch["count"] == 1
+        row = batch["items"][0]
+        companions = {value["role"]: value for value in row["additional_artifacts"]}
+        assert set(companions) == {"godot-spriteframes", "godot-atlas-metadata"}
+        assert {Path(companions[role]["artifact"]).name for role in companions} == {
+            "bundled-player.tres", "bundled-player.atlas-metadata.json"
+        }
+        for entry in [row, *companions.values()]:
+            file = batch_dir / entry["artifact"]
+            assert file.is_file() and file.stat().st_size > 0
+            assert hashlib.sha256(file.read_bytes()).hexdigest() == entry["sha256"]
+        print("PASS: real Asset Forge batch includes hashed Godot SpriteFrames and atlas metadata")
 
         project = work / "godot4-project"
         project.mkdir()
