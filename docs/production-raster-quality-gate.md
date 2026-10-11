@@ -385,6 +385,53 @@ a paid model output, a commercial grant for Qwen, an independently reviewed
 premium AAA asset or the complete Production-OS worker-delivery chain.
 Draft PR #13 is still nonmerged.
 
+## 2026-10-11 historical Qwen cache reuse guard
+
+The generated-asset `fulfill` command can select a cached success entry
+and supply its stored PNG as `source_path` to the processing executor.
+That skips `execute_generated_asset` and therefore skips that
+generator's *current* commercial model-license gate. The cache file
+recorded a final backend and model, but an old successful record could
+have been produced under earlier, incorrect commercial metadata.
+A historical Qwen raster should not be promoted commercially merely
+because its checksum remains intact.
+
+Commit
+[`9bde049`](https://github.com/dbrckk/asset-forge/commit/9bde049449b0151ed79c5f204f8629340257b1b0)
+closes this alternate route for commercial generated requests:
+
+- An explicitly requested `kaggle-qwen` or `qwen-colab` backend fails
+  **before** selecting a cached artifact.
+- Exact-key and cross-project library hits whose recorded backend is
+  `kaggle-qwen`/`qwen-colab`, whose recorded model contains
+  `qwen-image-2.1`, or which have no recorded backend are **cache misses**
+  for commercial requests. The regular generator selector must then
+  decide whether a permitted backend can satisfy the request; it
+  must not treat stored bytes as new commercial authorization.
+- Non-Qwen entries continue through the previous lookup path. That is
+  a cache behavior guarantee, **not** verification of their provider
+  contracts, asset provenance or commercial-use rights.
+
+The no-GPU/no-network functional CI smoke uses a *real local asset-library
+index* with a historical Qwen record, the actual `asset_forge.main`
+CLI parser and cache-selection path, and a stub at the **generation
+executor boundary**. It verifies a Qwen exact cache miss, an explicit
+commercial Qwen refusal before generation, a cross-project commercial
+cache miss and a non-Qwen entry that remains selectable. No real model
+is invoked, no commercial rights are granted and no secret is read.
+
+The first smoke `b788b07` failed at its harness call because the
+CLI's `main()` reads `sys.argv` rather than accepting an `argv`
+parameter. The harness was corrected in
+[`b19ec63`](https://github.com/dbrckk/asset-forge/commit/b19ec63c3dc74115796d4c628c2891f4881b57ce)
+without weakening the guard. [Actions **38124287234**](https://github.com/dbrckk/asset-forge/actions/runs/38124287234)
+at that exact commit finished **SUCCESS 4/4 jobs**, including the
+commercial-cache smoke and the real Godot 4 import job.
+
+Release remains gated on genuine licensed visual production, independent
+semantic fidelity evidence, and the complete Production-OS consumer
+handoff. PR #13 stays draft and unmerged.
+
 ## Evidence to collect
 
 Record: original instruction and manifest constraints; execution run ID;
