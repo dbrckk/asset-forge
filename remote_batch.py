@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -120,6 +121,8 @@ def run(
     ordered = _ordered_items(items)
     request_ids: set[str] = set()
     target_paths: set[str] = set()
+    source_root_raw = str(os.environ.get("ASSET_FORGE_BATCH_SOURCE_ROOT") or "").strip()
+    source_root = Path(source_root_raw).resolve(strict=True) if source_root_raw else None
     for item in ordered:
         item_id = item["_id"]
         request_id = _safe_id(item["request"].get("requestId") or item_id)
@@ -136,10 +139,35 @@ def run(
             raise RemoteBatchError(f"duplicate batch requestId: {request_id}")
         if target_path in target_paths:
             raise RemoteBatchError(f"duplicate batch target_path: {target_path}")
+        # Hosted workflow source files must originate inside the checked-out
+        # workspace, never from arbitrary runner directories or secrets.
+        # Local callers retain their explicitly permitted file paths when
+        # ASSET_FORGE_BATCH_SOURCE_ROOT is not configured.
+        raw_source = item.get("source_path")
+        if raw_source is not None and not isinstance(raw_source, str):
+            raise RemoteBatchError(f"source_path must be a string for {item_id}")
+        source_path = str(raw_source or "").strip()
+        manifest = item["request"].get("manifest")
+        source = manifest.get("source") if isinstance(manifest, dict) else None
+        source_mode = source.get("mode") if isinstance(source, dict) else None
+        if source_mode in {"custom", "external"} and not source_path:
+            raise RemoteBatchError(f"provided source missing for {item_id}")
+        if source_path and source_root is not None:
+            candidate = Path(source_path)
+            if candidate.is_symlink():
+                raise RemoteBatchError(f"source_path symlink forbidden for {item_id}")
+            try:
+                resolved = candidate.resolve(strict=True)
+            except (OSError, RuntimeError) as exc:
+                raise RemoteBatchError(f"source_path not accessible for {item_id}") from exc
+            if not resolved.is_file() or not resolved.is_relative_to(source_root):
+                raise RemoteBatchError(f"source_path outside trusted workspace for {item_id}")
+            source_path = str(resolved)
         request_ids.add(request_id)
         target_paths.add(target_path)
         item["_request_id"] = request_id
         item["_target_path"] = target_path
+        item["_source_path"] = source_path
 
     output_root = Path(output_root)
     output_root.mkdir(parents=True, exist_ok=True)
@@ -189,7 +217,7 @@ def run(
         ]
         if model:
             cmd.extend(["--model", model])
-        source_path = str(item.get("source_path") or "").strip()
+        source_path = item["_source_path"]
         if source_path:
             cmd.extend(["--source", source_path])
         else:
