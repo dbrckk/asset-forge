@@ -136,6 +136,54 @@ jobs:
                   assert (result.returncode == 0) is valid, "dispatch validation mismatch"
                   staged = Path(root) / "build/production-request.json"
                   assert staged.is_file() is valid
+                  if valid:
+                      result_request = json.loads(staged.read_text(encoding="utf-8"))
+                      assert result_request["delivery"]["outputDir"] == "build/asset-forge/production"
+
+          # Caller outputDir may be traversal or absolute: the real dispatch
+          # materializer must keep all generated outputs in its fixed sandbox.
+          report_step = dispatch[dispatch.index("      - name: Locate and validate production report\n"):]
+          assert 'report="build/asset-forge/production/production-report.json"' in report_step
+          assert 'find build/asset-forge' not in report_step
+          for configured in ("../../outside", "/tmp/foreign-output", "build/custom"):
+              with TemporaryDirectory() as root:
+                  request = {
+                      "schema": "asset-forge/production-request/v1",
+                      "delivery": {"engine": "godot4", "outputDir": configured},
+                  }
+                  env = dict(os.environ)
+                  env.update({
+                      "REQUEST_JSON": json.dumps(request),
+                      "REQUEST_BACKEND": "auto",
+                      "REQUEST_MODEL": "",
+                  })
+                  result = subprocess.run(
+                      [sys.executable, "-c", dispatch_code], cwd=root, env=env,
+                      capture_output=True, text=True, timeout=10,
+                  )
+                  assert result.returncode == 0, "dispatch failed to confine output"
+                  staged = json.loads((Path(root) / "build/production-request.json").read_text(encoding="utf-8"))
+                  assert staged["delivery"] == {
+                      "engine": "godot4", "outputDir": "build/asset-forge/production"
+                  }
+                  assert not (Path(root) / "build/custom").exists()
+          with TemporaryDirectory() as root:
+              env = dict(os.environ)
+              env.update({
+                  "REQUEST_JSON": json.dumps({
+                      "schema": "asset-forge/production-request/v1",
+                      "delivery": "../../not-an-object",
+                  }),
+                  "REQUEST_BACKEND": "auto",
+                  "REQUEST_MODEL": "",
+              })
+              result = subprocess.run(
+                  [sys.executable, "-c", dispatch_code], cwd=root, env=env,
+                  capture_output=True, text=True, timeout=10,
+              )
+              assert result.returncode != 0
+              assert not (Path(root) / "build/production-request.json").exists()
+          print("Dispatch request fixed output directory and validation verified offline")
           print("Dispatch request model validation rejected offline")
           print("Batch request model/output/shell injection rejected offline")
           PY
