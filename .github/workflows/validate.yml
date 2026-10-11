@@ -456,6 +456,7 @@ jobs:
           import copy
           import json
           import os
+          import sys
           from pathlib import Path
           from tempfile import TemporaryDirectory
           from unittest.mock import patch
@@ -464,6 +465,11 @@ jobs:
           from asset_library import (
               record_success, request_fingerprint, reusable_content_fingerprint,
           )
+
+          # The project's main() reads sys.argv rather than accepting argv.
+          def run_cli(arguments):
+              with patch.object(sys, "argv", ["asset-forge"] + arguments):
+                  return asset_forge.main()
 
           with TemporaryDirectory() as root_str:
               root = Path(root_str)
@@ -507,7 +513,7 @@ jobs:
               ):
                   # An old commercially declared Qwen cache record must be
                   # treated as a MISS, never as a vetted external source.
-                  status = asset_forge.main([
+                  status = run_cli([
                       "fulfill", str(request_file),
                       "--output-dir", str(root / "direct-auto"), "--backend", "auto",
                   ])
@@ -517,7 +523,7 @@ jobs:
                   # The explicit Qwen backend must be rejected before cache
                   # lookup AND before the generation executor is reached.
                   captured_sources.clear()
-                  status = asset_forge.main([
+                  status = run_cli([
                       "fulfill", str(request_file),
                       "--output-dir", str(root / "direct-qwen"), "--backend", "kaggle-qwen",
                   ])
@@ -532,7 +538,7 @@ jobs:
                   another["manifest"]["constraints"]["allowCrossProjectReuse"] = True
                   request_file.write_text(json.dumps(another), encoding="utf-8")
                   captured_sources.clear()
-                  status = asset_forge.main([
+                  status = run_cli([
                       "fulfill", str(request_file),
                       "--output-dir", str(root / "cross-project"), "--backend", "auto",
                   ])
@@ -558,7 +564,7 @@ jobs:
                   "asset_forge.execute_compiled_production_job",
                   side_effect=guard_before_generation,
               ):
-                  status = asset_forge.main([
+                  status = run_cli([
                       "fulfill", str(request_file),
                       "--output-dir", str(root / "cloudflare"), "--backend", "cloudflare",
                   ])
