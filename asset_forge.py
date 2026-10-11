@@ -422,6 +422,24 @@ def execute_compiled_production_job(
     )
 
 
+def _cache_entry_has_restricted_qwen_origin(entry: dict) -> bool:
+    """Cache integrity is not a model-rights grant.
+
+    Qwen may appear as the recorded backend or inside the recorded model
+    name (including historical entries). Missing model provenance is not
+    acceptable evidence for commercial reuse either.
+    """
+    if not isinstance(entry, dict):
+        return True
+    backend = str(entry.get("backend") or "").strip().lower()
+    model = str(entry.get("model") or "").strip().lower()
+    return (
+        not backend
+        or backend in {"kaggle-qwen", "qwen-colab"}
+        or "qwen-image-2.1" in model
+    )
+
+
 def _write_production_inputs(output_dir: Path, job: dict) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     payloads = {
@@ -528,6 +546,13 @@ def _enrich_engine_handoff(job: dict, result: dict, output_dir: Path) -> dict:
             "spriteFrames": str(spriteframes),
             "atlasResourcePath": "res://" + Path(artifact).name,
         }
+        # Godot resources are part of the delivery, not merely temporary
+        # build outputs. Remote batch collectors use additionalArtifacts to
+        # bundle these files with their own SHA256 digests.
+        extras = result.get("additionalArtifacts")
+        result["additionalArtifacts"] = (
+            list(extras) if isinstance(extras, list) else []
+        ) + [str(atlas_path), str(spriteframes)]
         _persist_enriched_production_report(result)
     return result
 
@@ -855,6 +880,17 @@ def main() -> int:
                 return 1
             plan = build_plan(request["manifest"], root)
             job = build_production_job(request, plan)
+            rights = job.get("manifest", {}).get("license", {})
+            commercial = isinstance(rights, dict) and rights.get("commercialUse") is True
+            if (
+                commercial
+                and job.get("requiresGenerator") is True
+                and args.backend in {"kaggle-qwen", "qwen-colab"}
+            ):
+                raise ValueError(
+                    "commercial rights unverified: explicit Qwen generation and "
+                    "historical Qwen cache reuse require separate commercial authorization"
+                )
             if job.get("requiresGenerator") is not True and args.source is None:
                 raise ValueError("fulfill requires --source for external/custom requests")
             output_dir = args.output_dir
@@ -884,6 +920,13 @@ def main() -> int:
                 if library_enabled and library_path is not None and fingerprint is not None
                 else None
             )
+            if (
+                commercial and library_hit is not None
+                and _cache_entry_has_restricted_qwen_origin(library_hit)
+            ):
+                # Re-evaluate through an actually permitted backend instead of
+                # letting a historical research-only artifact bypass the guard.
+                library_hit = None
             constraints = (
                 job.get("manifest", {}).get("constraints", {})
                 if isinstance(job.get("manifest"), dict)
@@ -913,6 +956,11 @@ def main() -> int:
                 )
                 else None
             )
+            if (
+                commercial and reusable_hit is not None
+                and _cache_entry_has_restricted_qwen_origin(reusable_hit)
+            ):
+                reusable_hit = None
             selected_library_hit = library_hit or reusable_hit
             effective_source = (
                 Path(selected_library_hit["artifact"])

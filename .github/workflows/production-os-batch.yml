@@ -56,6 +56,7 @@ jobs:
       ASSET_FORGE_GITHUB_TOKEN: ${{ github.token }}
       ASSET_FORGE_GITHUB_REPOSITORY: ${{ github.repository }}
       ASSET_FORGE_BACKEND_HISTORY: .asset-forge/backend-history.json
+      ASSET_FORGE_BATCH_SOURCE_ROOT: ${{ github.workspace }}
     steps:
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -118,8 +119,19 @@ jobs:
               payload = envelope["spec"]
               backend = envelope.get("backend") or "auto"
               model = envelope.get("model") or ""
-          if backend not in {"auto", "pollinations", "qwen-colab", "cloudflare", "kaggle-qwen", "vtracer", "kaggle-triposr"}:
+          if not isinstance(backend, str) or backend not in {
+              "auto", "pollinations", "qwen-colab", "cloudflare",
+              "kaggle-qwen", "vtracer", "kaggle-triposr",
+          }:
               raise SystemExit("invalid Asset Forge backend")
+          # The model is untrusted request data. Reject control characters,
+          # shell syntax, multiline Actions outputs and overly long names.
+          # Ordinary Hugging Face repo/model names and revision separators
+          # remain supported without allowing shell interpolation.
+          if not isinstance(model, str) or (
+              model and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/+@-]{0,191}", model)
+          ):
+              raise SystemExit("invalid Asset Forge model identifier")
           Path("build/remote-batch").mkdir(parents=True, exist_ok=True)
           Path("build/remote-batch/spec.json").write_text(
               json.dumps(payload, indent=2, sort_keys=True) + "\n",
@@ -131,15 +143,19 @@ jobs:
 
       - name: Execute dependency-aware batch
         shell: bash
+        env:
+          REQUEST_BACKEND: ${{ steps.request.outputs.backend }}
+          REQUEST_MODEL: ${{ steps.request.outputs.model }}
         run: |
+          set -euo pipefail
           args=(
             python remote_batch.py
             --spec build/remote-batch/spec.json
             --output-root build/remote-batch/output
-            --backend "${{ steps.request.outputs.backend }}"
+            --backend "$REQUEST_BACKEND"
           )
-          if [ -n "${{ steps.request.outputs.model }}" ]; then
-            args+=(--model "${{ steps.request.outputs.model }}")
+          if [ -n "$REQUEST_MODEL" ]; then
+            args+=(--model "$REQUEST_MODEL")
           fi
           "${args[@]}"
 

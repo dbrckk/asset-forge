@@ -3,8 +3,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
+import re
 import shutil
 import subprocess
+import unicodedata
 from pathlib import Path
 
 
@@ -39,9 +42,14 @@ def _cloudflare_runtime_fallback_count(routing: dict) -> int:
 
 
 def _safe_id(value: str) -> str:
-    value = str(value or "").strip()
-    if not value or any(ch not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._" for ch in value):
-        raise RemoteBatchError("batch item id must be filename-safe")
+    if not isinstance(value, str):
+        raise RemoteBatchError("batch item id and requestId must be strings")
+    value = value.strip()
+    # Match the production request identifier contract. In particular, "."
+    # and ".." are directories, not safe identifiers, even though their
+    # individual characters are on the filename-safe list.
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", value):
+        raise RemoteBatchError("batch item id must be a safe production identifier")
     return value
 
 
@@ -110,22 +118,102 @@ def run(
     if not isinstance(items, list) or not items:
         raise RemoteBatchError("batch spec must contain a non-empty items list")
 
+    # Validate the ENTIRE ordered batch before creating directories or
+    # invoking any generator. Otherwise a malformed late item can waste
+    # inference on earlier items and duplicate request IDs share one job root.
+    ordered = _ordered_items(items)
+    item_ids: set[str] = set()
+    request_ids: set[str] = set()
+    target_paths: set[str] = set()
+    source_root_raw = str(os.environ.get("ASSET_FORGE_BATCH_SOURCE_ROOT") or "").strip()
+    source_root = Path(source_root_raw).resolve(strict=True) if source_root_raw else None
+    for item in ordered:
+        item_id = item["_id"]
+        item_key = item_id.casefold()
+        if item_key in item_ids:
+            raise RemoteBatchError(f"duplicate case-insensitive batch item id: {item_id}")
+        request_id = _safe_id(item["request"].get("requestId") or item_id)
+        raw_target = item.get("target_path")
+        if not isinstance(raw_target, str):
+            raise RemoteBatchError(f"target_path must be a string for {item_id}")
+        target_path = raw_target.strip().replace("\\", "/")
+        # Prevent Windows device aliases and invalid segments from reaching
+        # cross-platform asset consumers, not merely traversal/absolute paths.
+        segments = target_path.split("/")
+        forbidden_windows_name = any(
+            re.fullmatch(r"(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\..*)?", segment, re.IGNORECASE)
+            for segment in segments
+        )
+        if (
+            not target_path
+            or target_path.startswith("/")
+            or re.match(r"^[A-Za-z]:", target_path)
+            or any(ord(ch) < 32 for ch in target_path)
+            or re.search(r'[<>:"|?*]', target_path)
+            or forbidden_windows_name
+            or any(part in {"", ".", ".."} or part.endswith((" ", ".")) for part in segments)
+        ):
+            raise RemoteBatchError(f"unsafe target_path for {item_id}")
+        # Fail before generation when future consumers use case-insensitive
+        # or Unicode-normalizing filesystems (e.g. Windows and macOS).
+        request_key = request_id.casefold()
+        target_key = unicodedata.normalize("NFC", target_path).casefold()
+        if request_key in request_ids:
+            raise RemoteBatchError(f"duplicate batch requestId: {request_id}")
+        if target_key in target_paths:
+            raise RemoteBatchError(f"duplicate batch target_path: {target_path}")
+        # Hosted workflow source files must originate inside the checked-out
+        # workspace, never from arbitrary runner directories or secrets.
+        # Local callers retain their explicitly permitted file paths when
+        # ASSET_FORGE_BATCH_SOURCE_ROOT is not configured.
+        raw_source = item.get("source_path")
+        if raw_source is not None and not isinstance(raw_source, str):
+            raise RemoteBatchError(f"source_path must be a string for {item_id}")
+        source_path = str(raw_source or "").strip()
+        manifest = item["request"].get("manifest")
+        source = manifest.get("source") if isinstance(manifest, dict) else None
+        source_mode = source.get("mode") if isinstance(source, dict) else None
+        if source_mode in {"custom", "external"} and not source_path:
+            raise RemoteBatchError(f"provided source missing for {item_id}")
+        if source_path:
+            candidate = Path(source_path)
+            if candidate.is_symlink():
+                raise RemoteBatchError(f"source_path symlink forbidden for {item_id}")
+            if not candidate.is_file():
+                raise RemoteBatchError(f"source_path missing or not a file for {item_id}")
+            if source_root is not None:
+                try:
+                    resolved = candidate.resolve(strict=True)
+                except (OSError, RuntimeError) as exc:
+                    raise RemoteBatchError(f"source_path not accessible for {item_id}") from exc
+                if not resolved.is_relative_to(source_root):
+                    raise RemoteBatchError(f"source_path outside trusted workspace for {item_id}")
+                source_path = str(resolved)
+        item_ids.add(item_key)
+        request_ids.add(request_key)
+        target_paths.add(target_key)
+        item["_request_id"] = request_id
+        item["_target_path"] = target_path
+        item["_source_path"] = source_path
+
     output_root = Path(output_root)
     output_root.mkdir(parents=True, exist_ok=True)
     bundle_root = output_root / "bundle"
     bundle_root.mkdir(parents=True, exist_ok=True)
 
     artifacts: dict[str, Path] = {}
+    # Prevent additional artifacts from replacing another item's deliverable.
+    # Casefold is intentional: bundles may be consumed on case-insensitive hosts.
+    bundle_destinations: set[str] = set()
     results = []
     auto_backend_override: str | None = None
     cloudflare_runtime_failures = 0
-    for item in _ordered_items(items):
+    commercial_override_exemptions = 0
+    for item in ordered:
         item_id = item["_id"]
         request = item["request"]
-        request_id = _safe_id(request.get("requestId") or item_id)
-        target_path = str(item.get("target_path") or "").strip().replace("\\", "/").lstrip("/")
-        if not target_path or any(part in {"", ".", ".."} for part in target_path.split("/")):
-            raise RemoteBatchError(f"unsafe target_path for {item_id}")
+        request_id = item["_request_id"]
+        target_path = item["_target_path"]
 
         item_root = output_root / "jobs" / request_id
         item_root.mkdir(parents=True, exist_ok=True)
@@ -134,7 +222,20 @@ def run(
             json.dumps(request, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
-        item_backend = auto_backend_override or backend
+        manifest = request.get("manifest")
+        license_data = manifest.get("license") if isinstance(manifest, dict) else None
+        commercial_use = (
+            isinstance(license_data, dict)
+            and license_data.get("commercialUse") is True
+        )
+        # A circuit breaker is a reliability hint, not a commercial model
+        # authorization. Commercial assets must stay on the normal auto
+        # selector, which excludes research-licensed Qwen.
+        if auto_backend_override is not None and backend == "auto" and commercial_use:
+            item_backend = "auto"
+            commercial_override_exemptions += 1
+        else:
+            item_backend = auto_backend_override or backend
         cmd = [
             executable,
             "fulfill",
@@ -146,7 +247,7 @@ def run(
         ]
         if model:
             cmd.extend(["--model", model])
-        source_path = str(item.get("source_path") or "").strip()
+        source_path = item["_source_path"]
         if source_path:
             cmd.extend(["--source", source_path])
         else:
@@ -186,13 +287,35 @@ def run(
         artifact = artifact.resolve()
         if not artifact.is_relative_to(item_root.resolve()):
             raise RemoteBatchError(f"artifact escapes item output for {item_id}")
+        if artifact.stat().st_size <= 0:
+            raise RemoteBatchError(f"empty primary artifact for {item_id}")
 
         bundled = bundle_root / f"{item_id}{artifact.suffix.lower()}"
+        bundle_key = bundled.name.casefold()
+        if bundle_key in bundle_destinations:
+            raise RemoteBatchError(f"duplicate bundle artifact destination for {item_id}")
         shutil.copyfile(artifact, bundled)
+        bundle_destinations.add(bundle_key)
         digest = hashlib.sha256(bundled.read_bytes()).hexdigest()
         artifacts[item_id] = bundled
 
         additional_rows = []
+        handoff = report.get("engineHandoff")
+        handoff_roles: dict[Path, str] = {}
+        if (
+            isinstance(handoff, dict)
+            and handoff.get("engine") == "godot4"
+            and handoff.get("type") == "spriteframes"
+            and handoff.get("ready") is True
+        ):
+            for field, role in (
+                ("atlasMetadata", "godot-atlas-metadata"),
+                ("spriteFrames", "godot-spriteframes"),
+            ):
+                value = handoff.get(field)
+                if not isinstance(value, str) or not value.strip():
+                    raise RemoteBatchError(f"missing Godot handoff {field} for {item_id}")
+                handoff_roles[Path(value).resolve()] = role
         raw_additional = report.get("additionalArtifacts")
         if raw_additional is None:
             raw_additional = []
@@ -212,17 +335,33 @@ def run(
                     f"additional artifact missing for {item_id}"
                 )
             extra_name = extra.name
-            if extra_name.startswith(artifact.stem + "."):
+            role = handoff_roles.get(extra)
+            if role == "godot-spriteframes":
+                bundle_name = f"{item_id}.tres"
+            elif role == "godot-atlas-metadata":
+                bundle_name = f"{item_id}.atlas-metadata.json"
+            elif extra_name.startswith(artifact.stem + "."):
                 bundle_name = f"{item_id}{extra_name[len(artifact.stem):]}"
             else:
                 bundle_name = f"{item_id}.extra{extra_index}{extra.suffix.lower()}"
             bundled_extra = bundle_root / bundle_name
+            extra_key = bundled_extra.name.casefold()
+            if extra_key in bundle_destinations:
+                raise RemoteBatchError(
+                    f"duplicate bundle artifact destination for {item_id}"
+                )
             shutil.copyfile(extra, bundled_extra)
+            bundle_destinations.add(extra_key)
             additional_rows.append({
                 "artifact": str(bundled_extra.relative_to(output_root)),
                 "sha256": hashlib.sha256(bundled_extra.read_bytes()).hexdigest(),
                 "source_name": extra_name,
+                **({"role": role} if role else {}),
             })
+        if handoff_roles and {
+            row.get("role") for row in additional_rows
+        }.issuperset(set(handoff_roles.values())) is False:
+            raise RemoteBatchError(f"incomplete Godot handoff bundle for {item_id}")
 
         generation = report.get("generation") if isinstance(report.get("generation"), dict) else {}
         validation = report.get("validation") if isinstance(report.get("validation"), dict) else {}
@@ -330,6 +469,7 @@ def run(
                 "cloudflare_runtime_failures": cloudflare_runtime_failures,
                 "override": auto_backend_override,
                 "open": auto_backend_override is not None,
+                "commercial_exemptions": commercial_override_exemptions,
             },
         },
         "quality_summary": {

@@ -84,14 +84,37 @@ jobs:
       - name: Materialize request
         env:
           REQUEST_JSON: ${{ inputs.request_json }}
+          REQUEST_BACKEND: ${{ inputs.backend }}
+          REQUEST_MODEL: ${{ inputs.model }}
         run: |
           python - <<'PY'
           import json
           import os
+          import re
           from pathlib import Path
 
+          allowed_backends = {
+              "auto", "pollinations", "qwen-colab", "cloudflare",
+              "kaggle-qwen", "vtracer", "kaggle-triposr",
+          }
+          backend = os.environ["REQUEST_BACKEND"] or "auto"
+          model = os.environ["REQUEST_MODEL"]
+          if backend not in allowed_backends:
+              raise SystemExit("invalid Asset Forge backend")
+          if model and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/+@-]{0,191}", model):
+              raise SystemExit("invalid Asset Forge model identifier")
           raw = os.environ["REQUEST_JSON"]
           request = json.loads(raw)
+          if not isinstance(request, dict):
+              raise SystemExit("invalid Asset Forge request payload")
+          delivery = request.get("delivery")
+          if delivery is not None and not isinstance(delivery, dict):
+              raise SystemExit("invalid Asset Forge delivery")
+          # The Actions runner owns the output artifact directory. Never
+          # resolve caller-supplied paths or publish from outside this root.
+          delivery = dict(delivery or {})
+          delivery["outputDir"] = "build/asset-forge/production"
+          request["delivery"] = delivery
           Path("build").mkdir(exist_ok=True)
           Path("build/production-request.json").write_text(
               json.dumps(request, indent=2, sort_keys=True) + "\n",
@@ -104,10 +127,14 @@ jobs:
 
       - name: Fulfill production request
         shell: bash
+        env:
+          REQUEST_BACKEND: ${{ inputs.backend }}
+          REQUEST_MODEL: ${{ inputs.model }}
         run: |
-          args=(asset-forge fulfill build/production-request.json --backend "${{ inputs.backend }}")
-          if [ -n "${{ inputs.model }}" ]; then
-            args+=(--model "${{ inputs.model }}")
+          set -euo pipefail
+          args=(asset-forge fulfill build/production-request.json --backend "${REQUEST_BACKEND:-auto}")
+          if [ -n "$REQUEST_MODEL" ]; then
+            args+=(--model "$REQUEST_MODEL")
           fi
           "${args[@]}"
 
@@ -115,14 +142,15 @@ jobs:
         id: report
         shell: bash
         run: |
-          report="$(find build/asset-forge -name production-report.json -type f -print -quit)"
-          if [ -z "$report" ]; then
-            echo "::error::No production-report.json was produced"
+          set -euo pipefail
+          report="build/asset-forge/production/production-report.json"
+          if [ ! -f "$report" ]; then
+            echo "::error::No production-report.json was produced at the expected runner output path"
             exit 1
           fi
           asset-forge validate-production-report "$report"
           echo "path=$report" >> "$GITHUB_OUTPUT"
-          echo "dir=$(dirname "$report")" >> "$GITHUB_OUTPUT"
+          echo "dir=build/asset-forge/production" >> "$GITHUB_OUTPUT"
 
       - name: Publish job summary
         shell: bash

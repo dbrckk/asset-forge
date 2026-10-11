@@ -50,6 +50,14 @@ VECTOR_GENERATED_TYPES = {"vector", "svg", "icon", "ui-vector", "logo"}
 THREE_D_GENERATED_TYPES = {"mesh", "prop", "environment", "character-3d"}
 SUPPORTED_GENERATED_TYPES = RASTER_GENERATED_TYPES | VECTOR_GENERATED_TYPES | THREE_D_GENERATED_TYPES
 DEFAULT_VECTOR_MODEL = "recraft/recraft-v4.1-vector"
+# SDXL accepts a dedicated negative_prompt; keep excluded visual motifs out
+# of the positive description for a single-subject raster asset.
+SDXL_SINGLE_SPRITE_NEGATIVE_PROMPT = (
+    "sprite sheet, contact sheet, asset pack, texture atlas, icon collection, "
+    "grid, tilemap, rows of objects, repeated objects, duplicates, multiple "
+    "variants, UI dashboard, user interface, buttons, labels, text, watermark, "
+    "background scenery, border, framing, cropped subject"
+)
 DEFAULT_REFERENCE_MODEL = "kontext"
 DEFAULT_3D_MODEL = "microsoft/trellis-2"
 MAX_3D_BYTES = 100 * 1024 * 1024
@@ -99,11 +107,41 @@ def _backend_history_path(*, environ=None) -> Path | None:
     return Path(raw) if raw else None
 
 
-def _select_free_raster_backend(status: dict, *, environ=None) -> str | None:
+def _declares_commercial_generation(job: dict) -> bool:
+    manifest = job.get("manifest")
+    license_data = manifest.get("license") if isinstance(manifest, dict) else None
+    return isinstance(license_data, dict) and license_data.get("commercialUse") is True
+
+
+def _qwen_21_commercial_rights_blocker(job: dict) -> bool:
+    # A caller-supplied model string is not proof of commercial authorization.
+    # The Kaggle/Colab Qwen paths can use the default research-licensed model
+    # even if an alternate model was passed to the outer API. Until actual
+    # model provenance and grant verification exists, fail closed for ALL
+    # commercially declared generation through these Qwen backends.
+    return _declares_commercial_generation(job)
+
+
+def _strict_single_sprite_fidelity(job: dict) -> bool:
+    if job.get("assetType") not in {"sprite", "pixel-art"}:
+        return False
+    manifest = job.get("manifest")
+    constraints = manifest.get("constraints") if isinstance(manifest, dict) else None
+    if not isinstance(constraints, dict):
+        return False
+    frames = constraints.get("expectedFrames")
+    return (
+        constraints.get("semanticArtReviewRequired") is True
+        and type(frames) is int
+        and frames == 1
+    )
+
+
+def _select_free_raster_backend(status: dict, *, environ=None, allow_qwen: bool = True) -> str | None:
     ready = []
     if status.get("cloudflare", {}).get("rasterReady") is True:
         ready.append("cloudflare")
-    if status.get("kaggleQwen", {}).get("rasterReady") is True:
+    if allow_qwen and status.get("kaggleQwen", {}).get("rasterReady") is True:
         ready.append("kaggle-qwen")
     return choose_backend(
         ready,
@@ -405,20 +443,30 @@ def build_generation_prompt(job: dict) -> str:
     fw = constraints.get("frameWidth")
     fh = constraints.get("frameHeight")
     frames = constraints.get("expectedFrames")
+    is_animation = isinstance(frames, int) and not isinstance(frames, bool) and frames > 1
     if isinstance(fw, int) and isinstance(fh, int):
-        details.append(f"Each animation frame must be exactly {fw}x{fh} pixels.")
-    if isinstance(frames, int):
+        if is_animation:
+            details.append(f"Each animation frame must be exactly {fw}x{fh} pixels.")
+        else:
+            details.append(f"Target output image dimensions: {fw}x{fh} pixels.")
+    if is_animation:
         details.append(f"The sprite sheet must contain exactly {frames} frames.")
-    geometry = _sprite_sheet_geometry(job)
-    if geometry is not None:
-        _, _, columns, rows = geometry
+        geometry = _sprite_sheet_geometry(job)
+        if geometry is not None:
+            _, _, columns, rows = geometry
+            details.append(
+                f"Arrange the frames on an exact {columns}-column by {rows}-row regular grid with no gutters."
+            )
+            details.append(
+                "Keep the character or object at a stable scale and anchor point in every frame; "
+                "preserve identity, palette, proportions, lighting direction, and camera angle across "
+                "the full sequence. Every frame must be visually distinct and animation-ready."
+            )
+    elif frames == 1 and asset_type in {"sprite", "pixel-art"}:
         details.append(
-            f"Arrange the frames on an exact {columns}-column by {rows}-row regular grid with no gutters."
-        )
-        details.append(
-            "Keep the character or object at a stable scale and anchor point in every frame; "
-            "preserve identity, palette, proportions, lighting direction, and camera angle across "
-            "the full sequence. Every frame must be visually distinct and animation-ready."
+            "Compose exactly one physically coherent, centered subject on the canvas, "
+            "with one continuous silhouette, generous clear space around every edge, "
+            "and one consistent camera view. Depict a single finished object."
         )
     prompt = " ".join(details)
     if len(prompt) > 16000:
@@ -569,7 +617,28 @@ def select_generation_backend(job: dict, requested: str = "auto") -> str:
     imagen_codex = status.get("imagenCodex", {})
     vtracer = status.get("vtracer", {})
     if asset_type in RASTER_GENERATED_TYPES:
-        selected = _select_free_raster_backend(status)
+        if _strict_single_sprite_fidelity(job):
+            if _qwen_21_commercial_rights_blocker(job):
+                raise GenerationError(
+                    "commercial rights unverified: Qwen-Image-2.1 uses the "
+                    "Qwen Research License, which requires a separate commercial "
+                    "license for commercial model use; automatic Qwen selection "
+                    "is refused for a commercial-use manifest"
+                )
+            # Repeated real SDXL outputs passed technical QA while violating
+            # the required instruction-fidelity gate. Do not keep spending
+            # image-generation calls on this known-inadequate default route.
+            if kaggle.get("rasterReady") is True:
+                return "kaggle-qwen"
+            raise GenerationError(
+                "strict single-sprite semantic fidelity requires an available "
+                "Kaggle Qwen raster backend for automatic routing; "
+                "no qualified strict auto backend is ready"
+            )
+        selected = _select_free_raster_backend(
+            status,
+            allow_qwen=not _qwen_21_commercial_rights_blocker(job),
+        )
         if selected is not None:
             return selected
         raise GenerationError("no authenticated free raster generation backend is ready")
@@ -692,6 +761,14 @@ def execute_generated_asset(
         raise GenerationError("production job does not require a generator")
     requested_backend = backend
     backend = select_generation_backend(job, backend)
+    if (
+        backend in {"kaggle-qwen", "qwen-colab"}
+        and _qwen_21_commercial_rights_blocker(job)
+    ):
+        raise GenerationError(
+            "commercial rights unverified: Qwen-Image-2.1 Research License "
+            "does not authorize commercial model use without separate permission"
+        )
     initial_backend = backend
     fallback_history = []
     asset_type = str(job.get("assetType") or "")
@@ -747,6 +824,11 @@ def execute_generated_asset(
     # Cloudflare SDXL is currently text-to-image only in our production path.
     # Referenced raster jobs would predictably incur a failed Cloudflare call
     # before falling back to Qwen. Route them straight to Kaggle when ready.
+    if backend == "cloudflare" and references and _qwen_21_commercial_rights_blocker(job):
+        raise GenerationError(
+            "commercial rights unverified: Cloudflare reference generation would "
+            "route through the noncommercial Qwen-Image-2.1 backend"
+        )
     if (
         backend == "cloudflare"
         and references
@@ -906,12 +988,20 @@ def execute_generated_asset(
                 cloudflare_ready = (
                     statuses.get("cloudflare", {}).get("rasterReady") is True
                 )
+                commercial_qwen_blocked = _qwen_21_commercial_rights_blocker(job)
                 kaggle_ready = (
                     statuses.get("kaggleQwen", {}).get("rasterReady") is True
+                    and not commercial_qwen_blocked
                 )
                 raster_source = output_dir / "vector-source.png"
                 raster_metadata = None
-                raster_backend = _select_free_raster_backend(statuses)
+                # VTracer first generates a raster. Commercial vector requests
+                # must never silently select or fall back to Qwen-Image-2.1.
+                raster_backend = (
+                    ("cloudflare" if cloudflare_ready else None)
+                    if commercial_qwen_blocked
+                    else _select_free_raster_backend(statuses)
+                )
                 if raster_backend == "cloudflare":
                     try:
                         raster_metadata = cloudflare_generate(
@@ -1059,6 +1149,13 @@ def execute_generated_asset(
                             reference_path=(references[0] if references else None),
                             strength=float(constraint_value.get("referenceStrength") or 0.55),
                             guidance=float(constraint_value.get("guidance") or 7.5),
+                            negative_prompt=(
+                                SDXL_SINGLE_SPRITE_NEGATIVE_PROMPT
+                                if asset_type in {"sprite", "pixel-art"}
+                                and constraints.get("expectedFrames") == 1
+                                and (effective_model or DEFAULT_CLOUDFLARE_MODEL) == DEFAULT_CLOUDFLARE_MODEL
+                                else None
+                            ),
                             model=effective_model or DEFAULT_CLOUDFLARE_MODEL,
                             timeout_seconds=timeout,
                         )
@@ -1074,7 +1171,7 @@ def execute_generated_asset(
                             is True
                         )
                         allow_fallback = requested_backend == "auto" or bool(references)
-                        if kaggle_ready and allow_fallback:
+                        if kaggle_ready and allow_fallback and not _qwen_21_commercial_rights_blocker(job):
                             try:
                                 metadata = kaggle_generate(
                                     prompt,
@@ -1122,7 +1219,11 @@ def execute_generated_asset(
                             .get("rasterReady")
                             is True
                         )
-                        if requested_backend == "auto" and cloudflare_ready:
+                        if (
+                            requested_backend == "auto"
+                            and cloudflare_ready
+                            and not _strict_single_sprite_fidelity(job)
+                        ):
                             try:
                                 metadata = cloudflare_generate(
                                     prompt,
@@ -1133,6 +1234,12 @@ def execute_generated_asset(
                                     steps=int(constraint_value.get("generationSteps") or 20),
                                     reference_path=None,
                                     guidance=float(constraint_value.get("guidance") or 7.5),
+                                    negative_prompt=(
+                                        SDXL_SINGLE_SPRITE_NEGATIVE_PROMPT
+                                        if asset_type in {"sprite", "pixel-art"}
+                                        and constraints.get("expectedFrames") == 1
+                                        else None
+                                    ),
                                     model=DEFAULT_CLOUDFLARE_MODEL,
                                     timeout_seconds=timeout,
                                 )
