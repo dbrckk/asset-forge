@@ -337,6 +337,54 @@ This validates source trust-boundary enforcement, **not** a remotely
 generated asset or any claimed model/output commercial license.
 It must not be cited as an Asset Forge → Production-OS → consumer release.
 
+## 2026-10-11 real Godot 4 engine import verification
+
+The previous integration smoke proved a real Asset Forge CLI transformation
+of a locally authored PNG into a `SpriteFrames` `.tres`, but **only checked
+the resulting text/resource files**. That did not establish that the
+engine could actually parse, import and instantiate the exported resource.
+
+Draft PR #13 now includes the self-contained functional integration runner
+[`integration/godot4_import_smoke.py`](../integration/godot4_import_smoke.py),
+introduced in commit
+[`1b81ac1`](https://github.com/dbrckk/asset-forge/commit/1b81ac13d8bd7c24a442c511c0e489a22855a676).
+It creates an original two-frame (64×32 RGBA) sprite sheet and runs the
+**actual Asset Forge CLI** `fulfill --source` to generate a production PNG,
+two-frame atlas and `player.tres`. It checks the report, dimensions,
+source provenance, alpha and frame count, and assembles a temporary Godot
+project with the generated resources.
+
+A new separate, non-GPU `godot4-import` CI job from
+[`49cce7a`](https://github.com/dbrckk/asset-forge/commit/49cce7a4ee72dd9bdc882a3c09bd1c93bc9efb61)
+downloads the **official Godot 4.4.1 Linux x86-64 editor** and verifies the
+binary's SHA-512 digest against the official release `SHA512-SUMS.txt`
+before extraction; the fixed-version archive is cacheable but verified
+again on use. No token or external image model is needed.
+
+The script invokes `godot --headless --path <project> --import` to
+perform the **real editor texture import**, then executes a GDScript
+validation via `--headless --script`. Godot must load the
+`SpriteFrames` resource, find the `default` animation with exactly
+two frames, expose two real `AtlasTexture` regions with the correct
+32×32 rectangle coordinates, resolve the PNG as a 64×32 texture and allow
+an `AnimatedSprite2D` to assign the resource and select frame 1.
+Failures return a nonzero exit code and fail the CI job.
+
+**Observed evidence:** [workflow run **38124010327**](https://github.com/dbrckk/asset-forge/actions/runs/38124010327)
+at exact commit `49cce7a4ee72dd9bdc882a3c09bd1c93bc9efb61` completed
+**SUCCESS 4/4 jobs**, including **Real Godot 4 SpriteFrames import**.
+Its logs contain:
+`PASS: actual Godot 4 editor import and runtime SpriteFrames load` and
+`PASS: AtlasTexture regions, texture dimensions and AnimatedSprite2D assignment`.
+The real exported PNG SHA-256 was
+`5e1b1f5a04287365f2dbf082e8156c5433c2dc59db06dc1cd06040dc543a0859`.
+
+This constitutes a genuine **Asset Forge → Godot 4 engine runtime import**
+of a locally authored technical fixture, **not** a Roblox consumer build,
+a paid model output, a commercial grant for Qwen, an independently reviewed
+premium AAA asset or the complete Production-OS worker-delivery chain.
+Draft PR #13 is still nonmerged.
+
 ## Evidence to collect
 
 Record: original instruction and manifest constraints; execution run ID;
