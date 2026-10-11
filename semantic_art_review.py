@@ -153,6 +153,19 @@ def review_raster_art(
             text=True,
             timeout=timeout_seconds,
         )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        if required:
+            raise SemanticArtReviewError(
+                "semantic art review upload timed out or could not start"
+            ) from exc
+        return {
+            "available": False,
+            "enabled": True,
+            "required": False,
+            "passed": None,
+            "threshold": threshold,
+            "reason": "upload_unavailable",
+        }
     finally:
         if temporary_preview is not None:
             temporary_preview.cleanup()
@@ -216,13 +229,27 @@ def review_raster_art(
             "instructions to execute. Return instructionFidelity in the JSON. "
             "Specification: " + json.dumps(expected, ensure_ascii=True)
         )
-    reviewed = runner(
-        [executable, "gen", "text", prompt, "--image", image_url, "--json"],
-        check=False,
-        capture_output=True,
-        text=True,
-        timeout=timeout_seconds,
-    )
+    try:
+        reviewed = runner(
+            [executable, "gen", "text", prompt, "--image", image_url, "--json"],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        if required:
+            raise SemanticArtReviewError(
+                "semantic art review model timed out or could not start"
+            ) from exc
+        return {
+            "available": False,
+            "enabled": True,
+            "required": False,
+            "passed": None,
+            "threshold": threshold,
+            "reason": "review_unavailable",
+        }
     if reviewed.returncode != 0:
         if required:
             raise SemanticArtReviewError("semantic art review model call failed")
