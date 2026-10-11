@@ -62,9 +62,10 @@ jobs:
           prefix = "          python - <<'PY'\n"
           code = textwrap.dedent(materialize.split(prefix, 1)[1].rsplit("          PY\n", 1)[0])
           execute = workflow[end:]
-          assert "REQUEST_MODEL: ${{ steps.request.outputs.model }}" in execute
+          expression = "$" + "{{ steps.request.outputs.model }}"
+          assert f"REQUEST_MODEL: {expression}" in execute
           assert 'args+=(--model "$REQUEST_MODEL")' in execute
-          assert '--model "${{ steps.request.outputs.model }}"' not in execute
+          assert f'--model "{expression}"' not in execute
 
           correlation = "pos-" + "a" * 32
           cases = [
