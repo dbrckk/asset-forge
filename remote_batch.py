@@ -152,17 +152,20 @@ def run(
         source_mode = source.get("mode") if isinstance(source, dict) else None
         if source_mode in {"custom", "external"} and not source_path:
             raise RemoteBatchError(f"provided source missing for {item_id}")
-        if source_path and source_root is not None:
+        if source_path:
             candidate = Path(source_path)
             if candidate.is_symlink():
                 raise RemoteBatchError(f"source_path symlink forbidden for {item_id}")
-            try:
-                resolved = candidate.resolve(strict=True)
-            except (OSError, RuntimeError) as exc:
-                raise RemoteBatchError(f"source_path not accessible for {item_id}") from exc
-            if not resolved.is_file() or not resolved.is_relative_to(source_root):
-                raise RemoteBatchError(f"source_path outside trusted workspace for {item_id}")
-            source_path = str(resolved)
+            if not candidate.is_file():
+                raise RemoteBatchError(f"source_path missing or not a file for {item_id}")
+            if source_root is not None:
+                try:
+                    resolved = candidate.resolve(strict=True)
+                except (OSError, RuntimeError) as exc:
+                    raise RemoteBatchError(f"source_path not accessible for {item_id}") from exc
+                if not resolved.is_relative_to(source_root):
+                    raise RemoteBatchError(f"source_path outside trusted workspace for {item_id}")
+                source_path = str(resolved)
         request_ids.add(request_id)
         target_paths.add(target_path)
         item["_request_id"] = request_id
