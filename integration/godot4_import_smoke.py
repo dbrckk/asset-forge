@@ -174,11 +174,13 @@ def main() -> int:
 
         # Exercise the real batch coordinator with another fresh CLI fulfill,
         # not a fake generator or an unexecuted sample. No GPU/network needed.
+        if str(ROOT) not in sys.path:
+            sys.path.insert(0, str(ROOT))
         from remote_batch import run as run_remote_batch
         wrapper = work / "asset-forge-cli"
         wrapper.write_text(
-            "#!/bin/sh\\nexec " + shlex.quote(sys.executable) + " "
-            + shlex.quote(str(ROOT / "asset_forge.py")) + ' "$@"\\n',
+            "#!/bin/sh\nexec " + shlex.quote(sys.executable) + " "
+            + shlex.quote(str(ROOT / "asset_forge.py")) + ' "$@"\n',
             encoding="utf-8",
         )
         wrapper.chmod(0o700)
