@@ -118,13 +118,13 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-10-14T09:02:52Z
+Generated: 2026-10-14T09:33:27Z
 
 ### Git
 - Branch: `main`
-- Head: `8c25497d880a`
-- Commit date: 2026-10-14T11:02:37+02:00
-- Commit: fix(ci): require explicit approval for metered cross-repo E2E (#16)
+- Head: `c6d17cfe9aa5`
+- Commit date: 2026-10-14T11:33:17+02:00
+- Commit: fix(live-e2e): fail closed on unqualified commercial image backend (#17)
 - Tracked files: 325
 
 ### Recently changed files
@@ -138,7 +138,6 @@ Generated: 2026-10-14T09:02:52Z
 - `tests/test_cloudflare_backend.py`
 - `tests/test_generator_backends.py`
 - `docs/production-raster-quality-gate.md`
-- `integration/godot4_import_smoke.py`
 
 ### Project signals
 - `pyproject.toml`

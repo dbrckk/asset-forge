@@ -1511,6 +1511,16 @@ def test_cross_repo_live_e2e_uses_current_collaborators()
 ⋮----
 def test_cross_repo_live_e2e_requires_real_asset_backend()
 ⋮----
+# Commercial target art cannot fall through to research-licensed or
+# commercially unqualified inference providers after credential selection.
+⋮----
+# Execute the exact shell gate offline: only the reviewed Cloudflare
+# route passes. Neither rejected backend can reach install/generation.
+embedded = WORKFLOW.split("- name: Require commercial-safe raster model\n", 1)[1].split(
+script = textwrap.dedent(embedded)
+⋮----
+result = subprocess.run(
+⋮----
 # Live generation can be metered: a change/push must NEVER run it.
 ⋮----
 def test_cross_repo_live_e2e_generates_and_compiles_target()

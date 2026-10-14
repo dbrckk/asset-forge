@@ -604,6 +604,17 @@ jobs:
             exit 2
           fi
 
+      - name: Require commercial-safe raster model
+        shell: bash
+        env:
+          SELECTED_BACKEND: ${{ steps.credential.outputs.backend }}
+        run: |
+          set -euo pipefail
+          if [ "$SELECTED_BACKEND" != "cloudflare" ]; then
+            echo "::error::Commercial Deadline Zero asset requires the reviewed Cloudflare FLUX.2 Klein 4B route; Kaggle Qwen/Pollinations have not been qualified for this commercial pilot."
+            exit 2
+          fi
+
       - name: Install live toolchain
         shell: bash
         run: |
@@ -732,7 +743,7 @@ jobs:
           KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
           POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
         run: |
-          asset-forge fulfill             build/live-e2e/production-request.json             --output-dir build/live-e2e/fulfilled             --backend "$BACKEND"
+          asset-forge fulfill             build/live-e2e/production-request.json             --output-dir build/live-e2e/fulfilled             --backend "$BACKEND"             --model "@cf/black-forest-labs/flux-2-klein-4b"
           asset-forge validate-production-report             build/live-e2e/fulfilled/production-report.json
           test -s build/live-e2e/fulfilled/live-production-pipeline-icon.png
 
@@ -5353,6 +5364,16 @@ WORKFLOW = Path(
 def test_cross_repo_live_e2e_uses_current_collaborators()
 ⋮----
 def test_cross_repo_live_e2e_requires_real_asset_backend()
+⋮----
+# Commercial target art cannot fall through to research-licensed or
+# commercially unqualified inference providers after credential selection.
+⋮----
+# Execute the exact shell gate offline: only the reviewed Cloudflare
+# route passes. Neither rejected backend can reach install/generation.
+embedded = WORKFLOW.split("- name: Require commercial-safe raster model\n", 1)[1].split(
+script = textwrap.dedent(embedded)
+⋮----
+result = subprocess.run(
 ⋮----
 # Live generation can be metered: a change/push must NEVER run it.
 ⋮----
