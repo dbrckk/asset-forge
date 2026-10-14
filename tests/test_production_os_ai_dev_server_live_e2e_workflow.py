@@ -19,6 +19,14 @@ def test_cross_repo_live_e2e_requires_real_asset_backend():
     assert "POLLINATIONS_API_KEY" in WORKFLOW
     assert "No real Asset Forge image-generation backend is configured." in WORKFLOW
     assert "exit 2" in WORKFLOW
+    # Live generation can be metered: a change/push must NEVER run it.
+    assert "  push:\n" not in WORKFLOW
+    assert "  workflow_dispatch:\n" in WORKFLOW
+    assert "approve_provider_usage:" in WORKFLOW
+    assert "default: false" in WORKFLOW
+    assert 'APPROVED: ${{ inputs.approve_provider_usage }}' in WORKFLOW
+    assert "Explicit provider usage approval is required before generation." in WORKFLOW
+    assert WORKFLOW.index("- name: Require explicit live-generation approval") < WORKFLOW.index("- name: Select live generation backend")
 
 
 def test_cross_repo_live_e2e_generates_and_compiles_target():
@@ -33,6 +41,13 @@ def test_cross_repo_live_e2e_persists_evidence():
     assert "assetForgeReportSuccess" in WORKFLOW
     assert "artifactSha256" in WORKFLOW
     assert "production-os-ai-dev-server-asset-forge-live-e2e" in WORKFLOW
+    # Prove the completed boundaries accurately: the studio request is local,
+    # not evidence of a hosted Production-OS execution or target PR delivery.
+    assert '"handoffScope":"local-protocol-adapter-only"' in WORKFLOW
+    assert '"hostedProductionOsJobExecuted":False' in WORKFLOW
+    assert '"targetRepoPRCreated":False' in WORKFLOW
+    assert '"liveGeneration":report.get("success") is True' in WORKFLOW
+    assert "No hosted Production-OS job or target GitHub PR was executed" in WORKFLOW
 
 
 def test_cross_repo_live_e2e_scopes_credentials_and_records_exact_revisions():
