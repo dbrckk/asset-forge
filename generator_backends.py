@@ -17,6 +17,7 @@ from visual_similarity import compare_against_references
 from cloudflare_backend import (
     CloudflareGenerationError,
     DEFAULT_MODEL as DEFAULT_CLOUDFLARE_MODEL,
+    FLUX_KLEIN_MODEL,
     generate as cloudflare_generate,
     status as cloudflare_status,
 )
@@ -821,17 +822,24 @@ def execute_generated_asset(
         if not reference.is_file() or reference.stat().st_size <= 0:
             raise GenerationError(f"visual reference file missing or empty: {reference}")
 
-    # Cloudflare SDXL is currently text-to-image only in our production path.
-    # Referenced raster jobs would predictably incur a failed Cloudflare call
-    # before falling back to Qwen. Route them straight to Kaggle when ready.
-    if backend == "cloudflare" and references and _qwen_21_commercial_rights_blocker(job):
+    # FLUX.2 Klein 4B is the explicit commercial-safe Workers AI
+    # multi-reference model (Apache-2.0). Never let an arbitrary custom model
+    # name stand in for checked commercial rights. Noncommercial SDXL reference
+    # jobs retain the historical Kaggle Qwen routing behavior.
+    commercial_references = bool(references) and _declares_commercial_generation(job)
+    cloudflare_flux_references = (
+        backend == "cloudflare"
+        and bool(references)
+        and (commercial_references or model == FLUX_KLEIN_MODEL)
+    )
+    if commercial_references and backend == "cloudflare" and model not in {None, FLUX_KLEIN_MODEL}:
         raise GenerationError(
-            "commercial rights unverified: Cloudflare reference generation would "
-            "route through the noncommercial Qwen-Image-2.1 backend"
+            "commercial Cloudflare references require the Apache-2.0 FLUX.2 Klein 4B model"
         )
     if (
         backend == "cloudflare"
         and references
+        and not cloudflare_flux_references
         and generator_backend_status().get("kaggleQwen", {}).get("rasterReady") is True
     ):
         fallback_history.append({
@@ -843,6 +851,7 @@ def execute_generated_asset(
         backend = "kaggle-qwen"
 
     effective_model = model or (
+        FLUX_KLEIN_MODEL if cloudflare_flux_references else
         "visioncortex/vtracer" if backend == "vtracer" else
         DEFAULT_VECTOR_MODEL if backend == "pollinations" and vector else
         DEFAULT_REFERENCE_MODEL if backend == "pollinations" and references else
@@ -1147,6 +1156,7 @@ def execute_generated_asset(
                             seed=int(constraint_value.get("seed") or 0),
                             steps=int(constraint_value.get("generationSteps") or 20),
                             reference_path=(references[0] if references else None),
+                            reference_paths=(references if cloudflare_flux_references else None),
                             strength=float(constraint_value.get("referenceStrength") or 0.55),
                             guidance=float(constraint_value.get("guidance") or 7.5),
                             negative_prompt=(
