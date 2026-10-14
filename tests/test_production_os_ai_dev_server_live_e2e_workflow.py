@@ -19,6 +19,12 @@ def test_cross_repo_live_e2e_requires_real_asset_backend():
     assert "POLLINATIONS_API_KEY" in WORKFLOW
     assert "No real Asset Forge image-generation backend is configured." in WORKFLOW
     assert "exit 2" in WORKFLOW
+    # Commercial target art cannot fall through to research-licensed or
+    # commercially unqualified inference providers after credential selection.
+    assert "- name: Require commercial-safe raster model" in WORKFLOW
+    assert 'if [ "$SELECTED_BACKEND" != "cloudflare" ]; then' in WORKFLOW
+    assert "Cloudflare FLUX.2 Klein 4B route" in WORKFLOW
+    assert WORKFLOW.index("- name: Require commercial-safe raster model") < WORKFLOW.index("- name: Install live toolchain")
     # Live generation can be metered: a change/push must NEVER run it.
     assert "  push:\n" not in WORKFLOW
     assert "  workflow_dispatch:\n" in WORKFLOW
@@ -31,6 +37,7 @@ def test_cross_repo_live_e2e_requires_real_asset_backend():
 
 def test_cross_repo_live_e2e_generates_and_compiles_target():
     assert "asset-forge fulfill" in WORKFLOW
+    assert '--model "@cf/black-forest-labs/flux-2-klein-4b"' in WORKFLOW
     assert "asset-forge validate-production-report" in WORKFLOW
     assert "live-production-pipeline-icon.png" in WORKFLOW
     assert "gradle :core:compileJava :core:test :desktop:compileJava" in WORKFLOW
