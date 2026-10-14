@@ -1,3 +1,6 @@
+import os
+import subprocess
+import textwrap
 from pathlib import Path
 
 
@@ -19,6 +22,28 @@ def test_cross_repo_live_e2e_requires_real_asset_backend():
     assert "POLLINATIONS_API_KEY" in WORKFLOW
     assert "No real Asset Forge image-generation backend is configured." in WORKFLOW
     assert "exit 2" in WORKFLOW
+    # Commercial target art cannot fall through to research-licensed or
+    # commercially unqualified inference providers after credential selection.
+    assert "- name: Require commercial-safe raster model" in WORKFLOW
+    assert 'if [ "$SELECTED_BACKEND" != "cloudflare" ]; then' in WORKFLOW
+    assert "Cloudflare FLUX.2 Klein 4B route" in WORKFLOW
+    assert WORKFLOW.index("- name: Require commercial-safe raster model") < WORKFLOW.index("- name: Install live toolchain")
+    # Execute the exact shell gate offline: only the reviewed Cloudflare
+    # route passes. Neither rejected backend can reach install/generation.
+    embedded = WORKFLOW.split("- name: Require commercial-safe raster model\n", 1)[1].split(
+        "\n      - name: Install live toolchain", 1
+    )[0].split("        run: |\n", 1)[1]
+    script = textwrap.dedent(embedded)
+    for selected, exit_code in (("cloudflare", 0), ("kaggle-qwen", 2), ("pollinations", 2)):
+        result = subprocess.run(
+            ["bash", "-c", script],
+            env={**os.environ, "SELECTED_BACKEND": selected},
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+        assert result.returncode == exit_code, (selected, result.stderr)
     # Live generation can be metered: a change/push must NEVER run it.
     assert "  push:\n" not in WORKFLOW
     assert "  workflow_dispatch:\n" in WORKFLOW
@@ -31,6 +56,7 @@ def test_cross_repo_live_e2e_requires_real_asset_backend():
 
 def test_cross_repo_live_e2e_generates_and_compiles_target():
     assert "asset-forge fulfill" in WORKFLOW
+    assert '--model "@cf/black-forest-labs/flux-2-klein-4b"' in WORKFLOW
     assert "asset-forge validate-production-report" in WORKFLOW
     assert "live-production-pipeline-icon.png" in WORKFLOW
     assert "gradle :core:compileJava :core:test :desktop:compileJava" in WORKFLOW

@@ -95,6 +95,17 @@ jobs:
             exit 2
           fi
 
+      - name: Require commercial-safe raster model
+        shell: bash
+        env:
+          SELECTED_BACKEND: ${{ steps.credential.outputs.backend }}
+        run: |
+          set -euo pipefail
+          if [ "$SELECTED_BACKEND" != "cloudflare" ]; then
+            echo "::error::Commercial Deadline Zero asset requires the reviewed Cloudflare FLUX.2 Klein 4B route; Kaggle Qwen/Pollinations have not been qualified for this commercial pilot."
+            exit 2
+          fi
+
       - name: Install live toolchain
         shell: bash
         run: |
@@ -223,7 +234,7 @@ jobs:
           KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
           POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
         run: |
-          asset-forge fulfill             build/live-e2e/production-request.json             --output-dir build/live-e2e/fulfilled             --backend "$BACKEND"
+          asset-forge fulfill             build/live-e2e/production-request.json             --output-dir build/live-e2e/fulfilled             --backend "$BACKEND"             --model "@cf/black-forest-labs/flux-2-klein-4b"
           asset-forge validate-production-report             build/live-e2e/fulfilled/production-report.json
           test -s build/live-e2e/fulfilled/live-production-pipeline-icon.png
 
