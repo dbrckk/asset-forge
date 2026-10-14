@@ -1,17 +1,14 @@
 name: Deadline Zero live visual pilot
 
+# This can call a metered provider. Never auto-run on push or merge.
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/deadline-zero-live-pilot.yml"
-      - "examples/deadline-zero-live-pilot-batch.json"
-      - "remote_batch.py"
-      - "generator_backends.py"
-      - "cloudflare_backend.py"
-      - "kaggle_backend.py"
   workflow_dispatch:
+    inputs:
+      approve_provider_usage:
+        description: "I explicitly approve live image-generation quota/charges"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -30,6 +27,15 @@ jobs:
       KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
       KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
     steps:
+      - name: Require explicit live-generation approval
+        shell: bash
+        env:
+          APPROVED: ${{ inputs.approve_provider_usage }}
+        run: |
+          if [ "$APPROVED" != "true" ]; then
+            echo "::error::Live image generation requires explicit manual approval."
+            exit 2
+          fi
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
@@ -83,10 +89,9 @@ jobs:
           echo "::error::Manual live visual pilot requires Cloudflare or Kaggle credentials."
           exit 2
 
-      # The commercial brief has two reference-dependent follow-up assets.
-      # Cloudflare references route through Qwen-Image-2.1 and Kaggle Qwen
-      # also lacks verified commercial rights. Refuse BEFORE generating the
-      # standalone anchor to avoid wasted API/GPU usage and partial claims.
+      # Commercial references use licensed FLUX.2 Klein 4B on Cloudflare;
+      # research-licensed Kaggle Qwen remains blocked before any image call.
+      # This pilot is manual-only and requires explicit provider cost consent.
       - name: Preflight commercial model rights before generating assets
         if: steps.credential.outputs.ready == 'true'
         env:
@@ -113,10 +118,7 @@ jobs:
               and item["request"]["manifest"].get("license", {}).get("commercialUse") is True
           ]
           has_references = any(item.get("depends_on") for item in commercial)
-          blocked = bool(commercial) and (
-              backend == "kaggle-qwen"
-              or (backend == "cloudflare" and has_references)
-          )
+          blocked = bool(commercial) and backend != "cloudflare"
           if blocked:
               folder = Path("build/deadline-zero-live-pilot")
               folder.mkdir(parents=True, exist_ok=True)
@@ -132,7 +134,7 @@ jobs:
                   json.dumps(status, sort_keys=True, indent=2) + "\n",
                   encoding="utf-8",
               )
-              print("::error::Commercial model rights are not verified for reference-dependent Qwen generation; pilot aborted before asset production.")
+              print("::error::Commercial reference pilot requires Cloudflare FLUX.2 Klein 4B, not unlicensed Qwen generation.")
               raise SystemExit(2)
           print("PASS: model-rights preflight allows selected pilot backend")
           PY
@@ -140,10 +142,14 @@ jobs:
       - name: Produce Rex visual pilot
         if: steps.credential.outputs.ready == 'true'
         run: |
-          python remote_batch.py \
-            --spec examples/deadline-zero-live-pilot-batch.json \
-            --output-root build/deadline-zero-live-pilot \
-            --backend "${{ steps.credential.outputs.backend }}"
+          backend="${{ steps.credential.outputs.backend }}"
+          args=(--spec examples/deadline-zero-live-pilot-batch.json
+                --output-root build/deadline-zero-live-pilot
+                --backend "$backend")
+          if [ "$backend" = "cloudflare" ]; then
+            args+=(--model "@cf/black-forest-labs/flux-2-klein-4b")
+          fi
+          python remote_batch.py "${args[@]}"
 
       - name: Persist blocked pilot status
         if: steps.credential.outputs.ready != 'true'
