@@ -30,9 +30,9 @@ def test_cross_repo_live_e2e_requires_real_asset_backend():
     assert WORKFLOW.index("- name: Require commercial-safe raster model") < WORKFLOW.index("- name: Install live toolchain")
     # Execute the exact shell gate offline: only the reviewed Cloudflare
     # route passes. Neither rejected backend can reach install/generation.
-    embedded = WORKFLOW.split("- name: Require commercial-safe raster model\\n", 1)[1].split(
-        "\\n      - name: Install live toolchain", 1
-    )[0].split("        run: |\\n", 1)[1]
+    embedded = WORKFLOW.split("- name: Require commercial-safe raster model\n", 1)[1].split(
+        "\n      - name: Install live toolchain", 1
+    )[0].split("        run: |\n", 1)[1]
     script = textwrap.dedent(embedded)
     for selected, exit_code in (("cloudflare", 0), ("kaggle-qwen", 2), ("pollinations", 2)):
         result = subprocess.run(
