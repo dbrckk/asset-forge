@@ -1,13 +1,8 @@
 name: Live generation smoke
 
+# Real provider calls are never an incidental side effect of merging code.
+# The operator must explicitly dispatch this workflow and accept its usage.
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/live-generation.yml'
-      - 'generator_backends.py'
-      - 'production_executor.py'
-      - 'examples/production-request-live-raster.json'
   workflow_dispatch:
 
 permissions:

@@ -7,6 +7,7 @@ from pathlib import Path
 
 from cloudflare_backend import (
     CloudflareGenerationError,
+    FLUX_KLEIN_MODEL,
     _extract_image_bytes,
     generate,
     status,
@@ -78,6 +79,75 @@ class CloudflareBackendTests(unittest.TestCase):
             self.assertIn("image_b64", seen["payload"])
             self.assertEqual(seen["payload"]["width"], 512)
             self.assertTrue(result["reference"])
+
+            # Official FLUX.2 Klein Workers AI protocol uses multipart binary
+            # input_image_0..3, not SDXL JSON image_b64. Verify two references
+            # and the Apache-2.0 4B endpoint without any network call.
+            try:
+                from PIL import Image
+            except ImportError:
+                # The base no-deps suite retains its historical dependencies.
+                # CI separately reruns this test after installing Pillow.
+                return
+            ref2 = root / "ref2.png"
+            Image.new("RGB", (64, 80)).save(ref)
+            Image.new("RGB", (96, 96)).save(ref2)
+            seen_flux = {}
+
+            def flux_opener(request, timeout):
+                seen_flux["url"] = request.full_url
+                seen_flux["headers"] = {
+                    key.lower(): value for key, value in request.header_items()
+                }
+                seen_flux["body"] = request.data
+                return Response(
+                    json.dumps({"result": {"image": base64.b64encode(b"PNG").decode()}}).encode(),
+                    "application/json",
+                )
+
+            result = generate(
+                "keep character identity",
+                out,
+                width=512,
+                height=768,
+                reference_path=ref,
+                reference_paths=[ref, ref2],
+                model=FLUX_KLEIN_MODEL,
+                environ={
+                    "CLOUDFLARE_API_TOKEN": "secret",
+                    "CLOUDFLARE_ACCOUNT_ID": "account",
+                },
+                opener=flux_opener,
+            )
+            self.assertEqual(out.read_bytes(), b"PNG")
+            self.assertIn(FLUX_KLEIN_MODEL, seen_flux["url"])
+            self.assertTrue(
+                seen_flux["headers"]["content-type"].startswith(
+                    "multipart/form-data; boundary="
+                )
+            )
+            self.assertIn(b'name="input_image_0"', seen_flux["body"])
+            self.assertIn(b'name="input_image_1"', seen_flux["body"])
+            self.assertIn(b'name="prompt"', seen_flux["body"])
+            self.assertNotIn(b"image_b64", seen_flux["body"])
+            self.assertNotIn(b"num_steps", seen_flux["body"])
+            self.assertEqual(result["reference_count"], 2)
+            self.assertEqual(result["steps"], 4)
+
+            # Reject disallowed reference geometry before any chargeable call.
+            Image.new("RGB", (512, 80)).save(ref2)
+            with self.assertRaisesRegex(CloudflareGenerationError, "smaller than 512"):
+                generate(
+                    "keep character identity",
+                    out,
+                    reference_paths=[ref, ref2],
+                    model=FLUX_KLEIN_MODEL,
+                    environ={
+                        "CLOUDFLARE_API_TOKEN": "secret",
+                        "CLOUDFLARE_ACCOUNT_ID": "account",
+                    },
+                    opener=lambda *args, **kwargs: self.fail("unexpected paid request"),
+                )
 
     def test_generate_rejects_missing_credentials(self):
         with self.assertRaisesRegex(CloudflareGenerationError, "required"):

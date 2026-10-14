@@ -391,6 +391,59 @@ class GeneratorBackendsTests(unittest.TestCase):
             self.assertEqual(result["backend"], "kaggle-qwen")
             self.assertEqual(seen["reference_path"], reference)
 
+            # Commercial references cannot be sent to research-licensed
+            # Qwen; Cloudflare must use FLUX.2 Klein 4B Apache-2.0 and
+            # preserve ALL refs. This offline stub creates no provider usage.
+            from cloudflare_backend import FLUX_KLEIN_MODEL
+            second = out / "style.png"
+            second.write_bytes(b"PNG")
+            commercial = job()
+            commercial["manifest"]["license"] = {"commercialUse": True}
+            flux_seen = {}
+
+            def fake_flux(prompt, output, **kwargs):
+                flux_seen.update(kwargs)
+                output.write_bytes(b"PNG")
+                return {"model": kwargs["model"], "provider": "cloudflare"}
+
+            with patch(
+                "generator_backends.generator_backend_status",
+                return_value={
+                    "cloudflare": {"rasterReady": True},
+                    "kaggleQwen": {"rasterReady": True},
+                },
+            ), patch(
+                "generator_backends.cloudflare_generate", side_effect=fake_flux
+            ), patch(
+                "generator_backends.kaggle_generate",
+                side_effect=AssertionError("commercial request must never reach Qwen"),
+            ):
+                generated = execute_generated_asset(
+                    commercial, out / "commercial",
+                    backend="cloudflare",
+                    reference_paths=[reference, second],
+                    raster_normalizer=lambda raw, target, _: (
+                        target.write_bytes(raw.read_bytes()) and {"rows": 2, "columns": 2}
+                    ),
+                    similarity_evaluator=lambda child, refs: {
+                        "score": 0.95,
+                        "bestReference": str(refs[0]),
+                        "comparisons": [],
+                    },
+                )
+            self.assertEqual(generated["backend"], "cloudflare")
+            self.assertEqual(flux_seen["model"], FLUX_KLEIN_MODEL)
+            self.assertEqual(flux_seen["reference_paths"], [reference, second])
+
+            # Merely claiming a custom model name cannot bypass licensing.
+            with self.assertRaisesRegex(GenerationError, "Apache-2.0 FLUX"):
+                execute_generated_asset(
+                    commercial, out / "rejected",
+                    backend="cloudflare",
+                    model="@cf/unverified/research-only",
+                    reference_paths=[reference],
+                )
+
     def test_auto_cloudflare_failure_falls_back_to_kaggle_qwen(self):
         with tempfile.TemporaryDirectory() as td:
             out = Path(td)

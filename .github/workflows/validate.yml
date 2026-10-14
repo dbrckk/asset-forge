@@ -36,6 +36,10 @@ jobs:
         run: python -m compileall -q backend_history.py asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py vector_backend.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py kaggle_3d_backend.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
+      - name: Install raster image inspector for offline FLUX contract tests
+        run: python -m pip install "Pillow>=12.2,<13"
+      - name: Verify FLUX multipart references with real PNG fixtures
+        run: python -m unittest discover -s tests -p "test_cloudflare_backend.py" -v
       - name: Validate example manifest
         run: python asset_forge.py validate examples/asset-manifest.json
       - name: Build example plan
@@ -62,6 +66,12 @@ jobs:
           )[0]
           code = textwrap.dedent(embedded)
           original = Path("examples/deadline-zero-live-pilot-batch.json")
+          # Charged image generation is never triggered by a push/merge.
+          assert "  push:" not in workflow.split("permissions:", 1)[0]
+          assert "approve_provider_usage:" in workflow
+          assert '--model "@cf/black-forest-labs/flux-2-klein-4b"' in workflow
+          smoke = Path(".github/workflows/live-generation.yml").read_text()
+          assert "  push:" not in smoke.split("permissions:", 1)[0]
           for backend in ("cloudflare", "kaggle-qwen"):
               with TemporaryDirectory() as temporary:
                   root = Path(temporary)
@@ -73,17 +83,21 @@ jobs:
                       [sys.executable, "-c", code], cwd=root, env=env,
                       capture_output=True, text=True, timeout=8,
                   )
-                  assert result.returncode == 2, (backend, result.stderr)
-                  report = json.loads(
-                      (root / "build/deadline-zero-live-pilot/pilot-status.json").read_text()
-                  )
-                  assert report["status"] == "commercial_model_license_unverified"
-                  assert report["success"] is False
-                  assert report["generation_attempted"] is False
-                  assert report["backend"] == backend
-                  assert len(report["affected_items"]) == 3
+                  if backend == "cloudflare":
+                      assert result.returncode == 0, result.stderr
+                      assert not (root / "build/deadline-zero-live-pilot/pilot-status.json").exists()
+                  else:
+                      assert result.returncode == 2, (backend, result.stderr)
+                      report = json.loads(
+                          (root / "build/deadline-zero-live-pilot/pilot-status.json").read_text()
+                      )
+                      assert report["status"] == "commercial_model_license_unverified"
+                      assert report["success"] is False
+                      assert report["generation_attempted"] is False
+                      assert report["backend"] == backend
+                      assert len(report["affected_items"]) == 3
                   assert not (root / "build/deadline-zero-live-pilot/batch-result.json").exists()
-          print("Commercial pilot preflight rejected unsafe generation without inference")
+          print("Offline: licensed Cloudflare allowed, Qwen blocked, no auto generation")
           PY
       - name: Smoke-check batch model request injection offline
         run: |
