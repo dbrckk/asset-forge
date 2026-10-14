@@ -603,6 +603,21 @@ def opener(request, timeout)
 ⋮----
 result = generate(
 ⋮----
+# Official FLUX.2 Klein Workers AI protocol uses multipart binary
+# input_image_0..3, not SDXL JSON image_b64. Verify two references
+# and the Apache-2.0 4B endpoint without any network call.
+⋮----
+# The base no-deps suite retains its historical dependencies.
+# CI separately reruns this test after installing Pillow.
+⋮----
+ref2 = root / "ref2.png"
+⋮----
+seen_flux = {}
+⋮----
+def flux_opener(request, timeout)
+⋮----
+# Reject disallowed reference geometry before any chargeable call.
+⋮----
 def test_generate_rejects_missing_credentials(self)
 ```
 
@@ -809,6 +824,22 @@ def test_cloudflare_reference_routes_directly_to_kaggle_qwen(self)
 seen = {}
 ⋮----
 def fake_kaggle(prompt, output, **kwargs)
+⋮----
+# Commercial references cannot be sent to research-licensed
+# Qwen; Cloudflare must use FLUX.2 Klein 4B Apache-2.0 and
+# preserve ALL refs. This offline stub creates no provider usage.
+⋮----
+second = out / "style.png"
+⋮----
+commercial = job()
+⋮----
+flux_seen = {}
+⋮----
+def fake_flux(prompt, output, **kwargs)
+⋮----
+generated = execute_generated_asset(
+⋮----
+# Merely claiming a custom model name cannot bypass licensing.
 ⋮----
 def test_auto_cloudflare_failure_falls_back_to_kaggle_qwen(self)
 ⋮----

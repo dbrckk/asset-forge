@@ -118,18 +118,23 @@ Status: active
 <!-- AUTO:START -->
 ## Automatic repository state
 
-Generated: 2026-10-11T17:39:31Z
+Generated: 2026-10-14T08:11:07Z
 
 ### Git
 - Branch: `main`
-- Head: `be6c1cb3ac63`
-- Commit date: 2026-10-11T19:38:22+02:00
-- Commit: fix(pilot): stop noncommercial generation before billed reference work
+- Head: `dc5f5966195b`
+- Commit date: 2026-10-14T10:10:56+02:00
+- Commit: feat(visuals): licensed FLUX.2 Klein 4B commercial reference pipeline (#15)
 - Tracked files: 325
 
 ### Recently changed files
 - `.github/workflows/deadline-zero-live-pilot.yml`
+- `.github/workflows/live-generation.yml`
 - `.github/workflows/validate.yml`
+- `cloudflare_backend.py`
+- `generator_backends.py`
+- `tests/test_cloudflare_backend.py`
+- `tests/test_generator_backends.py`
 - `docs/production-raster-quality-gate.md`
 - `integration/godot4_import_smoke.py`
 - `asset_forge.py`

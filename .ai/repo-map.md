@@ -213,18 +213,15 @@ jobs:
 ````yaml
 name: Deadline Zero live visual pilot
 
+# This can call a metered provider. Never auto-run on push or merge.
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/deadline-zero-live-pilot.yml"
-      - "examples/deadline-zero-live-pilot-batch.json"
-      - "remote_batch.py"
-      - "generator_backends.py"
-      - "cloudflare_backend.py"
-      - "kaggle_backend.py"
   workflow_dispatch:
+    inputs:
+      approve_provider_usage:
+        description: "I explicitly approve live image-generation quota/charges"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -243,6 +240,15 @@ jobs:
       KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
       KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
     steps:
+      - name: Require explicit live-generation approval
+        shell: bash
+        env:
+          APPROVED: ${{ inputs.approve_provider_usage }}
+        run: |
+          if [ "$APPROVED" != "true" ]; then
+            echo "::error::Live image generation requires explicit manual approval."
+            exit 2
+          fi
       - name: Checkout asset-forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
@@ -296,10 +302,9 @@ jobs:
           echo "::error::Manual live visual pilot requires Cloudflare or Kaggle credentials."
           exit 2
 
-      # The commercial brief has two reference-dependent follow-up assets.
-      # Cloudflare references route through Qwen-Image-2.1 and Kaggle Qwen
-      # also lacks verified commercial rights. Refuse BEFORE generating the
-      # standalone anchor to avoid wasted API/GPU usage and partial claims.
+      # Commercial references use licensed FLUX.2 Klein 4B on Cloudflare;
+      # research-licensed Kaggle Qwen remains blocked before any image call.
+      # This pilot is manual-only and requires explicit provider cost consent.
       - name: Preflight commercial model rights before generating assets
         if: steps.credential.outputs.ready == 'true'
         env:
@@ -326,10 +331,7 @@ jobs:
               and item["request"]["manifest"].get("license", {}).get("commercialUse") is True
           ]
           has_references = any(item.get("depends_on") for item in commercial)
-          blocked = bool(commercial) and (
-              backend == "kaggle-qwen"
-              or (backend == "cloudflare" and has_references)
-          )
+          blocked = bool(commercial) and backend != "cloudflare"
           if blocked:
               folder = Path("build/deadline-zero-live-pilot")
               folder.mkdir(parents=True, exist_ok=True)
@@ -345,7 +347,7 @@ jobs:
                   json.dumps(status, sort_keys=True, indent=2) + "\n",
                   encoding="utf-8",
               )
-              print("::error::Commercial model rights are not verified for reference-dependent Qwen generation; pilot aborted before asset production.")
+              print("::error::Commercial reference pilot requires Cloudflare FLUX.2 Klein 4B, not unlicensed Qwen generation.")
               raise SystemExit(2)
           print("PASS: model-rights preflight allows selected pilot backend")
           PY
@@ -353,10 +355,14 @@ jobs:
       - name: Produce Rex visual pilot
         if: steps.credential.outputs.ready == 'true'
         run: |
-          python remote_batch.py \
-            --spec examples/deadline-zero-live-pilot-batch.json \
-            --output-root build/deadline-zero-live-pilot \
-            --backend "${{ steps.credential.outputs.backend }}"
+          backend="${{ steps.credential.outputs.backend }}"
+          args=(--spec examples/deadline-zero-live-pilot-batch.json
+                --output-root build/deadline-zero-live-pilot
+                --backend "$backend")
+          if [ "$backend" = "cloudflare" ]; then
+            args+=(--model "@cf/black-forest-labs/flux-2-klein-4b")
+          fi
+          python remote_batch.py "${args[@]}"
 
       - name: Persist blocked pilot status
         if: steps.credential.outputs.ready != 'true'
@@ -421,14 +427,9 @@ jobs:
 ````yaml
 name: Live generation smoke
 
+# Real provider calls are never an incidental side effect of merging code.
+# The operator must explicitly dispatch this workflow and accept its usage.
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/live-generation.yml'
-      - 'generator_backends.py'
-      - 'production_executor.py'
-      - 'examples/production-request-live-raster.json'
   workflow_dispatch:
 
 permissions:
@@ -1335,6 +1336,10 @@ jobs:
         run: python -m compileall -q backend_history.py asset_forge.py raster_pack.py raster_backend.py runtime_atlas.py godot_export.py godot_3d_delivery.py godot_handoff.py engine_profile_validation.py asset_profile_validation.py starlist_bridge.py animation_infer.py svg_tools.py vector_backend.py gltf_tools.py gltf_quality.py gltf_binary_metrics.py gltf_diagnostics.py kaggle_3d_backend.py blender_adapter.py toolchain_3d.py tests
       - name: Unit tests
         run: python -m unittest discover -s tests -v
+      - name: Install raster image inspector for offline FLUX contract tests
+        run: python -m pip install "Pillow>=12.2,<13"
+      - name: Verify FLUX multipart references with real PNG fixtures
+        run: python -m unittest discover -s tests -p "test_cloudflare_backend.py" -v
       - name: Validate example manifest
         run: python asset_forge.py validate examples/asset-manifest.json
       - name: Build example plan
@@ -1361,6 +1366,12 @@ jobs:
           )[0]
           code = textwrap.dedent(embedded)
           original = Path("examples/deadline-zero-live-pilot-batch.json")
+          # Charged image generation is never triggered by a push/merge.
+          assert "  push:" not in workflow.split("permissions:", 1)[0]
+          assert "approve_provider_usage:" in workflow
+          assert '--model "@cf/black-forest-labs/flux-2-klein-4b"' in workflow
+          smoke = Path(".github/workflows/live-generation.yml").read_text()
+          assert "  push:" not in smoke.split("permissions:", 1)[0]
           for backend in ("cloudflare", "kaggle-qwen"):
               with TemporaryDirectory() as temporary:
                   root = Path(temporary)
@@ -1372,17 +1383,21 @@ jobs:
                       [sys.executable, "-c", code], cwd=root, env=env,
                       capture_output=True, text=True, timeout=8,
                   )
-                  assert result.returncode == 2, (backend, result.stderr)
-                  report = json.loads(
-                      (root / "build/deadline-zero-live-pilot/pilot-status.json").read_text()
-                  )
-                  assert report["status"] == "commercial_model_license_unverified"
-                  assert report["success"] is False
-                  assert report["generation_attempted"] is False
-                  assert report["backend"] == backend
-                  assert len(report["affected_items"]) == 3
+                  if backend == "cloudflare":
+                      assert result.returncode == 0, result.stderr
+                      assert not (root / "build/deadline-zero-live-pilot/pilot-status.json").exists()
+                  else:
+                      assert result.returncode == 2, (backend, result.stderr)
+                      report = json.loads(
+                          (root / "build/deadline-zero-live-pilot/pilot-status.json").read_text()
+                      )
+                      assert report["status"] == "commercial_model_license_unverified"
+                      assert report["success"] is False
+                      assert report["generation_attempted"] is False
+                      assert report["backend"] == backend
+                      assert len(report["affected_items"]) == 3
                   assert not (root / "build/deadline-zero-live-pilot/batch-result.json").exists()
-          print("Commercial pilot preflight rejected unsafe generation without inference")
+          print("Offline: licensed Cloudflare allowed, Qwen blocked, no auto generation")
           PY
       - name: Smoke-check batch model request injection offline
         run: |
@@ -4412,6 +4427,21 @@ def opener(request, timeout)
 ⋮----
 result = generate(
 ⋮----
+# Official FLUX.2 Klein Workers AI protocol uses multipart binary
+# input_image_0..3, not SDXL JSON image_b64. Verify two references
+# and the Apache-2.0 4B endpoint without any network call.
+⋮----
+# The base no-deps suite retains its historical dependencies.
+# CI separately reruns this test after installing Pillow.
+⋮----
+ref2 = root / "ref2.png"
+⋮----
+seen_flux = {}
+⋮----
+def flux_opener(request, timeout)
+⋮----
+# Reject disallowed reference geometry before any chargeable call.
+⋮----
 def test_generate_rejects_missing_credentials(self)
 ````
 
@@ -4618,6 +4648,22 @@ def test_cloudflare_reference_routes_directly_to_kaggle_qwen(self)
 seen = {}
 ⋮----
 def fake_kaggle(prompt, output, **kwargs)
+⋮----
+# Commercial references cannot be sent to research-licensed
+# Qwen; Cloudflare must use FLUX.2 Klein 4B Apache-2.0 and
+# preserve ALL refs. This offline stub creates no provider usage.
+⋮----
+second = out / "style.png"
+⋮----
+commercial = job()
+⋮----
+flux_seen = {}
+⋮----
+def fake_flux(prompt, output, **kwargs)
+⋮----
+generated = execute_generated_asset(
+⋮----
+# Merely claiming a custom model name cannot bypass licensing.
 ⋮----
 def test_auto_cloudflare_failure_falls_back_to_kaggle_qwen(self)
 ⋮----
@@ -7752,6 +7798,7 @@ def write_job_manifest(job: dict, path: Path) -> None
 ## File: cloudflare_backend.py
 ````python
 DEFAULT_MODEL = "@cf/stabilityai/stable-diffusion-xl-base-1.0"
+FLUX_KLEIN_MODEL = "@cf/black-forest-labs/flux-2-klein-4b"
 ⋮----
 class CloudflareGenerationError(RuntimeError)
 ⋮----
@@ -7782,12 +7829,38 @@ value = value.split(",", 1)[1]
 ⋮----
 decoded = base64.b64decode(value, validate=True)
 ⋮----
-width = max(256, min(2048, int(width)))
-height = max(256, min(2048, int(height)))
-steps = max(1, min(20, int(steps)))
+"""Workers AI FLUX.2 Klein 4B requires multipart, including prompt-only.
+
+    Verify all references and limits locally, before contacting the provider.
+    The hosted model accepts at most four PNG/JPEG images strictly below
+    512 x 512. Do not silently shrink or modify user-provided reference art.
+    """
+⋮----
+image_parts: list[tuple[str, str, bytes]] = []
+⋮----
+reference = Path(source)
+⋮----
+image_format = img.format
+⋮----
+mime = "image/png" if image_format == "PNG" else "image/jpeg"
+⋮----
+boundary = "asset-forge-" + uuid.uuid4().hex
+parts: list[bytes] = []
+⋮----
+def field(name: str, value: str) -> None
+⋮----
+flux = model == FLUX_KLEIN_MODEL
+width = int(width) if flux else max(256, min(2048, int(width)))
+height = int(height) if flux else max(256, min(2048, int(height)))
+steps = 4 if flux else max(1, min(20, int(steps)))
+references = (
+⋮----
 payload = {
 ⋮----
-reference = Path(reference_path)
+reference = references[0]
+⋮----
+body = json.dumps(payload).encode("utf-8")
+content_type = "application/json"
 ⋮----
 url = (
 request = urllib.request.Request(
@@ -8109,9 +8182,12 @@ output = output_dir / (
 ⋮----
 references = [Path(path) for path in (reference_paths or [])]
 ⋮----
-# Cloudflare SDXL is currently text-to-image only in our production path.
-# Referenced raster jobs would predictably incur a failed Cloudflare call
-# before falling back to Qwen. Route them straight to Kaggle when ready.
+# FLUX.2 Klein 4B is the explicit commercial-safe Workers AI
+# multi-reference model (Apache-2.0). Never let an arbitrary custom model
+# name stand in for checked commercial rights. Noncommercial SDXL reference
+# jobs retain the historical Kaggle Qwen routing behavior.
+commercial_references = bool(references) and _declares_commercial_generation(job)
+cloudflare_flux_references = (
 ⋮----
 backend = "kaggle-qwen"
 ⋮----

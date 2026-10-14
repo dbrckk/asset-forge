@@ -1,18 +1,18 @@
 # CI status
 
-Summary: 5 success / 1 failure / 2 active
+Summary: 4 success / 3 failure / 1 active
 
-- Validate asset-forge: queued / pending (be6c1cb3)
-- Deadline Zero live visual pilot: queued / pending (be6c1cb3)
-- Validate asset-forge: completed / success (17037d56)
-- Live generation smoke: completed / success (17e6c395)
-- Validate asset-forge: completed / success (17e6c395)
-- Deadline Zero live visual pilot: completed / failure (17e6c395)
-- Validate asset-forge: completed / success (35e0b128)
-- Validate asset-forge: completed / success (474fae9a)
+- Validate asset-forge: in_progress / pending (dc5f5966)
+- Validate asset-forge: completed / success (2f5c7afe)
+- Validate asset-forge: completed / failure (7a73c392)
+- Validate asset-forge: completed / success (71643545)
+- Validate asset-forge: completed / success (af4ee9f9)
+- Validate asset-forge: completed / failure (9a6fdf70)
+- Validate asset-forge: completed / failure (f4e9430d)
+- Precise semantic refresh: completed / success (7fd88750)
 
 ## Latest failed run structure
-- Job: produce
-  - Failed step: Produce Rex visual pilot
+- Job: test
+  - Failed step: Smoke-check commercial pilot preflight offline
 
 > Generated summary only; inspect GitHub Actions for full logs when needed.
