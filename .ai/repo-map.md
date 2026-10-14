@@ -508,14 +508,17 @@ jobs:
 ## File: .github/workflows/production-os-ai-dev-server-live-e2e.yml
 ````yaml
 name: Production OS AI Dev Server Asset Forge Live E2E
-# Requalify the live path whenever production raster constraints change.
-
+# Manual-only: live image providers can consume quota or charge money.
+# This validates a local Production-OS -> AI Dev Server request contract,
+# not a hosted Production-OS job, GitHub PR or target-branch delivery.
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/production-os-ai-dev-server-live-e2e.yml'
   workflow_dispatch:
+    inputs:
+      approve_provider_usage:
+        description: "I approve live image generation quota/possible charges"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -529,6 +532,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
+      - name: Require explicit live-generation approval
+        shell: bash
+        env:
+          APPROVED: ${{ inputs.approve_provider_usage }}
+        run: |
+          if [ "$APPROVED" != "true" ]; then
+            echo "::error::Explicit provider usage approval is required before generation."
+            exit 2
+          fi
+
       - name: Checkout current Asset Forge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -626,7 +639,7 @@ jobs:
               raise AssertionError(backend)
           PY
 
-      - name: Materialize Production OS handoff through AI Dev Server
+      - name: Validate local Production OS handoff contract through AI Dev Server
         shell: bash
         run: |
           set -euo pipefail
@@ -647,7 +660,7 @@ jobs:
                   "handoff": {
                       "repository": "dbrckk/deadline-zero",
                       "task": "Generate and integrate a live secondary Deadline Zero UI icon",
-                      "final_goal": "Prove Production OS -> AI Dev Server -> Asset Forge -> target repository.",
+                      "final_goal": "Validate a local Production-OS/AI Dev Server request adapter and an isolated Asset Forge/target build. A hosted Production-OS job and target pull request are not tested.",
                       "agent_preference": "codex",
                       "token_budget": 50000,
                       "tool_contracts": {
@@ -759,16 +772,22 @@ jobs:
               "targetRepo":studio["target_repo"],
               "toolContract":studio["tool_contracts"]["asset_forge"],
               "assetForgeReportSuccess":report.get("success") is True,
-              "liveGeneration":True,
+              "liveGeneration":report.get("success") is True,
+              "handoffScope":"local-protocol-adapter-only",
+              "hostedProductionOsJobExecuted":False,
+              "targetRepoPRCreated":False,
               "artifactSha256":hashlib.sha256(asset.read_bytes()).hexdigest(),
               "deadlineZeroCompileAndTests":True,
           }
           assert evidence["assetForgeReportSuccess"]
+          assert evidence["liveGeneration"]
           (root/"e2e-evidence.json").write_text(
               json.dumps(evidence,indent=2,sort_keys=True)+"\n",
               encoding="utf-8",
           )
           PY
+          echo "### Scope: manual live Asset Forge + local protocol integration only" >> "$GITHUB_STEP_SUMMARY"
+          echo "No hosted Production-OS job or target GitHub PR was executed by this workflow." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload live E2E evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -5335,9 +5354,14 @@ def test_cross_repo_live_e2e_uses_current_collaborators()
 ⋮----
 def test_cross_repo_live_e2e_requires_real_asset_backend()
 ⋮----
+# Live generation can be metered: a change/push must NEVER run it.
+⋮----
 def test_cross_repo_live_e2e_generates_and_compiles_target()
 ⋮----
 def test_cross_repo_live_e2e_persists_evidence()
+⋮----
+# Prove the completed boundaries accurately: the studio request is local,
+# not evidence of a hosted Production-OS execution or target PR delivery.
 ⋮----
 def test_cross_repo_live_e2e_scopes_credentials_and_records_exact_revisions()
 ⋮----

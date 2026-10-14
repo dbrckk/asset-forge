@@ -1511,9 +1511,14 @@ def test_cross_repo_live_e2e_uses_current_collaborators()
 ⋮----
 def test_cross_repo_live_e2e_requires_real_asset_backend()
 ⋮----
+# Live generation can be metered: a change/push must NEVER run it.
+⋮----
 def test_cross_repo_live_e2e_generates_and_compiles_target()
 ⋮----
 def test_cross_repo_live_e2e_persists_evidence()
+⋮----
+# Prove the completed boundaries accurately: the studio request is local,
+# not evidence of a hosted Production-OS execution or target PR delivery.
 ⋮----
 def test_cross_repo_live_e2e_scopes_credentials_and_records_exact_revisions()
 ⋮----
